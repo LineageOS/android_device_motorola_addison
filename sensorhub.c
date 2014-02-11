@@ -208,9 +208,9 @@ static int sensorhub_algo_query(struct sensorhub_device_t* device, uint16_t algo
     int i, evt_reg_size, error = 0;
 
     if (algo == SENSORHUB_ALGO_ACCUM_MVMT) {
-        evt_reg_size = STM_EVT_SZ_ACCUM_MVMT;
+        evt_reg_size = STM401_EVT_SZ_ACCUM_MVMT;
     } else {
-        evt_reg_size = STM_EVT_SZ_TRANSITION;
+        evt_reg_size = STM401_EVT_SZ_TRANSITION;
     }
 
     unsigned char bytes[sizeof(algo) + evt_reg_size];

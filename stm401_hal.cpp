@@ -59,7 +59,7 @@ HubSensor::HubSensor()
     }
 
     if ((fp = fopen(MAG_CAL_FILE, "r")) != NULL) {
-        for (i=0; i<STM_MAG_CAL_SIZE; i++) {
+        for (i=0; i<STM401_MAG_CAL_SIZE; i++) {
             mMagCal[i] = fgetc(fp);
         }
         fclose(fp);
@@ -117,7 +117,7 @@ int HubSensor::enable(int32_t handle, int en)
                     if ((fp = fopen(MAG_CAL_FILE, "w")) == NULL) {
                         ALOGE("Can't open Mag Cal file");
                     } else {
-                        for (i=0; i<STM_MAG_CAL_SIZE; i++) {
+                        for (i=0; i<STM401_MAG_CAL_SIZE; i++) {
                             fputc(mMagCal[i], fp);
                         }
                         fclose(fp);
@@ -232,7 +232,7 @@ int HubSensor::enable(int32_t handle, int en)
                     if ((fp = fopen(MAG_CAL_FILE, "w")) == NULL) {
                         ALOGE("Can't open Mag Cal file");
                     } else {
-                        for (i=0; i<STM_MAG_CAL_SIZE; i++) {
+                        for (i=0; i<STM401_MAG_CAL_SIZE; i++) {
                             fputc(mMagCal[i], fp);
                         }
                         fclose(fp);

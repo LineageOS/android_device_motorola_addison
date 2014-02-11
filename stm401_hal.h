@@ -57,7 +57,7 @@ private:
     uint32_t mEnabled;
     uint32_t mWakeEnabled;
     uint32_t mPendingMask;
-    uint8_t mMagCal[STM_MAG_CAL_SIZE];
+    uint8_t mMagCal[STM401_MAG_CAL_SIZE];
     gzFile open_dropbox_file(const char* timestamp, const char* dst, const int flags);
     short capture_dump(char* timestamp, const int id, const char* dst, const int flags);
 };
