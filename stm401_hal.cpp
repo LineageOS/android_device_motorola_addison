@@ -168,6 +168,18 @@ int HubSensor::enable(int32_t handle, int en)
                 new_enabled |= M_DISP_BRIGHTNESS;
             found = 1;
             break;
+        case ID_IR_GESTURE:
+            new_enabled &= ~M_IR_GESTURE;
+            if (newState)
+                new_enabled |= M_IR_GESTURE;
+            found = 1;
+            break;
+        case ID_IR_RAW:
+            new_enabled &= ~M_IR_RAW;
+            if (newState)
+                new_enabled |= M_IR_RAW;
+            found = 1;
+            break;
     }
 
     if (found && (new_enabled != mEnabled)) {
@@ -282,6 +294,8 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
         case ID_S: status = 0;                                                    break;
         case ID_CA: status = 0;                                                   break;
         case ID_NFC: status = 0;                                                  break;
+        case ID_IR_GESTURE: status = 0;                                           break;
+        case ID_IR_RAW: status = 0;                                               break;
     }
     return status;
 }
@@ -513,6 +527,27 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->sensor = ID_NFC;
                 data->type = SENSOR_TYPE_NFC_DETECT;
                 data->data[0] = buff.data[NFC_NFC];
+                data->timestamp = buff.timestamp;
+                data++;
+                count--;
+                numEventReceived++;
+                break;
+            case DT_IR_GESTURE:
+                count--;
+                break;
+            case DT_IR_RAW:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor = ID_IR_RAW;
+                data->type = SENSOR_TYPE_IR_RAW;
+                data->ir_raw.top_right_high = STM16TOH(buff.data + IR_TR_H);
+                data->ir_raw.bottom_left_high = STM16TOH(buff.data + IR_BL_H);
+                data->ir_raw.bottom_right_high = STM16TOH(buff.data + IR_BR_H);
+                data->ir_raw.bottom_both_high = STM16TOH(buff.data + IR_BB_H);
+                data->ir_raw.top_right_low = STM16TOH(buff.data + IR_TR_L);
+                data->ir_raw.bottom_left_low = STM16TOH(buff.data + IR_BL_L);
+                data->ir_raw.bottom_right_low = STM16TOH(buff.data + IR_BR_L);
+                data->ir_raw.bottom_both_low = STM16TOH(buff.data + IR_BB_L);
+                data->ir_raw.ambient = STM16TOH(buff.data + IR_AMBIENT);
                 data->timestamp = buff.timestamp;
                 data++;
                 count--;

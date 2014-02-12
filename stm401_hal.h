@@ -81,6 +81,16 @@
 
 #define NFC_NFC (0 * sizeof(int8_t))
 
+#define IR_TR_H    (0 * sizeof(int16_t))
+#define IR_BL_H    (1 * sizeof(int16_t))
+#define IR_BR_H    (2 * sizeof(int16_t))
+#define IR_BB_H    (3 * sizeof(int16_t))
+#define IR_TR_L    (4 * sizeof(int16_t))
+#define IR_BL_L    (5 * sizeof(int16_t))
+#define IR_BR_L    (6 * sizeof(int16_t))
+#define IR_BB_L    (7 * sizeof(int16_t))
+#define IR_AMBIENT (8 * sizeof(int16_t))
+
 #define STM16TOH(p) (int16_t) be16toh(*((uint16_t *) (p)))
 #define STM32TOH(p) (int32_t) be32toh(*((uint32_t *) (p)))
 

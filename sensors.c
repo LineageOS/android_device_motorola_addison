@@ -85,6 +85,16 @@ static const struct sensor_t sSensorList[] = {
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_NFC,
                 SENSOR_TYPE_NFC_DETECT, 1.0f, 1.0f, 0.0f, 0, 0, 0, { } },
+
+    { "IR Gestures",
+                "Motorola",
+                1, SENSORS_HANDLE_BASE+ID_IR_GESTURE,
+                SENSOR_TYPE_IR_GESTURE, 1.0f, 1.0f, 1.0f, -1, 8, 8, {} },
+
+    { "IR Raw Data",
+                "Motorola",
+                1, SENSORS_HANDLE_BASE+ID_IR_RAW,
+                SENSOR_TYPE_IR_RAW, 4096.0f, 1.0f, 1.0f, 1000, 0, 0, {} },
 };
 
 static int open_sensors(const struct hw_module_t* module, const char* name,

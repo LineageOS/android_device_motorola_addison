@@ -60,6 +60,9 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 #define ID_CA (17) /* Camera Activate */
 #define ID_NFC (18) /* NFC Detect */
 
+#define ID_IR_GESTURE (19) /* IR Gesture */
+#define ID_IR_RAW     (20) /* IR Raw Data */
+
 /*****************************************************************************/
 
 /*

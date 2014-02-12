@@ -74,6 +74,8 @@ private:
             case ID_S:
             case ID_CA:
             case ID_NFC:
+            case ID_IR_GESTURE:
+            case ID_IR_RAW:
                 return accelgyromag;
         }
         return -EINVAL;
