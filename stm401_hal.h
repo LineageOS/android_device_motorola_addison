@@ -19,6 +19,7 @@
 
 #include <stdint.h>
 #include <errno.h>
+#include <endian.h>
 #include <sys/cdefs.h>
 #include <sys/types.h>
 #include <zlib.h>
@@ -40,6 +41,48 @@
 #define DROPBOX_FLAG_TEXT        2
 #define DROPBOX_FLAG_GZIP        4
 #define COPYSIZE 256
+
+// Defines for offsets into the sensorhub event data.
+#define ACCEL_X (0 * sizeof(int16_t))
+#define ACCEL_Y (1 * sizeof(int16_t))
+#define ACCEL_Z (2 * sizeof(int16_t))
+
+#define GYRO_X (0 * sizeof(int16_t))
+#define GYRO_Y (1 * sizeof(int16_t))
+#define GYRO_Z (2 * sizeof(int16_t))
+
+#define PRESSURE_PRESSURE (0 * sizeof(int32_t))
+
+#define MAGNETIC_X (0 * sizeof(int16_t))
+#define MAGNETIC_Y (1 * sizeof(int16_t))
+#define MAGNETIC_Z (2 * sizeof(int16_t))
+
+#define ORIENTATION_AZIMUTH (0 * sizeof(int16_t))
+#define ORIENTATION_PITCH   (1 * sizeof(int16_t))
+#define ORIENTATION_ROLL    (2 * sizeof(int16_t))
+
+#define TEMPERATURE_TEMPERATURE (0 * sizeof(int16_t))
+
+#define LIGHT_LIGHT (0 * sizeof(int16_t))
+
+#define ROTATE_ROTATE (0 * sizeof(int8_t))
+
+#define BRIGHT_BRIGHT (0 * sizeof(int8_t))
+
+#define DOCK_DOCK (0 * sizeof(int8_t))
+
+#define PROXIMITY_PROXIMITY (0 * sizeof(int8_t))
+
+#define FLAT_FLAT (0 * sizeof(int8_t))
+
+#define STOWED_STOWED (0 * sizeof(int8_t))
+
+#define CAMERA_CAMERA (0 * sizeof(int16_t))
+
+#define NFC_NFC (0 * sizeof(int8_t))
+
+#define STM16TOH(p) (int16_t) be16toh(*((uint16_t *) (p)))
+#define STM32TOH(p) (int32_t) be32toh(*((uint32_t *) (p)))
 
 struct input_event;
 

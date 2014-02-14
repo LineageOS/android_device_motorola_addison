@@ -20,6 +20,7 @@
 #include <cutils/log.h>
 
 #include <dirent.h>
+#include <endian.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <pthread.h>
@@ -41,6 +42,21 @@
 /* paths to the driver fds */
 #define DRIVER_CONTROL_PATH "/dev/stm401"
 #define DRIVER_DATA_NAME "/dev/stm401_ms"
+
+/* Constants and helper macro for accessing sensor hub event data. */
+#define MOVE_VALUE 0
+
+#define ALGO_PAST       0
+#define ALGO_CONFIDENCE 0
+#define ALGO_ID         1
+#define ALGO_TIME       1
+#define ALGO_OLDSTATE   1
+#define ALGO_NEWSTATE   3
+#define ALGO_DISTANCE   3
+#define ALGO_MS         5
+#define ALGO_ALGO       7
+
+#define STMLE16TOH(p) (int16_t) le16toh(*((uint16_t *) (p)))
 
 static pthread_mutex_t g_lock = PTHREAD_MUTEX_INITIALIZER;
 
@@ -269,39 +285,41 @@ static int sensorhub_poll(struct sensorhub_device_t* device, struct sensorhub_ev
     switch (buff.type) {
         case DT_MMMOVE:
             event->type = SENSORHUB_EVENT_START_MOVEMENT;
-            event->value[2] = buff.data1 >> 4;
+            event->value[2] = buff.data[MOVE_VALUE] >> 4;
             break;
         case DT_NOMOVE:
             event->type = SENSORHUB_EVENT_END_MOVEMENT;
-            event->value[2] = buff.data1 >> 4;
+            event->value[2] = buff.data[MOVE_VALUE] >> 4;
             break;
         case DT_ALGO_EVT:
-            algo = buff.data1 >> 8;
+            // These events are sent little endian and are different from
+            // all other sensorhub data which are sent big endian.
+            algo = buff.data[ALGO_ALGO];
             event->time = get_wall_clock();
             elapsed_ms = get_elapsed_realtime();
             event->ertime = elapsed_ms > 0 ? elapsed_ms : 0;
             if (algo == SENSORHUB_ALGO_ACCUM_MVMT) {
                 event->type = SENSORHUB_EVENT_ACCUM_MVMT;
-                event->time_s = buff.data2;
-                event->distance = buff.data3;
+                event->time_s = STMLE16TOH(buff.data + ALGO_TIME);
+                event->distance = STMLE16TOH(buff.data + ALGO_DISTANCE);
                 //ALOGD("sensorhub_poll(): accum mvmt: time_s: %d, distance: %d",
                 //    event->time_s, event->distance);
             } else
             if (algo == SENSORHUB_ALGO_ACCUM_MODALITY) {
                 event->type = SENSORHUB_EVENT_ACCUM_STATE;
                 event->accum_algo = algo;
-                event->id = buff.data2;
+                event->id = STMLE16TOH(buff.data + ALGO_ID);
             } else {
                 event->type = SENSORHUB_EVENT_TRANSITION;
-                elapsed_ms = buff.data4 * 1000;
+                elapsed_ms = STMLE16TOH(buff.data + ALGO_MS) * 1000;
                 event->time -= elapsed_ms;
                 if (event->ertime > 0)
                     event->ertime -= elapsed_ms;
                 event->algo = algo;
-                event->past = (buff.data1 & 0x0080) > 0;
-                event->confidence = buff.data1 & 0x007F;
-                event->old_state = buff.data2;
-                event->new_state = buff.data3;
+                event->past = (buff.data[ALGO_PAST] & 0x80) > 0;
+                event->confidence = buff.data[ALGO_CONFIDENCE] & 0x7F;
+                event->old_state = STMLE16TOH(buff.data + ALGO_OLDSTATE);
+                event->new_state = STMLE16TOH(buff.data + ALGO_NEWSTATE);
                 //ALOGD("sensorhub_poll(): tran: algo: %d, elapsed: %lld, t: %lld, ert: %lld",
                 //    event->algo, elapsed_ms, event->time, event->ertime);
             }
