@@ -89,7 +89,7 @@ static const struct sensor_t sSensorList[] = {
     { "IR Gestures",
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_IR_GESTURE,
-                SENSOR_TYPE_IR_GESTURE, 1.0f, 1.0f, 1.0f, -1, 8, 8, {} },
+                SENSOR_TYPE_IR_GESTURE, 1.0f, 1.0f, 1.0f, 0, 8, 8, {} },
 
     { "IR Raw Data",
                 "Motorola",

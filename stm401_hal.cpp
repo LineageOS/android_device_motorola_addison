@@ -311,7 +311,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
 
     if (count < 1)
         return -EINVAL;
-
     while (((ret = read(data_fd, &buff, sizeof(struct stm401_android_sensor_data))) != 0)  && count) {
         switch (buff.type) {
             case DT_ACCEL:
@@ -533,7 +532,18 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 numEventReceived++;
                 break;
             case DT_IR_GESTURE:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor = ID_IR_GESTURE;
+                data->type = SENSOR_TYPE_IR_GESTURE;
+                data->ir_gesture.event_id = buff.data[IR_EVENT];
+                data->ir_gesture.gesture_id = buff.data[IR_GESTURE];
+                data->ir_gesture.direction = buff.data[IR_DIRECTION] & 0x0F;
+                data->ir_gesture.magnitude = buff.data[IR_MAGNITUDE] >> 4;
+                data->ir_gesture.confidence = buff.data[IR_CONFIDENCE];
+                data->timestamp = buff.timestamp;
+                data++;
                 count--;
+                numEventReceived++;
                 break;
             case DT_IR_RAW:
                 data->version = SENSORS_EVENT_T_SIZE;
