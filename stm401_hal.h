@@ -51,11 +51,34 @@
 #define GYRO_Y (1 * sizeof(int16_t))
 #define GYRO_Z (2 * sizeof(int16_t))
 
+#define UNCALIB_GYRO_X (0 * sizeof(int16_t))
+#define UNCALIB_GYRO_Y (1 * sizeof(int16_t))
+#define UNCALIB_GYRO_Z (2 * sizeof(int16_t))
+#define UNCALIB_GYRO_X_BIAS (3 * sizeof(int16_t))
+#define UNCALIB_GYRO_Y_BIAS (4 * sizeof(int16_t))
+#define UNCALIB_GYRO_Z_BIAS (5 * sizeof(int16_t))
+
 #define PRESSURE_PRESSURE (0 * sizeof(int32_t))
 
 #define MAGNETIC_X (0 * sizeof(int16_t))
 #define MAGNETIC_Y (1 * sizeof(int16_t))
 #define MAGNETIC_Z (2 * sizeof(int16_t))
+
+#define UNCALIB_MAGNETIC_X (0 * sizeof(int16_t))
+#define UNCALIB_MAGNETIC_Y (1 * sizeof(int16_t))
+#define UNCALIB_MAGNETIC_Z (2 * sizeof(int16_t))
+#define UNCALIB_MAGNETIC_X_BIAS (3 * sizeof(int16_t))
+#define UNCALIB_MAGNETIC_Y_BIAS (4 * sizeof(int16_t))
+#define UNCALIB_MAGNETIC_Z_BIAS (5 * sizeof(int16_t))
+
+#define STEP_COUNTER_0 (0 * sizeof(int16_t))
+#define STEP_COUNTER_1 (1 * sizeof(int16_t))
+#define STEP_COUNTER_2 (2 * sizeof(int16_t))
+#define STEP_COUNTER_3 (3 * sizeof(int16_t))
+
+#define STEP_DETECTOR (0 * sizeof(int16_t))
+
+#define SIM (0 * sizeof(int16_t))
 
 #define ORIENTATION_AZIMUTH (0 * sizeof(int16_t))
 #define ORIENTATION_PITCH   (1 * sizeof(int16_t))

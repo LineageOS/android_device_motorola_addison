@@ -16,6 +16,7 @@
  */
 
 #include <hardware/sensors.h>
+#include <float.h>
 
 #include "nusensors.h"
 
@@ -85,7 +86,6 @@ static const struct sensor_t sSensorList[] = {
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_NFC,
                 SENSOR_TYPE_NFC_DETECT, 1.0f, 1.0f, 0.0f, 0, 0, 0, { } },
-
     { "IR Gestures",
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_IR_GESTURE,
@@ -95,6 +95,29 @@ static const struct sensor_t sSensorList[] = {
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_IR_RAW,
                 SENSOR_TYPE_IR_RAW, 4096.0f, 1.0f, 1.0f, 1000, 0, 0, {} },
+    { "Significant Motion sensor",
+                "Motorola",
+                1, SENSORS_HANDLE_BASE+ID_SIM,
+                SENSOR_TYPE_SIGNIFICANT_MOTION, 1.0f, 1.0f, 3.0f, -1, 0, 0, { } },
+    { "Step Detector sensor",
+                "Motorola",
+                1, SENSORS_HANDLE_BASE+ID_STEP_DETECTOR,
+                SENSOR_TYPE_STEP_DETECTOR, 1.0f, 0, 0, 0, 0, 0, { } },
+
+    { "Step Counter sensor",
+                "Motorola",
+                1, SENSORS_HANDLE_BASE+ID_STEP_COUNTER,
+                SENSOR_TYPE_STEP_COUNTER, FLT_MAX, 0, 0, 0, 0, 0, { } },
+
+    { "Uncalibrated gyro sensor",
+                "Motorola",
+                1, SENSORS_HANDLE_BASE+ID_UNCALIB_GYRO,
+                SENSOR_TYPE_GYROSCOPE_UNCALIBRATED,2000.0f, 1.0f, 6.1f, 20000, 0, 0, { } },
+
+    { "AK8975 3-axis Uncalibrated Magnetic field sensor",
+                "Asahi Kasei",
+                1, SENSORS_HANDLE_BASE+ID_M,
+                SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED, 2000.0f, 1.0f/10.0f, 6.8f, 10000, 0, 0, { } },
 };
 
 static int open_sensors(const struct hw_module_t* module, const char* name,

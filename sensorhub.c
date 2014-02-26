@@ -56,6 +56,8 @@
 #define ALGO_MS         5
 #define ALGO_ALGO       7
 
+#define GENERIC_INT_OFFSET 0
+
 #define STMLE16TOH(p) (int16_t) le16toh(*((uint16_t *) (p)))
 
 static pthread_mutex_t g_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -253,10 +255,10 @@ static int sensorhub_algo_query(struct sensorhub_device_t* device, uint16_t algo
         } else {
             output->type = SENSORHUB_EVENT_TRANSITION;
             output->algo = algo;
-            output->past = (p_evt[1] & 0x80) > 0;
-            output->confidence = p_evt[1] & 0x7F;
-            output->old_state = (p_evt[3] << 8) | p_evt[2];
-            output->new_state = (p_evt[5] << 8) | p_evt[4];
+            output->past = (p_evt[0] & 0x80) > 0;
+            output->confidence = p_evt[0] & 0x7F;
+            output->old_state = (p_evt[2] << 8) | p_evt[1];
+            output->new_state = (p_evt[4] << 8) | p_evt[3];
         }
     }
     pthread_mutex_unlock(&g_lock);
@@ -323,6 +325,17 @@ static int sensorhub_poll(struct sensorhub_device_t* device, struct sensorhub_ev
                 //ALOGD("sensorhub_poll(): tran: algo: %d, elapsed: %lld, t: %lld, ert: %lld",
                 //    event->algo, elapsed_ms, event->time, event->ertime);
             }
+            break;
+        case DT_GENERIC_INT:
+            // packaging irq3_status into ertime field
+            // of the event
+            event->type = SENSORHUB_EVENT_GENERIC_CB;
+            event->time = get_wall_clock();
+            event->ertime = STMLE16TOH(buff.data + GENERIC_INT_OFFSET);
+            break;
+        case DT_RESET:
+            event->type = SENSORHUB_EVENT_RESET;
+            event->time = get_wall_clock();
             break;
     }
     context->data_pollfd.revents = 0;

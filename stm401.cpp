@@ -26,6 +26,10 @@
 #define STM_VERSION_MATCH 1
 #define STM_DOWNLOADRETRIES 3
 #define STM_MAX_PACKET_LENGTH 256
+/* 512 matches the read buffer in kernel */
+#define STM_MAX_GENERIC_DATA 512
+#define STM_MAX_GENERIC_HEADER 4
+#define STM_MAX_GENERIC_COMMAND_LEN 3
 #define STM_FORCE_DOWNLOAD_MSG  "Use -f option to ignore version check eg: stm401 boot -f\n"
 #define FLASH_START_ADDRESS 0x08000000
 
@@ -71,6 +75,7 @@ typedef enum tag_stmmode
 	TUSER_PROFILE,
 	TACTIVE_MODE,
 	TPASSIVE_MODE,
+	READWRITE,
 	INVALID
 }eMsp_Mode;
 
@@ -120,12 +125,17 @@ int stm_version_check(int fd, bool check)
 
 int stm_convertAsciiToHex(char * input, unsigned char * output, int inlen)
 {
-	int i=0,outlen=0,x;
+	int i=0,outlen=0,x,result;
 
-	while(i < inlen) {
-		sscanf(input+i,"%02x",&x);
-		output[outlen++] = (unsigned char)x;
-		i= i+2;
+	if (input != NULL && output != NULL) {
+		while(i < inlen) {
+			result = sscanf(input+i,"%02x",&x);
+			if (result != 1) {
+				break;
+			}
+			output[outlen++] = (unsigned char)x;
+			i= i+2;
+		}
 	}
 	return outlen;
 }
@@ -243,6 +253,8 @@ int  main(int argc, char *argv[])
 		emode = TPASSIVE_MODE;
 	else if(!strcmp(argv[1], "getversion"))
 		emode = VERSION;
+	else if(!strcmp(argv[1], "readwrite"))
+		emode = READWRITE;
 
 	/* check if its a force download */
 	if ((emode == BOOTLOADER || emode == BOOTFACTORY) && (argc == 3)) {
@@ -406,6 +418,96 @@ int  main(int argc, char *argv[])
 	if( emode == INVALID ) {
 		LOGERROR("Invalid arguements passed: %d, %s\n",argc,argv[1])
 		ret = STM_FAILURE;
+	}
+	if (emode == READWRITE) {
+	    //                    1B      2B       2B    ...
+	    // stm401 readwrite [type] [address] [size] [data]
+	    //
+	    // read version example: stm401 readwrite 00 00 01 00 01
+	    // write example:        stm401 readwrite 01 00 0D 00 02 CC DD
+
+	    unsigned int arg_index = STM_MAX_GENERIC_COMMAND_LEN;
+	    unsigned char data_header[STM_MAX_GENERIC_HEADER];
+	    unsigned char *data_ptr;
+	    int result;
+
+	    if (argc < 7) {
+	        printf("READWRITE : Not enough arguments,\n");
+	        printf("stm401 readwrite [type] [address] [size] [data]\n");
+	        printf("read version example: msp430 readwrite 00 00 01 00 01\n");
+	        printf("write example:        msp430 readwrite 01 00 0D 00 02 CC DD\n");
+		goto EXIT;
+	    }
+
+	    // read in the header 2 bytes address, 2 bytes data_size
+	    DEBUG(" Header Input: ");
+	    for( i=0; i < STM_MAX_GENERIC_HEADER; i++) {
+	        result = stm_convertAsciiToHex(argv[arg_index],data_header+i,
+	                strlen(argv[arg_index]));
+	        if (result != 1) {
+	            printf("Header Input: msp_convertAsciiToHex failure\n");
+		    goto EXIT;
+	        }
+	        DEBUG(" %02x",data_header[i]);
+	        arg_index++;
+	    }
+
+	    // read_write, 0 = read, 1 = write
+	    unsigned int read_write = atoi(argv[2]);
+	    int addr = (data_header[0] << 8) | data_header[1];
+	    int data_size = (data_header[2] << 8) | data_header[3];
+
+	    if (data_size > STM_MAX_GENERIC_DATA - 1) {
+	        printf("Data size too large, must be <= %d\n", STM_MAX_GENERIC_DATA - 1);
+		goto EXIT;
+	    } else if (data_size <= 0) {
+	        printf("Data size invalid,\n");
+		goto EXIT;
+	    } else if (read_write && data_size != (argc - STM_MAX_GENERIC_COMMAND_LEN
+	             - STM_MAX_GENERIC_HEADER)) {
+	        printf("Not enough data provided,\n");
+		goto EXIT;
+	    }
+
+	    // allocate data_ptr with read/write size + header
+	    data_ptr = (unsigned char *)malloc(data_size + STM_MAX_GENERIC_HEADER);
+	    memset(data_ptr, 0, data_size + STM_MAX_GENERIC_HEADER);
+
+	    // copy header into data_ptr
+	    int data_index = STM_MAX_GENERIC_HEADER;
+	    memcpy(data_ptr, data_header, STM_MAX_GENERIC_HEADER);
+
+	    // if writing, read in the data
+	    if (read_write) {
+	        DEBUG(" READWRITE Data Input:");
+	        for( i=0; i < data_size; i++) {
+	            result = stm_convertAsciiToHex(argv[arg_index],
+	                data_ptr + data_index,
+	                strlen(argv[arg_index]));
+	            if (result != 1) {
+	                printf("Data Input: stm_convertAsciiToHex failure\n");
+	                free(data_ptr);
+		        goto EXIT;
+	            }
+	            arg_index++;
+	            data_index++;
+	            DEBUG(" %02x",data_ptr[i]);
+	        }
+	    }
+
+	    if (read_write) {
+	        ret = ioctl(fd,STM401_IOCTL_WRITE_REG,data_ptr);
+	        DEBUG ("Writing data returned: %d", ret);
+	    } else {
+	        ret = ioctl(fd,STM401_IOCTL_READ_REG,data_ptr);
+
+	        DEBUG ("Read data:");
+	        for ( i = 0; i < data_size; i++) {
+	            DEBUG (" %02x", data_ptr[i]);
+	        }
+	    }
+
+	    free(data_ptr);
 	}
 
 EXIT:

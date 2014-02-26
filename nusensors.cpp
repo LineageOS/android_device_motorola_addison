@@ -76,6 +76,11 @@ private:
             case ID_NFC:
             case ID_IR_GESTURE:
             case ID_IR_RAW:
+            case ID_SIM:
+            case ID_STEP_DETECTOR:
+            case ID_STEP_COUNTER:
+            case ID_UNCALIB_GYRO:
+            case ID_UNCALIB_MAG:
                 return accelgyromag;
         }
         return -EINVAL;

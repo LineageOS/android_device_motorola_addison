@@ -168,7 +168,7 @@ int HubSensor::enable(int32_t handle, int en)
                 new_enabled |= M_DISP_BRIGHTNESS;
             found = 1;
             break;
-        case ID_IR_GESTURE:
+	case ID_IR_GESTURE:
             new_enabled &= ~M_IR_GESTURE;
             if (newState)
                 new_enabled |= M_IR_GESTURE;
@@ -178,6 +178,30 @@ int HubSensor::enable(int32_t handle, int en)
             new_enabled &= ~M_IR_RAW;
             if (newState)
                 new_enabled |= M_IR_RAW;
+            found = 1;
+            break;
+        case ID_UNCALIB_GYRO:
+            new_enabled &= ~M_UNCALIB_GYRO;
+            if (newState)
+                new_enabled |= M_UNCALIB_GYRO;
+            found = 1;
+            break;
+	case ID_UNCALIB_MAG:
+            new_enabled &= ~M_UNCALIB_MAG;
+            if (newState)
+                new_enabled |= M_UNCALIB_MAG;
+            found = 1;
+            break;
+	case ID_STEP_COUNTER:
+            new_enabled &= ~M_STEP_COUNTER;
+            if (newState)
+                new_enabled |= M_STEP_COUNTER;
+            found = 1;
+            break;
+	case ID_STEP_DETECTOR:
+            new_enabled &= ~M_STEP_DETECTOR;
+            if (newState)
+                new_enabled |= M_STEP_DETECTOR;
             found = 1;
             break;
     }
@@ -253,6 +277,12 @@ int HubSensor::enable(int32_t handle, int en)
             }
             found = 1;
             break;
+        case ID_SIM:
+            new_enabled &= ~M_SIM;
+            if (newState)
+                new_enabled |= M_SIM;
+            found = 1;
+            break;
     }
 
     if (found && (new_enabled != mWakeEnabled)) {
@@ -294,8 +324,18 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
         case ID_S: status = 0;                                                    break;
         case ID_CA: status = 0;                                                   break;
         case ID_NFC: status = 0;                                                  break;
-        case ID_IR_GESTURE: status = 0;                                           break;
+	case ID_IR_GESTURE: status = 0;                                           break;
         case ID_IR_RAW: status = 0;                                               break;
+        case ID_SIM: status = 0;                                                  break;
+        case ID_UNCALIB_GYRO: status = ioctl(dev_fd,  STM401_IOCTL_SET_GYRO_DELAY, &delay); break;
+        case ID_UNCALIB_MAG:                                                      break;
+        case ID_STEP_COUNTER:
+		    delay /= 1000; // convert to seconds for pedometer rate
+		    if (delay == 0)
+		        delay = 1;
+		    status = ioctl(dev_fd,  STM401_IOCTL_SET_STEP_COUNTER_DELAY, &delay);
+		    break;
+        case ID_STEP_DETECTOR:status = 0;                                         break;
     }
     return status;
 }
@@ -333,6 +373,60 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->gyro.x = STM16TOH(buff.data + GYRO_X) * CONVERT_G_P;
                 data->gyro.y = STM16TOH(buff.data + GYRO_Y) * CONVERT_G_R;
                 data->gyro.z = STM16TOH(buff.data + GYRO_Z) * CONVERT_G_Y;
+                data->timestamp = buff.timestamp;
+                data++;
+                count--;
+                numEventReceived++;
+                break;
+            case DT_UNCALIB_GYRO:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor = ID_UNCALIB_GYRO;
+                data->type = SENSOR_TYPE_GYROSCOPE_UNCALIBRATED;
+                data->uncalibrated_gyro.x_uncalib = STM16TOH(buff.data + UNCALIB_GYRO_X) * CONVERT_G_P;
+                data->uncalibrated_gyro.y_uncalib = STM16TOH(buff.data + UNCALIB_GYRO_Y) * CONVERT_G_R;
+                data->uncalibrated_gyro.z_uncalib = STM16TOH(buff.data + UNCALIB_GYRO_Z) * CONVERT_G_Y;
+                data->uncalibrated_gyro.x_bias = STM16TOH(buff.data + UNCALIB_GYRO_X_BIAS) * CONVERT_BIAS_G_P;
+                data->uncalibrated_gyro.y_bias = STM16TOH(buff.data + UNCALIB_GYRO_Y_BIAS) * CONVERT_BIAS_G_R;
+                data->uncalibrated_gyro.z_bias = STM16TOH(buff.data + UNCALIB_GYRO_Z_BIAS) * CONVERT_BIAS_G_Y;
+                data->timestamp = buff.timestamp;
+                data++;
+                count--;
+                numEventReceived++;
+                break;
+            case DT_UNCALIB_MAG:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor = ID_UNCALIB_MAG;
+                data->type = SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED;
+                data->uncalibrated_magnetic.x_uncalib = STM16TOH(buff.data + UNCALIB_MAGNETIC_X) * CONVERT_M_X;
+                data->uncalibrated_magnetic.y_uncalib = STM16TOH(buff.data + UNCALIB_MAGNETIC_Y) * CONVERT_M_Y;
+                data->uncalibrated_magnetic.z_uncalib = STM16TOH(buff.data + UNCALIB_MAGNETIC_Z) * CONVERT_M_Z;
+                data->uncalibrated_magnetic.x_bias = STM16TOH(buff.data + UNCALIB_MAGNETIC_X_BIAS) * CONVERT_BIAS_M_X;
+                data->uncalibrated_magnetic.y_bias = STM16TOH(buff.data + UNCALIB_MAGNETIC_Y_BIAS) * CONVERT_BIAS_M_Y;
+                data->uncalibrated_magnetic.z_bias = STM16TOH(buff.data + UNCALIB_MAGNETIC_Z_BIAS) * CONVERT_BIAS_M_Z;
+                data->timestamp = buff.timestamp;
+                data++;
+                count--;
+                numEventReceived++;
+                break;
+            case DT_STEP_COUNTER:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor = ID_STEP_COUNTER;
+                data->type = SENSOR_TYPE_STEP_COUNTER;
+                data->u64.step_counter =  (
+                        (((uint64_t)STM16TOH(buff.data + STEP_COUNTER_3)) << 48) |
+                        (((uint64_t)STM16TOH(buff.data + STEP_COUNTER_2)) << 32) |
+                        (((uint64_t)STM16TOH(buff.data + STEP_COUNTER_1)) << 16) |
+                        (((uint64_t)STM16TOH(buff.data + STEP_COUNTER_0))) );
+                data->timestamp = buff.timestamp;
+                data++;
+                count--;
+                numEventReceived++;
+                break;
+            case DT_STEP_DETECTOR:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor = ID_STEP_DETECTOR;
+                data->type = SENSOR_TYPE_STEP_DETECTOR;
+                data->data[0] = STM16TOH(buff.data + STEP_DETECTOR);
                 data->timestamp = buff.timestamp;
                 data++;
                 count--;
@@ -562,6 +656,17 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data++;
                 count--;
                 numEventReceived++;
+                break;
+            case DT_SIM:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor = ID_SIM;
+                data->type = SENSOR_TYPE_SIGNIFICANT_MOTION;
+                data->data[0] = STM16TOH(buff.data + SIM);
+                data->timestamp = buff.timestamp;
+                data++;
+                count--;
+                numEventReceived++;
+                enable(ID_SIM, 0);
                 break;
             case DT_RESET:
                 count--;

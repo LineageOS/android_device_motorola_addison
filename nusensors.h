@@ -59,10 +59,13 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 #define ID_S  (16) /* Stowed */
 #define ID_CA (17) /* Camera Activate */
 #define ID_NFC (18) /* NFC Detect */
-
 #define ID_IR_GESTURE (19) /* IR Gesture */
 #define ID_IR_RAW     (20) /* IR Raw Data */
-
+#define ID_SIM (21) /* Significant motion */
+#define ID_STEP_DETECTOR (22) /* Step detector */
+#define ID_STEP_COUNTER  (23) /* Step counter */
+#define ID_UNCALIB_GYRO  (24) /* Uncalibrated Gyroscope */
+#define ID_UNCALIB_MAG   (25) /* Uncalibrated Magenetometer */
 /*****************************************************************************/
 
 /*
@@ -97,6 +100,9 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 #define CONVERT_M_X                 (CONVERT_M)
 #define CONVERT_M_Y                 (CONVERT_M)
 #define CONVERT_M_Z                 (CONVERT_M)
+#define CONVERT_BIAS_M_X            (CONVERT_M)
+#define CONVERT_BIAS_M_Y            (CONVERT_M)
+#define CONVERT_BIAS_M_Z            (CONVERT_M)
 
 #define CONVERT_O                   (1.0f/64.0f)
 #define CONVERT_O_Y                 (CONVERT_O)
@@ -120,6 +126,9 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 #define CONVERT_G_P                 (CONVERT_G)
 #define CONVERT_G_R                 (CONVERT_G)
 #define CONVERT_G_Y                 (CONVERT_G)
+#define CONVERT_BIAS_G_P            (CONVERT_G)
+#define CONVERT_BIAS_G_R            (CONVERT_G)
+#define CONVERT_BIAS_G_Y            (CONVERT_G)
 
 #define CONVERT_B                   (1.0f/100.0f)
 
