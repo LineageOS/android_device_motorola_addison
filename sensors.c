@@ -116,7 +116,7 @@ static const struct sensor_t sSensorList[] = {
 
     { "AK8975 3-axis Uncalibrated Magnetic field sensor",
                 "Asahi Kasei",
-                1, SENSORS_HANDLE_BASE+ID_M,
+                1, SENSORS_HANDLE_BASE+ID_UNCALIB_MAG,
                 SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED, 2000.0f, 1.0f/10.0f, 6.8f, 10000, 0, 0, { } },
 };
 
