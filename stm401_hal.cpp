@@ -483,7 +483,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = ID_L;
                 data->type = SENSOR_TYPE_LIGHT;
-                data->light = STM16TOH(buff.data + LIGHT_LIGHT);
+                data->light = (uint16_t)STM16TOH(buff.data + LIGHT_LIGHT);
                 data->timestamp = buff.timestamp;
                 data++;
                 count--;
