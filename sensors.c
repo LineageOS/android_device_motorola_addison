@@ -16,6 +16,7 @@
  */
 
 #include <hardware/sensors.h>
+#include <hardware/mot_sensorhub_stm401.h>
 #include <float.h>
 
 #include "nusensors.h"

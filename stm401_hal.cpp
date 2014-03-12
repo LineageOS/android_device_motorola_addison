@@ -29,6 +29,8 @@
 
 #include <cutils/log.h>
 
+#include <hardware/mot_sensorhub_stm401.h>
+
 #include "stm401_hal.h"
 
 /*****************************************************************************/
@@ -77,7 +79,7 @@ HubSensor::~HubSensor()
 int HubSensor::enable(int32_t handle, int en)
 {
     int newState  = en ? 1 : 0;
-    unsigned short new_enabled;
+    uint32_t new_enabled;
     int found = 0;
     int err = 0;
 
@@ -328,7 +330,7 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
         case ID_IR_RAW: status = 0;                                               break;
         case ID_SIM: status = 0;                                                  break;
         case ID_UNCALIB_GYRO: status = ioctl(dev_fd,  STM401_IOCTL_SET_GYRO_DELAY, &delay); break;
-        case ID_UNCALIB_MAG:                                                      break;
+        case ID_UNCALIB_MAG: status = ioctl(dev_fd,  STM401_IOCTL_SET_MAG_DELAY, &delay);  break;
         case ID_STEP_COUNTER:
 		    delay /= 1000; // convert to seconds for pedometer rate
 		    if (delay == 0)

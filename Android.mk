@@ -40,7 +40,7 @@ LOCAL_MODULE_TAGS := optional
 LOCAL_SHARED_LIBRARIES := liblog libcutils libz
 LOCAL_C_INCLUDES := external/zlib
 
-LOCAL_MODULE := sensors.msm8974
+LOCAL_MODULE := sensors.$(TARGET_BOARD_PLATFORM)
 
 include $(BUILD_SHARED_LIBRARY)
 
@@ -57,7 +57,7 @@ LOCAL_SRC_FILES := sensorhub.c
 
 LOCAL_SHARED_LIBRARIES := libcutils libc
 
-LOCAL_MODULE := sensorhub.msm8974
+LOCAL_MODULE := sensorhub.$(TARGET_BOARD_PLATFORM)
 
 LOCAL_MODULE_TAGS := optional
 
@@ -66,8 +66,8 @@ include $(BUILD_SHARED_LIBRARY)
 #################################################################
 include $(CLEAR_VARS)
 
-LOCAL_REQUIRED_MODULES := sensorhub.msm8974
-LOCAL_REQUIRED_MODULES += sensors.msm8974
+LOCAL_REQUIRED_MODULES := sensorhub.$(TARGET_BOARD_PLATFORM)
+LOCAL_REQUIRED_MODULES += sensors.$(TARGET_BOARD_PLATFORM)
 
 LOCAL_MODULE_TAGS := optional
 LOCAL_CFLAGS := -DLOG_TAG=\"STM401\"
