@@ -48,7 +48,7 @@
 
 #define ALGO_PAST       0
 #define ALGO_CONFIDENCE 0
-#define ALGO_ID         1
+#define ALGO_ID         0
 #define ALGO_TIME       1
 #define ALGO_OLDSTATE   1
 #define ALGO_NEWSTATE   3
