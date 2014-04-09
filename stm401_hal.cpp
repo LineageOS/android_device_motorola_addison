@@ -653,7 +653,8 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->ir_raw.bottom_left_low = STM16TOH(buff.data + IR_BL_L);
                 data->ir_raw.bottom_right_low = STM16TOH(buff.data + IR_BR_L);
                 data->ir_raw.bottom_both_low = STM16TOH(buff.data + IR_BB_L);
-                data->ir_raw.ambient = STM16TOH(buff.data + IR_AMBIENT);
+                data->ir_raw.ambient_high = STM16TOH(buff.data + IR_AMBIENT_H);
+                data->ir_raw.ambient_low = STM16TOH(buff.data + IR_AMBIENT_L);
                 data->timestamp = buff.timestamp;
                 data++;
                 count--;
