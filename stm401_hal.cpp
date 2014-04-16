@@ -326,8 +326,8 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
         case ID_S: status = 0;                                                    break;
         case ID_CA: status = 0;                                                   break;
         case ID_NFC: status = 0;                                                  break;
-	case ID_IR_GESTURE: status = 0;                                           break;
-        case ID_IR_RAW: status = 0;                                               break;
+        case ID_IR_GESTURE: status = ioctl(dev_fd, STM401_IOCTL_SET_IR_GESTURE_DELAY, &delay); break;
+        case ID_IR_RAW: status = ioctl(dev_fd, STM401_IOCTL_SET_IR_RAW_DELAY, &delay); break;
         case ID_SIM: status = 0;                                                  break;
         case ID_UNCALIB_GYRO: status = ioctl(dev_fd,  STM401_IOCTL_SET_GYRO_DELAY, &delay); break;
         case ID_UNCALIB_MAG: status = ioctl(dev_fd,  STM401_IOCTL_SET_MAG_DELAY, &delay);  break;
