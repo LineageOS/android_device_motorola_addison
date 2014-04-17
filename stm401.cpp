@@ -77,7 +77,7 @@ typedef enum tag_stmmode
 	TPASSIVE_MODE,
 	READWRITE,
 	INVALID
-}eMsp_Mode;
+}eStm_Mode;
 
 /****************************** function defitions ****************************/
 int stm_version_check(int fd, bool check)
@@ -109,8 +109,8 @@ int stm_version_check(int fd, bool check)
 	/* get old version from firmware */
 	oldversion = ioctl(fd, STM401_IOCTL_GET_VERSION, &temp);
 
-	/* check if version are different */
-	if( oldversion != newversion)
+	/* check if the version in hardware is older */
+	if( oldversion < newversion)
 		ret = STM_VERSION_MISMATCH;
 	else {
 		DEBUG(STM_FORCE_DOWNLOAD_MSG);
@@ -212,7 +212,7 @@ int  main(int argc, char *argv[])
 
 	int fd = -1, tries, ret = STM_SUCCESS;
 	FILE * filep = NULL;
-	eMsp_Mode emode = INVALID;
+	eStm_Mode emode = INVALID;
 	int temp = 100; // this is only a dummy variable for the 3rd parameter of ioctl call
 	unsigned char hexinput[250];
 	int count, i;
@@ -434,8 +434,8 @@ int  main(int argc, char *argv[])
 	    if (argc < 7) {
 	        printf("READWRITE : Not enough arguments,\n");
 	        printf("stm401 readwrite [type] [address] [size] [data]\n");
-	        printf("read version example: msp430 readwrite 00 00 01 00 01\n");
-	        printf("write example:        msp430 readwrite 01 00 0D 00 02 CC DD\n");
+	        printf("read version example: stm401 readwrite 00 00 01 00 01\n");
+	        printf("write example:        stm401 readwrite 01 00 0D 00 02 CC DD\n");
 		goto EXIT;
 	    }
 
@@ -445,7 +445,7 @@ int  main(int argc, char *argv[])
 	        result = stm_convertAsciiToHex(argv[arg_index],data_header+i,
 	                strlen(argv[arg_index]));
 	        if (result != 1) {
-	            printf("Header Input: msp_convertAsciiToHex failure\n");
+	            printf("Header Input: stm_convertAsciiToHex failure\n");
 		    goto EXIT;
 	        }
 	        DEBUG(" %02x",data_header[i]);
