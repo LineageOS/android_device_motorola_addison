@@ -76,6 +76,7 @@ typedef enum tag_stmmode
 	TACTIVE_MODE,
 	TPASSIVE_MODE,
 	READWRITE,
+	LOWPOWER_MODE,
 	INVALID
 }eStm_Mode;
 
@@ -255,6 +256,8 @@ int  main(int argc, char *argv[])
 		emode = VERSION;
 	else if(!strcmp(argv[1], "readwrite"))
 		emode = READWRITE;
+	else if(!strcmp(argv[1], "lowpower"))
+		emode = LOWPOWER_MODE;
 
 	/* check if its a force download */
 	if ((emode == BOOTLOADER || emode == BOOTFACTORY) && (argc == 3)) {
@@ -508,6 +511,16 @@ int  main(int argc, char *argv[])
 	    }
 
 	    free(data_ptr);
+	}
+	if(emode == LOWPOWER_MODE) {
+	    unsigned int setting = atoi(argv[2]);
+	    if (setting == 0 || setting == 1) {
+		LOGINFO(" lowpower mode set to: %d\n", setting);
+		ret = ioctl(fd, STM401_IOCTL_SET_LOWPOWER_MODE, &setting);
+	    } else {
+		LOGERROR(" lowpower mode incorrect setting\n");
+		ret = STM_FAILURE;
+	    }
 	}
 
 EXIT:
