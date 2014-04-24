@@ -122,7 +122,7 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 #define DISP_UNKNOWN                (-1.0f)
 
 // conversion of angular velocity(millidegrees/second) to rad/s
-#define CONVERT_G                   ((70.0f/1000.0f) * ((float)(M_PI/180.0f)))
+#define CONVERT_G                   ((2000.0f/32767.0f) * ((float)(M_PI/180.0f)))
 #define CONVERT_G_P                 (CONVERT_G)
 #define CONVERT_G_R                 (CONVERT_G)
 #define CONVERT_G_Y                 (CONVERT_G)
