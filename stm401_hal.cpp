@@ -350,10 +350,32 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
     char timeBuf[32];
     struct tm* ptm = NULL;
     struct timeval timeutc;
+    static long int sent_bug2go_sec = 0;
 
     if (count < 1)
         return -EINVAL;
     while (((ret = read(data_fd, &buff, sizeof(struct stm401_android_sensor_data))) != 0)  && count) {
+        /* these sensors are not supported, upload a bug2go if its been at least 10mins since previous bug2go*/
+        /* remove this if-clause when corruption issue resolved */
+        if (buff.type == DT_PRESSURE || buff.type == DT_TEMP || buff.type == DT_LIN_ACCEL ||
+            buff.type == DT_GRAVITY || buff.type == DT_DOCK || buff.type == DT_QUATERNION ||
+            buff.type == DT_NFC) {
+            count--;
+            time(&timeutc.tv_sec);
+            if ((sent_bug2go_sec == 0) ||
+                (timeutc.tv_sec - sent_bug2go_sec > 60*10)) {
+                // put timestamp in dropbox file
+                ptm = localtime(&(timeutc.tv_sec));
+                if (ptm != NULL) {
+                    strftime(timeBuf, sizeof(timeBuf), "%m-%d %H:%M:%S", ptm);
+                    capture_dump(timeBuf, buff.type, SENSORHUB_DUMPFILE,
+                        DROPBOX_FLAG_TEXT | DROPBOX_FLAG_GZIP);
+                }
+                sent_bug2go_sec = timeutc.tv_sec;
+            }
+            continue;
+        }
+
         switch (buff.type) {
             case DT_ACCEL:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -715,7 +737,7 @@ short HubSensor::capture_dump(char* timestamp, const int id, const char* dst, co
         // put timestamp in dropbox file
         rc = snprintf(buffer, COPYSIZE, "timestamp:%s\n", timestamp);
         gzwrite(dropbox_file, buffer, rc);
-        rc = snprintf(buffer, COPYSIZE, "reset_reason:%02d\n", id);
+        rc = snprintf(buffer, COPYSIZE, "reason:%02d\n", id);
         gzwrite(dropbox_file, buffer, rc);
         gzclose(dropbox_file);
         // to commit buffer cache to disk
