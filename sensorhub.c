@@ -332,7 +332,7 @@ static int sensorhub_poll(struct sensorhub_device_t* device, struct sensorhub_ev
             // of the event
             event->type = SENSORHUB_EVENT_GENERIC_CB;
             event->time = get_wall_clock();
-            event->ertime = STMLE16TOH(buff.data + GENERIC_INT_OFFSET);
+            event->ertime = buff.data[GENERIC_INT_OFFSET];
 #endif
             context->data_pollfd.revents = 0;
             return 0;
