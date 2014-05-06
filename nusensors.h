@@ -112,6 +112,7 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 // proximity uncovered and covered values
 #define PROX_UNCOVERED              (100.0f)
 #define PROX_COVERED                (3.0f)
+#define PROX_SATURATED              (1.0f)
 
 // flat up / down values
 #define FLAT_NOTDETECTED            (0.0f)

@@ -579,13 +579,15 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = ID_P;
                 data->type = SENSOR_TYPE_PROXIMITY;
-                if (buff.data[PROXIMITY_PROXIMITY]) {
-                    data->distance = PROX_COVERED;
-                    ALOGE("Proximity covered");
-                }
-                else {
+                if (buff.data[PROXIMITY_PROXIMITY] == 0) {
                     data->distance = PROX_UNCOVERED;
                     ALOGE("Proximity uncovered");
+		} else if (buff.data[PROXIMITY_PROXIMITY] == 1) {
+                    data->distance = PROX_COVERED;
+                    ALOGE("Proximity covered 1");
+                } else {
+                    data->distance = PROX_SATURATED;
+                    ALOGE("Proximity covered 2");
                 }
                 data->timestamp = buff.timestamp;
                 data++;
