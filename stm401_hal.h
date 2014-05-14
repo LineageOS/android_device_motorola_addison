@@ -119,6 +119,8 @@
 #define IR_BB_L       (7 * sizeof(int16_t))
 #define IR_AMBIENT_H  (8 * sizeof(int16_t))
 #define IR_AMBIENT_L  (9 * sizeof(int16_t))
+#define IR_OBJ        (0 * sizeof(int8_t))
+#define IR_OBJ_SHIFT  2
 
 #define STM16TOH(p) (int16_t) be16toh(*((uint16_t *) (p)))
 #define STM32TOH(p) (int32_t) be32toh(*((uint32_t *) (p)))

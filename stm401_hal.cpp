@@ -170,7 +170,7 @@ int HubSensor::enable(int32_t handle, int en)
                 new_enabled |= M_DISP_BRIGHTNESS;
             found = 1;
             break;
-	case ID_IR_GESTURE:
+        case ID_IR_GESTURE:
             new_enabled &= ~M_IR_GESTURE;
             if (newState)
                 new_enabled |= M_IR_GESTURE;
@@ -180,6 +180,12 @@ int HubSensor::enable(int32_t handle, int en)
             new_enabled &= ~M_IR_RAW;
             if (newState)
                 new_enabled |= M_IR_RAW;
+            found = 1;
+            break;
+        case ID_IR_OBJECT:
+            new_enabled &= ~M_IR_OBJECT;
+            if (newState)
+                new_enabled |= M_IR_OBJECT;
             found = 1;
             break;
         case ID_UNCALIB_GYRO:
@@ -328,6 +334,7 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
         case ID_NFC: status = 0;                                                  break;
         case ID_IR_GESTURE: status = ioctl(dev_fd, STM401_IOCTL_SET_IR_GESTURE_DELAY, &delay); break;
         case ID_IR_RAW: status = ioctl(dev_fd, STM401_IOCTL_SET_IR_RAW_DELAY, &delay); break;
+        case ID_IR_OBJECT: status = 0;                                            break;
         case ID_SIM: status = 0;                                                  break;
         case ID_UNCALIB_GYRO: status = ioctl(dev_fd,  STM401_IOCTL_SET_GYRO_DELAY, &delay); break;
         case ID_UNCALIB_MAG: status = ioctl(dev_fd,  STM401_IOCTL_SET_MAG_DELAY, &delay);  break;
@@ -679,6 +686,16 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->ir_raw.bottom_both_low = STM16TOH(buff.data + IR_BB_L);
                 data->ir_raw.ambient_high = STM16TOH(buff.data + IR_AMBIENT_H);
                 data->ir_raw.ambient_low = STM16TOH(buff.data + IR_AMBIENT_L);
+                data->timestamp = buff.timestamp;
+                data++;
+                count--;
+                numEventReceived++;
+                break;
+            case DT_IR_OBJECT:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor = ID_IR_OBJECT;
+                data->type = SENSOR_TYPE_IR_OBJECT;
+                data->data[0] = (*(buff.data + IR_OBJ) >> IR_OBJ_SHIFT) & 0x01;
                 data->timestamp = buff.timestamp;
                 data++;
                 count--;

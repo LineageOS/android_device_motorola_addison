@@ -66,6 +66,7 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 #define ID_STEP_COUNTER  (23) /* Step counter */
 #define ID_UNCALIB_GYRO  (24) /* Uncalibrated Gyroscope */
 #define ID_UNCALIB_MAG   (25) /* Uncalibrated Magenetometer */
+#define ID_IR_OBJECT (26) /* IR Object Detect */
 /*****************************************************************************/
 
 /*

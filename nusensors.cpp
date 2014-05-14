@@ -76,6 +76,7 @@ private:
             case ID_NFC:
             case ID_IR_GESTURE:
             case ID_IR_RAW:
+            case ID_IR_OBJECT:
             case ID_SIM:
             case ID_STEP_DETECTOR:
             case ID_STEP_COUNTER:
