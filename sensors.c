@@ -35,7 +35,7 @@ static const struct sensor_t sSensorList[] = {
     { "MPU6515 Gyroscope sensor",
                 "InvenSense",
                 1, SENSORS_HANDLE_BASE+ID_G,
-                SENSOR_TYPE_GYROSCOPE, 2000.0f, 1.0f, 6.1f, 20000, 0, 0, { } },
+                SENSOR_TYPE_GYROSCOPE, 2000.0f, 1.0f, 6.1f, 5000, 0, 0, { } },
     { "AK8963 3-axis Magnetic field sensor",
                 "Asahi Kasei",
                 1, SENSORS_HANDLE_BASE+ID_M,
