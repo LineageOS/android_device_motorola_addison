@@ -52,14 +52,18 @@ static const struct sensor_t sSensorList[] = {
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_DR,
                 SENSOR_TYPE_DISPLAY_ROTATE, 4.0f, 1.0f, 0.0f, 0, 0, 0, { } },
+#ifdef _STM401_DB
     { "Display Brightness sensor",
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_DB,
                 SENSOR_TYPE_DISPLAY_BRIGHTNESS, 255.0f, 1.0f, 0.0f, 0, 0, 0, { } },
+#endif
+#ifdef _STM401_DOCK
     { "Dock",
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_D,
                 SENSOR_TYPE_DOCK, 3.0f, 1.0f, 0.01f, 0, 0, 0, { } },
+#endif
 
     { "CT406 Proximity sensor",
                 "TAOS",
@@ -82,11 +86,12 @@ static const struct sensor_t sSensorList[] = {
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_CA,
                 SENSOR_TYPE_CAMERA_ACTIVATE, 1.0f, 1.0f, 0.0f, 20000, 0, 0, { } },
-
+#ifdef _STM401_NFC
     { "NFC Detect sensor",
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_NFC,
                 SENSOR_TYPE_NFC_DETECT, 1.0f, 1.0f, 0.0f, 0, 0, 0, { } },
+#endif
     { "IR Gestures",
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_IR_GESTURE,
@@ -104,6 +109,7 @@ static const struct sensor_t sSensorList[] = {
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_SIM,
                 SENSOR_TYPE_SIGNIFICANT_MOTION, 1.0f, 1.0f, 3.0f, -1, 0, 0, { } },
+#ifdef _STM401_PEDO
     { "Step Detector sensor",
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_STEP_DETECTOR,
@@ -113,7 +119,7 @@ static const struct sensor_t sSensorList[] = {
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_STEP_COUNTER,
                 SENSOR_TYPE_STEP_COUNTER, FLT_MAX, 0, 0, 0, 0, 0, { } },
-
+#endif
     { "Uncalibrated gyro sensor",
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_UNCALIB_GYRO,

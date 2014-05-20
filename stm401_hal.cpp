@@ -140,37 +140,45 @@ int HubSensor::enable(int32_t handle, int en)
                 new_enabled |= M_ALS;
             found = 1;
             break;
+#ifdef _STM401_LA
         case ID_LA:
             new_enabled &= ~M_LIN_ACCEL;
             if (newState)
                 new_enabled |= M_LIN_ACCEL;
             found = 1;
             break;
+#endif
+#ifdef _STM401_QUATERNION
         case ID_Q:
             new_enabled &= ~M_QUATERNION;
             if (newState)
                 new_enabled |= M_QUATERNION;
             found = 1;
             break;
+#endif
+#ifdef _STM401_GR
         case ID_GR:
             new_enabled &= ~M_GRAVITY;
             if (newState)
                 new_enabled |= M_GRAVITY;
             found = 1;
             break;
+#endif
         case ID_DR:
             new_enabled &= ~M_DISP_ROTATE;
             if (newState)
                 new_enabled |= M_DISP_ROTATE;
             found = 1;
             break;
+#ifdef _STM401_DB
         case ID_DB:
             new_enabled &= ~M_DISP_BRIGHTNESS;
             if (newState)
                 new_enabled |= M_DISP_BRIGHTNESS;
             found = 1;
             break;
-        case ID_IR_GESTURE:
+#endif
+	case ID_IR_GESTURE:
             new_enabled &= ~M_IR_GESTURE;
             if (newState)
                 new_enabled |= M_IR_GESTURE;
@@ -200,6 +208,7 @@ int HubSensor::enable(int32_t handle, int en)
                 new_enabled |= M_UNCALIB_MAG;
             found = 1;
             break;
+#ifdef _STM401_PEDO
 	case ID_STEP_COUNTER:
             new_enabled &= ~M_STEP_COUNTER;
             if (newState)
@@ -212,6 +221,7 @@ int HubSensor::enable(int32_t handle, int en)
                 new_enabled |= M_STEP_DETECTOR;
             found = 1;
             break;
+#endif
     }
 
     if (found && (new_enabled != mEnabled)) {
@@ -225,12 +235,14 @@ int HubSensor::enable(int32_t handle, int en)
     new_enabled = mWakeEnabled;
     found = 0;
     switch (handle) {
+#ifdef _STM401_DOCK
         case ID_D:
             new_enabled &= ~M_DOCK;
             if (newState)
                 new_enabled |= M_DOCK;
             found = 1;
             break;
+#endif
         case ID_P:
             new_enabled &= ~M_PROXIMITY;
             if (newState)
@@ -261,6 +273,7 @@ int HubSensor::enable(int32_t handle, int en)
                 new_enabled |= M_CAMERA_ACT;
             found = 1;
             break;
+#ifdef _STM401_NFC
         case ID_NFC:
             new_enabled &= ~M_NFC;
             if (newState)
@@ -285,6 +298,7 @@ int HubSensor::enable(int32_t handle, int en)
             }
             found = 1;
             break;
+#endif
         case ID_SIM:
             new_enabled &= ~M_SIM;
             if (newState)
@@ -320,24 +334,37 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
         case ID_O: status = ioctl(dev_fd,  STM401_IOCTL_SET_MAG_DELAY, &delay);   break;
         case ID_T: status = 0;                                                    break;
         case ID_L: status = 0;                                                    break;
+#ifdef _STM401_LA
         case ID_LA: status = 0;                                                   break;
+#endif
+#ifdef _STM401_QUATERNION
         case ID_Q: status = 0;                                                    break;
+#endif
+#ifdef _STM401_GR
         case ID_GR: status = 0;                                                   break;
+#endif
         case ID_DR: status = 0;                                                   break;
+#ifdef _STM401_DB
         case ID_DB: status = 0;                                                   break;
+#endif
+#ifdef _STM401_DOCK
         case ID_D: status = 0;                                                    break;
+#endif
         case ID_P: status = 0;                                                    break;
         case ID_FU: status = 0;                                                   break;
         case ID_FD: status = 0;                                                   break;
         case ID_S: status = 0;                                                    break;
         case ID_CA: status = 0;                                                   break;
+#ifdef _STM401_NFC
         case ID_NFC: status = 0;                                                  break;
+#endif
         case ID_IR_GESTURE: status = ioctl(dev_fd, STM401_IOCTL_SET_IR_GESTURE_DELAY, &delay); break;
         case ID_IR_RAW: status = ioctl(dev_fd, STM401_IOCTL_SET_IR_RAW_DELAY, &delay); break;
         case ID_IR_OBJECT: status = 0;                                            break;
         case ID_SIM: status = 0;                                                  break;
         case ID_UNCALIB_GYRO: status = ioctl(dev_fd,  STM401_IOCTL_SET_GYRO_DELAY, &delay); break;
         case ID_UNCALIB_MAG: status = ioctl(dev_fd,  STM401_IOCTL_SET_MAG_DELAY, &delay);  break;
+#ifdef _STM401_PEDO
         case ID_STEP_COUNTER:
 		    delay /= 1000; // convert to seconds for pedometer rate
 		    if (delay == 0)
@@ -345,6 +372,7 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
 		    status = ioctl(dev_fd,  STM401_IOCTL_SET_STEP_COUNTER_DELAY, &delay);
 		    break;
         case ID_STEP_DETECTOR:status = 0;                                         break;
+#endif
     }
     return status;
 }
@@ -439,6 +467,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 count--;
                 numEventReceived++;
                 break;
+#ifdef _STM401_PEDO
             case DT_STEP_COUNTER:
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = ID_STEP_COUNTER;
@@ -463,6 +492,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 count--;
                 numEventReceived++;
                 break;
+#endif
             case DT_PRESSURE:
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = ID_PR;
@@ -520,6 +550,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 count--;
                 numEventReceived++;
                 break;
+#ifdef _STM401_LA
             case DT_LIN_ACCEL:
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = ID_LA;
@@ -533,8 +564,12 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 count--;
                 numEventReceived++;
                 break;
+#endif
+#ifdef _STM401_QUATERNION
             case DT_QUATERNION:
                 break;
+#endif
+#ifdef _STM401_GR
             case DT_GRAVITY:
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = ID_GR;
@@ -548,6 +583,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 count--;
                 numEventReceived++;
                 break;
+#endif
             case DT_DISP_ROTATE:
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = ID_DR;
@@ -562,6 +598,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 count--;
                 numEventReceived++;
                 break;
+#ifdef _STM401_DB
             case DT_DISP_BRIGHT:
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = ID_DB;
@@ -572,6 +609,8 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 count--;
                 numEventReceived++;
                 break;
+#endif
+#ifdef _STM401_DOCK
             case DT_DOCK:
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = ID_D;
@@ -582,6 +621,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 count--;
                 numEventReceived++;
                 break;
+#endif
             case DT_PROX:
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = ID_P;
@@ -648,6 +688,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 count--;
                 numEventReceived++;
                 break;
+#ifdef _STM401_NFC
             case DT_NFC:
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = ID_NFC;
@@ -658,6 +699,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 count--;
                 numEventReceived++;
                 break;
+#endif
             case DT_IR_GESTURE:
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = ID_IR_GESTURE;
