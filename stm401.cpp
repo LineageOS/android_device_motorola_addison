@@ -403,6 +403,7 @@ int  main(int argc, char *argv[])
 			system("echo 'file stm401_queue.c -p' > /sys/kernel/debug/dynamic_debug/control");
 			system("echo 'file stm401_reset.c -p' > /sys/kernel/debug/dynamic_debug/control");
 			system("echo 'file stm401_wake_irq.c -p' > /sys/kernel/debug/dynamic_debug/control");
+			system("echo 'file stm401_display.c -p' > /sys/kernel/debug/dynamic_debug/control");
 		}
 		else {
 			system("echo 'file stm401_core.c +p' > /sys/kernel/debug/dynamic_debug/control");
@@ -412,6 +413,7 @@ int  main(int argc, char *argv[])
 			system("echo 'file stm401_queue.c +p' > /sys/kernel/debug/dynamic_debug/control");
 			system("echo 'file stm401_reset.c +p' > /sys/kernel/debug/dynamic_debug/control");
 			system("echo 'file stm401_wake_irq.c +p' > /sys/kernel/debug/dynamic_debug/control");
+			system("echo 'file stm401_display.c +p' > /sys/kernel/debug/dynamic_debug/control");
 		}
 	}
 	if( emode == FACTORY ) {
