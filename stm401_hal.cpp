@@ -49,6 +49,7 @@ HubSensor::HubSensor()
     int err = 0;
 
     memset(mMagCal, 0, sizeof(mMagCal));
+    memset(mErrorCnt, 0, sizeof(mErrorCnt));
 
     open_device();
 
@@ -394,19 +395,23 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
         /* remove this if-clause when corruption issue resolved */
         if (buff.type == DT_PRESSURE || buff.type == DT_TEMP || buff.type == DT_LIN_ACCEL ||
             buff.type == DT_GRAVITY || buff.type == DT_DOCK || buff.type == DT_QUATERNION ||
-            buff.type == DT_NFC) {
+            buff.type == DT_NFC || buff.type == DT_RESET) {
             count--;
-            time(&timeutc.tv_sec);
-            if ((sent_bug2go_sec == 0) ||
-                (timeutc.tv_sec - sent_bug2go_sec > 60*10)) {
-                // put timestamp in dropbox file
-                ptm = localtime(&(timeutc.tv_sec));
-                if (ptm != NULL) {
-                    strftime(timeBuf, sizeof(timeBuf), "%m-%d %H:%M:%S", ptm);
-                    capture_dump(timeBuf, buff.type, SENSORHUB_DUMPFILE,
-                        DROPBOX_FLAG_TEXT | DROPBOX_FLAG_GZIP);
-                }
-                sent_bug2go_sec = timeutc.tv_sec;
+            if (buff.type == DT_RESET) {
+                time(&timeutc.tv_sec);
+                if (buff.data[0] > 0 && buff.data[0] <= ERROR_TYPES)
+                    mErrorCnt[buff.data[0] - 1]++;
+                if ((sent_bug2go_sec == 0) ||
+                    (timeutc.tv_sec - sent_bug2go_sec > 24*60*60)) {
+                    // put timestamp in dropbox file
+                    ptm = localtime(&(timeutc.tv_sec));
+                    if (ptm != NULL) {
+                        strftime(timeBuf, sizeof(timeBuf), "%m-%d %H:%M:%S", ptm);
+                        capture_dump(timeBuf, buff.type, SENSORHUB_DUMPFILE,
+                            DROPBOX_FLAG_TEXT | DROPBOX_FLAG_GZIP);
+                    }
+                    sent_bug2go_sec = timeutc.tv_sec;
+		}
             }
             continue;
         }
@@ -788,7 +793,7 @@ gzFile HubSensor::open_dropbox_file(const char* timestamp, const char* dst, cons
 short HubSensor::capture_dump(char* timestamp, const int id, const char* dst, const int flags)
 {
     char buffer[COPYSIZE] = {0};
-    int rc = 0;
+    int rc = 0, i = 0;
     gzFile dropbox_file = NULL;
 
     dropbox_file = open_dropbox_file(timestamp, dst, flags);
@@ -800,6 +805,13 @@ short HubSensor::capture_dump(char* timestamp, const int id, const char* dst, co
         gzwrite(dropbox_file, buffer, rc);
         rc = snprintf(buffer, COPYSIZE, "reason:%02d\n", id);
         gzwrite(dropbox_file, buffer, rc);
+
+        for (i = 0; i < ERROR_TYPES; i++) {
+            rc = snprintf(buffer, COPYSIZE, "[%d]:%d\n", i+1, mErrorCnt[i]);
+            gzwrite(dropbox_file, buffer, rc);
+        }
+        memset(mErrorCnt, 0, sizeof(mErrorCnt));
+
         gzclose(dropbox_file);
         // to commit buffer cache to disk
         sync();

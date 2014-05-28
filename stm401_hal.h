@@ -125,6 +125,8 @@
 #define STM16TOH(p) (int16_t) be16toh(*((uint16_t *) (p)))
 #define STM32TOH(p) (int32_t) be32toh(*((uint32_t *) (p)))
 
+#define ERROR_TYPES    4
+
 struct input_event;
 
 class HubSensor : public SensorBase {
@@ -142,6 +144,7 @@ private:
     uint32_t mWakeEnabled;
     uint32_t mPendingMask;
     uint8_t mMagCal[STM401_MAG_CAL_SIZE];
+    uint8_t mErrorCnt[ERROR_TYPES];
     gzFile open_dropbox_file(const char* timestamp, const char* dst, const int flags);
     short capture_dump(char* timestamp, const int id, const char* dst, const int flags);
 };
