@@ -31,7 +31,7 @@
 #include <sys/select.h>
 
 #include "nusensors.h"
-#include "stm401_hal.h"
+#include "sensorhub_hal.h"
 
 /*****************************************************************************/
 
@@ -56,46 +56,14 @@ private:
     int handleToDriver(int handle) const {
         switch (handle) {
             case ID_A:
-            case ID_G:
-            case ID_PR:
-            case ID_M:
-            case ID_O:
-            case ID_T:
             case ID_L:
-#ifdef _STM401_LA
-            case ID_LA:
-#endif
-#ifdef _STM401_QUATERNIAN
-            case ID_Q:
-#endif
-#ifdef _STM401_GR
-            case ID_GR:
-#endif
             case ID_DR:
-#ifdef _STM401_DB
-            case ID_DB:
-#endif
-#ifdef _STM401_DOCK
-            case ID_D:
-#endif
             case ID_P:
             case ID_FU:
             case ID_FD:
             case ID_S:
             case ID_CA:
-#ifdef _STM401_NFC
-            case ID_NFC:
-#endif
-            case ID_IR_GESTURE:
-            case ID_IR_RAW:
-            case ID_IR_OBJECT:
             case ID_SIM:
-#ifdef _STM401_PEDO
-            case ID_STEP_DETECTOR:
-            case ID_STEP_COUNTER:
-#endif
-            case ID_UNCALIB_GYRO:
-            case ID_UNCALIB_MAG:
                 return accelgyromag;
         }
         return -EINVAL;

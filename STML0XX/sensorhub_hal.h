@@ -26,15 +26,17 @@
 #include <time.h>
 #include <private/android_filesystem_config.h>
 
-#include "linux/stm401.h"
+#include "linux/stml0xx.h"
 
 #include "nusensors.h"
 #include "SensorBase.h"
 
 /*****************************************************************************/
 
+#define SENSORHUB_DEVICE_NAME       "/dev/stml0xx"
+#define SENSORHUB_AS_DATA_NAME      "/dev/stml0xx_as"
+
 #define SENSORS_EVENT_T_SIZE sizeof(sensors_event_t);
-#define MAG_CAL_FILE "/data/misc/akmd_set.txt"
 #define DROPBOX_DIR "/data/system/dropbox-add"
 #define DROPBOX_TAG "SENSOR_HUB"
 #define SENSORHUB_DUMPFILE  "sensor_hub"
@@ -46,86 +48,18 @@
 #define ACCEL_X (0 * sizeof(int16_t))
 #define ACCEL_Y (1 * sizeof(int16_t))
 #define ACCEL_Z (2 * sizeof(int16_t))
-
-#define GYRO_X (0 * sizeof(int16_t))
-#define GYRO_Y (1 * sizeof(int16_t))
-#define GYRO_Z (2 * sizeof(int16_t))
-
-#define UNCALIB_GYRO_X (0 * sizeof(int16_t))
-#define UNCALIB_GYRO_Y (1 * sizeof(int16_t))
-#define UNCALIB_GYRO_Z (2 * sizeof(int16_t))
-#define UNCALIB_GYRO_X_BIAS (3 * sizeof(int16_t))
-#define UNCALIB_GYRO_Y_BIAS (4 * sizeof(int16_t))
-#define UNCALIB_GYRO_Z_BIAS (5 * sizeof(int16_t))
-
-#define PRESSURE_PRESSURE (0 * sizeof(int32_t))
-
-#define MAGNETIC_X (0 * sizeof(int16_t))
-#define MAGNETIC_Y (1 * sizeof(int16_t))
-#define MAGNETIC_Z (2 * sizeof(int16_t))
-
-#define UNCALIB_MAGNETIC_X (0 * sizeof(int16_t))
-#define UNCALIB_MAGNETIC_Y (1 * sizeof(int16_t))
-#define UNCALIB_MAGNETIC_Z (2 * sizeof(int16_t))
-#define UNCALIB_MAGNETIC_X_BIAS (3 * sizeof(int16_t))
-#define UNCALIB_MAGNETIC_Y_BIAS (4 * sizeof(int16_t))
-#define UNCALIB_MAGNETIC_Z_BIAS (5 * sizeof(int16_t))
-
-#define STEP_COUNTER_0 (0 * sizeof(int16_t))
-#define STEP_COUNTER_1 (1 * sizeof(int16_t))
-#define STEP_COUNTER_2 (2 * sizeof(int16_t))
-#define STEP_COUNTER_3 (3 * sizeof(int16_t))
-
-#define STEP_DETECTOR (0 * sizeof(int16_t))
-
-#define SIM (0 * sizeof(int16_t))
-
-#define ORIENTATION_AZIMUTH (0 * sizeof(int16_t))
-#define ORIENTATION_PITCH   (1 * sizeof(int16_t))
-#define ORIENTATION_ROLL    (2 * sizeof(int16_t))
-
-#define TEMPERATURE_TEMPERATURE (0 * sizeof(int16_t))
-
 #define LIGHT_LIGHT (0 * sizeof(int16_t))
-
 #define ROTATE_ROTATE (0 * sizeof(int8_t))
-
-#define BRIGHT_BRIGHT (0 * sizeof(int8_t))
-
-#define DOCK_DOCK (0 * sizeof(int8_t))
-
 #define PROXIMITY_PROXIMITY (0 * sizeof(int8_t))
-
 #define FLAT_FLAT (0 * sizeof(int8_t))
-
 #define STOWED_STOWED (0 * sizeof(int8_t))
-
 #define CAMERA_CAMERA (0 * sizeof(int16_t))
-
-#define NFC_NFC (0 * sizeof(int8_t))
-
-#define IR_EVENT      (0 * sizeof(int8_t))
-#define IR_GESTURE    (1 * sizeof(int8_t))
-#define IR_DIRECTION  (2 * sizeof(int8_t))
-#define IR_MAGNITUDE  (2 * sizeof(int8_t)) // Same offset as direction.
-#define IR_MOTION     (3 * sizeof(int8_t))
-#define IR_TR_H       (0 * sizeof(int16_t))
-#define IR_BL_H       (1 * sizeof(int16_t))
-#define IR_BR_H       (2 * sizeof(int16_t))
-#define IR_BB_H       (3 * sizeof(int16_t))
-#define IR_TR_L       (4 * sizeof(int16_t))
-#define IR_BL_L       (5 * sizeof(int16_t))
-#define IR_BR_L       (6 * sizeof(int16_t))
-#define IR_BB_L       (7 * sizeof(int16_t))
-#define IR_AMBIENT_H  (8 * sizeof(int16_t))
-#define IR_AMBIENT_L  (9 * sizeof(int16_t))
-#define IR_OBJ        (0 * sizeof(int8_t))
-#define IR_OBJ_SHIFT  2
+#define SIM (0 * sizeof(int16_t))
 
 #define STM16TOH(p) (int16_t) be16toh(*((uint16_t *) (p)))
 #define STM32TOH(p) (int32_t) be32toh(*((uint32_t *) (p)))
 
-#define ERROR_TYPES    5
+#define ERROR_TYPES    4
 
 struct input_event;
 
@@ -143,7 +77,6 @@ private:
     uint32_t mEnabled;
     uint32_t mWakeEnabled;
     uint32_t mPendingMask;
-    uint8_t mMagCal[STM401_MAG_CAL_SIZE];
     uint8_t mErrorCnt[ERROR_TYPES];
     gzFile open_dropbox_file(const char* timestamp, const char* dst, const int flags);
     short capture_dump(char* timestamp, const int id, const char* dst, const int flags);

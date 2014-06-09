@@ -75,9 +75,6 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 
 /*****************************************************************************/
 
-#define SENSORHUB_DEVICE_NAME       "/dev/stm401"
-#define SENSORHUB_AS_DATA_NAME      "/dev/stm401_as"
-
 // 1000 LSG = 1G
 #define LSG                         (1024.0f)
 
