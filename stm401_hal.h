@@ -108,7 +108,7 @@
 #define IR_GESTURE    (1 * sizeof(int8_t))
 #define IR_DIRECTION  (2 * sizeof(int8_t))
 #define IR_MAGNITUDE  (2 * sizeof(int8_t)) // Same offset as direction.
-#define IR_CONFIDENCE (3 * sizeof(int8_t))
+#define IR_MOTION     (3 * sizeof(int8_t))
 #define IR_TR_H       (0 * sizeof(int16_t))
 #define IR_BL_H       (1 * sizeof(int16_t))
 #define IR_BR_H       (2 * sizeof(int16_t))

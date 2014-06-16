@@ -719,7 +719,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->ir_gesture.gesture_id = buff.data[IR_GESTURE];
                 data->ir_gesture.direction = buff.data[IR_DIRECTION] & 0x0F;
                 data->ir_gesture.magnitude = buff.data[IR_MAGNITUDE] >> 4;
-                data->ir_gesture.confidence = buff.data[IR_CONFIDENCE];
+                data->ir_gesture.motion = buff.data[IR_MOTION];
                 data->timestamp = buff.timestamp;
                 data++;
                 count--;
