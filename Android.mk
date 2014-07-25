@@ -77,6 +77,8 @@ LOCAL_SRC_FILES := \
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SH_PATH) \
                     external/zlib
 
+LOCAL_C_INCLUDES += bionic/libc/kernel/common
+
 LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
 LOCAL_MODULE_TAGS := optional
@@ -95,6 +97,8 @@ include $(CLEAR_VARS)
 LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
 LOCAL_SRC_FILES := $(SH_PATH)/sensorhub.c
+LOCAL_C_INCLUDES := bionic/libc/kernel/common
+
 LOCAL_SHARED_LIBRARIES := libcutils libc
 LOCAL_MODULE := sensorhub.$(TARGET_BOARD_PLATFORM)
 LOCAL_MODULE_TAGS := optional
@@ -115,7 +119,7 @@ LOCAL_SRC_FILES:= $(SH_PATH)/$(SH_MODULE).cpp
 LOCAL_MODULE:= $(SH_MODULE)
 #LOCAL_CFLAGS+= -D_DEBUG
 LOCAL_SHARED_LIBRARIES := libcutils libc
-
+LOCAL_C_INCLUDES := bionic/libc/kernel/common
 include $(BUILD_EXECUTABLE)
 
 endif # !BOARD_USES_QCOM_SENSOR_HUB
