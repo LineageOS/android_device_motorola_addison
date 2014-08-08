@@ -499,13 +499,17 @@ int main(int argc, char *argv[])
         if (read_write) {
             ret = ioctl(fd,STML0XX_IOCTL_WRITE_REG,data_ptr);
             DEBUG ("Writing data returned: %d", ret);
+            printf ("Writing data returned: %d", ret);
         } else {
             ret = ioctl(fd,STML0XX_IOCTL_READ_REG,data_ptr);
             DEBUG ("Read data:");
+            printf ("Read data:");
             for ( i = 0; i < data_size; i++) {
                 DEBUG (" %02x", data_ptr[i]);
+                printf (" %02x", data_ptr[i]);
             }
         }
+        printf("\n");
 
         free(data_ptr);
     }
