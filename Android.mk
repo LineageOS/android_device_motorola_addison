@@ -40,6 +40,10 @@ ifeq ($(TARGET_BOARD_PLATFORM),msm8916),true)
 SH_MODULE := stml0xx
 SH_PATH := STML0XX
 SH_LOGTAG := \"STML0XX\"
+ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
+# Expose secondary accel for non-user builds
+SH_CFLAGS += -D_ENABLE_ACCEL_SECONDARY
+endif
 endif
 
 ######################

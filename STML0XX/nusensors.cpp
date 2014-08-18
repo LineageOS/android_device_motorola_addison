@@ -64,6 +64,7 @@ private:
             case ID_S:
             case ID_CA:
             case ID_SIM:
+            case ID_A2:
                 return accelgyromag;
         }
         return -EINVAL;

@@ -28,11 +28,10 @@
  */
 
 static const struct sensor_t sSensorList[] = {
-    // TODO: Revisit parameters
     { "KXTJ2 3-axis Accelerometer",
                 "Kionix",
                 1, SENSORS_HANDLE_BASE+ID_A,
-                SENSOR_TYPE_ACCELEROMETER, 4.0f*9.81f, 9.81f/2048.0f, 0.25f, 10000, 0, 0, { } },
+                SENSOR_TYPE_ACCELEROMETER, RANGE_G * GRAVITY_EARTH, GRAVITY_EARTH / LSG, 0.25f, 10000, 0, 0, { } },
     { "CT406 Light sensor",
                 "TAOS",
                 1, SENSORS_HANDLE_BASE+ID_L,
@@ -65,6 +64,12 @@ static const struct sensor_t sSensorList[] = {
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_SIM,
                 SENSOR_TYPE_SIGNIFICANT_MOTION, 1.0f, 1.0f, 3.0f, -1, 0, 0, { } },
+#ifdef _ENABLE_ACCEL_SECONDARY
+    { "KXTJ2 3-axis Accelerometer, Secondary",
+                "Kionix",
+                1, SENSORS_HANDLE_BASE+ID_A2,
+                SENSOR_TYPE_ACCELEROMETER, RANGE_G * GRAVITY_EARTH, GRAVITY_EARTH / LSG, 0.25f, 10000, 0, 0, { } },
+#endif
 };
 
 static int open_sensors(const struct hw_module_t* module, const char* name,

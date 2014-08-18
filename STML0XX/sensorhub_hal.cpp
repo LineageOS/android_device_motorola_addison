@@ -92,6 +92,12 @@ int HubSensor::enable(int32_t handle, int en)
                 new_enabled |= M_DISP_ROTATE;
             found = 1;
             break;
+        case ID_A2:
+            new_enabled &= ~M_ACCEL2;
+            if (newState)
+                new_enabled |= M_ACCEL2;
+            found = 1;
+            break;
     }
 
     if (found && (new_enabled != mEnabled)) {
@@ -164,6 +170,7 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
     unsigned short delay = int64_t(ns) / 1000000;
     switch (handle) {
         case ID_A: status = ioctl(dev_fd,  STML0XX_IOCTL_SET_ACC_DELAY, &delay);  break;
+        case ID_A2: status = ioctl(dev_fd, STML0XX_IOCTL_SET_ACC2_DELAY, &delay); break;
         case ID_L: status = 0;                                                    break;
         case ID_P: status = 0;                                                    break;
         case ID_FU: status = 0;                                                   break;
@@ -194,6 +201,19 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
             case DT_ACCEL:
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = ID_A;
+                data->type = SENSOR_TYPE_ACCELEROMETER;
+                data->acceleration.x = STM16TOH(buff.data+ACCEL_X) * CONVERT_A_X;
+                data->acceleration.y = STM16TOH(buff.data+ACCEL_Y) * CONVERT_A_Y;
+                data->acceleration.z = STM16TOH(buff.data+ACCEL_Z) * CONVERT_A_Z;
+                data->acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
+                data->timestamp = buff.timestamp;
+                data++;
+                count--;
+                numEventReceived++;
+                break;
+            case DT_ACCEL2:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor = ID_A2;
                 data->type = SENSOR_TYPE_ACCELEROMETER;
                 data->acceleration.x = STM16TOH(buff.data+ACCEL_X) * CONVERT_A_X;
                 data->acceleration.y = STM16TOH(buff.data+ACCEL_Y) * CONVERT_A_Y;
