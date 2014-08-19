@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <cutils/log.h>
+#include <cutils/properties.h>
 #include "linux/stm401.h"
 
 /******************************* # defines **************************************/
@@ -326,6 +327,7 @@ int  main(int argc, char *argv[])
 			else
 				emode = FACTORY;
 		}
+		property_set("hw.stm401.booted", "1");
 	}
 	if(emode == NORMAL) {
 		DEBUG("Ioctl call to reset STM\n");
