@@ -15,7 +15,8 @@
 
 LOCAL_PATH:= $(call my-dir)
 
-ifneq ($(PRODUCT_HAS_QCOMSENSORS),true)
+# If the board uses QCOM sensors then don't compile MOTO sensors.
+ifeq (, $(filter true,$(BOARD_USES_QCOM_SENSOR_HUB) $(PRODUCT_HAS_QCOMSENSORS)))
 ifneq ($(TARGET_SIMULATOR),true)
 
 ###########################################
@@ -104,4 +105,4 @@ LOCAL_SHARED_LIBRARIES := libcutils libc
 
 include $(BUILD_EXECUTABLE)
 
-endif # !PRODUCT_HAS_QCOMSENSORS
+endif # !BOARD_USES_QCOM_SENSOR_HUB
