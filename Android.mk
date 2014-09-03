@@ -37,13 +37,26 @@ SH_LOGTAG := \"STM401\"
 endif
 
 # 8916
-ifeq ($(TARGET_BOARD_PLATFORM),msm8916),true)
+ifeq ($(call is-board-platform,msm8916),true)
 SH_MODULE := stml0xx
 SH_PATH := STML0XX
 SH_LOGTAG := \"STML0XX\"
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 # Expose secondary accel for non-user builds
 SH_CFLAGS += -D_ENABLE_ACCEL_SECONDARY
+endif
+endif
+
+# 8610
+ifeq ($(call is-board-platform,msm8610),true)
+ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
+SH_MODULE := stml0xx
+SH_PATH := STML0XX
+SH_LOGTAG := \"STML0XX\"
+ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
+# Expose secondary accel for non-user builds
+SH_CFLAGS += -D_ENABLE_ACCEL_SECONDARY
+endif
 endif
 endif
 
