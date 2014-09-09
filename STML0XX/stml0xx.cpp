@@ -110,15 +110,16 @@ int stm_version_check(int fd, bool check)
     /* get old version from firmware */
     oldversion = ioctl(fd, STML0XX_IOCTL_GET_VERSION, &temp);
 
-    /* check if the version in hardware is older */
-    if( oldversion < newversion)
+    /* check if the version in hardware is different */
+    if( oldversion != newversion)
         ret = STM_VERSION_MISMATCH;
     else {
         DEBUG(STM_FORCE_DOWNLOAD_MSG);
         ret = STM_VERSION_MATCH;
     }
 
-    LOGINFO("Version info: version in filesystem = %d, version in hardware = %d\n",newversion, oldversion)
+    LOGINFO("Version info: version in filesystem = %d [0x%02X], version in hardware = %d [0x%02X]\n",
+                newversion, newversion, oldversion, oldversion)
 
     fclose(vfp);
     return ret;
