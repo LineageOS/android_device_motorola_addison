@@ -25,6 +25,8 @@
 #define STM_VERSION_MISMATCH -1
 #define STM_VERSION_MATCH 1
 #define STM_DOWNLOADRETRIES 3
+#define STM_MAX_BOOT_CHECK_RETRIES 10
+#define STM_MAX_BOOT_CHECK_DELAY_US 500000
 #define STM_MAX_PACKET_LENGTH 256
 /* 512 matches the read buffer in kernel */
 #define STM_MAX_GENERIC_DATA 512
@@ -209,7 +211,7 @@ EXIT:
 
 int main(int argc, char *argv[])
 {
-    int fd = -1, tries, ret = STM_SUCCESS;
+    int fd = -1, download_retries, boot_check_retries, ret = STM_SUCCESS;
     FILE * filep = NULL;
     eStm_Mode emode = INVALID;
     int temp = 100; // this is only a dummy variable for the 3rd parameter of ioctl call
@@ -218,6 +220,7 @@ int main(int argc, char *argv[])
     short delay = 0;
     int enabledints = 0;
     bool versioncheck = true;
+    bool sensorhubBooted = false;
     char ver_string[FW_VERSION_SIZE];
     char fw_file_name[256];
 
@@ -283,8 +286,8 @@ int main(int argc, char *argv[])
 
         /* check if new firmware available for download */
         if( (filep != NULL) && (stm_version_check(fd, versioncheck) == STM_VERSION_MISMATCH)) {
-            tries = 0;
-            while((tries < STM_DOWNLOADRETRIES )) {
+            download_retries = 0;
+            while((download_retries < STM_DOWNLOADRETRIES )) {
                 if( (stm_downloadFirmware(fd, filep)) >= STM_SUCCESS) {
                     fclose(filep);
                     filep = NULL;
@@ -292,6 +295,19 @@ int main(int argc, char *argv[])
                     if (emode == BOOTLOADER) {
                         ret = ioctl(fd, STML0XX_IOCTL_NORMALMODE, &temp);
                         printf("\n");
+                        /* Wait until the hub is fully booted */
+                        boot_check_retries = 0;
+                        while (boot_check_retries < STM_MAX_BOOT_CHECK_RETRIES) {
+                            ret = ioctl(fd, STML0XX_IOCTL_GET_BOOTED, &sensorhubBooted);
+                            if (sensorhubBooted) {
+                                /* hub fully booted. break out of the loop */
+                                break;
+                            } else {
+                                /* wait and retry */
+                                usleep(STM_MAX_BOOT_CHECK_DELAY_US);
+                                boot_check_retries++;
+                            }
+                        }
                         if (stm_version_check(fd, true) == STM_VERSION_MATCH)
                             LOGINFO("Firmware download completed successfully\n")
                         else
@@ -302,13 +318,13 @@ int main(int argc, char *argv[])
                     break;
                 }
                 //point the file pointer to the beginning of the file for the next try
-                tries++;
+                download_retries++;
                 fseek(filep, 0, SEEK_SET);
                 // Need to use sleep as msleep is not available
                 sleep(1);
             }
 
-            if( tries >= STM_DOWNLOADRETRIES ) {
+            if( download_retries >= STM_DOWNLOADRETRIES ) {
                 LOGERROR("Firmware download failed.\n")
                 ret = STM_FAILURE;
                 ioctl(fd,STML0XX_IOCTL_NORMALMODE, &temp);
