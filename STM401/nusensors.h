@@ -37,6 +37,7 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
+#define MIN_SENSOR_ID (0)
 #define ID_A  (0)  /* Accelerometer */
 #define ID_G  (1)  /* Gyroscope */
 #define ID_PR (2)  /* Pressure */
@@ -67,6 +68,8 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 #define ID_UNCALIB_GYRO  (24) /* Uncalibrated Gyroscope */
 #define ID_UNCALIB_MAG   (25) /* Uncalibrated Magenetometer */
 #define ID_IR_OBJECT (26) /* IR Object Detect */
+#define MAX_SENSOR_ID (26)
+
 /*****************************************************************************/
 
 /*

@@ -140,12 +140,14 @@ public:
     virtual int setDelay(int32_t handle, int64_t ns);
     virtual int enable(int32_t handle, int enabled);
     virtual int readEvents(sensors_event_t* data, int count);
+    virtual int flush(int32_t handle);
 
 private:
     int update_delay();
     uint32_t mEnabled;
     uint32_t mWakeEnabled;
     uint32_t mPendingMask;
+    uint32_t mFlushEnabled;
     uint8_t mMagCal[STM401_MAG_CAL_SIZE];
     uint8_t mErrorCnt[ERROR_TYPES];
     gzFile open_dropbox_file(const char* timestamp, const char* dst, const int flags);
