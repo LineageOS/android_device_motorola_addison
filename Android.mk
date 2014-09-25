@@ -83,6 +83,8 @@ LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
 LOCAL_MODULE_TAGS := optional
 LOCAL_SHARED_LIBRARIES := liblog libcutils libz
+LOCAL_C_INCLUDES := external/zlib \
+                    bionic/libc/kernel/common
 LOCAL_MODULE := sensors.$(TARGET_BOARD_PLATFORM)
 
 include $(BUILD_SHARED_LIBRARY)
@@ -97,6 +99,8 @@ include $(CLEAR_VARS)
 LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
 LOCAL_SRC_FILES := $(SH_PATH)/sensorhub.c
+LOCAL_C_INCLUDES := bionic/libc/kernel/common
+
 LOCAL_C_INCLUDES := bionic/libc/kernel/common
 
 LOCAL_SHARED_LIBRARIES := libcutils libc
