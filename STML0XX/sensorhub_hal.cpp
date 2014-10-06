@@ -350,6 +350,12 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
     return numEventReceived;
 }
 
+int HubSensor::flush(int32_t handle)
+{
+    //stub for now
+    return 0;
+}
+
 gzFile HubSensor::open_dropbox_file(const char* timestamp, const char* dst, const int flags)
 {
     char dropbox_path[128];
