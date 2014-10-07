@@ -39,7 +39,8 @@ HubSensor::HubSensor()
 : SensorBase(SENSORHUB_DEVICE_NAME, SENSORHUB_AS_DATA_NAME),
       mEnabled(0),
       mWakeEnabled(0),
-      mPendingMask(0)
+      mPendingMask(0),
+      mFlushEnabled(0)
 {
     // read the actual value of all sensors if they're enabled already
     struct input_absinfo absinfo;
@@ -194,7 +195,35 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
 
     if (count < 1)
         return -EINVAL;
-    while (((ret = read(data_fd, &buff, sizeof(struct stml0xx_android_sensor_data))) != 0)  && count) {
+
+    if(count && mFlushEnabled) {
+        uint32_t bit = 1;
+        int id = MIN_SENSOR_ID;
+
+        sensors_event_t mFlushEvent;
+        mFlushEvent.version = META_DATA_VERSION;
+        mFlushEvent.sensor = 0;
+        mFlushEvent.type = SENSOR_TYPE_META_DATA;
+        mFlushEvent.reserved0 = 0;
+        mFlushEvent.timestamp = 0;
+        mFlushEvent.meta_data.what = META_DATA_FLUSH_COMPLETE;
+        //mFlushEvent.meta_data.sensor = to be set below depending on sensor
+
+        while (count && mFlushEnabled && id <= MAX_SENSOR_ID) {
+            if (mFlushEnabled & bit) {
+                mFlushEnabled &= ~(bit);
+                mFlushEvent.meta_data.sensor = id;
+                *data++ = mFlushEvent;
+                count--;
+                numEventReceived++;
+            }
+
+            bit <<= 1;
+            id++;
+        }
+    }
+
+    while (count && ((ret = read(data_fd, &buff, sizeof(struct stml0xx_android_sensor_data))) != 0)) {
         /* Sensorhub reset occurred, upload a bug2go if its been at least 10mins since previous bug2go*/
         /* remove this if-clause when corruption issue resolved */
         switch (buff.type) {
@@ -352,7 +381,9 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
 
 int HubSensor::flush(int32_t handle)
 {
-    //stub for now
+    if (handle >= MIN_SENSOR_ID && handle <= MAX_SENSOR_ID) {
+        mFlushEnabled |= (1 << handle);
+    }
     return 0;
 }
 

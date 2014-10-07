@@ -78,6 +78,7 @@ private:
     uint32_t mEnabled;
     uint32_t mWakeEnabled;
     uint32_t mPendingMask;
+    uint32_t mFlushEnabled;
     uint8_t mErrorCnt[ERROR_TYPES];
     gzFile open_dropbox_file(const char* timestamp, const char* dst, const int flags);
     short capture_dump(char* timestamp, const int id, const char* dst, const int flags);

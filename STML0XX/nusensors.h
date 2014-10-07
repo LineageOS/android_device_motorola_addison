@@ -37,6 +37,7 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
+#define MIN_SENSOR_ID (0)
 #define ID_A  (0)  /* Accelerometer */
 #define ID_L  (1)  /* Light */
 #define ID_DR (2)  /* Display Rotate */
@@ -47,6 +48,7 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 #define ID_CA (7)  /* Camera Activate */
 #define ID_SIM (8) /* Significant motion */
 #define ID_A2 (9) /* Secondary Accel */
+#define MAX_SENSOR_ID (9)
 /*****************************************************************************/
 
 /*

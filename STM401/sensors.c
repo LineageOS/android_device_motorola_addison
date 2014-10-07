@@ -97,7 +97,7 @@ static const struct sensor_t sSensorList[] = {
     { "Camera Activation sensor",
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_CA,
-                SENSOR_TYPE_CAMERA_ACTIVATE, 1.0f, 1.0f, 0.0f, 20000, 0, 0, "",
+                SENSOR_TYPE_CAMERA_ACTIVATE, 1.0f, 1.0f, 0.0f, 0, 0, 0, "",
                 "", 0, SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP},
 #ifdef _ENABLE_NFC
     { "NFC Detect sensor",
