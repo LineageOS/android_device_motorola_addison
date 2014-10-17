@@ -173,6 +173,7 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
         case ID_A: status = ioctl(dev_fd,  STML0XX_IOCTL_SET_ACC_DELAY, &delay);  break;
         case ID_A2: status = ioctl(dev_fd, STML0XX_IOCTL_SET_ACC2_DELAY, &delay); break;
         case ID_L: status = 0;                                                    break;
+        case ID_DR: status = 0;                                                   break;
         case ID_P: status = 0;                                                    break;
         case ID_FU: status = 0;                                                   break;
         case ID_FD: status = 0;                                                   break;
