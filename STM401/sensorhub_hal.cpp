@@ -150,14 +150,6 @@ int HubSensor::enable(int32_t handle, int en)
             found = 1;
             break;
 #endif
-#ifdef _ENABLE_QUATERNION
-        case ID_Q:
-            new_enabled &= ~M_QUATERNION;
-            if (newState)
-                new_enabled |= M_QUATERNION;
-            found = 1;
-            break;
-#endif
 #ifdef _ENABLE_GR
         case ID_GR:
             new_enabled &= ~M_GRAVITY;
@@ -172,14 +164,6 @@ int HubSensor::enable(int32_t handle, int en)
                 new_enabled |= M_DISP_ROTATE;
             found = 1;
             break;
-#ifdef _ENABLE_DB
-        case ID_DB:
-            new_enabled &= ~M_DISP_BRIGHTNESS;
-            if (newState)
-                new_enabled |= M_DISP_BRIGHTNESS;
-            found = 1;
-            break;
-#endif
 	case ID_IR_GESTURE:
             new_enabled &= ~M_IR_GESTURE;
             if (newState)
@@ -237,14 +221,6 @@ int HubSensor::enable(int32_t handle, int en)
     new_enabled = mWakeEnabled;
     found = 0;
     switch (handle) {
-#ifdef _ENABLE_DOCK
-        case ID_D:
-            new_enabled &= ~M_DOCK;
-            if (newState)
-                new_enabled |= M_DOCK;
-            found = 1;
-            break;
-#endif
         case ID_P:
             new_enabled &= ~M_PROXIMITY;
             if (newState)
@@ -275,32 +251,6 @@ int HubSensor::enable(int32_t handle, int en)
                 new_enabled |= M_CAMERA_ACT;
             found = 1;
             break;
-#ifdef _ENABLE_NFC
-        case ID_NFC:
-            new_enabled &= ~M_NFC;
-            if (newState)
-                new_enabled |= M_NFC;
-            else {
-                FILE *fp;
-                int i;
-
-                err = ioctl(dev_fd, STM401_IOCTL_GET_MAG_CAL, &mMagCal);
-                if (err < 0) {
-                    ALOGE("Can't read Mag Cal data");
-                } else {
-                    if ((fp = fopen(MAG_CAL_FILE, "w")) == NULL) {
-                        ALOGE("Can't open Mag Cal file");
-                    } else {
-                        for (i=0; i<STM401_MAG_CAL_SIZE; i++) {
-                            fputc(mMagCal[i], fp);
-                        }
-                        fclose(fp);
-                    }
-                }
-            }
-            found = 1;
-            break;
-#endif
         case ID_SIM:
             new_enabled &= ~M_SIM;
             if (newState)
@@ -339,27 +289,15 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
 #ifdef _ENABLE_LA
         case ID_LA: status = 0;                                                   break;
 #endif
-#ifdef _ENABLE_QUATERNION
-        case ID_Q: status = 0;                                                    break;
-#endif
 #ifdef _ENABLE_GR
         case ID_GR: status = 0;                                                   break;
 #endif
         case ID_DR: status = 0;                                                   break;
-#ifdef _ENABLE_DB
-        case ID_DB: status = 0;                                                   break;
-#endif
-#ifdef _ENABLE_DOCK
-        case ID_D: status = 0;                                                    break;
-#endif
         case ID_P: status = 0;                                                    break;
         case ID_FU: status = 0;                                                   break;
         case ID_FD: status = 0;                                                   break;
         case ID_S: status = 0;                                                    break;
         case ID_CA: status = 0;                                                   break;
-#ifdef _ENABLE_NFC
-        case ID_NFC: status = 0;                                                  break;
-#endif
         case ID_IR_GESTURE: status = ioctl(dev_fd, STM401_IOCTL_SET_IR_GESTURE_DELAY, &delay); break;
         case ID_IR_RAW: status = ioctl(dev_fd, STM401_IOCTL_SET_IR_RAW_DELAY, &delay); break;
         case ID_IR_OBJECT: status = 0;                                            break;
@@ -605,10 +543,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 numEventReceived++;
                 break;
 #endif
-#ifdef _ENABLE_QUATERNION
-            case DT_QUATERNION:
-                break;
-#endif
 #ifdef _ENABLE_GR
             case DT_GRAVITY:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -638,30 +572,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 count--;
                 numEventReceived++;
                 break;
-#ifdef _ENABLE_DB
-            case DT_DISP_BRIGHT:
-                data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_DB;
-                data->type = SENSOR_TYPE_DISPLAY_BRIGHTNESS;
-                data->data[0] = buff.data[BRIGHT_BRIGHT];
-                data->timestamp = buff.timestamp;
-                data++;
-                count--;
-                numEventReceived++;
-                break;
-#endif
-#ifdef _ENABLE_DOCK
-            case DT_DOCK:
-                data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_D;
-                data->type = SENSOR_TYPE_DOCK;
-                data->data[0] = buff.data[DOCK_DOCK];
-                data->timestamp = buff.timestamp;
-                data++;
-                count--;
-                numEventReceived++;
-                break;
-#endif
             case DT_PROX:
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = ID_P;
@@ -728,18 +638,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 count--;
                 numEventReceived++;
                 break;
-#ifdef _ENABLE_NFC
-            case DT_NFC:
-                data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_NFC;
-                data->type = SENSOR_TYPE_NFC_DETECT;
-                data->data[0] = buff.data[NFC_NFC];
-                data->timestamp = buff.timestamp;
-                data++;
-                count--;
-                numEventReceived++;
-                break;
-#endif
             case DT_IR_GESTURE:
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = ID_IR_GESTURE;

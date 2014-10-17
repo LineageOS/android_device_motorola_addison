@@ -67,27 +67,15 @@ private:
 #ifdef _ENABLE_LA
             case ID_LA:
 #endif
-#ifdef _ENABLE_QUATERNIAN
-            case ID_Q:
-#endif
 #ifdef _ENABLE_GR
             case ID_GR:
 #endif
             case ID_DR:
-#ifdef _ENABLE_DB
-            case ID_DB:
-#endif
-#ifdef _ENABLE_DOCK
-            case ID_D:
-#endif
             case ID_P:
             case ID_FU:
             case ID_FD:
             case ID_S:
             case ID_CA:
-#ifdef _ENABLE_NFC
-            case ID_NFC:
-#endif
             case ID_IR_GESTURE:
             case ID_IR_RAW:
             case ID_IR_OBJECT:
