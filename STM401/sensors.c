@@ -18,6 +18,7 @@
 #include <hardware/sensors.h>
 #include <hardware/mot_sensorhub_stm401.h>
 #include <float.h>
+#include <limits.h>
 
 #include "nusensors.h"
 
@@ -136,6 +137,13 @@ static const struct sensor_t sSensorList[] = {
                 1, SENSORS_HANDLE_BASE+ID_UNCALIB_MAG,
                 SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED, 2000.0f, 1.0f/10.0f, 6.8f, 10000, 0, 0, "",
                 "", 200000, SENSOR_FLAG_CONTINUOUS_MODE },
+#ifdef _ENABLE_CHOPCHOP
+    { "ChopChop Gesture",
+                "Motorola",
+                1, SENSORS_HANDLE_BASE+ID_CHOPCHOP_GESTURE,
+                SENSOR_TYPE_CHOPCHOP_GESTURE, USHRT_MAX*1.0f, 1.0f, 0.0f, 0, 0, 0, "",
+                "", 0, SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP },
+#endif
 };
 
 static int open_sensors(const struct hw_module_t* module, const char* name,

@@ -86,6 +86,9 @@ private:
 #endif
             case ID_UNCALIB_GYRO:
             case ID_UNCALIB_MAG:
+#ifdef _ENABLE_CHOPCHOP
+            case ID_CHOPCHOP_GESTURE:
+#endif
                 return accelgyromag;
         }
         return -EINVAL;

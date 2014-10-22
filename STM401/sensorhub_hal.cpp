@@ -257,6 +257,14 @@ int HubSensor::enable(int32_t handle, int en)
                 new_enabled |= M_SIM;
             found = 1;
             break;
+#ifdef _ENABLE_CHOPCHOP
+        case ID_CHOPCHOP_GESTURE:
+            new_enabled &= ~M_CHOPCHOP;
+            if (newState)
+                new_enabled |= M_CHOPCHOP;
+            found = 1;
+            break;
+#endif
     }
 
     if (found && (new_enabled != mWakeEnabled)) {
@@ -312,6 +320,9 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
 		    status = ioctl(dev_fd,  STM401_IOCTL_SET_STEP_COUNTER_DELAY, &delay);
 		    break;
         case ID_STEP_DETECTOR:status = 0;                                         break;
+#endif
+#ifdef _ENABLE_CHOPCHOP
+        case ID_CHOPCHOP_GESTURE: status = 0;                                     break;
 #endif
     }
     return status;
@@ -692,6 +703,18 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 numEventReceived++;
                 enable(ID_SIM, 0);
                 break;
+#ifdef _ENABLE_CHOPCHOP
+            case DT_CHOPCHOP:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor = ID_CHOPCHOP_GESTURE;
+                data->type = SENSOR_TYPE_CHOPCHOP_GESTURE;
+                data->data[0] = STM16TOH(buff.data + CHOPCHOP_CHOPCHOP);
+                data->timestamp = buff.timestamp;
+                data++;
+                count--;
+                numEventReceived++;
+                break;
+#endif
             case DT_RESET:
                 count--;
                 // put timestamp in dropbox file
