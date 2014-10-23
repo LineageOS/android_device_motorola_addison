@@ -23,6 +23,7 @@
 #include <dirent.h>
 #include <sys/select.h>
 #include <dlfcn.h>
+#include <limits.h>
 
 #include <linux/akm8975.h>
 #include <linux/stm401.h>
@@ -40,7 +41,14 @@ HubSensor::HubSensor()
       mEnabled(0),
       mWakeEnabled(0),
       mPendingMask(0),
-      mFlushEnabled(0)
+      mFlushEnabled(0),
+      mOrientEnabled(0),
+      mMagEnabled(0),
+      mUncalMagEnabled(0),
+      mMagReqDelay(USHRT_MAX),
+      mUncalMagReqDelay(USHRT_MAX),
+      mOrientReqDelay(USHRT_MAX),
+      mEcompassDelay(USHRT_MAX)
 {
     // read the actual value of all sensors if they're enabled already
     struct input_absinfo absinfo;
@@ -106,27 +114,24 @@ int HubSensor::enable(int32_t handle, int en)
             found = 1;
             break;
         case ID_M:
+            // Mag and orientation are tied together via ecompass sensor. Must
+            // set new_enabled only after checking both mMagEnabled and mOrientEnabled.
+            mMagEnabled = newState;
+            if( !mMagEnabled )
+            {
+                // Reset mag requested rate if not enabled
+                mMagReqDelay = USHRT_MAX;
+            }
+            found = 1;
+            break;
         case ID_O:
-            new_enabled &= ~M_ECOMPASS;
-            if (newState)
-                new_enabled |= M_ECOMPASS;
-            else {
-                FILE *fp;
-                int i;
-
-                err = ioctl(dev_fd, STM401_IOCTL_GET_MAG_CAL, &mMagCal);
-                if (err < 0) {
-                    ALOGE("Can't read Mag Cal data");
-                } else {
-                    if ((fp = fopen(MAG_CAL_FILE, "w")) == NULL) {
-                        ALOGE("Can't open Mag Cal file");
-                    } else {
-                        for (i=0; i<STM401_MAG_CAL_SIZE; i++) {
-                            fputc(mMagCal[i], fp);
-                        }
-                        fclose(fp);
-                    }
-                }
+            // Mag and orientation are tied together via ecompass sensor. Must
+            // set new_enabled only after checking both mMagEnabled and mOrientEnabled.
+            mOrientEnabled = newState;
+            if( !mOrientEnabled )
+            {
+                // Reset orientation requested rate if not enabled
+                mOrientReqDelay = USHRT_MAX;
             }
             found = 1;
             break;
@@ -189,9 +194,15 @@ int HubSensor::enable(int32_t handle, int en)
             found = 1;
             break;
 	case ID_UNCALIB_MAG:
+            mUncalMagEnabled = newState;
             new_enabled &= ~M_UNCALIB_MAG;
             if (newState)
                 new_enabled |= M_UNCALIB_MAG;
+            else
+            {
+                // Reset uncal mag requested rate if disabled
+                mUncalMagReqDelay = USHRT_MAX;
+            }
             found = 1;
             break;
 #ifdef _ENABLE_PEDO
@@ -208,7 +219,40 @@ int HubSensor::enable(int32_t handle, int en)
             found = 1;
             break;
 #endif
-    }
+    } // end switch(handle)
+
+    // Mag and orientation are tied to same physical sensor
+    if( handle == ID_M || handle == ID_O || handle == ID_UNCALIB_MAG )
+    {
+        // May need to update the rate
+        updateEcompassRate();
+
+        // Turn off ecompass sensor only if both mag and orientation are deregistered
+        if( !mMagEnabled && !mOrientEnabled )
+        {
+            new_enabled &= ~M_ECOMPASS;
+
+            // Also read calibration data at this time
+            FILE *fp;
+            int i;
+
+            err = ioctl(dev_fd, STM401_IOCTL_GET_MAG_CAL, &mMagCal);
+            if (err < 0) {
+                ALOGE("Can't read Mag Cal data");
+            } else {
+                if ((fp = fopen(MAG_CAL_FILE, "w")) == NULL) {
+                    ALOGE("Can't open Mag Cal file");
+                } else {
+                    for (i=0; i<STM401_MAG_CAL_SIZE; i++) {
+                        fputc(mMagCal[i], fp);
+                    }
+                    fclose(fp);
+                }
+            }
+        } // Otherwise, we are enabling either mag or orientation, so turn on ecompass
+        else
+            new_enabled |= M_ECOMPASS;
+    } // end if( handle == ID_M || handle == ID_O )
 
     if (found && (new_enabled != mEnabled)) {
         err = ioctl(dev_fd, STM401_IOCTL_SET_SENSORS, &new_enabled);
@@ -290,8 +334,12 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
         case ID_A: status = ioctl(dev_fd,  STM401_IOCTL_SET_ACC_DELAY, &delay);   break;
         case ID_G: status = ioctl(dev_fd,  STM401_IOCTL_SET_GYRO_DELAY, &delay);  break;
         case ID_PR: status = ioctl(dev_fd,  STM401_IOCTL_SET_PRES_DELAY, &delay); break;
-        case ID_M: /* Mag and orientation get set together */
-        case ID_O: status = ioctl(dev_fd,  STM401_IOCTL_SET_MAG_DELAY, &delay);   break;
+        case ID_M:
+            mMagReqDelay = delay;
+            break;
+        case ID_O:
+            mOrientReqDelay = delay;
+            break;
         case ID_T: status = 0;                                                    break;
         case ID_L: status = 0;                                                    break;
 #ifdef _ENABLE_LA
@@ -311,7 +359,9 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
         case ID_IR_OBJECT: status = 0;                                            break;
         case ID_SIM: status = 0;                                                  break;
         case ID_UNCALIB_GYRO: status = ioctl(dev_fd,  STM401_IOCTL_SET_GYRO_DELAY, &delay); break;
-        case ID_UNCALIB_MAG: status = ioctl(dev_fd,  STM401_IOCTL_SET_MAG_DELAY, &delay);  break;
+        case ID_UNCALIB_MAG:
+            mUncalMagReqDelay = delay;
+            break;
 #ifdef _ENABLE_PEDO
         case ID_STEP_COUNTER:
 		    delay /= 1000; // convert to seconds for pedometer rate
@@ -325,6 +375,10 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
         case ID_CHOPCHOP_GESTURE: status = 0;                                     break;
 #endif
     }
+
+    if( handle == ID_M || handle == ID_O || handle == ID_UNCALIB_MAG )
+        status = updateEcompassRate();
+
     return status;
 }
 
@@ -783,4 +837,35 @@ short HubSensor::capture_dump(char* timestamp, const int id, const char* dst, co
     }
 
     return 0;
+}
+
+int HubSensor::updateEcompassRate()
+{
+    int ret = 0;
+
+    const size_t reqDelays_len = 3;
+    unsigned short reqDelays[reqDelays_len] = {
+        mMagEnabled      ? mMagReqDelay      : (unsigned short)USHRT_MAX,
+        mOrientEnabled   ? mOrientReqDelay   : (unsigned short)USHRT_MAX,
+        mUncalMagEnabled ? mUncalMagReqDelay : (unsigned short)USHRT_MAX
+    };
+    unsigned short minReqDelay = USHRT_MAX;
+
+    // Get minReqDelay
+    for( size_t i = 0; i < reqDelays_len; ++i )
+    {
+        if( reqDelays[i] < minReqDelay )
+            minReqDelay = reqDelays[i];
+    }
+
+    // Do ioctl if we have a valid delay and it's different
+    if( minReqDelay == USHRT_MAX )
+        mEcompassDelay = USHRT_MAX;
+    else if( mEcompassDelay != minReqDelay )
+    {
+        mEcompassDelay = minReqDelay;
+        ret = ioctl(dev_fd,  STM401_IOCTL_SET_MAG_DELAY, &mEcompassDelay);
+    }
+
+    return ret;
 }

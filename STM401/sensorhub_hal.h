@@ -151,8 +151,35 @@ private:
     uint32_t mFlushEnabled;
     uint8_t mMagCal[STM401_MAG_CAL_SIZE];
     uint8_t mErrorCnt[ERROR_TYPES];
+    //! \brief last value passed to \c enable() on orientation sensor
+    uint8_t mOrientEnabled;
+    //! \brief last value passed to \c enable() on mag sensor
+    uint8_t mMagEnabled;
+    //! \brief last value passed to \c enable() on uncal mag sensor
+    uint8_t mUncalMagEnabled;
+    //! \brief \c USHRT_MAX if unset or mag disabled, o.w. the requested mag delay in ms.
+    unsigned short mMagReqDelay;
+    //! \brief \c USHRT_MAX if unset or uncal mag disabled, o.w. the requested uncal mag delay in ms.
+    unsigned short mUncalMagReqDelay;
+    //! \brief \c USHRT_MAX if unset or orientation disabled, o.w. the requested orientation delay in ms.
+    unsigned short mOrientReqDelay;
+    //! \brief Currently-set eCompass delay in ms, or \c USHRT_MAX if unset.
+    unsigned short mEcompassDelay;
     gzFile open_dropbox_file(const char* timestamp, const char* dst, const int flags);
     short capture_dump(char* timestamp, const int id, const char* dst, const int flags);
+    /*!
+     * \brief Helper to update eCompass rate
+     *
+     * Reads \c mMagReqDelay, \c mUncalMagReqDelay, and \c mOrientReqDelay.
+     * Sets \c mEcompassDelay to the value passed through the ioctl(), or
+     * back to \c USHRT_MAX if all requested delays are USHRT_MAX.
+     *
+     * Only issues a new delay-change ioctl() if the computed rate is
+     * different from the currently-set \c mEcompassDelay.
+     *
+     * \returns ioctl() status resulting from ecompass rate set
+     */
+    int updateEcompassRate();
 };
 
 /*****************************************************************************/
