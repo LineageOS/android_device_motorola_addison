@@ -691,6 +691,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data++;
                 count--;
                 numEventReceived++;
+                enable(ID_IR_OBJECT, 0); /* One-shot sensor. Disable now */
                 break;
             case DT_SIM:
                 data->version = SENSORS_EVENT_T_SIZE;
