@@ -103,9 +103,17 @@ int GyroSensor::setDelay(int32_t handle, int64_t ns)
         return -EINVAL;
 
     int delay = ns / 1000000;
+
+    if (mEnabled == 0 && dev_fd == -1)
+        open_device();
+
     if (ioctl(dev_fd, L3G4200D_IOCTL_SET_DELAY, &delay)) {
         return -errno;
     }
+
+    if (mEnabled == 0)
+        close_device();
+
     return 0;
 }
 
