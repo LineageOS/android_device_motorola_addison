@@ -332,7 +332,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = ID_SIM;
                 data->type = SENSOR_TYPE_SIGNIFICANT_MOTION;
-                data->data[0] = STM16TOH(buff.data + SIM);
+                data->data[0] = 1;
                 data->timestamp = buff.timestamp;
                 data++;
                 count--;
