@@ -107,6 +107,8 @@
 
 #define NFC_NFC (0 * sizeof(int8_t))
 
+#define FLUSH_FLUSH (0 * sizeof(int32_t))
+
 #define IR_EVENT      (0 * sizeof(int8_t))
 #define IR_GESTURE    (1 * sizeof(int8_t))
 #define IR_DIRECTION  (2 * sizeof(int8_t))
@@ -148,7 +150,6 @@ private:
     uint32_t mEnabled;
     uint32_t mWakeEnabled;
     uint32_t mPendingMask;
-    uint32_t mFlushEnabled;
     uint8_t mMagCal[STM401_MAG_CAL_SIZE];
     uint8_t mErrorCnt[ERROR_TYPES];
     //! \brief last value passed to \c enable() on orientation sensor
