@@ -310,7 +310,7 @@ static int open_sensors(const struct hw_module_t* module, const char* id,
 		memset(&dev->device, 0, sizeof(sensors_poll_device_1_t));
 
 		dev->device.common.tag = HARDWARE_DEVICE_TAG;
-		dev->device.common.version  = SENSORS_DEVICE_API_VERSION_1_3;
+		dev->device.common.version  = SENSORS_DEVICE_API_VERSION_1_0;
 		dev->device.common.module   = const_cast<hw_module_t*>(module);
 		dev->device.common.close	= poll__close;
 		dev->device.activate		= poll__activate;
