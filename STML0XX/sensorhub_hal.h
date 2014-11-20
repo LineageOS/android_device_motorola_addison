@@ -54,7 +54,6 @@
 #define FLAT_FLAT (0 * sizeof(int8_t))
 #define STOWED_STOWED (0 * sizeof(int8_t))
 #define CAMERA_CAMERA (0 * sizeof(int16_t))
-#define SIM (0 * sizeof(int16_t))
 #define FLUSH (0 * sizeof(int32_t))
 
 #define STM16TOH(p) (int16_t) be16toh(*((uint16_t *) (p)))

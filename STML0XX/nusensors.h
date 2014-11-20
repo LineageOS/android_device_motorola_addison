@@ -46,9 +46,8 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 #define ID_FD (5)  /* Flat Down */
 #define ID_S  (6)  /* Stowed */
 #define ID_CA (7)  /* Camera Activate */
-#define ID_SIM (8) /* Significant motion */
-#define ID_A2 (9) /* Secondary Accel */
-#define MAX_SENSOR_ID (9)
+#define ID_A2 (8) /* Secondary Accel */
+#define MAX_SENSOR_ID (8)
 /*****************************************************************************/
 
 /*

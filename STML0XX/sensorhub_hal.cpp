@@ -141,12 +141,6 @@ int HubSensor::enable(int32_t handle, int en)
                 new_enabled |= M_CAMERA_ACT;
             found = 1;
             break;
-        case ID_SIM:
-            new_enabled &= ~M_SIM;
-            if (newState)
-                new_enabled |= M_SIM;
-            found = 1;
-            break;
     }
 
     if (found && (new_enabled != mWakeEnabled)) {
@@ -178,7 +172,6 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
         case ID_FD: status = 0;                                                   break;
         case ID_S: status = 0;                                                    break;
         case ID_CA: status = 0;                                                   break;
-        case ID_SIM: status = 0;                                                  break;
     }
     return status;
 }
@@ -327,17 +320,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data++;
                 count--;
                 numEventReceived++;
-                break;
-            case DT_SIM:
-                data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_SIM;
-                data->type = SENSOR_TYPE_SIGNIFICANT_MOTION;
-                data->data[0] = 1;
-                data->timestamp = buff.timestamp;
-                data++;
-                count--;
-                numEventReceived++;
-                enable(ID_SIM, 0);
                 break;
             case DT_RESET:
                 count--;

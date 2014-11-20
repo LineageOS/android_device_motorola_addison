@@ -73,11 +73,6 @@ static const struct sensor_t sSensorList[] = {
                 SENSOR_TYPE_CAMERA_ACTIVATE, 1.0f, 1.0f, 0.0f, 0, 0, 0,
                 "com.motorola.sensor.camera_activate",
                 "", 0, SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP},
-    { "Significant Motion sensor",
-                "Motorola",
-                1, SENSORS_HANDLE_BASE+ID_SIM,
-                SENSOR_TYPE_SIGNIFICANT_MOTION, 1.0f, 1.0f, 3.0f, -1, 0, 0, "",
-                "", 0, SENSOR_FLAG_ONE_SHOT_MODE | SENSOR_FLAG_WAKE_UP},
 #ifdef _ENABLE_ACCEL_SECONDARY
     { "KXTJ2 3-axis Accelerometer, Secondary",
                 "Kionix",

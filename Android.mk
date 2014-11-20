@@ -31,7 +31,7 @@ ifneq ($(TARGET_SIMULATOR),true)
 # Select sensorhub type based on platform #
 ###########################################
 # 8974 / 8084
-ifneq (, $(filter $(TARGET_BOARD_PLATFORM),msm8974 apq8084),true)
+ifneq (, $(filter $(TARGET_BOARD_PLATFORM),msm8974 apq8084))
 SH_MODULE := stm401
 SH_PATH := STM401
 SH_LOGTAG := \"STM401\"
