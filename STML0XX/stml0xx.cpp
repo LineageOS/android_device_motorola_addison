@@ -416,6 +416,7 @@ int main(int argc, char *argv[])
             system("echo 'file stml0xx_wake_irq.c -p' > /sys/kernel/debug/dynamic_debug/control");
             system("echo 'file stml0xx_display.c -p' > /sys/kernel/debug/dynamic_debug/control");
             system("echo 'file stml0xx_spi.c -p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file stml0xx_led.c -p' > /sys/kernel/debug/dynamic_debug/control");
         }
         else {
             system("echo 'file stml0xx_core.c +p' > /sys/kernel/debug/dynamic_debug/control");
@@ -427,6 +428,7 @@ int main(int argc, char *argv[])
             system("echo 'file stml0xx_wake_irq.c +p' > /sys/kernel/debug/dynamic_debug/control");
             system("echo 'file stml0xx_display.c +p' > /sys/kernel/debug/dynamic_debug/control");
             system("echo 'file stml0xx_spi.c +p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file stml0xx_led.c +p' > /sys/kernel/debug/dynamic_debug/control");
         }
     }
     if( emode == FACTORY ) {
