@@ -50,6 +50,7 @@ public:
     virtual int flush(int32_t handle);
 
     void processEvent(int code, int value);
+    void calibrate(float x, float y, float z);
 };
 
 /*****************************************************************************/

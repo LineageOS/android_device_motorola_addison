@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+#include <cmath>
 #include <fcntl.h>
 #include <errno.h>
 #include <math.h>
@@ -28,6 +29,14 @@
 #include <cutils/log.h>
 
 #include "l3g4200d_hal.h"
+
+extern bool is_device_moving;
+extern bool is_gyro_calibrated;
+float cal_x = 0.0f;
+float cal_y = 0.0f;
+float cal_z = 0.0f;
+static int counter = 0;
+
 
 /*****************************************************************************/
 
@@ -63,6 +72,8 @@ GyroSensor::GyroSensor()
         }
     }
 
+    is_gyro_calibrated = false;
+
     if (!mEnabled) {
         close_device();
     }
@@ -75,9 +86,21 @@ int GyroSensor::setEnable(int32_t, int en)
 {
     int flags = en ? 1 : 0;
     int err = 0;
+    struct timeval timeutc;
+    static long int calibrated_sec = 0;
     if (flags != mEnabled) {
         if (flags) {
             open_device();
+            time(&timeutc.tv_sec);
+            if ((calibrated_sec == 0) ||
+                (timeutc.tv_sec - calibrated_sec > ONE_DAY)) {
+                    is_gyro_calibrated = false;
+                    counter = 0;
+                    cal_x = 0.0f;
+                    cal_y = 0.0f;
+                    cal_z = 0.0f;
+                    calibrated_sec = timeutc.tv_sec;
+            }
         }
         err = ioctl(dev_fd, L3G4200D_IOCTL_SET_ENABLE, &flags);
         err = err<0 ? -errno : 0;
@@ -141,6 +164,8 @@ int GyroSensor::readEvents(sensors_event_t* data, int count)
         if (type == EV_REL) {
             processEvent(event->code, event->value);
         } else if (type == EV_SYN) {
+            if (is_gyro_calibrated == false)
+                calibrate(mPendingEvent.gyro.x, mPendingEvent.gyro.y, mPendingEvent.gyro.z);
             int64_t time = timevalToNano(event->time);
             mPendingEvent.timestamp = time;
             if (mEnabled) {
@@ -163,16 +188,44 @@ void GyroSensor::processEvent(int code, int value)
     switch (code) {
         case EVENT_TYPE_GYRO_P:
             mPendingEvent.gyro.y = value * CONVERT_G_P;
+            if (is_gyro_calibrated)
+                mPendingEvent.gyro.y = mPendingEvent.gyro.y + cal_y;
             break;
         case EVENT_TYPE_GYRO_R:
             mPendingEvent.gyro.x = value * CONVERT_G_R;
+            if (is_gyro_calibrated)
+                mPendingEvent.gyro.x = mPendingEvent.gyro.x + cal_x;
             break;
         case EVENT_TYPE_GYRO_Y:
             mPendingEvent.gyro.z = value * CONVERT_G_Y;
+            if (is_gyro_calibrated)
+                mPendingEvent.gyro.z = mPendingEvent.gyro.z + cal_z;
             break;
     }
 }
 
+void GyroSensor::calibrate(float x, float y, float z)
+{
+    if (is_device_moving == false && counter < 10) {
+        cal_x += x;
+        cal_y += y;
+        cal_z += z;
+        counter++;
+    }
+    if (counter == 10) {
+        cal_x = -1.0f * (cal_x / 10);
+        cal_y = -1.0f * (cal_y / 10);
+        cal_z = -1.0f * (cal_z / 10);
+        if (fabs(cal_x) > 0.5 || fabs(cal_y) > 0.5 || fabs(cal_z) > 0.5) {
+            cal_x = 0.0f;
+            cal_y = 0.0f;
+            cal_z = 0.0f;
+            counter = 0;
+        } else {
+            is_gyro_calibrated = true;
+        }
+    }
+}
 int GyroSensor::flush(int32_t handle)
 {
     mFlushEnabled = 1;

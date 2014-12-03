@@ -39,6 +39,9 @@
 #endif
 /*****************************************************************************/
 
+bool is_device_moving = true;
+bool is_gyro_calibrated = true;
+
 struct sensors_poll_context_t {
     sensors_poll_device_1_t device; // must be first
 

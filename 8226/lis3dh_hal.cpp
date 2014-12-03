@@ -29,6 +29,15 @@
 
 #include "lis3dh_hal.h"
 
+extern bool is_device_moving;
+extern bool is_gyro_calibrated;
+static unsigned int mCurrentDataNumber = 0;
+static unsigned int mLastLowNumber = 0;
+static unsigned int mLastHighNumber = 0;
+static unsigned long mm_mmoveme_time = 10; // init to max
+
+#define MM_ALLOWED_STD_DEV  0.03f
+
 /*****************************************************************************/
 
 AccelerationSensor::AccelerationSensor()
@@ -264,6 +273,13 @@ int AccelerationSensor::readEvents(sensors_event_t* data, int count)
             mInputReader.next();
         } else if (type == EV_SYN) {
             int64_t time = timevalToNano(event->time);
+#ifdef FEATURE_GYRO_L3D4200_SUPPORTED
+            if(is_gyro_calibrated == false) {
+                Process_MeaningfulMovement((double)mPendingEvent[Accelerometer].acceleration.x,
+                    (double)mPendingEvent[Accelerometer].acceleration.y,
+                    (double)mPendingEvent[Accelerometer].acceleration.z);
+            }
+#endif
             for (int j=0 ; count && mPendingMask && j<(numSensors-1) ; j++) {
                 if (mPendingMask & (1<<j)) {
                     mPendingMask &= ~(1<<j);
@@ -286,6 +302,69 @@ int AccelerationSensor::readEvents(sensors_event_t* data, int count)
     }
 
     return numEventReceived;
+}
+
+void AccelerationSensor::client_mm(double nowStdDev)
+{
+	mCurrentDataNumber++;
+
+    if( nowStdDev < MM_ALLOWED_STD_DEV )
+    {
+        mLastLowNumber = mCurrentDataNumber;
+    }
+    else
+    {
+        mLastHighNumber = mCurrentDataNumber;
+    }
+    if((mCurrentDataNumber - mLastLowNumber) >= 1 )
+    {
+        is_device_moving = true;
+    }
+    else if( (mCurrentDataNumber - mLastHighNumber) >= 5 )
+    {
+        is_device_moving = false;
+    }
+}
+
+void AccelerationSensor::Process_MeaningfulMovement(double acc_x, double acc_y, double acc_z)
+{
+    static unsigned int cnt = 0;
+    static double mean_x = 0, mean_y = 0, mean_z = 0;
+    static double s_x = 0, s_y = 0, s_z = 0;
+    double delta = 0, std_dev_x = 0, std_dev_y = 0, std_dev_xyz = 0;
+
+    cnt++;
+
+    delta = acc_x - mean_x;
+    mean_x += delta / cnt;
+    s_x += delta * (acc_x - mean_x);
+
+    delta = acc_y - mean_y;
+    mean_y += delta / cnt;
+    s_y += delta * (acc_y - mean_y);
+
+    delta = acc_z - mean_z;
+    mean_z += delta / cnt;
+    s_z += delta * (acc_z - mean_z);
+
+    //Caution, arrayloc could go higher than move_time when sample rate is being changed to a lower rate
+    //move_time can NEVER be less than 2!
+    if (cnt >= mm_mmoveme_time) {
+       std_dev_x =  s_x / (cnt-1);
+       std_dev_y =  s_y / (cnt-1);
+       // sum std deviations, z contribution is capped at max of x or y contribution to suppress audio effect
+       std_dev_xyz = fmin(s_z / (cnt-1), fmax(std_dev_x, std_dev_y)) + std_dev_x + std_dev_y;
+
+       client_mm(std_dev_xyz);
+
+	   cnt = 0;
+	   mean_x = 0;
+	   mean_y = 0;
+	   mean_z = 0;
+	   s_x = 0;
+	   s_y = 0;
+	   s_z = 0;
+	}
 }
 
 void AccelerationSensor::processEvent(int code, int value)

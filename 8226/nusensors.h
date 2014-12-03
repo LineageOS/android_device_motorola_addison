@@ -124,6 +124,7 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 
 #define SENSOR_STATE_MASK           (0x7FFF)
 
+#define ONE_DAY                     24*60*60
 /*****************************************************************************/
 
 __END_DECLS

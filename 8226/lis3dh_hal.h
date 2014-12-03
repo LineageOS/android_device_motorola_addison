@@ -63,6 +63,8 @@ public:
 
     int enableOrientation(int enabled);
     void processEvent(int code, int value);
+    void Process_MeaningfulMovement(double acc_x, double acc_y, double acc_z);
+    void client_mm(double nowStdDev);
 };
 
 #define BIT_A   (1 << Accelerometer)
