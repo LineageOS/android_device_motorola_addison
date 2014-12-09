@@ -19,6 +19,7 @@
 #include <errno.h>
 #include <dirent.h>
 #include <math.h>
+#include <new>
 
 #include <poll.h>
 #include <pthread.h>
@@ -181,20 +182,26 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device)
 {
     int status = -EINVAL;
 
-    sensors_poll_context_t *dev = new sensors_poll_context_t();
-    memset(&dev->device, 0, sizeof(sensors_poll_device_1_t));
+    sensors_poll_context_t *dev = new(std::nothrow) sensors_poll_context_t();
 
-    dev->device.common.tag = HARDWARE_DEVICE_TAG;
-    dev->device.common.version  = SENSORS_DEVICE_API_VERSION_1_3;
-    dev->device.common.module   = const_cast<hw_module_t*>(module);
-    dev->device.common.close    = poll__close;
-    dev->device.activate        = poll__activate;
-    dev->device.setDelay        = poll__setDelay;
-    dev->device.poll            = poll__poll;
-    dev->device.batch           = poll__batch;
-    dev->device.flush           = poll__flush;
+    if (dev) {
+        memset(&dev->device, 0, sizeof(sensors_poll_device_1_t));
 
-    *device = &dev->device.common;
-    status = 0;
+        dev->device.common.tag = HARDWARE_DEVICE_TAG;
+        dev->device.common.version  = SENSORS_DEVICE_API_VERSION_1_3;
+        dev->device.common.module   = const_cast<hw_module_t*>(module);
+        dev->device.common.close    = poll__close;
+        dev->device.activate        = poll__activate;
+        dev->device.setDelay        = poll__setDelay;
+        dev->device.poll            = poll__poll;
+        dev->device.batch           = poll__batch;
+        dev->device.flush           = poll__flush;
+
+        *device = &dev->device.common;
+        status = 0;
+    } else {
+        ALOGE("out of memory: new failed for sensors_poll_context_t");
+    }
+
     return status;
 }
