@@ -50,6 +50,10 @@ ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 # Expose secondary accel for non-user builds
 SH_CFLAGS += -D_ENABLE_ACCEL_SECONDARY
 endif
+ifneq (,$(findstring osprey, $(strip $(TARGET_PRODUCT))))
+SH_PATH := STML0XX_MAG
+SH_CFLAGS += -D_ENABLE_MAGNETOMETER
+endif
 endif
 
 # 8610
@@ -75,7 +79,16 @@ LOCAL_SRC_FILES := \
                 SensorBase.cpp \
                 $(SH_PATH)/nusensors.cpp \
                 $(SH_PATH)/sensors.c \
+                $(SH_PATH)/sensorhub_hal.cpp
+
+ifneq (,$(findstring osprey, $(strip $(TARGET_PRODUCT))))
+LOCAL_SRC_FILES := \
+		$(SH_PATH)/AkmSensor.cpp \
+		$(SH_PATH)/InputEventReader.cpp \
+                $(SH_PATH)/SensorBase.cpp \
                 $(SH_PATH)/sensorhub_hal.cpp \
+		$(SH_PATH)/sensors.cpp
+endif
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SH_PATH) \
                     external/zlib
@@ -85,7 +98,7 @@ LOCAL_C_INCLUDES += bionic/libc/kernel/common
 LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_MODULE_TAGS := optional
-LOCAL_SHARED_LIBRARIES := liblog libcutils libz
+LOCAL_SHARED_LIBRARIES := liblog libcutils libz libdl
 LOCAL_C_INCLUDES := external/zlib \
                     bionic/libc/kernel/common
 LOCAL_MODULE := sensors.$(TARGET_BOARD_PLATFORM)
