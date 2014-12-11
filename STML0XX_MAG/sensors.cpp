@@ -179,7 +179,7 @@ static const struct sensor_t sSensorList[] = {
 		"com.motorola.sensor.camera_activate",
 		"",
 		0,
-		SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
+		SENSOR_FLAG_SPECIAL_REPORTING_MODE | SENSOR_FLAG_WAKE_UP,
 		{} },
 #ifdef _ENABLE_ACCEL_SECONDARY
 	{ "KXTJ2 3-axis Accelerometer, Secondary",
@@ -208,6 +208,7 @@ static int open_sensors(const struct hw_module_t* module, const char* id,
 static int sensors__get_sensors_list(struct sensors_module_t* module,
 				     struct sensor_t const** list) 
 {
+	(void)module;
 	*list = sSensorList;
 	return ARRAY_SIZE(sSensorList);
 }
@@ -443,6 +444,7 @@ static int poll__flush(sensors_poll_device_1_t *dev,
 static int open_sensors(const struct hw_module_t* module, const char* id,
 			struct hw_device_t** device)
 {
+	(void)id;
 	int status = -EINVAL;
 
 	sensors_poll_context_t *dev = new(std::nothrow) sensors_poll_context_t();

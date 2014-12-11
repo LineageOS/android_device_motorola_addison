@@ -32,53 +32,53 @@ static const struct sensor_t sSensorList[] = {
                 "Kionix",
                 1, SENSORS_HANDLE_BASE+ID_A,
                 SENSOR_TYPE_ACCELEROMETER, RANGE_G * GRAVITY_EARTH, GRAVITY_EARTH / LSG, 0.25f, 10000, 0, 0, "",
-                "", 200000, SENSOR_FLAG_CONTINUOUS_MODE },
+                "", 200000, SENSOR_FLAG_CONTINUOUS_MODE, {0,0} },
     { "CT406 Light sensor",
                 "TAOS",
                 1, SENSORS_HANDLE_BASE+ID_L,
                 SENSOR_TYPE_LIGHT, 27000.0f, 1.0f, 0.175f, 0, 0, 0, "",
-                "", 0, SENSOR_FLAG_ON_CHANGE_MODE },
+                "", 0, SENSOR_FLAG_ON_CHANGE_MODE, {0,0} },
     { "Display Rotation sensor",
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_DR,
                 SENSOR_TYPE_DISPLAY_ROTATE, 4.0f, 1.0f, 0.0f, 0, 0, 0,
                 "com.motorola.sensor.display_rotate",
-                "", 0, SENSOR_FLAG_ON_CHANGE_MODE },
+                "", 0, SENSOR_FLAG_ON_CHANGE_MODE, {0,0} },
     { "CT406 Proximity sensor",
                 "TAOS",
                 1, SENSORS_HANDLE_BASE+ID_P,
                 SENSOR_TYPE_PROXIMITY, 100.0f, 100.0f, 3.0f, 0, 0, 0, "",
-                "", 0, SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP},
+                "", 0, SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP, {0,0}},
     { "Flat Up",
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_FU,
                 SENSOR_TYPE_FLAT_UP, 1.0f, 1.0f, 0.0f, 0, 0, 0,
                 "com.motorola.sensor.flat_up",
-                "", 0, SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP},
+                "", 0, SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP, {0,0}},
     { "Flat Down",
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_FD,
                 SENSOR_TYPE_FLAT_DOWN, 1.0f, 1.0f, 0.0f, 0, 0, 0,
                 "com.motorola.sensor.flat_down",
-                "", 0, SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP},
+                "", 0, SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP, {0,0}},
     { "Stowed",
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_S,
                 SENSOR_TYPE_STOWED, 1.0f, 1.0f, 0.0f, 0, 0, 0,
                 "com.motorola.sensor.stowed",
-                "", 0, SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP},
+                "", 0, SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP, {0,0}},
     { "Camera Activation sensor",
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_CA,
                 SENSOR_TYPE_CAMERA_ACTIVATE, 1.0f, 1.0f, 0.0f, 0, 0, 0,
                 "com.motorola.sensor.camera_activate",
-                "", 0, SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP},
+                "", 0, SENSOR_FLAG_SPECIAL_REPORTING_MODE | SENSOR_FLAG_WAKE_UP, {0,0}},
 #ifdef _ENABLE_ACCEL_SECONDARY
     { "KXTJ2 3-axis Accelerometer, Secondary",
                 "Kionix",
                 1, SENSORS_HANDLE_BASE+ID_A2,
                 SENSOR_TYPE_ACCELEROMETER, RANGE_G * GRAVITY_EARTH, GRAVITY_EARTH / LSG, 0.25f, 10000, 0, 0, "",
-                "", 200000, SENSOR_FLAG_CONTINUOUS_MODE },
+                "", 200000, SENSOR_FLAG_CONTINUOUS_MODE, {0,0} },
 #endif
 };
 
@@ -88,6 +88,7 @@ static int open_sensors(const struct hw_module_t* module, const char* name,
 static int sensors__get_sensors_list(struct sensors_module_t* module,
         struct sensor_t const** list)
 {
+    (void)module;
     *list = sSensorList;
     return ARRAY_SIZE(sSensorList);
 }
@@ -114,5 +115,6 @@ struct sensors_module_t HAL_MODULE_INFO_SYM = {
 static int open_sensors(const struct hw_module_t* module, const char* name,
         struct hw_device_t** device)
 {
+    (void)name;
     return init_nusensors(module, device);
 }
