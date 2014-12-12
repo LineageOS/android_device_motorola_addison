@@ -117,13 +117,54 @@ LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_SRC_FILES := $(SH_PATH)/sensorhub.c
 LOCAL_C_INCLUDES := bionic/libc/kernel/common
 
-LOCAL_C_INCLUDES := bionic/libc/kernel/common
-
 LOCAL_SHARED_LIBRARIES := libcutils libc
 LOCAL_MODULE := sensorhub.$(TARGET_BOARD_PLATFORM)
 LOCAL_MODULE_TAGS := optional
 
 include $(BUILD_SHARED_LIBRARY)
+
+#########################
+# AKM executable        #
+#########################
+include $(CLEAR_VARS)
+
+ifneq (,$(findstring osprey, $(strip $(TARGET_PRODUCT))))
+
+AKM_PATH := 8916_ak09912_akmd_3D
+SMARTCOMPASS_LIB := libSmartCompass
+
+LOCAL_MODULE_TAGS := optional
+
+LOCAL_MODULE  := akmd09912
+
+LOCAL_C_INCLUDES := \
+        bionic/libc/kernel/common \
+        $(LOCAL_PATH)/$(AKM_PATH) \
+        $(LOCAL_PATH)/$(AKM_PATH)/$(SMARTCOMPASS_LIB)
+
+LOCAL_SRC_FILES := \
+        $(AKM_PATH)/AKMD_Driver.c \
+        $(AKM_PATH)/DispMessage.c \
+        $(AKM_PATH)/FileIO.c \
+        $(AKM_PATH)/Measure.c \
+        $(AKM_PATH)/main.c \
+        $(AKM_PATH)/misc.c \
+	$(AKM_PATH)/FST_AK09912.c
+
+LOCAL_CFLAGS := -DAKMD_FOR_AK09912
+LOCAL_CFLAGS += -DAKMD_AK099XX
+LOCAL_CFLAGS += -Wall -Wextra
+LOCAL_CFLAGS += -DENABLE_AKMDEBUG=1
+#LOCAL_CFLAGS += -DAKM_LOG_ENABLE
+
+LOCAL_LDFLAGS += -L$(LOCAL_PATH)/$(AKM_PATH)/$(SMARTCOMPASS_LIB) -lAK09912WO6D
+
+LOCAL_FORCE_STATIC_EXECUTABLE := false
+LOCAL_SHARED_LIBRARIES := libc libm libutils libcutils
+
+include $(BUILD_EXECUTABLE)
+
+endif # osprey
 
 ###########################
 # Sensor Hub Flash loader #
