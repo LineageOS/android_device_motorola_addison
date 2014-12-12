@@ -352,12 +352,22 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
 {
 	int nbEvents = 0;
 	int ret;
+	int err;
 
-	ret = poll(mPollFds, numFds, nbEvents ? 0 : -1);
-	if (ret < 0) {
-		ALOGE("poll() failed (%s)", strerror(errno));
-		return -errno;
+	while (true) {
+		ret = poll(mPollFds, numFds, nbEvents ? 0 : -1);
+		err = errno;
+		// Success
+		if (ret >= 0)
+			break;
+		ALOGE("poll() failed (%s)", strerror(err));
+		// EINTR is OK
+		if (err == EINTR)
+			continue;
+		else
+			return -err;
 	}
+
 	for (int i=0 ; count && i<numSensorDrivers ; i++) {
 		SensorBase* const sensor(mSensors[i]);
 		if ((mPollFds[i].revents & POLLIN) || (sensor->hasPendingEvents())) {
