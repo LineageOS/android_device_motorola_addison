@@ -35,6 +35,8 @@
 
 #define SENSORHUB_DEVICE_NAME       "/dev/stm401"
 #define SENSORHUB_AS_DATA_NAME      "/dev/stm401_as"
+#define QUAT_6AXIS_RATE_ATTR_NAME   "/sys/devices/virtual/stm401/stm401_as/rv_6axis_update_rate"
+#define QUAT_9AXIS_RATE_ATTR_NAME   "/sys/devices/virtual/stm401/stm401_as/rv_9axis_update_rate"
 
 #define SENSORS_EVENT_T_SIZE sizeof(sensors_event_t);
 #define MAG_CAL_FILE "/data/misc/akmd_set.txt"
@@ -60,6 +62,15 @@
 #define UNCALIB_GYRO_X_BIAS (3 * sizeof(int16_t))
 #define UNCALIB_GYRO_Y_BIAS (4 * sizeof(int16_t))
 #define UNCALIB_GYRO_Z_BIAS (5 * sizeof(int16_t))
+
+#define QUAT_6AXIS_A (0 * sizeof(int16_t))
+#define QUAT_6AXIS_B (1 * sizeof(int16_t))
+#define QUAT_6AXIS_C (2 * sizeof(int16_t))
+#define QUAT_6AXIS_W (3 * sizeof(int16_t))
+#define QUAT_9AXIS_A (0 * sizeof(int16_t))
+#define QUAT_9AXIS_B (1 * sizeof(int16_t))
+#define QUAT_9AXIS_C (2 * sizeof(int16_t))
+#define QUAT_9AXIS_W (3 * sizeof(int16_t))
 
 #define PRESSURE_PRESSURE (0 * sizeof(int32_t))
 

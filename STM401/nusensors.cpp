@@ -93,6 +93,8 @@ private:
 #ifdef _ENABLE_LIFT
             case ID_LIFT_GESTURE:
 #endif
+            case ID_QUAT_6AXIS:
+            case ID_QUAT_9AXIS:
                 return accelgyromag;
         }
         return -EINVAL;
