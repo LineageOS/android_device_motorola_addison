@@ -26,209 +26,18 @@
 
 #include <linux/input.h>
 
-#include <utils/Atomic.h>
+#include <cutils/atomic.h>
+#include <cutils/log.h>
+
+#include <hardware/sensors.h>
+#include <hardware/mot_sensorhub_stml0xx.h>
 
 #include "sensors.h"
-#include "sensorhub_hal.h"
-#include "AKMLog.h"
+#include "SensorBase.h"
 #include "AkmSensor.h"
+#include "sensorhub_hal.h"
 
 /*****************************************************************************/
-
-/* The SENSORS Module */
-static const struct sensor_t sSensorList[] = {
-	{ "KXTJ2 3-axis Accelerometer",
-		"Kionix",
-		1,
-		SENSORS_HANDLE_BASE + ID_A,
-		SENSOR_TYPE_ACCELEROMETER,
-		RANGE_G * GRAVITY_EARTH,
-		GRAVITY_EARTH / LSG,
-		0.25f,
-		10000,
-		0,
-		0,
-		"",
-		"",
-		200000,
-		SENSOR_FLAG_CONTINUOUS_MODE,
-		{} },
-	{ "AK09912 3-axis Magnetic field sensor",
-		"Asahi Kasei Microdevices",
-		1,
-		SENSORS_HANDLE_BASE + ID_M,
-		SENSOR_TYPE_MAGNETIC_FIELD,
-		4912.0f,
-		CONVERT_M,
-		0.10f,
-		10000,
-		0,
-		0,
-		"",
-		"",
-		200000,
-		SENSOR_FLAG_CONTINUOUS_MODE,
-		{} },
-	{ "CT406 Light sensor",
-		"TAOS",
-		1,
-		SENSORS_HANDLE_BASE + ID_L,
-		SENSOR_TYPE_LIGHT,
-		27000.0f,
-		1.0f,
-		0.175f,
-		0,
-		0,
-		0,
-		"",
-                "",
-		0,
-		SENSOR_FLAG_ON_CHANGE_MODE,
-		{} },
-	{ "CT406 Proximity sensor",
-		"TAOS",
-		1,
-		SENSORS_HANDLE_BASE + ID_P,
-		SENSOR_TYPE_PROXIMITY,
-		100.0f,
-		100.0f,
-		3.0f,
-		0,
-		0,
-		0,
-		"",
-                "",
-		0,
-		SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
-		{} },
-	{ "Display Rotation sensor",
-		"Motorola",
-		1,
-		SENSORS_HANDLE_BASE + ID_DR,
-		SENSOR_TYPE_DISPLAY_ROTATE,
-		4.0f,
-		1.0f,
-		0.0f,
-		0,
-		0,
-		0,
-		"com.motorola.sensor.display_rotate",
-		"",
-		0,
-		SENSOR_FLAG_ON_CHANGE_MODE,
-		{} },
-	{ "Flat Up",
-		"Motorola",
-		1,
-		SENSORS_HANDLE_BASE + ID_FU,
-		SENSOR_TYPE_FLAT_UP,
-		1.0f,
-		1.0f,
-		0.0f,
-		0,
-		0,
-		0,
-		"com.motorola.sensor.flat_up",
-		"",
-		0,
-		SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
-		{} },
-	{ "Flat Down",
-		"Motorola",
-		1,
-		SENSORS_HANDLE_BASE + ID_FD,
-		SENSOR_TYPE_FLAT_DOWN,
-		1.0f,
-		1.0f,
-		0.0f,
-		0,
-		0,
-		0,
-		"com.motorola.sensor.flat_down",
-		"",
-		0,
-		SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
-		{} },
-	{ "Stowed",
-		"Motorola",
-		1,
-		SENSORS_HANDLE_BASE + ID_S,
-		SENSOR_TYPE_STOWED,
-		1.0f,
-		1.0f,
-		0.0f,
-		0,
-		0,
-		0,
-		"com.motorola.sensor.stowed",
-		"",
-		0,
-		SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
-		{} },
-	{ "Camera Activation sensor",
-		"Motorola",
-		1,
-		SENSORS_HANDLE_BASE + ID_CA,
-		SENSOR_TYPE_CAMERA_ACTIVATE,
-		1.0f,
-		1.0f,
-		0.0f,
-		0,
-		0,
-		0,
-		"com.motorola.sensor.camera_activate",
-		"",
-		0,
-		SENSOR_FLAG_SPECIAL_REPORTING_MODE | SENSOR_FLAG_WAKE_UP,
-		{} },
-#ifdef _ENABLE_ACCEL_SECONDARY
-	{ "KXTJ2 3-axis Accelerometer, Secondary",
-		"Kionix",
-		1,
-		SENSORS_HANDLE_BASE + ID_A2,
-		SENSOR_TYPE_ACCELEROMETER,
-		RANGE_G * GRAVITY_EARTH,
-		GRAVITY_EARTH / LSG,
-		0.25f,
-		10000,
-		0,
-		0,
-		"",
-		"",
-		200000,
-		SENSOR_FLAG_CONTINUOUS_MODE,
-		{} },
-#endif
-};
-
-
-static int open_sensors(const struct hw_module_t* module, const char* id,
-			struct hw_device_t** device);
-
-static int sensors__get_sensors_list(struct sensors_module_t* module,
-				     struct sensor_t const** list) 
-{
-	(void)module;
-	*list = sSensorList;
-	return ARRAY_SIZE(sSensorList);
-}
-
-static struct hw_module_methods_t sensors_module_methods = {
-	open: open_sensors
-};
-
-struct sensors_module_t HAL_MODULE_INFO_SYM = {
-	common: {
-		tag: HARDWARE_MODULE_TAG,
-		version_major: 1,
-		version_minor: 0,
-		id: SENSORS_HARDWARE_MODULE_ID,
-		name: "Motorola Sensors Module",
-		author: "Motorola",
-		methods: &sensors_module_methods,
-	},
-	get_sensors_list: sensors__get_sensors_list
-};
 
 struct sensors_poll_context_t {
 	sensors_poll_device_1_t device; // must be first
@@ -351,6 +160,7 @@ int sensors_poll_context_t::setDelay(int handle, int64_t ns) {
 int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
 {
 	int nbEvents = 0;
+	int n = 0;
 	int ret;
 	int err;
 
@@ -371,14 +181,11 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
 	for (int i=0 ; count && i<numSensorDrivers ; i++) {
 		SensorBase* const sensor(mSensors[i]);
 		if ((mPollFds[i].revents & POLLIN) || (sensor->hasPendingEvents())) {
-			SensorBase* const sensor(mSensors[i]);
 			int nb = sensor->readEvents(data, count);
 			count -= nb;
 			nbEvents += nb;
 			data += nb;
-			if (nb < count) {
-				mPollFds[i].revents = 0;
-			}
+			mPollFds[i].revents = 0;
 		}
 	}
 
@@ -399,6 +206,8 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
 
 int sensors_poll_context_t::batch(int handle, int flags, int64_t ns, int64_t timeout)
 {
+	(void)flags;
+	(void)timeout;
 	return setDelay(handle, ns);
 }
 
@@ -451,14 +260,11 @@ static int poll__flush(sensors_poll_device_1_t *dev,
 /*****************************************************************************/
 
 /** Open a new instance of a sensor device using name */
-static int open_sensors(const struct hw_module_t* module, const char* id,
-			struct hw_device_t** device)
+int init_sensors(hw_module_t const* module, hw_device_t** device)
 {
-	(void)id;
 	int status = -EINVAL;
 
 	sensors_poll_context_t *dev = new(std::nothrow) sensors_poll_context_t();
-
 	if (dev) {
 		memset(&dev->device, 0, sizeof(sensors_poll_device_1_t));
 

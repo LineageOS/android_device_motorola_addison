@@ -32,6 +32,7 @@ class SensorBase {
 protected:
 	const char* dev_name;
 	const char* data_name;
+	const char* mot_data_name;
 	int dev_fd;
 	int data_fd;
 
@@ -50,7 +51,8 @@ protected:
 public:
 	SensorBase(
 		const char* dev_name,
-		const char* data_name);
+		const char* data_name,
+		const char* mot_data_name);
 
 	virtual ~SensorBase();
 

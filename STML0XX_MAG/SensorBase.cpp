@@ -26,17 +26,25 @@
 
 #include <linux/input.h>
 
-#include "AKMLog.h"
 #include "SensorBase.h"
 
 /*****************************************************************************/
 
 SensorBase::SensorBase(
-	const char* dev_name,
-	const char* data_name)
+		const char* dev_name,
+		const char* data_name,
+		const char* mot_data_name)
 	: dev_name(dev_name), data_name(data_name),
+		mot_data_name(mot_data_name),
 		dev_fd(-1), data_fd(-1)
 {
+	if (data_name) {
+		data_fd = openInput(data_name);
+		ALOGE_IF(data_fd<0, "Couldn't open %s (%s)", data_name, strerror(errno));
+	} else if (mot_data_name) {
+		data_fd = open(mot_data_name, O_RDONLY);
+		ALOGE_IF(data_fd<0, "Couldn't open %s (%s)", mot_data_name, strerror(errno));
+	}
 }
 
 SensorBase::~SensorBase() {
@@ -51,18 +59,10 @@ int SensorBase::open_device() {
 		dev_fd = open(dev_name, O_RDONLY);
 		ALOGE_IF(dev_fd<0, "Couldn't open %s (%s)", dev_name, strerror(errno));
 	}
-	if (data_fd<0 && data_name) {
-		data_fd = open(data_name, O_RDONLY);
-		ALOGE_IF(data_fd<0, "Couldn't open %s (%s)", data_name, strerror(errno));
-	}
 	return 0;
 }
 
 int SensorBase::close_device() {
-	if (data_fd >= 0) {
-		close(data_fd);
-		data_fd = -1;
-	}
 	if (dev_fd >= 0) {
 		close(dev_fd);
 		dev_fd = -1;
@@ -98,6 +98,8 @@ int SensorBase::getFd() const {
 }
 
 int SensorBase::setDelay(int32_t handle, int64_t ns) {
+	(void)handle;
+	(void)ns;
 	return 0;
 }
 
@@ -147,6 +149,8 @@ int SensorBase::openInput(const char* inputName) {
 				close(fd);
 				fd = -1;
 			}
+		} else {
+			ALOGE("SensorBase::openInput open error");
 		}
 	}
 	closedir(dir);

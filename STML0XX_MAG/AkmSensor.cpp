@@ -23,7 +23,8 @@
 #include <sys/select.h>
 #include <dlfcn.h>
 
-#include "AKMLog.h"
+#include <cutils/log.h>
+
 #include "AkmSensor.h"
 
 #define AKMD_DEFAULT_INTERVAL	200000000
@@ -33,24 +34,20 @@
 /*****************************************************************************/
 
 AkmSensor::AkmSensor()
-: SensorBase(NULL, "compass"),
+: SensorBase(NULL, "compass", NULL),
 	mPendingMask(0),
 	mInputReader(32)
 {
 	mEnabled = 0;
 	mDelay = -1;
 	
+	memset(&mPendingEvents, 0, sizeof(mPendingEvents));
 	mPendingEvents.version = sizeof(sensors_event_t);
 	mPendingEvents.sensor = ID_M;
 	mPendingEvents.type = SENSOR_TYPE_MAGNETIC_FIELD;
-	mPendingEvents.magnetic.status = SENSOR_STATUS_ACCURACY_HIGH;
-	memset(mPendingEvents.data, 0, sizeof(mPendingEvents.data));
+	mPendingEvents.magnetic.status = SENSOR_STATUS_UNRELIABLE;
 
-	if (data_name) {
-		data_fd = openInput(data_name);
-	}
-
-	if (data_fd) {
+	if (data_fd >= 0) {
 		strcpy(input_sysfs_path, AKM_SYSFS_PATH);
 		input_sysfs_path_len = strlen(input_sysfs_path);
 	} else {
@@ -91,17 +88,15 @@ int AkmSensor::setEnable(int32_t handle, int enabled)
 	if (buffer[0] != '\0') {
 		err = write_sys_attribute(input_sysfs_path, buffer, 1);
 		if (err != 0) {
+			ALOGE("AkmSensor: %s write failed.",
+				&input_sysfs_path[input_sysfs_path_len]);
 			return err;
 		}
 		ALOGD("AkmSensor: set %s to %s",
 			&input_sysfs_path[input_sysfs_path_len], buffer);
 
-		/* for AKMD specification */
-		if (buffer[0] == '1') {
-			setDelay(handle, AKMD_DEFAULT_INTERVAL);
-		} else {
+		if (buffer[0] == '0')
 			setDelay(handle, -1);
-		}
 	}
 
 	if (enabled) {
@@ -143,12 +138,15 @@ int AkmSensor::setDelay(int32_t handle, int64_t ns)
 	}
 
 	if (ns != mDelay) {
-		bytes = sprintf(buffer, "%lld", ns);
+		bytes = sprintf(buffer, "%lld", (long long int)ns);
 		err = write_sys_attribute(input_sysfs_path, buffer, bytes);
 		if (err == 0) {
 			mDelay = ns;
 			ALOGD("AkmSensor: set %s to %f ms.",
 				&input_sysfs_path[input_sysfs_path_len], ns/1000000.0f);
+		} else {
+			ALOGE("AkmSensor: %s write failed.",
+				&input_sysfs_path[input_sysfs_path_len]);
 		}
 	}
 
@@ -225,5 +223,6 @@ int AkmSensor::readEvents(sensors_event_t* data, int count)
 
 int AkmSensor::flush(int32_t handle)
 {
+	(void)handle;
 	return 0;
 }

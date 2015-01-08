@@ -36,7 +36,7 @@
 /*****************************************************************************/
 
 HubSensor::HubSensor()
-: SensorBase(SENSORHUB_DEVICE_NAME, SENSORHUB_AS_DATA_NAME),
+: SensorBase(SENSORHUB_DEVICE_NAME, NULL, SENSORHUB_AS_DATA_NAME),
       mEnabled(0),
       mWakeEnabled(0),
       mPendingMask(0)
