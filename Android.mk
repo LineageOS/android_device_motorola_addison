@@ -41,6 +41,17 @@ SH_LOGTAG := \"STM401\"
 SH_CFLAGS += -D_ENABLE_CHOPCHOP
 endif
 
+# 8994
+ifeq ($(call is-board-platform,msm8994),true)
+SH_MODULE := motosh
+SH_PATH := MOTOSH
+SH_LOGTAG := \"MOTOSH\"
+#SH_CFLAGS += -D_ENABLE_PEDO
+#SH_CFLAGS += -D_ENABLE_LA
+#SH_CFLAGS += -D_ENABLE_GR
+#SH_CFLAGS += -D_ENABLE_CHOPCHOP
+endif
+
 # 8916
 ifeq ($(call is-board-platform,msm8916),true)
 SH_MODULE := stml0xx
