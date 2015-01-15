@@ -48,10 +48,12 @@ SensorBase::SensorBase(
 }
 
 SensorBase::~SensorBase() {
-	if (data_fd >= 0)
+    if (data_fd >= 0) {
 		close(data_fd);
-	if (dev_fd >= 0)
+    }
+    if (dev_fd >= 0) {
 		close(dev_fd);
+    }
 }
 
 int SensorBase::open_device() {
@@ -77,14 +79,14 @@ int SensorBase::write_sys_attribute(
 
 	fd = open(path, O_WRONLY);
 	if (fd < 0) {
-		ALOGE("SensorBase: write_attr failed to open %s (%s)",
+        ALOGE("SensorBase::write_attr failed to open %s (%s)",
 			path, strerror(errno));
 		return -1;
 	}
 
 	amt = write(fd, value, bytes);
 	amt = ((amt == -1) ? -errno : 0);
-	ALOGE_IF(amt < 0, "SensorBase: write_int failed to write %s (%s)",
+	ALOGE_IF(amt < 0, "SensorBase::write_attr failed to write %s (%s)",
 		path, strerror(errno));
 	close(fd);
 	return amt;
@@ -100,10 +102,6 @@ int SensorBase::getFd() const {
 int SensorBase::setDelay(int32_t handle, int64_t ns) {
 	(void)handle;
 	(void)ns;
-	return 0;
-}
-
-int64_t SensorBase::getDelay() {
 	return 0;
 }
 

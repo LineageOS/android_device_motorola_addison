@@ -37,21 +37,31 @@ public:
 	AkmSensor();
 	virtual ~AkmSensor();
 
-	virtual int setEnable(int32_t handle, int enabled);
-	virtual int getEnable();
+	enum {
+		Accelerometer = 0,
+		MagneticField,
+		Orientation,
+		RotationVector,
+		numSensors
+	};
+
 	virtual int setDelay(int32_t handle, int64_t ns);
-	virtual int64_t getDelay();
+	virtual int setEnable(int32_t handle, int enabled);
 	virtual int readEvents(sensors_event_t* data, int count);
 	virtual int flush(int32_t handle);
+	void processEvent(int code, int value);
+	int setAccel(sensors_event_t* data);
 
 private:
-	int mEnabled;
-	int64_t mDelay;
+	int mEnabled[numSensors];
+	int64_t mDelay[numSensors];
 	uint32_t mPendingMask;
 	InputEventCircularReader mInputReader;
-	sensors_event_t mPendingEvents;
+	sensors_event_t mPendingEvents[numSensors];
 	char input_sysfs_path[PATH_MAX];
 	int input_sysfs_path_len;
+
+	int handle2id(int32_t handle);
 };
 
 /*****************************************************************************/

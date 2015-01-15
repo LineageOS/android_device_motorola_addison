@@ -84,10 +84,10 @@ LOCAL_SRC_FILES := \
 ifneq (,$(findstring osprey, $(strip $(TARGET_PRODUCT))))
 LOCAL_SRC_FILES := \
 		$(SH_PATH)/AkmSensor.cpp \
+                $(SH_PATH)/HubSensor.cpp \
 		$(SH_PATH)/InputEventReader.cpp \
                 $(SH_PATH)/SensorBase.cpp \
-                $(SH_PATH)/sensorhub_hal.cpp \
-		$(SH_PATH)/sensors_p_c.cpp \
+		$(SH_PATH)/SensorsPollContext.cpp \
 		$(SH_PATH)/sensors.c
 endif
 
@@ -131,7 +131,7 @@ include $(CLEAR_VARS)
 
 ifneq (,$(findstring osprey, $(strip $(TARGET_PRODUCT))))
 
-AKM_PATH := 8916_ak09912_akmd_3D
+AKM_PATH := 8916_ak09912_akmd_6D
 SMARTCOMPASS_LIB := libSmartCompass
 
 LOCAL_MODULE_TAGS := optional
@@ -140,7 +140,7 @@ LOCAL_MODULE  := akmd09912
 LOCAL_MULTILIB := 32
 
 LOCAL_C_INCLUDES := \
-        bionic/libc/kernel/common \
+        bionic/libc/kernel/uapi \
         $(LOCAL_PATH)/$(AKM_PATH) \
         $(LOCAL_PATH)/$(AKM_PATH)/$(SMARTCOMPASS_LIB)
 
@@ -151,15 +151,17 @@ LOCAL_SRC_FILES := \
         $(AKM_PATH)/Measure.c \
         $(AKM_PATH)/main.c \
         $(AKM_PATH)/misc.c \
-	$(AKM_PATH)/FST_AK09912.c
+	$(AKM_PATH)/FST_AK09912.c \
+	$(AKM_PATH)/Acc_aot.c
 
 LOCAL_CFLAGS := -DAKMD_FOR_AK09912
 LOCAL_CFLAGS += -DAKMD_AK099XX
+LOCAL_CFLAGS += -DAKMD_ACC_EXTERNAL
 LOCAL_CFLAGS += -Wall -Wextra
 LOCAL_CFLAGS += -DENABLE_AKMDEBUG=1
 #LOCAL_CFLAGS += -DAKM_LOG_ENABLE
 
-LOCAL_LDFLAGS += -L$(LOCAL_PATH)/$(AKM_PATH)/$(SMARTCOMPASS_LIB) -lAK09912WO6D
+LOCAL_LDFLAGS += -L$(LOCAL_PATH)/$(AKM_PATH)/$(SMARTCOMPASS_LIB) -lAK09912
 
 LOCAL_FORCE_STATIC_EXECUTABLE := false
 LOCAL_SHARED_LIBRARIES := libc libm libutils libcutils

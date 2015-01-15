@@ -62,12 +62,7 @@ public:
 
 	/* When this function is called, increments the reference counter. */
 	virtual int setEnable(int32_t handle, int enabled) = 0;
-	/* It returns the number of reference. */
-	virtual int getEnable() = 0;
-
 	virtual int setDelay(int32_t handle, int64_t ns);
-	virtual int64_t getDelay();
-
 	virtual int flush(int32_t handle) = 0;
 };
 
