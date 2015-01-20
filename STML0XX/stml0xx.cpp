@@ -289,46 +289,59 @@ int main(int argc, char *argv[])
             download_retries = 0;
             while((download_retries < STM_DOWNLOADRETRIES )) {
                 if( (stm_downloadFirmware(fd, filep)) >= STM_SUCCESS) {
-                    fclose(filep);
-                    filep = NULL;
-                    /* reset STM */
                     if (emode == BOOTLOADER) {
+                        /* reset STM */
+                        usleep(STM_MAX_BOOT_CHECK_DELAY_US);
                         ret = ioctl(fd, STML0XX_IOCTL_NORMALMODE, &temp);
                         printf("\n");
+
                         /* Wait until the hub is fully booted */
                         boot_check_retries = 0;
-                        while (boot_check_retries < STM_MAX_BOOT_CHECK_RETRIES) {
+                        sensorhubBooted = 0;
+                        while (boot_check_retries < STM_MAX_BOOT_CHECK_RETRIES &&
+                                !sensorhubBooted) {
+                            usleep(STM_MAX_BOOT_CHECK_DELAY_US);
+
                             ret = ioctl(fd, STML0XX_IOCTL_GET_BOOTED, &sensorhubBooted);
-                            if (sensorhubBooted) {
-                                /* hub fully booted. break out of the loop */
-                                break;
-                            } else {
-                                /* wait and retry */
-                                usleep(STM_MAX_BOOT_CHECK_DELAY_US);
-                                boot_check_retries++;
-                            }
+                            boot_check_retries++;
                         }
-                        if (stm_version_check(fd, true) == STM_VERSION_MATCH)
-                            LOGINFO("Firmware download completed successfully\n")
-                        else
-                            LOGERROR("Firmware download error\n")
                     }
                     else
                         emode = FACTORY;
-                    break;
+
+                    // If sensorhub did not successfully boot
+                    // do not break and try to flash it again
+                    if (sensorhubBooted) {
+                        LOGINFO("STML0XX Booted, Firmware download completed successfully\n")
+                        break;
+                    } else {
+                        LOGERROR("STML0XX did not boot\n");
+                    }
                 }
-                //point the file pointer to the beginning of the file for the next try
+
                 download_retries++;
-                fseek(filep, 0, SEEK_SET);
-                // Need to use sleep as msleep is not available
-                sleep(1);
+                if (download_retries < STM_DOWNLOADRETRIES) {
+                    //point the file pointer to the beginning of the file for the next try
+                    fseek(filep, 0, SEEK_SET);
+                    LOGERROR("STML0XX retry flashing: %d / %d\n", download_retries + 1,
+                            STM_DOWNLOADRETRIES);
+
+                    // Need to use sleep as msleep is not available
+                    sleep(1);
+                }
             }
 
-            if( download_retries >= STM_DOWNLOADRETRIES ) {
+            if( sensorhubBooted ) {
+                if (stm_version_check(fd, true) != STM_VERSION_MATCH)
+                    LOGERROR("STML0XX version mismatch\n")
+            } else {
                 LOGERROR("Firmware download failed.\n")
                 ret = STM_FAILURE;
                 ioctl(fd,STML0XX_IOCTL_NORMALMODE, &temp);
             }
+
+            fclose(filep);
+            filep = NULL;
         } else {
             DEBUG("No new firmware to download \n");
             /* reset STM in case for soft-reboot of device */
