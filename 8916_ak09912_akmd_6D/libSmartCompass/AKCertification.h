@@ -1,6 +1,6 @@
 /******************************************************************************
  *
- *  $Id: AKCertification.h 931 2013-01-23 09:10:21Z miyazaki.hr $
+ *  $Id: AKCertification.h 255 2014-06-12 06:04:43Z yamada.rj $
  *
  * -- Copyright Notice --
  *
@@ -25,10 +25,10 @@
 #define AKSC_INC_AKCERTIFICATION_H
 
 //========================= Type declaration  ===========================//
-#define AKSC_CI_MAX_CHARSIZE	16
-#define AKSC_CI_MAX_KEYSIZE		16
-#define AKSC_CERTIFICATION_CERTIFICATED	((int16)0x0001)
-#define	AKSC_CERTIFICATION_DENIED		((int16)0x8000)
+#define AKSC_CI_MAX_CHARSIZE    16
+#define AKSC_CI_MAX_KEYSIZE     16
+#define AKSC_CERTIFICATION_CERTIFICATED ((int16)0x0001)
+#define AKSC_CERTIFICATION_DENIED       ((int16)0x8000)
 
 //========================= Constant definition =========================//
 

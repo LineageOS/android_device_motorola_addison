@@ -1,6 +1,6 @@
 /******************************************************************************
  *
- *  $Id: AKConfigure.h 931 2013-01-23 09:10:21Z miyazaki.hr $
+ *  $Id: AKConfigure.h 255 2014-06-12 06:04:43Z yamada.rj $
  *
  * -- Copyright Notice --
  *
@@ -26,8 +26,8 @@
 
 //========================= Language configuration ===================//
 #if defined(__cplusplus)
-#define AKLIB_C_API_START	extern "C" {
-#define AKLIB_C_API_END		}
+#define AKLIB_C_API_START   extern "C" {
+#define AKLIB_C_API_END     }
 #else
 #define AKLIB_C_API_START
 #define AKLIB_C_API_END
@@ -40,12 +40,34 @@
 #if defined(AKSC_TEST_MODE)
 #define STATIC
 #else
-#define STATIC	static
+#define STATIC  static
 #endif
 
 //========================= Arithmetic Cast ==========================//
 #define AKSC_ARITHMETIC_CAST
 
+//======================== Arithmetic configuration ==================//
+// If this definition is uncommented, double type is used for
+// mathematical functions and AK's floating point type "AKSC_FLOAT".
+// Otherwise float type is used for theirs.
+// This configuration does not changes floating point calculation used
+// in AK's functions. This is intended to cut down memory.
+//#define AKSC_MATH_DOUBLE
+
+//======================== Constant value configuration ==============//
+// If this definition is uncommented, use FLT_EPSILON, which is
+// defined in <float.h>. Otherwise AK's defined value or 0 is used.
+#define AKSC_USE_STD_FLOAT
+
+//======================== Use AKM's type definition =================//
+// If this definition is uncommented, use type definition, which is
+// defined in <stdint.h>. Otherwise AK's definition is used
+//#define AKSC_USE_STD_TYPES
+
+// When AK's definition is used (i.e. AKSC_USE_STD_TYPES is commented
+// out), int32 type depends on the system architecture. If the system
+// is 64bit architecture, please uncomment below.
+#define AKSC_ARCH_64BIT
 
 #endif
 

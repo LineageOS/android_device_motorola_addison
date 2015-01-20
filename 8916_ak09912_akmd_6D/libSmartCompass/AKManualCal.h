@@ -1,6 +1,6 @@
 /******************************************************************************
  *
- *  $Id: AKManualCal.h 931 2013-01-23 09:10:21Z miyazaki.hr $
+ *  $Id: AKManualCal.h 255 2014-06-12 06:04:43Z yamada.rj $
  *
  * -- Copyright Notice --
  *
@@ -32,9 +32,9 @@
 
 //========================= Prototype of Function =======================//
 AKLIB_C_API_START
-int16 AKSC_HOffsetCal(				//(o)   : Calibration success(1), failure(0)
-	const	int16vec	hdata[],	//(i)   : Geomagnetic vectors(the size must be 3)
-			int16vec*	ho			//(o)   : Offset(5Q11)
+int16 AKSC_HOffsetCal(      //(o)   : Calibration success(1), failure(0)
+    const int16vec hdata[], //(i)   : Geomagnetic vectors(the size must be 3)
+    int16vec       *ho      //(o)   : Offset(5Q11)
 );
 
 AKLIB_C_API_END

@@ -137,7 +137,6 @@ SMARTCOMPASS_LIB := libSmartCompass
 LOCAL_MODULE_TAGS := optional
 
 LOCAL_MODULE  := akmd09912
-LOCAL_MULTILIB := 32
 
 LOCAL_C_INCLUDES := \
         bionic/libc/kernel/uapi \
