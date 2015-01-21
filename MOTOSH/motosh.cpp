@@ -26,7 +26,7 @@
 #define STM_VERSION_MISMATCH -1
 #define STM_VERSION_MATCH 1
 #define STM_DOWNLOADRETRIES 3
-#define STM_MAX_PACKET_LENGTH 256
+#define STM_MAX_PACKET_LENGTH 128
 /* 512 matches the read buffer in kernel */
 #define STM_MAX_GENERIC_DATA 512
 #define STM_MAX_GENERIC_HEADER 4
@@ -78,6 +78,7 @@ typedef enum tag_stmmode
 	TPASSIVE_MODE,
 	READWRITE,
 	LOWPOWER_MODE,
+	MASS_ERASE_PART,
 	INVALID
 }eStm_Mode;
 
@@ -159,6 +160,12 @@ int stm_getpacket( FILE ** filepointer, unsigned char * databuff)
 		}
 	}
 
+	/* packet size needs to be a multiple of 8 bytes (64 bits) */
+	while(len < STM_MAX_PACKET_LENGTH && 
+	      len % 8 > 0){
+		databuff[len] = 0xFF;
+		len++;
+	}
 	return len;
 
 }
@@ -197,10 +204,10 @@ int stm_downloadFirmware( int fd, FILE *filep)
 		int i;
 		for( i=0; i<packetlength; i++)
 			DEBUG("%02x ",packet[i]);
-#else
+#endif
 		printf(".");
 		fflush(stdout);
-#endif
+
 		ret = write(fd, packet, packetlength);
 		CHECK_RETURN_VALUE(ret,"Packet download failed\n");
 	} while(packetlength != 0);
@@ -259,6 +266,8 @@ int  main(int argc, char *argv[])
 		emode = READWRITE;
 	else if(!strcmp(argv[1], "lowpower"))
 		emode = LOWPOWER_MODE;
+	else if(!strcmp(argv[1], "masserase"))
+		emode = MASS_ERASE_PART;
 
 	/* check if its a force download */
 	if ((emode == BOOTLOADER || emode == BOOTFACTORY) && (argc == 3)) {
@@ -296,10 +305,16 @@ int  main(int argc, char *argv[])
 					if (emode == BOOTLOADER) {
 						ret = ioctl(fd, MOTOSH_IOCTL_NORMALMODE, &temp);
 						printf("\n");
-					    if (stm_version_check(fd, true) == STM_VERSION_MATCH)
-						    LOGINFO("Firmware download completed successfully\n")
-					    else
-						    LOGERROR("Firmware download error\n")
+						if (stm_version_check(fd, true) != STM_VERSION_MATCH) {
+							/* try once more */
+							printf("Retry normal mode switch\n");
+							ret = ioctl(fd, MOTOSH_IOCTL_NORMALMODE, &temp);
+						}
+
+						if (stm_version_check(fd, true) == STM_VERSION_MATCH)
+							LOGINFO("Firmware download completed successfully\n")
+						else
+							LOGERROR("Firmware download error\n")
 
 					}
 					else
@@ -525,6 +540,17 @@ int  main(int argc, char *argv[])
 		LOGERROR(" lowpower mode incorrect setting\n");
 		ret = STM_FAILURE;
 	    }
+	}
+	if(emode == MASS_ERASE_PART) {
+	    DEBUG("Ioctl call to switch to bootloader mode\n");
+	    ret = ioctl(fd, MOTOSH_IOCTL_BOOTLOADERMODE, &temp);
+	    CHECK_RETURN_VALUE(ret,"Failed to switch STM to bootloader mode\n");
+
+	    DEBUG("Ioctl call to erase flash on STM\n");
+	    ret = ioctl(fd, MOTOSH_IOCTL_MASSERASE, &temp);
+	    CHECK_RETURN_VALUE(ret,"Failed to erase STM \n");
+	    LOGINFO("Erased.\n");
+
 	}
 
 EXIT:
