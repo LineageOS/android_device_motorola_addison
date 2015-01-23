@@ -40,17 +40,18 @@ int init_sensors(hw_module_t const* module, hw_device_t** device);
 #define MIN_SENSOR_ID (0 + SENSORS_HANDLE_BASE)
 #define ID_A  (0 + SENSORS_HANDLE_BASE)  /* Accelerometer */
 #define ID_M  (1 + SENSORS_HANDLE_BASE)  /* Magnetometer */
-#define ID_OR (2 + SENSORS_HANDLE_BASE)  /* Orientation */
-#define ID_RV (3 + SENSORS_HANDLE_BASE)  /* Rotation Vector */
-#define ID_L  (4 + SENSORS_HANDLE_BASE)  /* Light */
-#define ID_P  (5 + SENSORS_HANDLE_BASE)  /* Proximity */
-#define ID_DR (6 + SENSORS_HANDLE_BASE)  /* Display Rotate */
-#define ID_FU (7 + SENSORS_HANDLE_BASE)  /* Flat Up */
-#define ID_FD (8 + SENSORS_HANDLE_BASE)  /* Flat Down */
-#define ID_S  (9 + SENSORS_HANDLE_BASE)  /* Stowed */
-#define ID_CA (10 + SENSORS_HANDLE_BASE) /* Camera Activate */
-#define ID_A2 (11 + SENSORS_HANDLE_BASE) /* Secondary Accel */
-#define MAX_SENSOR_ID (11 + SENSORS_HANDLE_BASE)
+#define ID_UM (2 + SENSORS_HANDLE_BASE)  /* Uncalibrated Magnetometer */
+#define ID_OR (3 + SENSORS_HANDLE_BASE)  /* Orientation */
+#define ID_RV (4 + SENSORS_HANDLE_BASE)  /* Rotation Vector */
+#define ID_L  (5 + SENSORS_HANDLE_BASE)  /* Light */
+#define ID_P  (6 + SENSORS_HANDLE_BASE)  /* Proximity */
+#define ID_DR (7 + SENSORS_HANDLE_BASE)  /* Display Rotate */
+#define ID_FU (8 + SENSORS_HANDLE_BASE)  /* Flat Up */
+#define ID_FD (9 + SENSORS_HANDLE_BASE)  /* Flat Down */
+#define ID_S  (10 + SENSORS_HANDLE_BASE)  /* Stowed */
+#define ID_CA (11 + SENSORS_HANDLE_BASE) /* Camera Activate */
+#define ID_A2 (12 + SENSORS_HANDLE_BASE) /* Secondary Accel */
+#define MAX_SENSOR_ID (12 + SENSORS_HANDLE_BASE)
 
 /*****************************************************************************/
 /* Sensor Hub definitions */
@@ -96,6 +97,11 @@ int init_sensors(hw_module_t const* module, hw_device_t** device);
 #define EVENT_TYPE_MAGV_Y           ABS_RZ
 #define EVENT_TYPE_MAGV_Z           ABS_THROTTLE
 #define EVENT_TYPE_MAGV_STATUS      ABS_RUDDER
+
+/* For Uncalibrated Magnetometer */
+#define EVENT_TYPE_UCMAGV_X         ABS_WHEEL
+#define EVENT_TYPE_UCMAGV_Y         ABS_GAS
+#define EVENT_TYPE_UCMAGV_Z         ABS_BRAKE
 
 /* Fusion Orientaion */
 #define EVENT_TYPE_YAW              ABS_HAT0Y

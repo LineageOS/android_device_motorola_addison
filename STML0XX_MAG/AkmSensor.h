@@ -40,13 +40,15 @@ public:
 	enum {
 		Accelerometer = 0,
 		MagneticField,
+		UncalMagneticField,
 		Orientation,
 		RotationVector,
 		numSensors
 	};
 
-	virtual int setDelay(int32_t handle, int64_t ns);
+	virtual int writeMagDelay(int64_t ns);
 	virtual int setEnable(int32_t handle, int enabled);
+	virtual int setDelay(int32_t handle, int64_t ns);
 	virtual int readEvents(sensors_event_t* data, int count);
 	virtual int flush(int32_t handle);
 	void processEvent(int code, int value);

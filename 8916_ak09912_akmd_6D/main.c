@@ -105,6 +105,8 @@ static int startClone(AKSCPRMS* prms)
 void Disp_MeasurementResultHook(AKSCPRMS* prms, const uint16 flag)
 {
 	int rbuf[AKM_YPR_DATA_SIZE] = { 0 };
+	int16vec rawmag;
+
 	/* Coordinate system is already converted to Android */
 	rbuf[0] = flag;				/* Data flag */
 	rbuf[1] = prms->m_avec.u.x;	/* Ax */
@@ -125,6 +127,16 @@ void Disp_MeasurementResultHook(AKSCPRMS* prms, const uint16 flag)
 	rbuf[13] = prms->m_quat.u.x * (-1);
 	rbuf[14] = prms->m_quat.u.z * (-1);
 	rbuf[15] = prms->m_quat.u.w;
+
+	/* Get the uncalibrated reading */
+	rawmag.u.x = prms->m_hdata[0].u.x;
+	rawmag.u.y = prms->m_hdata[0].u.y;
+	rawmag.u.z = prms->m_hdata[0].u.z;
+	ConvertCoordinate(prms->m_hlayout, &rawmag);
+	rbuf[16] = rawmag.u.x;
+	rbuf[17] = rawmag.u.y;
+	rbuf[18] = rawmag.u.z;
+
 	AKD_SetYPR(rbuf);
 
 	if (g_opmode & OPMODE_CONSOLE) {

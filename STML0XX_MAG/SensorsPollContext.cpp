@@ -122,6 +122,7 @@ int SensorsPollContext::handleToDriver(int handle) {
 		case ID_A2:
 			return sensor_hub;
 		case ID_M:
+		case ID_UM:
 		case ID_OR:
 		case ID_RV:
 			return akm;
@@ -180,12 +181,14 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
 		// Success
 		if (ret >= 0)
 			break;
-		ALOGE("poll() failed (%s)", strerror(err));
 		// EINTR is OK
-		if (err == EINTR)
+		if (err == EINTR) {
+			ALOGE("poll() restart (%s)", strerror(err));
 			continue;
-		else
+		} else {
+			ALOGE("poll() failed (%s)", strerror(err));
 			return -err;
+		}
 	}
 
 	for (int i=0 ; count && i<numSensorDrivers ; i++) {
