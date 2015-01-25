@@ -68,7 +68,7 @@ ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 # Expose secondary accel for non-user builds
 SH_CFLAGS += -D_ENABLE_ACCEL_SECONDARY
 endif
-ifneq (,$(findstring osprey, $(strip $(TARGET_PRODUCT))))
+ifneq (,$(filter lux_% osprey_%, $(strip $(TARGET_PRODUCT))))
 SH_PATH := STML0XX_MAG
 SH_CFLAGS += -D_ENABLE_MAGNETOMETER
 endif
@@ -99,7 +99,7 @@ LOCAL_SRC_FILES := \
                 $(SH_PATH)/sensors.c \
                 $(SH_PATH)/sensorhub_hal.cpp
 
-ifneq (,$(findstring osprey, $(strip $(TARGET_PRODUCT))))
+ifneq (,$(filter lux_% osprey_%, $(strip $(TARGET_PRODUCT))))
 LOCAL_SRC_FILES := \
 		$(SH_PATH)/AkmSensor.cpp \
                 $(SH_PATH)/HubSensor.cpp \
@@ -147,7 +147,7 @@ include $(BUILD_SHARED_LIBRARY)
 #########################
 include $(CLEAR_VARS)
 
-ifneq (,$(findstring osprey, $(strip $(TARGET_PRODUCT))))
+ifneq (,$(filter lux_% osprey_%, $(strip $(TARGET_PRODUCT))))
 
 AKM_PATH := 8916_ak09912_akmd_6D
 SMARTCOMPASS_LIB := libSmartCompass
@@ -185,7 +185,7 @@ LOCAL_SHARED_LIBRARIES := libc libm libutils libcutils
 
 include $(BUILD_EXECUTABLE)
 
-endif # osprey
+endif # lux osprey
 
 ###########################
 # Sensor Hub Flash loader #
