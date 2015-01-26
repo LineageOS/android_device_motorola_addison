@@ -26,7 +26,7 @@
 #define STM_VERSION_MISMATCH -1
 #define STM_VERSION_MATCH 1
 #define STM_DOWNLOADRETRIES 3
-#define STM_MAX_PACKET_LENGTH 128
+#define STM_MAX_PACKET_LENGTH 248
 /* 512 matches the read buffer in kernel */
 #define STM_MAX_GENERIC_DATA 512
 #define STM_MAX_GENERIC_HEADER 4
