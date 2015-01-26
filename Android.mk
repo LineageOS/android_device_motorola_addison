@@ -52,6 +52,13 @@ SH_LOGTAG := \"MOTOSH\"
 #SH_CFLAGS += -D_ENABLE_CHOPCHOP
 endif
 
+# 8992
+ifeq ($(call is-board-platform,msm8992),true)
+SH_MODULE := motosh
+SH_PATH := MOTOSH
+SH_LOGTAG := \"MOTOSH\"
+endif
+
 # 8916
 ifeq ($(call is-board-platform,msm8916),true)
 SH_MODULE := stml0xx
