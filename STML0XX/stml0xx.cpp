@@ -65,6 +65,7 @@ typedef enum tag_stmmode
 {
     BOOTLOADER,
     BOOTFACTORY,
+    ERASE,
     NORMAL,
     DEBUG,
     FACTORY,
@@ -231,6 +232,8 @@ int main(int argc, char *argv[])
         emode = BOOTLOADER;
     else if( !strcmp(argv[1], "bootfactory"))
         emode = BOOTFACTORY;
+    else if(!strcmp(argv[1], "erase"))
+        emode = ERASE;
     else if( !strcmp(argv[1], "normal"))
         emode = NORMAL;
     else if(!strcmp(argv[1], "tboot"))
@@ -350,6 +353,15 @@ int main(int argc, char *argv[])
             else
                 emode = FACTORY;
         }
+    }
+    if(emode == ERASE) {
+        DEBUG("Ioctl call to switch to bootloader mode\n");
+        ret = ioctl(fd, STML0XX_IOCTL_BOOTLOADERMODE, &temp);
+        CHECK_RETURN_VALUE(ret,"Failed to switch STM to bootloader mode\n");
+
+        DEBUG("Ioctl call to erase flash on STM\n");
+        ret = ioctl(fd, STML0XX_IOCTL_MASSERASE, &temp);
+        CHECK_RETURN_VALUE(ret,"Failed to erase STM \n");
     }
     if(emode == NORMAL) {
         DEBUG("Ioctl call to reset STM\n");
