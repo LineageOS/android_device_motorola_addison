@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2015 Motorola Mobility LLC
- */
-
 #include <fcntl.h>
 #include <errno.h>
 #include <math.h>

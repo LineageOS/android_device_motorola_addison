@@ -272,12 +272,22 @@ static int sensorhub_poll(struct sensorhub_device_t* device, struct sensorhub_ev
     int64_t elapsed_ms;
     uint16_t algo;
     int ret;
+    int err;
 
     ALOGD("sensorhub_poll() polling...");
-    ret = poll(&(context->data_pollfd), 1, -1);
-    if (ret < 0) {
-        ALOGE("poll() failed (%s)", strerror(errno));
-        return -errno;
+    while (true) {
+	    ret = poll(&(context->data_pollfd), 1, -1);
+            err = errno;
+            if (ret >= 0)
+                break;
+            /* EINTR is OK */
+            if (err == EINTR) {
+                ALOGE("poll() restart (%s)", strerror(err));
+                continue;
+            } else {
+                ALOGE("poll() failed (%s)", strerror(err));
+                return -err;
+            }
     }
 
     ret = read(context->data_pollfd.fd, &buff, sizeof(struct stml0xx_moto_sensor_data));

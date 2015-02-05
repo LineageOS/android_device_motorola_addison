@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-/*
- * Copyright (C) 2015 Motorola Mobility LLC
- */
+#include <float.h>
+
+#include <cutils/log.h>
 
 #include <hardware/sensors.h>
 #include <hardware/mot_sensorhub_stml0xx.h>
 
-#include "Sensors.h"
+#include "sensors.h"
 
+/*****************************************************************************/
+
+/* The SENSORS Module */
 static const struct sensor_t sSensorList[] = {
-	{ "3-axis Accelerometer",
+	{ "KXTJ2 3-axis Accelerometer",
 		"Kionix",
 		1,
 		ID_A,
@@ -40,8 +43,7 @@ static const struct sensor_t sSensorList[] = {
 		200000,
 		SENSOR_FLAG_CONTINUOUS_MODE,
 		{} },
-#ifdef _ENABLE_MAGNETOMETER
-	{ "3-axis Calibrated Magnetic field sensor",
+	{ "AK09912 3-axis Magnetic field sensor",
 		"Asahi Kasei Microdevices",
 		1,
 		ID_M,
@@ -57,7 +59,7 @@ static const struct sensor_t sSensorList[] = {
 		200000,
 		SENSOR_FLAG_CONTINUOUS_MODE,
 		{} },
-	{ "3-axis Uncalibrated Magnetic field sensor",
+	{ "AK09912 3-axis Uncalibrated Magnetic field sensor",
 		"Asahi Kasei Microdevices",
 		1,
 		ID_UM,
@@ -73,7 +75,7 @@ static const struct sensor_t sSensorList[] = {
 		200000,
 		SENSOR_FLAG_CONTINUOUS_MODE,
 		{} },
-	{ "Orientation sensor",
+	{ "AKM Orientation sensor",
 		"Asahi Kasei Microdevices",
 		1,
 		ID_OR,
@@ -90,7 +92,7 @@ static const struct sensor_t sSensorList[] = {
 		SENSOR_FLAG_CONTINUOUS_MODE,
 		{} },
 /* Don't expose rotation vector
-	{ "Rotation Vector sensor",
+	{ "AKM Rotation Vector sensor",
 		"Asahi Kasei Microdevices",
 		1,
 		ID_RV,
@@ -107,8 +109,7 @@ static const struct sensor_t sSensorList[] = {
 		SENSOR_FLAG_CONTINUOUS_MODE,
 		{} },
 */
-#endif /* _ENABLE_MAGNETOMETER */
-	{ "Ambient Light sensor",
+	{ "CT406 Light sensor",
 		"TAOS",
 		1,
 		ID_L,
@@ -124,7 +125,7 @@ static const struct sensor_t sSensorList[] = {
 		0,
 		SENSOR_FLAG_ON_CHANGE_MODE,
 		{} },
-	{ "Proximity sensor",
+	{ "CT406 Proximity sensor",
 		"TAOS",
 		1,
 		ID_P,
@@ -221,7 +222,7 @@ static const struct sensor_t sSensorList[] = {
 		SENSOR_FLAG_SPECIAL_REPORTING_MODE | SENSOR_FLAG_WAKE_UP,
 		{} },
 #ifdef _ENABLE_ACCEL_SECONDARY
-	{ "3-axis Accelerometer, Secondary",
+	{ "KXTJ2 3-axis Accelerometer, Secondary",
 		"Kionix",
 		1,
 		ID_A2,
@@ -239,3 +240,42 @@ static const struct sensor_t sSensorList[] = {
 		{} },
 #endif
 };
+
+
+static int open_sensors(const struct hw_module_t* module, const char* id,
+			struct hw_device_t** device);
+
+static int sensors__get_sensors_list(struct sensors_module_t* module,
+				     struct sensor_t const** list) 
+{
+	(void)module;
+	*list = sSensorList;
+	return ARRAY_SIZE(sSensorList);
+}
+
+static struct hw_module_methods_t sensors_module_methods = {
+	open: open_sensors
+};
+
+struct sensors_module_t HAL_MODULE_INFO_SYM = {
+	common: {
+		tag: HARDWARE_MODULE_TAG,
+		version_major: 1,
+		version_minor: 0,
+		id: SENSORS_HARDWARE_MODULE_ID,
+		name: "Motorola Sensors Module",
+		author: "Motorola",
+		methods: &sensors_module_methods,
+		dso: NULL,
+		reserved: {0},
+	},
+	get_sensors_list: sensors__get_sensors_list
+};
+
+/** Open a new instance of a sensor device using name */
+static int open_sensors(const struct hw_module_t* module, const char* id,
+			struct hw_device_t** device)
+{
+	(void)id;
+	return init_sensors(module, device);
+}
