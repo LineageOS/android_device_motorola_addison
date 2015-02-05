@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2011-2014 Motorola, Inc.
  * Copyright (C) 2008 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ */
+
+/*
+ * Copyright (C) 2011-2015 Motorola Mobility LLC
  */
 
 #include <fcntl.h>
@@ -35,6 +38,8 @@
 
 /*****************************************************************************/
 
+HubSensor HubSensor::self;
+
 HubSensor::HubSensor()
 : SensorBase(SENSORHUB_DEVICE_NAME, NULL, SENSORHUB_AS_DATA_NAME),
       mEnabled(0),
@@ -52,10 +57,12 @@ HubSensor::HubSensor()
 
     open_device();
 
+#ifdef _ENABLE_MAGNETOMETER
     for (i=0; i< NUM_FUSION_DEVICES; i++) {
         mFusionEnabled[i] = 0;
         mFusionDelay[i] = 200;
     }
+#endif
 
     if (!ioctl(dev_fd, STML0XX_IOCTL_GET_SENSORS, &flags))  {
         mEnabled = flags;
@@ -70,6 +77,11 @@ HubSensor::~HubSensor()
 {
 }
 
+HubSensor *HubSensor::getInstance()
+{
+	return &self;
+}
+
 int HubSensor::setEnable(int32_t handle, int en)
 {
     int newState  = en ? 1 : 0;
@@ -80,7 +92,13 @@ int HubSensor::setEnable(int32_t handle, int en)
     new_enabled = mEnabled;
     switch (handle) {
         case ID_A:
+#ifdef _ENABLE_MAGNETOMETER
             mFusionEnabled[ACCEL] = newState;
+#else
+            new_enabled &= ~M_ACCEL;
+            if (newState)
+                new_enabled |= M_ACCEL;
+#endif
             found = 1;
             break;
         case ID_L:
@@ -101,6 +119,7 @@ int HubSensor::setEnable(int32_t handle, int en)
                 new_enabled |= M_ACCEL2;
             found = 1;
             break;
+#ifdef _ENABLE_MAGNETOMETER
         case ID_OR:
             mFusionEnabled[ORIENTATION] = newState;
             found = 1;
@@ -109,8 +128,10 @@ int HubSensor::setEnable(int32_t handle, int en)
             mFusionEnabled[ROTATION] = newState;
             found = 1;
             break;
+#endif
     }
 
+#ifdef _ENABLE_MAGNETOMETER
     if ((handle == ID_A) || (handle == ID_OR) || (handle == ID_RV)) {
 	unsigned short delay =  200;
 
@@ -129,6 +150,7 @@ int HubSensor::setEnable(int32_t handle, int en)
         if (accel_enable)
             new_enabled |= M_ACCEL;
     }
+#endif
 
     if (found && (new_enabled != mEnabled)) {
         err = ioctl(dev_fd, STML0XX_IOCTL_SET_SENSORS, &new_enabled);
@@ -194,7 +216,11 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
     unsigned short delay = int64_t(ns) / 1000000;
     switch (handle) {
         case ID_A:
+#ifdef _ENABLE_MAGNETOMETER
                 mFusionDelay[ACCEL] = delay;
+#else
+	        err = ioctl(dev_fd, STML0XX_IOCTL_SET_ACC_DELAY, &delay);
+#endif
 		break;
         case ID_A2:
 		err = ioctl(dev_fd, STML0XX_IOCTL_SET_ACC2_DELAY, &delay);
@@ -207,16 +233,19 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
         case ID_S:
         case ID_CA:
 		break;
+#ifdef _ENABLE_MAGNETOMETER
 	case ID_OR:
                 mFusionDelay[ORIENTATION] = delay;
 		break;
 	case ID_RV:
                 mFusionDelay[ROTATION] = delay;
 		break;
+#endif
 	default:
 		err = -EINVAL;
     }
 
+#ifdef _ENABLE_MAGNETOMETER
     if ((handle == ID_A) || (handle == ID_OR) || (handle == ID_RV)) {
 	if (mFusionEnabled[ACCEL])
 		delay = mFusionDelay[ACCEL];
@@ -228,6 +257,7 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
         err = ioctl(dev_fd,  STML0XX_IOCTL_SET_ACC_DELAY, &delay);
 	ALOGE_IF(err, "Could not change delay(%s)", strerror(-err));
     }
+#endif
 
     return err;
 }

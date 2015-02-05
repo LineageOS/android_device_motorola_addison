@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/*
+ * Copyright (C) 2015 Motorola Mobility LLC
+ */
+
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -32,46 +36,21 @@
 #include <hardware/sensors.h>
 #include <hardware/mot_sensorhub_stml0xx.h>
 
-#include "sensors.h"
+#include "Sensors.h"
+#include "SensorsPollContext.h"
+#ifdef _ENABLE_MAGNETOMETER
 #include "SensorBase.h"
+#endif
 #include "AkmSensor.h"
 #include "HubSensor.h"
 
 /*****************************************************************************/
 
-struct SensorsPollContext {
-	sensors_poll_device_1_t device; // must be first
-
-	SensorsPollContext();
-	~SensorsPollContext();
-	int activate(int handle, int enabled);
-	int setDelay(int handle, int64_t ns);
-	int pollEvents(sensors_event_t* data, int count);
-	int batch(int handle, int flags, int64_t ns, int64_t timeout);
-	int flush(int handle);
-
-private:
-	enum {
-		sensor_hub = 0,
-		akm        = 1,
-		numSensorDrivers,
-		numFds,
-	};
-
-	static const size_t wake = numFds - 1;
-	static const char WAKE_MESSAGE = 'W';
-	struct pollfd mPollFds[numFds];
-	int mWritePipeFd;
-	SensorBase* mSensors[numSensorDrivers];
-
-	int handleToDriver(int handle);
-};
-
-/*****************************************************************************/
+SensorsPollContext SensorsPollContext::self;
 
 SensorsPollContext::SensorsPollContext()
 {
-	mSensors[sensor_hub] = new(std::nothrow) HubSensor();
+	mSensors[sensor_hub] = HubSensor::getInstance();
 	if (mSensors[sensor_hub]) {
 		mPollFds[sensor_hub].fd = mSensors[sensor_hub]->getFd();
 		mPollFds[sensor_hub].events = POLLIN;
@@ -80,7 +59,8 @@ SensorsPollContext::SensorsPollContext()
 		ALOGE("out of memory: new failed for HubSensor");
 	}
 
-	mSensors[akm] = new(std::nothrow) AkmSensor();
+#ifdef _ENABLE_MAGNETOMETER
+	mSensors[akm] = AkmSensor::getInstance();
 	if (mSensors[akm]) {
 		mPollFds[akm].fd = mSensors[akm]->getFd();
 		mPollFds[akm].events = POLLIN;
@@ -99,17 +79,27 @@ SensorsPollContext::SensorsPollContext()
 	mPollFds[wake].fd = wakeFds[0];
 	mPollFds[wake].events = POLLIN;
 	mPollFds[wake].revents = 0;
+#endif
 }
 
-SensorsPollContext::~SensorsPollContext() {
+SensorsPollContext::~SensorsPollContext()
+{
 	for (int i=0 ; i<numSensorDrivers ; i++) {
 		delete mSensors[i];
 	}
+#ifdef _ENABLE_MAGNETOMETER
 	close(mPollFds[wake].fd);
 	close(mWritePipeFd);
+#endif
 }
 
-int SensorsPollContext::handleToDriver(int handle) {
+SensorsPollContext *SensorsPollContext::getInstance()
+{
+	return &self;
+}
+
+int SensorsPollContext::handleToDriver(int handle)
+{
 	switch (handle) {
 		case ID_A:
 		case ID_L:
@@ -121,16 +111,19 @@ int SensorsPollContext::handleToDriver(int handle) {
 		case ID_CA:
 		case ID_A2:
 			return sensor_hub;
+#ifdef _ENABLE_MAGNETOMETER
 		case ID_M:
 		case ID_UM:
 		case ID_OR:
 		case ID_RV:
 			return akm;
+#endif
 	}
 	return -EINVAL;
 }
 
-int SensorsPollContext::activate(int handle, int enabled) {
+int SensorsPollContext::activate(int handle, int enabled)
+{
 	int drv = handleToDriver(handle);
 	int err = 0;
 
@@ -139,6 +132,7 @@ int SensorsPollContext::activate(int handle, int enabled) {
 
 	err = mSensors[drv]->setEnable(handle, enabled);
 
+#ifdef _ENABLE_MAGNETOMETER
 	if (!err && ((handle == ID_OR) || (handle == ID_RV))) {
 		err = mSensors[sensor_hub]->setEnable(handle, enabled);
 	}
@@ -148,11 +142,13 @@ int SensorsPollContext::activate(int handle, int enabled) {
 		int result = write(mWritePipeFd, &wakeMessage, 1);
 		ALOGE_IF(result<0, "error sending wake message (%s)", strerror(errno));
 	}
+#endif
 
 	return err;
 }
 
-int SensorsPollContext::setDelay(int handle, int64_t ns) {
+int SensorsPollContext::setDelay(int handle, int64_t ns)
+{
 	int drv = handleToDriver(handle);
 	int err = 0;
 
@@ -161,9 +157,11 @@ int SensorsPollContext::setDelay(int handle, int64_t ns) {
 
 	err = mSensors[drv]->setDelay(handle, ns);
 
+#ifdef _ENABLE_MAGNETOMETER
 	if (!err && ((handle == ID_OR) || (handle == ID_RV))) {
 		err = mSensors[sensor_hub]->setDelay(handle, ns);
 	}
+#endif
 
 	return err;
 }
@@ -200,6 +198,7 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
 			data += nb;
 			mPollFds[i].revents = 0;
 
+#ifdef _ENABLE_MAGNETOMETER
 			if ((0 != nb) && (sensor_hub == i)) {
 				sensors_event_t* sensor_data = data - nb;
 				for (int j=0; j<nb; j++) {
@@ -209,9 +208,11 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
 					sensor_data--;
 				}
 			}
+#endif
 		}
 	}
 
+#ifdef _ENABLE_MAGNETOMETER
 	if (mPollFds[wake].revents & POLLIN) {
 		char msg;
 		int result = read(mPollFds[wake].fd, &msg, 1);
@@ -223,6 +224,7 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
 			int(msg));
 		mPollFds[wake].revents = 0;
 	}
+#endif
 
 	return nbEvents;
 }
@@ -237,75 +239,4 @@ int SensorsPollContext::batch(int handle, int flags, int64_t ns, int64_t timeout
 int SensorsPollContext::flush(int handle)
 {
 	return mSensors[sensor_hub]->flush(handle);
-}
-
-/*****************************************************************************/
-
-static int poll__close(struct hw_device_t *dev)
-{
-	SensorsPollContext *ctx = (SensorsPollContext *)dev;
-	if (ctx) {
-		delete ctx;
-	}
-	return 0;
-}
-
-static int poll__activate(struct sensors_poll_device_t *dev,
-	int handle, int enabled) {
-	SensorsPollContext *ctx = (SensorsPollContext *)dev;
-	return ctx->activate(handle, enabled);
-}
-
-static int poll__setDelay(struct sensors_poll_device_t *dev,
-	int handle, int64_t ns) {
-	SensorsPollContext *ctx = (SensorsPollContext *)dev;
-	return ctx->setDelay(handle, ns);
-}
-
-static int poll__poll(struct sensors_poll_device_t *dev,
-	sensors_event_t* data, int count) {
-	SensorsPollContext *ctx = (SensorsPollContext *)dev;
-	return ctx->pollEvents(data, count);
-}
-
-static int poll__batch(sensors_poll_device_1_t *dev,
-		int handle, int flags, int64_t ns, int64_t timeout) {
-	SensorsPollContext *ctx = (SensorsPollContext *)dev;
-	return ctx->batch(handle, flags, ns, timeout);
-}
-
-static int poll__flush(sensors_poll_device_1_t *dev,
-		int handle) {
-	SensorsPollContext *ctx = (SensorsPollContext *)dev;
-	return ctx->flush(handle);
-}
-
-/*****************************************************************************/
-
-/** Open a new instance of a sensor device using name */
-int init_sensors(hw_module_t const* module, hw_device_t** device)
-{
-	int status = -EINVAL;
-
-	SensorsPollContext *dev = new(std::nothrow) SensorsPollContext();
-	if (dev) {
-		memset(&dev->device, 0, sizeof(sensors_poll_device_1_t));
-
-		dev->device.common.tag      = HARDWARE_DEVICE_TAG;
-		dev->device.common.version  = SENSORS_DEVICE_API_VERSION_1_3;
-		dev->device.common.module   = const_cast<hw_module_t*>(module);
-		dev->device.common.close    = poll__close;
-		dev->device.activate        = poll__activate;
-		dev->device.setDelay        = poll__setDelay;
-		dev->device.poll            = poll__poll;
-		dev->device.batch           = poll__batch;
-		dev->device.flush           = poll__flush;
-
-		*device = &dev->device.common;
-		status = 0;
-	} else {
-		ALOGE("out of memory: new failed for SensorsPollContext");
-	}
-
-	return status;
 }

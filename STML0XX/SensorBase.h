@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/*
+ * Copyright (C) 2015 Motorola Mobility LLC
+ */
+
 #ifndef ANDROID_SENSOR_BASE_H
 #define ANDROID_SENSOR_BASE_H
 
@@ -29,6 +33,23 @@
 struct sensors_event_t;
 
 class SensorBase {
+public:
+	SensorBase(
+		const char* dev_name,
+		const char* data_name,
+		const char* mot_data_name);
+
+	virtual ~SensorBase();
+
+	virtual int readEvents(sensors_event_t* data, int count) = 0;
+	virtual bool hasPendingEvents() const;
+	virtual int getFd() const;
+
+	/* When this function is called, increments the reference counter. */
+	virtual int setEnable(int32_t handle, int enabled) = 0;
+	virtual int setDelay(int32_t handle, int64_t ns);
+	virtual int flush(int32_t handle) = 0;
+
 protected:
 	const char* dev_name;
 	const char* data_name;
@@ -47,23 +68,6 @@ protected:
 	int close_device();
 	int write_sys_attribute(
 		char const *path, char const *value, int bytes);
-
-public:
-	SensorBase(
-		const char* dev_name,
-		const char* data_name,
-		const char* mot_data_name);
-
-	virtual ~SensorBase();
-
-	virtual int readEvents(sensors_event_t* data, int count) = 0;
-	virtual bool hasPendingEvents() const;
-	virtual int getFd() const;
-
-	/* When this function is called, increments the reference counter. */
-	virtual int setEnable(int32_t handle, int enabled) = 0;
-	virtual int setDelay(int32_t handle, int64_t ns);
-	virtual int flush(int32_t handle) = 0;
 };
 
 /*****************************************************************************/

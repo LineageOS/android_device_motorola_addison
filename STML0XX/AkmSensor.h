@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/*
+ * Copyright (C) 2015 Motorola Mobility LLC
+ */
+
 #ifndef ANDROID_AKM_SENSOR_H
 #define ANDROID_AKM_SENSOR_H
 
@@ -24,7 +28,7 @@
 
 #include <linux/limits.h>
 
-#include "sensors.h"
+#include "Sensors.h"
 #include "SensorBase.h"
 #include "InputEventReader.h"
 
@@ -46,6 +50,7 @@ public:
 		numSensors
 	};
 
+	static AkmSensor* getInstance();
 	virtual int writeMagDelay(int64_t ns);
 	virtual int setEnable(int32_t handle, int enabled);
 	virtual int setDelay(int32_t handle, int64_t ns);
@@ -55,6 +60,7 @@ public:
 	int setAccel(sensors_event_t* data);
 
 private:
+	static AkmSensor self;
 	int mEnabled[numSensors];
 	int64_t mDelay[numSensors];
 	uint32_t mPendingMask;

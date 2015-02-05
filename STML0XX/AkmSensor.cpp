@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/*
+ * Copyright (C) 2015 Motorola Mobility LLC
+ */
+
 #include <fcntl.h>
 #include <errno.h>
 #include <math.h>
@@ -31,6 +35,8 @@
 #define AKM_SYSFS_PATH	"/sys/class/compass/akm09912/"
 
 /*****************************************************************************/
+
+AkmSensor AkmSensor::self;
 
 AkmSensor::AkmSensor()
 : SensorBase(NULL, "compass", NULL),
@@ -81,6 +87,11 @@ AkmSensor::~AkmSensor()
 	for (int i=0; i<numSensors; i++) {
 		setEnable(i, 0);
 	}
+}
+
+AkmSensor *AkmSensor::getInstance()
+{
+	return &self;
 }
 
 int AkmSensor::writeMagDelay(int64_t ns)

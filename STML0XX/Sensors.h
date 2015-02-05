@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/*
+ * Copyright (C) 2015 Motorola Mobility LLC
+ */
+
 #ifndef ANDROID_SENSORS_H
 #define ANDROID_SENSORS_H
 
@@ -31,27 +35,30 @@
 
 __BEGIN_DECLS
 
-int init_sensors(hw_module_t const* module, hw_device_t** device);
-
 /*****************************************************************************/
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
 #define MIN_SENSOR_ID (0 + SENSORS_HANDLE_BASE)
 #define ID_A  (0 + SENSORS_HANDLE_BASE)  /* Accelerometer */
-#define ID_M  (1 + SENSORS_HANDLE_BASE)  /* Magnetometer */
-#define ID_UM (2 + SENSORS_HANDLE_BASE)  /* Uncalibrated Magnetometer */
-#define ID_OR (3 + SENSORS_HANDLE_BASE)  /* Orientation */
-#define ID_RV (4 + SENSORS_HANDLE_BASE)  /* Rotation Vector */
-#define ID_L  (5 + SENSORS_HANDLE_BASE)  /* Light */
-#define ID_P  (6 + SENSORS_HANDLE_BASE)  /* Proximity */
-#define ID_DR (7 + SENSORS_HANDLE_BASE)  /* Display Rotate */
-#define ID_FU (8 + SENSORS_HANDLE_BASE)  /* Flat Up */
-#define ID_FD (9 + SENSORS_HANDLE_BASE)  /* Flat Down */
-#define ID_S  (10 + SENSORS_HANDLE_BASE)  /* Stowed */
-#define ID_CA (11 + SENSORS_HANDLE_BASE) /* Camera Activate */
-#define ID_A2 (12 + SENSORS_HANDLE_BASE) /* Secondary Accel */
+#define ID_L  (1 + SENSORS_HANDLE_BASE)  /* Light */
+#define ID_P  (2 + SENSORS_HANDLE_BASE)  /* Proximity */
+#define ID_DR (3 + SENSORS_HANDLE_BASE)  /* Display Rotate */
+#define ID_FU (4 + SENSORS_HANDLE_BASE)  /* Flat Up */
+#define ID_FD (5 + SENSORS_HANDLE_BASE)  /* Flat Down */
+#define ID_S  (6 + SENSORS_HANDLE_BASE)  /* Stowed */
+#define ID_CA (7 + SENSORS_HANDLE_BASE)  /* Camera Activate */
+#define ID_A2 (8 + SENSORS_HANDLE_BASE)  /* Secondary Accel */
+#ifdef _ENABLE_MAGNETOMETER
+#define ID_M  (9 + SENSORS_HANDLE_BASE)  /* Magnetometer */
+#define ID_UM (10 + SENSORS_HANDLE_BASE) /* Uncalibrated Magnetometer */
+#define ID_OR (11 + SENSORS_HANDLE_BASE) /* Orientation */
+#define ID_RV (12 + SENSORS_HANDLE_BASE) /* Rotation Vector */
+
 #define MAX_SENSOR_ID (12 + SENSORS_HANDLE_BASE)
+#else
+#define MAX_SENSOR_ID (8 + SENSORS_HANDLE_BASE)
+#endif
 
 /*****************************************************************************/
 /* Sensor Hub definitions */
@@ -83,6 +90,8 @@ int init_sensors(hw_module_t const* module, hw_device_t** device);
 #define FLAT_DETECTED               (1.0f)
 
 /*****************************************************************************/
+
+#ifdef _ENABLE_MAGNETOMETER
 
 /* AKM Definitions */
 
@@ -130,6 +139,8 @@ int init_sensors(hw_module_t const* module, hw_device_t** device);
 #define CONVERT_RV					CONVERT_Q14
 
 #define SENSOR_STATE_MASK           (0x7FFF)
+
+#endif /* _ENABLE_MAGNETOMETER */
 
 /*****************************************************************************/
 
