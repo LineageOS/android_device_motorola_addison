@@ -142,7 +142,14 @@ static const struct sensor_t sSensorList[] = {
                 "Motorola",
                 1, SENSORS_HANDLE_BASE+ID_CHOPCHOP_GESTURE,
                 SENSOR_TYPE_CHOPCHOP_GESTURE, USHRT_MAX*1.0f, 1.0f, 0.0f, 0, 0, 0, "",
-                "", 0, SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP, {0,0} },
+                "", 0, SENSOR_FLAG_SPECIAL_REPORTING_MODE | SENSOR_FLAG_WAKE_UP, {0,0} },
+#endif
+#ifdef _ENABLE_LIFT
+    { "Lift Gesture",
+                "Motorola",
+                1, SENSORS_HANDLE_BASE+ID_LIFT_GESTURE,
+                SENSOR_TYPE_LIFT_GESTURE, USHRT_MAX*1.0f, 1.0f, 0.0f, 0, 0, 0, "",
+                "", 0, SENSOR_FLAG_SPECIAL_REPORTING_MODE | SENSOR_FLAG_WAKE_UP, {0,0} },
 #endif
 };
 

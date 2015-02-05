@@ -69,7 +69,8 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 #define ID_UNCALIB_MAG   (25) /* Uncalibrated Magenetometer */
 #define ID_IR_OBJECT (26) /* IR Object Detect */
 #define ID_CHOPCHOP_GESTURE (27) /* ChopChop Gesture */
-#define MAX_SENSOR_ID (27)
+#define ID_LIFT_GESTURE (28) /* Lift Gesture */
+#define MAX_SENSOR_ID (28)
 
 /*****************************************************************************/
 

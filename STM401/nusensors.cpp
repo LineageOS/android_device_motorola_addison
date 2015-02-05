@@ -90,6 +90,9 @@ private:
 #ifdef _ENABLE_CHOPCHOP
             case ID_CHOPCHOP_GESTURE:
 #endif
+#ifdef _ENABLE_LIFT
+            case ID_LIFT_GESTURE:
+#endif
                 return accelgyromag;
         }
         return -EINVAL;
