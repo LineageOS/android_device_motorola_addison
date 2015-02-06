@@ -164,7 +164,7 @@ int sensors_poll_context_t::setDelay(int handle, int64_t ns) {
     int drv = handleToDriver(handle);
 
     if (handle == ID_O) {
-        setDelay_sub(ID_M, ns);
+        setDelay_sub(ID_O, ns);
         err = mSensors[handleToDriver(ID_A)]->setDelay(handle, ns);
     } else if (handle == ID_M)
         err = setDelay_sub(handle, ns);
