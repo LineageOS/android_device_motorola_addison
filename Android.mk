@@ -69,7 +69,6 @@ ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 SH_CFLAGS += -D_ENABLE_ACCEL_SECONDARY
 endif
 ifneq (,$(filter lux_% osprey_%, $(strip $(TARGET_PRODUCT))))
-SH_PATH := STML0XX_MAG
 SH_CFLAGS += -D_ENABLE_MAGNETOMETER
 endif
 endif
@@ -93,21 +92,31 @@ include $(CLEAR_VARS)
 LOCAL_CFLAGS := -DLOG_TAG=\"MotoSensors\"
 LOCAL_CFLAGS += $(SH_CFLAGS)
 
+ifneq (,$(filter surnia_% otus_% lux_% osprey_%, $(strip $(TARGET_PRODUCT))))
+# Sensor HAL file for M0 hub products
 LOCAL_SRC_FILES := \
-                SensorBase.cpp \
-                $(SH_PATH)/nusensors.cpp \
-                $(SH_PATH)/sensors.c \
-                $(SH_PATH)/sensorhub_hal.cpp
+                $(SH_PATH)/SensorBase.cpp \
+                $(SH_PATH)/HubSensor.cpp \
+		$(SH_PATH)/SensorHal.cpp
 
 ifneq (,$(filter lux_% osprey_%, $(strip $(TARGET_PRODUCT))))
+# Additional Sensor HAL file for M0 hub products with magnetometer
+LOCAL_SRC_FILES += \
+		$(SH_PATH)/AkmSensor.cpp  \
+		$(SH_PATH)/InputEventReader.cpp
+endif /* lux || osprey */
+
+# This file must be last
+LOCAL_SRC_FILES += \
+		$(SH_PATH)/SensorsPollContext.cpp
+else /* surnia || otus || lux || osprey */
+# Sensor HAL files for M4 and L4 products
 LOCAL_SRC_FILES := \
-		$(SH_PATH)/AkmSensor.cpp \
-                $(SH_PATH)/HubSensor.cpp \
-		$(SH_PATH)/InputEventReader.cpp \
-                $(SH_PATH)/SensorBase.cpp \
-		$(SH_PATH)/SensorsPollContext.cpp \
-		$(SH_PATH)/sensors.c
-endif
+		SensorBase.cpp \
+		$(SH_PATH)/nusensors.cpp \
+		$(SH_PATH)/sensors.c \
+		$(SH_PATH)/sensorhub_hal.cpp
+endif /* surnia || otus || lux || osprey */
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SH_PATH) \
                     external/zlib

@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/*
+ * Copyright (C) 2015 Motorola Mobility LLC
+ */
+
 #ifndef ANDROID_HUB_SENSOR_H
 #define ANDROID_HUB_SENSOR_H
 
@@ -28,7 +32,7 @@
 
 #include "linux/stml0xx.h"
 
-#include "nusensors.h"
+#include "Sensors.h"
 #include "SensorBase.h"
 
 /*****************************************************************************/
@@ -65,23 +69,38 @@ struct input_event;
 
 class HubSensor : public SensorBase {
 public:
-            HubSensor();
-    virtual ~HubSensor();
+	HubSensor();
+	virtual ~HubSensor();
 
-    virtual int setDelay(int32_t handle, int64_t ns);
-    virtual int enable(int32_t handle, int enabled);
-    virtual int readEvents(sensors_event_t* data, int count);
-    virtual int flush(int32_t handle);
+	static HubSensor* getInstance();
+	virtual int setEnable(int32_t handle, int enabled);
+	virtual int setDelay(int32_t handle, int64_t ns);
+	virtual int readEvents(sensors_event_t* data, int count);
+	virtual int flush(int32_t handle);
 
 private:
-    int update_delay();
-    uint32_t mEnabled;
-    uint32_t mWakeEnabled;
-    uint32_t mPendingMask;
-    uint32_t mFlushEnabled;
-    uint8_t mErrorCnt[ERROR_TYPES];
-    gzFile open_dropbox_file(const char* timestamp, const char* dst, const int flags);
-    short capture_dump(char* timestamp, const int id, const char* dst, const int flags);
+#ifdef _ENABLE_MAGNETOMETER
+	typedef enum fusion_enum
+	{
+		ACCEL,
+		ORIENTATION,
+		ROTATION,
+		NUM_FUSION_DEVICES
+	} Fusion_Device;
+
+	uint32_t mFusionEnabled[NUM_FUSION_DEVICES];
+	unsigned short mFusionDelay[NUM_FUSION_DEVICES];
+#endif
+
+	static HubSensor self;
+	uint32_t mEnabled;
+	uint32_t mWakeEnabled;
+	uint32_t mPendingMask;
+	uint32_t mFlushEnabled;
+
+	uint8_t mErrorCnt[ERROR_TYPES];
+	gzFile open_dropbox_file(const char* timestamp, const char* dst, const int flags);
+	short capture_dump(char* timestamp, const int id, const char* dst, const int flags);
 };
 
 /*****************************************************************************/
