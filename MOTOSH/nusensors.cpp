@@ -147,6 +147,9 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
     if(mPollFds[accelgyromag].revents & POLLIN) {
         SensorBase* const sensor(mSensors[accelgyromag]);
         int nb = sensor->readEvents(data, count);
+        // Need to relay any errors upward.
+        if (nb < 0)
+            return nb;
         count -= nb;
         nbEvents += nb;
         data += nb;

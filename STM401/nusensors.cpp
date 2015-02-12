@@ -147,6 +147,9 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
     if(mPollFds[accelgyromag].revents & POLLIN) {
         SensorBase* const sensor(mSensors[accelgyromag]);
         int nb = sensor->readEvents(data, count);
+        // Need to relay any errors upward.
+        if (nb < 0)
+            return nb;
         count -= nb;
         nbEvents += nb;
         data += nb;
@@ -156,7 +159,7 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
     return nbEvents;
 }
 
-int sensors_poll_context_t::batch(int handle, int flags, int64_t ns, int64_t timeout)
+int sensors_poll_context_t::batch(int handle, int /*flags*/, int64_t ns, int64_t /*timeout*/)
 {
     return setDelay(handle, ns);
 }

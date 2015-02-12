@@ -272,8 +272,14 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
     struct timeval timeutc;
     static long int sent_bug2go_sec = 0;
 
-    if (count < 1)
+    if (!data) {
+        ALOGE("HubSensor::readEvents - null data buffer");
         return -EINVAL;
+    }
+    if (count < 1) {
+        ALOGE("HubSensor::readEvents - bad count %d", count);
+        return -EINVAL;
+    }
 
     while (count && ((ret = read(data_fd, &buff, sizeof(struct stml0xx_android_sensor_data))) != 0)) {
         /* Sensorhub reset occurred, upload a bug2go if its been at least 10mins since previous bug2go*/
