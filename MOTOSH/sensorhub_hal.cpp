@@ -57,10 +57,10 @@ HubSensor::HubSensor()
 
     memset(mMagCal, 0, sizeof(mMagCal));
     memset(mErrorCnt, 0, sizeof(mErrorCnt));
-    ALOGE("Sensorhub hal created");
+    ALOGI("Sensorhub hal created");
 
     open_device();
-#if 0
+
     if (!ioctl(dev_fd, MOTOSH_IOCTL_GET_SENSORS, &flags))  {
         mEnabled = flags;
     }
@@ -79,7 +79,6 @@ HubSensor::HubSensor()
            ALOGE("Can't send Mag Cal data");
         }
     }
-#endif
 }
 
 HubSensor::~HubSensor()
