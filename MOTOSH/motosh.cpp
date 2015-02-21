@@ -305,17 +305,17 @@ int  main(int argc, char *argv[])
 					if (emode == BOOTLOADER) {
 						ret = ioctl(fd, MOTOSH_IOCTL_NORMALMODE, &temp);
 						printf("\n");
+						// IOCTLS will be briefly blocked during part reset
+						sleep(1);
 						if (stm_version_check(fd, true) != STM_VERSION_MATCH) {
 							/* try once more */
-							printf("Retry normal mode switch\n");
-							ret = ioctl(fd, MOTOSH_IOCTL_NORMALMODE, &temp);
-						}
-
-						if (stm_version_check(fd, true) == STM_VERSION_MATCH)
+							sleep(2);
+							if (stm_version_check(fd, true) == STM_VERSION_MATCH)
+								LOGINFO("Firmware download completed successfully\n")
+							else
+								LOGERROR("Firmware download error\n")
+						} else
 							LOGINFO("Firmware download completed successfully\n")
-						else
-							LOGERROR("Firmware download error\n")
-
 					}
 					else
 						emode = FACTORY;
