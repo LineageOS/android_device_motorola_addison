@@ -30,7 +30,7 @@
 
 #include <linux/android_alarm.h>
 #include <linux/input.h>
-#include <motosh.h>
+#include <linux/motosh.h>
 
 #include <sys/ioctl.h>
 #include <sys/poll.h>

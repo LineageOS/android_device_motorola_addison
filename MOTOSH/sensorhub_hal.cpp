@@ -25,7 +25,7 @@
 #include <dlfcn.h>
 #include <limits.h>
 
-#include <motosh.h>
+#include <linux/motosh.h>
 
 #include <cutils/log.h>
 

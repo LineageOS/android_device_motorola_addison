@@ -120,17 +120,21 @@ LOCAL_SRC_FILES := \
 		$(SH_PATH)/sensorhub_hal.cpp
 endif /* surnia || otus || lux || osprey */
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SH_PATH) \
-                    external/zlib
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SH_PATH)
+LOCAL_C_INCLUDES += external/zlib
 
-LOCAL_C_INCLUDES += bionic/libc/kernel/common
+ifeq ($(SH_MODULE), motosh)
+	LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
+	# Need the UAPI output directory to be populated with motosh.h
+	LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+else
+	LOCAL_C_INCLUDES += bionic/libc/kernel/common
+endif # SH_MODULE == "motosh"
 
 LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_MODULE_TAGS := optional
 LOCAL_SHARED_LIBRARIES := liblog libcutils libz libdl
-LOCAL_C_INCLUDES := external/zlib \
-                    bionic/libc/kernel/common
 LOCAL_MODULE := sensors.$(TARGET_BOARD_PLATFORM)
 
 include $(BUILD_SHARED_LIBRARY)
@@ -145,7 +149,14 @@ include $(CLEAR_VARS)
 LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_SRC_FILES := $(SH_PATH)/sensorhub.c
-LOCAL_C_INCLUDES := bionic/libc/kernel/common
+
+ifeq ($(SH_MODULE), motosh)
+	LOCAL_C_INCLUDES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
+	# Need the UAPI output directory to be populated with motosh.h
+	LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+else
+	LOCAL_C_INCLUDES := bionic/libc/kernel/common
+endif # SH_MODULE == "motosh"
 
 LOCAL_SHARED_LIBRARIES := libcutils libc
 LOCAL_MODULE := sensorhub.$(TARGET_BOARD_PLATFORM)
@@ -222,7 +233,15 @@ LOCAL_SRC_FILES:= $(SH_PATH)/$(SH_MODULE).cpp
 LOCAL_MODULE:= $(SH_MODULE)
 #LOCAL_CFLAGS+= -D_DEBUG
 LOCAL_SHARED_LIBRARIES := libcutils libc
-LOCAL_C_INCLUDES := bionic/libc/kernel/common
+ifeq ($(SH_MODULE), motosh)
+	LOCAL_C_INCLUDES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
+	# Need the UAPI output directory to be populated with motosh.h
+	LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+else
+	# For other flash loaders still relying on bionic
+	LOCAL_C_INCLUDES += bionic/libc/kernel/common
+endif # SH_MODULE == "motosh"
+
 include $(BUILD_EXECUTABLE)
 
 ###########################################
