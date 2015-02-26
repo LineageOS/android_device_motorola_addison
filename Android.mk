@@ -122,10 +122,14 @@ endif /* surnia || otus || lux || osprey */
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SH_PATH)
 LOCAL_C_INCLUDES += external/zlib
-LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
 
-# Need the UAPI output directory to be populated with motosh.h
-LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+ifeq ($(SH_MODULE), motosh)
+	LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
+	# Need the UAPI output directory to be populated with motosh.h
+	LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+else
+	LOCAL_C_INCLUDES += bionic/libc/kernel/common
+endif # SH_MODULE == "motosh"
 
 LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_RELATIVE_PATH := hw
