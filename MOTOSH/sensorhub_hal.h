@@ -26,7 +26,7 @@
 #include <time.h>
 #include <private/android_filesystem_config.h>
 
-#include <linux/motosh.h>
+#include "motosh.h"
 
 #include "nusensors.h"
 #include "SensorBase.h"

@@ -14,7 +14,7 @@
 #include <fcntl.h>
 #include <cutils/log.h>
 #include <cutils/properties.h>
-#include <linux/motosh.h>
+#include "motosh.h"
 
 /******************************* # defines **************************************/
 #define STM_DRIVER "/dev/motosh"
