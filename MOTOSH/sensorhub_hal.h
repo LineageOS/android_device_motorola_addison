@@ -37,7 +37,7 @@
 #define SENSORHUB_AS_DATA_NAME      "/dev/motosh_as"
 
 #define SENSORS_EVENT_T_SIZE sizeof(sensors_event_t);
-#define MAG_CAL_FILE "/data/misc/akmd_set.txt"
+#define MAG_CAL_FILE "/data/misc/sensorhub/akmd_set.txt"
 #define DROPBOX_DIR "/data/system/dropbox-add"
 #define DROPBOX_TAG "SENSOR_HUB"
 #define SENSORHUB_DUMPFILE  "sensor_hub"
