@@ -72,6 +72,7 @@ SH_CFLAGS += -D_ENABLE_ACCEL_SECONDARY
 endif
 ifneq (,$(filter lux_% osprey_%, $(strip $(TARGET_PRODUCT))))
 SH_CFLAGS += -D_ENABLE_MAGNETOMETER
+SH_CFLAGS += -D_ENABLE_LIFT
 endif
 endif
 

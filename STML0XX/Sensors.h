@@ -39,26 +39,28 @@ __BEGIN_DECLS
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
-#define MIN_SENSOR_ID (0 + SENSORS_HANDLE_BASE)
-#define ID_A  (0 + SENSORS_HANDLE_BASE)  /* Accelerometer */
-#define ID_L  (1 + SENSORS_HANDLE_BASE)  /* Light */
-#define ID_P  (2 + SENSORS_HANDLE_BASE)  /* Proximity */
-#define ID_DR (3 + SENSORS_HANDLE_BASE)  /* Display Rotate */
-#define ID_FU (4 + SENSORS_HANDLE_BASE)  /* Flat Up */
-#define ID_FD (5 + SENSORS_HANDLE_BASE)  /* Flat Down */
-#define ID_S  (6 + SENSORS_HANDLE_BASE)  /* Stowed */
-#define ID_CA (7 + SENSORS_HANDLE_BASE)  /* Camera Activate */
-#define ID_A2 (8 + SENSORS_HANDLE_BASE)  /* Secondary Accel */
+typedef enum sensor_handle {
+	MIN_SENSOR_ID,
+	ID_A,	/* Accelerometer */
+	ID_L,	/* Light */
+	ID_P,	/* Proximity */
+	ID_DR,	/* Display Rotate */
+	ID_FU,	/* Flat Up */
+	ID_FD,	/* Flat Down */
+	ID_S,	/* Stowed */
+	ID_CA,	/* Camera Activate */
+	ID_A2,	/* Secondary Accel */
 #ifdef _ENABLE_MAGNETOMETER
-#define ID_M  (9 + SENSORS_HANDLE_BASE)  /* Magnetometer */
-#define ID_UM (10 + SENSORS_HANDLE_BASE) /* Uncalibrated Magnetometer */
-#define ID_OR (11 + SENSORS_HANDLE_BASE) /* Orientation */
-#define ID_RV (12 + SENSORS_HANDLE_BASE) /* Rotation Vector */
-
-#define MAX_SENSOR_ID (12 + SENSORS_HANDLE_BASE)
-#else
-#define MAX_SENSOR_ID (8 + SENSORS_HANDLE_BASE)
+	ID_M,	/* Magnetometer */
+	ID_UM,	/* Uncalibrated Magnetometer */
+	ID_OR,	/* Orientation */
+	ID_RV, 	/* Rotation Vector */
 #endif
+#ifdef _ENABLE_LIFT
+	ID_LF, 	/* Lift Gesture */
+#endif
+	MAX_SENSOR_ID
+} sensor_handle_t;
 
 /*****************************************************************************/
 /* Sensor Hub definitions */

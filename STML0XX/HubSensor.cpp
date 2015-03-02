@@ -193,6 +193,14 @@ int HubSensor::setEnable(int32_t handle, int en)
                 new_enabled |= M_CAMERA_ACT;
             found = 1;
             break;
+#ifdef _ENABLE_LIFT
+        case ID_LF:
+            new_enabled &= ~M_LIFT;
+            if (newState)
+                new_enabled |= M_LIFT;
+            found = 1;
+            break;
+#endif
     }
 
     if (found && (new_enabled != mWakeEnabled)) {
@@ -232,6 +240,9 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
         case ID_FD:
         case ID_S:
         case ID_CA:
+#ifdef _ENABLE_LIFT
+        case ID_LF:
+#endif
 		break;
 #ifdef _ENABLE_MAGNETOMETER
 	case ID_OR:
@@ -299,7 +310,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 break;
             case DT_ACCEL:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_A;
+                data->sensor = SENSORS_HANDLE_BASE + ID_A;
                 data->type = SENSOR_TYPE_ACCELEROMETER;
                 data->acceleration.x = STM16TOH(buff.data+ACCEL_X) * CONVERT_A_X;
                 data->acceleration.y = STM16TOH(buff.data+ACCEL_Y) * CONVERT_A_Y;
@@ -312,7 +323,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 break;
             case DT_ACCEL2:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_A2;
+                data->sensor = SENSORS_HANDLE_BASE + ID_A2;
                 data->type = SENSOR_TYPE_ACCELEROMETER;
                 data->acceleration.x = STM16TOH(buff.data+ACCEL_X) * CONVERT_A_X;
                 data->acceleration.y = STM16TOH(buff.data+ACCEL_Y) * CONVERT_A_Y;
@@ -325,7 +336,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 break;
             case DT_ALS:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_L;
+                data->sensor = SENSORS_HANDLE_BASE + ID_L;
                 data->type = SENSOR_TYPE_LIGHT;
                 data->light = (uint16_t)STM16TOH(buff.data + LIGHT_LIGHT);
                 data->timestamp = buff.timestamp;
@@ -335,7 +346,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 break;
             case DT_DISP_ROTATE:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_DR;
+                data->sensor = SENSORS_HANDLE_BASE + ID_DR;
                 data->type = SENSOR_TYPE_DISPLAY_ROTATE;
                 if (buff.data[ROTATE_ROTATE] == DISP_FLAT)
                     data->data[0] = DISP_UNKNOWN;
@@ -349,7 +360,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 break;
             case DT_PROX:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_P;
+                data->sensor = SENSORS_HANDLE_BASE + ID_P;
                 data->type = SENSOR_TYPE_PROXIMITY;
                 if (buff.data[PROXIMITY_PROXIMITY] == 0) {
                     data->distance = PROX_UNCOVERED;
@@ -368,7 +379,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 break;
             case DT_FLAT_UP:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_FU;
+                data->sensor = SENSORS_HANDLE_BASE + ID_FU;
                 data->type = SENSOR_TYPE_FLAT_UP;
                 if (buff.data[FLAT_FLAT] == 0x01)
                     data->data[0] = FLAT_DETECTED;
@@ -381,7 +392,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 break;
             case DT_FLAT_DOWN:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_FD;
+                data->sensor = SENSORS_HANDLE_BASE + ID_FD;
                 data->type = SENSOR_TYPE_FLAT_DOWN;
                 if (buff.data[FLAT_FLAT] == 0x02)
                     data->data[0] = FLAT_DETECTED;
@@ -394,7 +405,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 break;
             case DT_STOWED:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_S;
+                data->sensor = SENSORS_HANDLE_BASE + ID_S;
                 data->type = SENSOR_TYPE_STOWED;
                 data->data[0] = buff.data[STOWED_STOWED];
                 data->timestamp = buff.timestamp;
@@ -404,7 +415,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 break;
             case DT_CAMERA_ACT:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_CA;
+                data->sensor = SENSORS_HANDLE_BASE + ID_CA;
                 data->type = SENSOR_TYPE_CAMERA_ACTIVATE;
                 data->data[0] = STML0XX_CAMERA_DATA;
                 data->data[1] = STM16TOH(buff.data + CAMERA_CAMERA);
@@ -430,6 +441,20 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                     sent_bug2go_sec = timeutc.tv_sec;
                 }
                 break;
+#ifdef _ENABLE_LIFT
+            case DT_LIFT:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor = SENSORS_HANDLE_BASE + ID_LF;
+                data->type = SENSOR_TYPE_LIFT_GESTURE;
+                data->data[0] = STM32TOH(buff.data + LIFT_DISTANCE);
+                data->data[1] = STM32TOH(buff.data + LIFT_ROTATION);
+                data->data[2] = STM32TOH(buff.data + LIFT_GRAV_DIFF);
+                data->timestamp = buff.timestamp;
+                data++;
+                count--;
+                numEventReceived++;
+                break;
+#endif
             default:
                 break;
         }
@@ -441,7 +466,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
 int HubSensor::flush(int32_t handle)
 {
     int ret = 0;
-    if (handle >= MIN_SENSOR_ID && handle <= MAX_SENSOR_ID) {
+    if (handle > MIN_SENSOR_ID && handle < MAX_SENSOR_ID) {
         ret = ioctl(dev_fd,  STML0XX_IOCTL_SET_FLUSH, &handle);
     }
     return ret;
