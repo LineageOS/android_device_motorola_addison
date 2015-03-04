@@ -140,11 +140,9 @@ int AkmSensor::setEnable(int32_t handle, int enabled)
     }
 
     if (enabled) {
-        (mEnabled[id])++;
-        if (mEnabled[id] > 32767) mEnabled[id] = 32767;
+        mEnabled[id] = 1;
     } else {
-        (mEnabled[id])--;
-        if (mEnabled[id] < 0) mEnabled[id] = 0;
+        mEnabled[id] = 0;
     }
     ALOGD("AkmSensor: mEnabled[%d] = %d", id, mEnabled[id]);
 
