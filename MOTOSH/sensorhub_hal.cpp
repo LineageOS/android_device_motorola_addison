@@ -53,6 +53,7 @@ HubSensor::HubSensor()
     short flags = 0;
     FILE *fp;
     int i;
+    int mag_data;
     int err = 0;
 
     memset(mMagCal, 0, sizeof(mMagCal));
@@ -71,7 +72,12 @@ HubSensor::HubSensor()
 
     if ((fp = fopen(MAG_CAL_FILE, "r")) != NULL) {
         for (i=0; i<MOTOSH_MAG_CAL_SIZE; i++) {
-            mMagCal[i] = fgetc(fp);
+            mag_data = fgetc(fp);
+            if (mag_data == EOF) {
+                memset(mMagCal, 0, sizeof(mMagCal));
+                break;
+            }
+            mMagCal[i] = mag_data;
         }
         fclose(fp);
         err = ioctl(dev_fd, MOTOSH_IOCTL_SET_MAG_CAL, &mMagCal);
