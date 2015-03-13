@@ -81,8 +81,8 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 
 /*****************************************************************************/
 
-// 1000 LSG = 1G
-#define LSG                         (1024.0f)
+// 2048 LSG = 1G
+#define LSG                         (2048.0f)
 
 // conversion of acceleration data to SI units (m/s^2)
 #define CONVERT_A                   (GRAVITY_EARTH / LSG)
