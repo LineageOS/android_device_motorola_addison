@@ -63,7 +63,6 @@
 typedef enum tag_stmmode
 {
 	BOOTLOADER,
-	BOOTFACTORY,
 	NORMAL,
 	DEBUG,
 	FACTORY,
@@ -73,9 +72,6 @@ typedef enum tag_stmmode
 	TWRITE,
 	TMWRITE,
 	TMWRRD,
-	TUSER_PROFILE,
-	TACTIVE_MODE,
-	TPASSIVE_MODE,
 	READWRITE,
 	LOWPOWER_MODE,
 	MASS_ERASE_PART,
@@ -216,6 +212,55 @@ EXIT:
 	return ret;
 }
 
+/*!
+ * \brief Print help info
+ *
+ * \param[in] terminate 1 if you also want to \c exit(), 0 otherwise
+ */
+void help(int terminate)
+{
+	printf("\n");
+	printf("motosh - Moto sensorhub debug and control\n");
+	printf("USAGE:  ./motosh <command> <command-options>\n");
+	printf("  command:\n");
+	printf("    help - print this message\n");
+	printf("    boot - download new firmware to hub\n");
+	printf("      options:\n");
+	printf("        -f disables version check\n");
+	printf("    normal - reset hub into normal mode\n");
+	printf("    tboot - send hub into bootloader mode\n");
+	printf("    tread - read a hub register\n");
+	printf("      options:\n");
+	printf("    twrite - write a hub register\n");
+	printf("    tmread\n");
+	printf("      options: <register> <nbytes>\n");
+	printf("        register - register number\n");
+	printf("        nbytes   - number of bytes to read\n");
+	printf("    tmwrite\n");
+	printf("    debug - turn on/off kernel dynamic debug\n");
+	printf("      options: <state>\n");
+	printf("        state - 1 for on, 0 for off\n");
+	printf("    factory - send hub into factory mode\n");
+	printf("    getversion - display firmware version in hub and filesystem\n");
+	printf("    readwrite\n");
+	printf("      options: <type> <address> <size> <data>\n");
+	printf("        type    - 1 byte -- 00 for read, 01 for write\n");
+	printf("        address - 2 bytes\n");
+	printf("        size    - 2 bytes size of read/write\n");
+	printf("        data    - bytes to write\n");
+	printf("      ex. -- read version\n");
+	printf("        ./motosh readwrite 00 00 01 00 01\n");
+	printf("      ex. -- write 2 bytes\n");
+	printf("        ./motosh readwrite 01 00 0D 00 02 CC DD\n");
+	printf("    lowpower - enable/disable low power mode\n");
+	printf("      options: <state>\n");
+	printf("        state - 1 for enable, 0 for disable\n");
+	printf("    masserase - erase the firmware\n");
+	printf("\n");
+	if( terminate )
+		exit(0);
+}
+
 int  main(int argc, char *argv[])
 {
 
@@ -234,10 +279,10 @@ int  main(int argc, char *argv[])
 	DEBUG("Start MOTOSH  Version-1 service\n");
 
 	/*parse command line arguements */
-	if(!strcmp(argv[1], "boot"))
+	if( argc < 2 || !strcmp(argv[1], "help") )
+		help(1);
+	else if(!strcmp(argv[1], "boot"))
 		emode = BOOTLOADER;
-	else if( !strcmp(argv[1], "bootfactory"))
-		emode = BOOTFACTORY;
 	else if( !strcmp(argv[1], "normal"))
 		emode = NORMAL;
 	else if(!strcmp(argv[1], "tboot"))
@@ -252,14 +297,8 @@ int  main(int argc, char *argv[])
 		emode = TMWRITE;
 	else if(!strcmp(argv[1], "debug"))
 		emode = DEBUG;
-	else if(!strcmp(argv[1], "udata"))
-		emode = TUSER_PROFILE;
 	else if(!strcmp(argv[1], "factory"))
 		emode = FACTORY;
-	else if(!strcmp(argv[1], "active"))
-		emode = TACTIVE_MODE;
-	else if(!strcmp(argv[1], "passive"))
-		emode = TPASSIVE_MODE;
 	else if(!strcmp(argv[1], "getversion"))
 		emode = VERSION;
 	else if(!strcmp(argv[1], "readwrite"))
@@ -270,7 +309,7 @@ int  main(int argc, char *argv[])
 		emode = MASS_ERASE_PART;
 
 	/* check if its a force download */
-	if ((emode == BOOTLOADER || emode == BOOTFACTORY) && (argc == 3)) {
+	if (emode == BOOTLOADER && (argc == 3)) {
 		if(!strcmp(argv[2], "-f"))
 			versioncheck = false;
 	}
@@ -284,7 +323,7 @@ int  main(int argc, char *argv[])
 	}
 
 
-	if ((emode == BOOTLOADER) || (emode == BOOTFACTORY)) {
+	if (emode == BOOTLOADER) {
 		if (emode == BOOTLOADER) {
 			ret = ioctl(fd, MOTOSH_IOCTL_GET_VERNAME, ver_string);
 			sprintf(fw_file_name, "%s%s.bin", STM_FIRMWARE_FILE, ver_string);
@@ -355,6 +394,8 @@ int  main(int argc, char *argv[])
                 CHECK_RETURN_VALUE(ret, "STM not in bootloader mode");
 	}
 	if( emode == TREAD) {
+		if( argc < 4 )
+			help(1);
 		DEBUG("Test read\n");
 		// get the register to read from
                 stm_convertAsciiToHex(argv[2],hexinput,strlen(argv[2]));
@@ -396,6 +437,8 @@ int  main(int argc, char *argv[])
 		}
 	}
 	if( emode == TMWRRD) {
+		if( argc < 4 )
+			help(1);
 		DEBUG( " Read from address ");
 		stm_convertAsciiToHex(argv[2],hexinput,strlen(argv[2]));
 		DEBUG (" %02x, ",hexinput[0]);
@@ -407,6 +450,8 @@ int  main(int argc, char *argv[])
 		stm_version_check(fd, versioncheck);
 	}
 	if( emode == DEBUG ) {
+		if( argc < 3 )
+			help(1);
 		DEBUG( " Set debug to ");
 		stm_convertAsciiToHex(argv[2],hexinput,strlen(argv[2]));
 		delay = hexinput[0];
@@ -455,13 +500,8 @@ int  main(int argc, char *argv[])
 	    unsigned char *data_ptr;
 	    int result;
 
-	    if (argc < 7) {
-	        printf("READWRITE : Not enough arguments,\n");
-	        printf("motosh readwrite [type] [address] [size] [data]\n");
-	        printf("read version example: motosh readwrite 00 00 01 00 01\n");
-	        printf("write example:        motosh readwrite 01 00 0D 00 02 CC DD\n");
-		goto EXIT;
-	    }
+	    if (argc < 7)
+		help(1);
 
 	    // read in the header 2 bytes address, 2 bytes data_size
 	    DEBUG(" Header Input: ");
@@ -534,6 +574,8 @@ int  main(int argc, char *argv[])
 	    free(data_ptr);
 	}
 	if(emode == LOWPOWER_MODE) {
+	    if( argc < 3 )
+		help(1);
 	    unsigned int setting = atoi(argv[2]);
 	    if (setting == 0 || setting == 1) {
 		LOGINFO(" lowpower mode set to: %d\n", setting);
@@ -563,3 +605,4 @@ EXIT:
 		fclose(filep);
 	return ret;
 }
+
