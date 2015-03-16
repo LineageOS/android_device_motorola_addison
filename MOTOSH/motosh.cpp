@@ -36,21 +36,21 @@
 
 
 #define CHECK_RETURN_VALUE( ret, msg)  if (ret < 0) {\
-					 ALOGE("%s: %s \n",msg, strerror(errno)); \
-					 printf("%s: %s \n",msg, strerror(errno)); \
-					 goto EXIT; \
-					    }
+                     ALOGE("%s: %s \n",msg, strerror(errno)); \
+                     printf("%s: %s \n",msg, strerror(errno)); \
+                     goto EXIT; \
+                        }
 
 #define CHECKIFHEX(c)  ((c >= 'A' && c <= 'F') || ( c >= '0' && c <='9') || ( c >= 'a' && c <= 'f'))
 
 #define LOGERROR(format, ...) {\
-		ALOGE(format,## __VA_ARGS__); \
-		printf(format,##__VA_ARGS__); \
+        ALOGE(format,## __VA_ARGS__); \
+        printf(format,##__VA_ARGS__); \
 }
 
 #define LOGINFO(format, ...) {\
-		ALOGI(format,## __VA_ARGS__); \
-		printf(format,##__VA_ARGS__); \
+        ALOGI(format,## __VA_ARGS__); \
+        printf(format,##__VA_ARGS__); \
 }
 
 #ifdef _DEBUG
@@ -62,154 +62,154 @@
 /****************************** structures & enums *****************************/
 typedef enum tag_stmmode
 {
-	BOOTLOADER,
-	NORMAL,
-	DEBUG,
-	FACTORY,
-	VERSION,
-	TBOOT,
-	TREAD,
-	TWRITE,
-	TMWRITE,
-	TMWRRD,
-	READWRITE,
-	LOWPOWER_MODE,
-	MASS_ERASE_PART,
-	INVALID
+    BOOTLOADER,
+    NORMAL,
+    DEBUG,
+    FACTORY,
+    VERSION,
+    TBOOT,
+    TREAD,
+    TWRITE,
+    TMWRITE,
+    TMWRRD,
+    READWRITE,
+    LOWPOWER_MODE,
+    MASS_ERASE_PART,
+    INVALID
 }eStm_Mode;
 
 /****************************** function defitions ****************************/
 int stm_version_check(int fd, bool check)
 {
-	FILE * vfp = NULL;
-	int ret = STM_VERSION_MISMATCH;
-	int newversion;
-	int oldversion;
-	int temp;
-	char ver_string[FW_VERSION_SIZE];
-	char ver_file_name[256];
+    FILE * vfp = NULL;
+    int ret = STM_VERSION_MISMATCH;
+    int newversion;
+    int oldversion;
+    int temp;
+    char ver_string[FW_VERSION_SIZE];
+    char ver_file_name[256];
 
-	/*check if a version check is required */
-	if ( check == false)
-		return STM_VERSION_MISMATCH;
+    /*check if a version check is required */
+    if ( check == false)
+        return STM_VERSION_MISMATCH;
 
-	/* read new version number from version file*/
-	ioctl(fd, MOTOSH_IOCTL_GET_VERNAME, ver_string);
-	sprintf(ver_file_name, "%s%s.txt", STM_VERSION_FILE, ver_string);
-	DEBUG("MOTOSH version file name %s\n", ver_file_name);
-	vfp = fopen(ver_file_name,"r");
-	if(vfp == NULL) {
-		LOGERROR(" version file not found at %s\n", ver_file_name)
-		DEBUG(STM_FORCE_DOWNLOAD_MSG);
-		return ret;
-	}
-	fscanf(vfp, "%02x", &newversion);
+    /* read new version number from version file*/
+    ioctl(fd, MOTOSH_IOCTL_GET_VERNAME, ver_string);
+    sprintf(ver_file_name, "%s%s.txt", STM_VERSION_FILE, ver_string);
+    DEBUG("MOTOSH version file name %s\n", ver_file_name);
+    vfp = fopen(ver_file_name,"r");
+    if(vfp == NULL) {
+        LOGERROR(" version file not found at %s\n", ver_file_name)
+        DEBUG(STM_FORCE_DOWNLOAD_MSG);
+        return ret;
+    }
+    fscanf(vfp, "%02x", &newversion);
 
-	/* get old version from firmware */
-	oldversion = ioctl(fd, MOTOSH_IOCTL_GET_VERSION, &temp);
+    /* get old version from firmware */
+    oldversion = ioctl(fd, MOTOSH_IOCTL_GET_VERSION, &temp);
 
-	/* check if the version in hardware is older */
-	if( oldversion < newversion)
-		ret = STM_VERSION_MISMATCH;
-	else {
-		DEBUG(STM_FORCE_DOWNLOAD_MSG);
-		ret = STM_VERSION_MATCH;
-	}
+    /* check if the version in hardware is older */
+    if( oldversion < newversion)
+        ret = STM_VERSION_MISMATCH;
+    else {
+        DEBUG(STM_FORCE_DOWNLOAD_MSG);
+        ret = STM_VERSION_MATCH;
+    }
 
-	LOGINFO("Version info: version in filesystem = %d, version in hardware = %d\n",newversion, oldversion)
+    LOGINFO("Version info: version in filesystem = %d, version in hardware = %d\n",newversion, oldversion)
 
-	fclose(vfp);
-	return ret;
+    fclose(vfp);
+    return ret;
 }
 
 int stm_convertAsciiToHex(char * input, unsigned char * output, int inlen)
 {
-	int i=0,outlen=0,x,result;
+    int i=0,outlen=0,x,result;
 
-	if (input != NULL && output != NULL) {
-		while(i < inlen) {
-			result = sscanf(input+i,"%02x",&x);
-			if (result != 1) {
-				break;
-			}
-			output[outlen++] = (unsigned char)x;
-			i= i+2;
-		}
-	}
-	return outlen;
+    if (input != NULL && output != NULL) {
+        while(i < inlen) {
+            result = sscanf(input+i,"%02x",&x);
+            if (result != 1) {
+                break;
+            }
+            output[outlen++] = (unsigned char)x;
+            i= i+2;
+        }
+    }
+    return outlen;
 }
 
 int stm_getpacket( FILE ** filepointer, unsigned char * databuff)
 {
-	FILE * fp = *filepointer;
-	int len = 0;
-	unsigned char c;
+    FILE * fp = *filepointer;
+    int len = 0;
+    unsigned char c;
 
-	while(1){
-		c = fgetc(fp);
-		if (feof(fp))
-			break;
-		databuff[len] = c;
-		len++;
-		if( len >= STM_MAX_PACKET_LENGTH) {
-			break;
-		}
-	}
+    while(1){
+        c = fgetc(fp);
+        if (feof(fp))
+            break;
+        databuff[len] = c;
+        len++;
+        if( len >= STM_MAX_PACKET_LENGTH) {
+            break;
+        }
+    }
 
-	/* packet size needs to be a multiple of 8 bytes (64 bits) */
-	while(len < STM_MAX_PACKET_LENGTH && 
-	      len % 8 > 0){
-		databuff[len] = 0xFF;
-		len++;
-	}
-	return len;
+    /* packet size needs to be a multiple of 8 bytes (64 bits) */
+    while(len < STM_MAX_PACKET_LENGTH &&
+          len % 8 > 0){
+        databuff[len] = 0xFF;
+        len++;
+    }
+    return len;
 
 }
 
 int stm_downloadFirmware( int fd, FILE *filep)
 {
 
-	unsigned int address;
-	int ret = STM_SUCCESS;
-	int packetlength;
+    unsigned int address;
+    int ret = STM_SUCCESS;
+    int packetlength;
 #ifdef _DEBUG
-	int packetno = 0;
+    int packetno = 0;
 #endif
-	unsigned char packet[STM_MAX_PACKET_LENGTH];
-	int temp = 100; // this is only a dummy variable for the 3rd parameter of ioctl call
+    unsigned char packet[STM_MAX_PACKET_LENGTH];
+    int temp = 100; // this is only a dummy variable for the 3rd parameter of ioctl call
 
-	DEBUG("Ioctl call to switch to bootloader mode\n");
-	ret = ioctl(fd, MOTOSH_IOCTL_BOOTLOADERMODE, &temp);
-	CHECK_RETURN_VALUE(ret,"Failed to switch STM to bootloader mode\n");
+    DEBUG("Ioctl call to switch to bootloader mode\n");
+    ret = ioctl(fd, MOTOSH_IOCTL_BOOTLOADERMODE, &temp);
+    CHECK_RETURN_VALUE(ret,"Failed to switch STM to bootloader mode\n");
 
-	DEBUG("Ioctl call to erase flash on STM\n");
-	ret = ioctl(fd, MOTOSH_IOCTL_MASSERASE, &temp);
-	CHECK_RETURN_VALUE(ret,"Failed to erase STM \n");
+    DEBUG("Ioctl call to erase flash on STM\n");
+    ret = ioctl(fd, MOTOSH_IOCTL_MASSERASE, &temp);
+    CHECK_RETURN_VALUE(ret,"Failed to erase STM \n");
 
-	address = FLASH_START_ADDRESS;
-	ret = ioctl(fd, MOTOSH_IOCTL_SETSTARTADDR, &address);
-	CHECK_RETURN_VALUE(ret,"Failed to set address\n");
+    address = FLASH_START_ADDRESS;
+    ret = ioctl(fd, MOTOSH_IOCTL_SETSTARTADDR, &address);
+    CHECK_RETURN_VALUE(ret,"Failed to set address\n");
 
-	DEBUG("Start sending firmware packets to the driver\n");
-	do {
-		packetlength = stm_getpacket (&filep, packet);
-		if( packetlength == 0)
-			break;
+    DEBUG("Start sending firmware packets to the driver\n");
+    do {
+        packetlength = stm_getpacket (&filep, packet);
+        if( packetlength == 0)
+            break;
 #ifdef _DEBUG
-		DEBUG("Sending packet %d  of length %d:\n", packetno++, packetlength);
-		int i;
-		for( i=0; i<packetlength; i++)
-			DEBUG("%02x ",packet[i]);
+        DEBUG("Sending packet %d  of length %d:\n", packetno++, packetlength);
+        int i;
+        for( i=0; i<packetlength; i++)
+            DEBUG("%02x ",packet[i]);
 #endif
-		printf(".");
-		fflush(stdout);
+        printf(".");
+        fflush(stdout);
 
-		ret = write(fd, packet, packetlength);
-		CHECK_RETURN_VALUE(ret,"Packet download failed\n");
-	} while(packetlength != 0);
+        ret = write(fd, packet, packetlength);
+        CHECK_RETURN_VALUE(ret,"Packet download failed\n");
+    } while(packetlength != 0);
 
 EXIT:
-	return ret;
+    return ret;
 }
 
 /*!
@@ -219,390 +219,390 @@ EXIT:
  */
 void help(int terminate)
 {
-	printf("\n");
-	printf("motosh - Moto sensorhub debug and control\n");
-	printf("USAGE:  ./motosh <command> <command-options>\n");
-	printf("  command:\n");
-	printf("    help - print this message\n");
-	printf("    boot - download new firmware to hub\n");
-	printf("      options:\n");
-	printf("        -f disables version check\n");
-	printf("    normal - reset hub into normal mode\n");
-	printf("    tboot - send hub into bootloader mode\n");
-	printf("    tread - read a hub register\n");
-	printf("      options:\n");
-	printf("    twrite - write a hub register\n");
-	printf("    tmread\n");
-	printf("      options: <register> <nbytes>\n");
-	printf("        register - register number\n");
-	printf("        nbytes   - number of bytes to read\n");
-	printf("    tmwrite\n");
-	printf("    debug - turn on/off kernel dynamic debug\n");
-	printf("      options: <state>\n");
-	printf("        state - 1 for on, 0 for off\n");
-	printf("    factory - send hub into factory mode\n");
-	printf("    getversion - display firmware version in hub and filesystem\n");
-	printf("    readwrite\n");
-	printf("      options: <type> <address> <size> <data>\n");
-	printf("        type    - 1 byte -- 00 for read, 01 for write\n");
-	printf("        address - 2 bytes\n");
-	printf("        size    - 2 bytes size of read/write\n");
-	printf("        data    - bytes to write\n");
-	printf("      ex. -- read version\n");
-	printf("        ./motosh readwrite 00 00 01 00 01\n");
-	printf("      ex. -- write 2 bytes\n");
-	printf("        ./motosh readwrite 01 00 0D 00 02 CC DD\n");
-	printf("    lowpower - enable/disable low power mode\n");
-	printf("      options: <state>\n");
-	printf("        state - 1 for enable, 0 for disable\n");
-	printf("    masserase - erase the firmware\n");
-	printf("\n");
-	if( terminate )
-		exit(0);
+    printf("\n");
+    printf("motosh - Moto sensorhub debug and control\n");
+    printf("USAGE:  ./motosh <command> <command-options>\n");
+    printf("  command:\n");
+    printf("    help - print this message\n");
+    printf("    boot - download new firmware to hub\n");
+    printf("      options:\n");
+    printf("        -f disables version check\n");
+    printf("    normal - reset hub into normal mode\n");
+    printf("    tboot - send hub into bootloader mode\n");
+    printf("    tread - read a hub register\n");
+    printf("      options:\n");
+    printf("    twrite - write a hub register\n");
+    printf("    tmread\n");
+    printf("      options: <register> <nbytes>\n");
+    printf("        register - register number\n");
+    printf("        nbytes   - number of bytes to read\n");
+    printf("    tmwrite\n");
+    printf("    debug - turn on/off kernel dynamic debug\n");
+    printf("      options: <state>\n");
+    printf("        state - 1 for on, 0 for off\n");
+    printf("    factory - send hub into factory mode\n");
+    printf("    getversion - display firmware version in hub and filesystem\n");
+    printf("    readwrite\n");
+    printf("      options: <type> <address> <size> <data>\n");
+    printf("        type    - 1 byte -- 00 for read, 01 for write\n");
+    printf("        address - 2 bytes\n");
+    printf("        size    - 2 bytes size of read/write\n");
+    printf("        data    - bytes to write\n");
+    printf("      ex. -- read version\n");
+    printf("        ./motosh readwrite 00 00 01 00 01\n");
+    printf("      ex. -- write 2 bytes\n");
+    printf("        ./motosh readwrite 01 00 0D 00 02 CC DD\n");
+    printf("    lowpower - enable/disable low power mode\n");
+    printf("      options: <state>\n");
+    printf("        state - 1 for enable, 0 for disable\n");
+    printf("    masserase - erase the firmware\n");
+    printf("\n");
+    if( terminate )
+        exit(0);
 }
 
 int  main(int argc, char *argv[])
 {
 
-	int fd = -1, tries, ret = STM_SUCCESS;
-	FILE * filep = NULL;
-	eStm_Mode emode = INVALID;
-	int temp = 100; // this is only a dummy variable for the 3rd parameter of ioctl call
-	unsigned char hexinput[250];
-	int count, i;
-	short delay = 0;
-	int enabledints = 0;
-	bool versioncheck = true;
-	char ver_string[FW_VERSION_SIZE];
-	char fw_file_name[256];
+    int fd = -1, tries, ret = STM_SUCCESS;
+    FILE * filep = NULL;
+    eStm_Mode emode = INVALID;
+    int temp = 100; // this is only a dummy variable for the 3rd parameter of ioctl call
+    unsigned char hexinput[250];
+    int count, i;
+    short delay = 0;
+    int enabledints = 0;
+    bool versioncheck = true;
+    char ver_string[FW_VERSION_SIZE];
+    char fw_file_name[256];
 
-	DEBUG("Start MOTOSH  Version-1 service\n");
+    DEBUG("Start MOTOSH  Version-1 service\n");
 
-	/*parse command line arguements */
-	if( argc < 2 || !strcmp(argv[1], "help") )
-		help(1);
-	else if(!strcmp(argv[1], "boot"))
-		emode = BOOTLOADER;
-	else if( !strcmp(argv[1], "normal"))
-		emode = NORMAL;
-	else if(!strcmp(argv[1], "tboot"))
-		emode = TBOOT;
-        else if(!strcmp(argv[1], "tread"))
-                emode = TREAD;
-        else if(!strcmp(argv[1], "twrite"))
-                emode = TWRITE;
-	else if(!strcmp(argv[1], "tmread"))
-		emode = TMWRRD;
-	else if(!strcmp(argv[1], "tmwrite"))
-		emode = TMWRITE;
-	else if(!strcmp(argv[1], "debug"))
-		emode = DEBUG;
-	else if(!strcmp(argv[1], "factory"))
-		emode = FACTORY;
-	else if(!strcmp(argv[1], "getversion"))
-		emode = VERSION;
-	else if(!strcmp(argv[1], "readwrite"))
-		emode = READWRITE;
-	else if(!strcmp(argv[1], "lowpower"))
-		emode = LOWPOWER_MODE;
-	else if(!strcmp(argv[1], "masserase"))
-		emode = MASS_ERASE_PART;
+    /*parse command line arguements */
+    if( argc < 2 || !strcmp(argv[1], "help") )
+        help(1);
+    else if(!strcmp(argv[1], "boot"))
+        emode = BOOTLOADER;
+    else if( !strcmp(argv[1], "normal"))
+        emode = NORMAL;
+    else if(!strcmp(argv[1], "tboot"))
+        emode = TBOOT;
+    else if(!strcmp(argv[1], "tread"))
+        emode = TREAD;
+    else if(!strcmp(argv[1], "twrite"))
+        emode = TWRITE;
+    else if(!strcmp(argv[1], "tmread"))
+        emode = TMWRRD;
+    else if(!strcmp(argv[1], "tmwrite"))
+        emode = TMWRITE;
+    else if(!strcmp(argv[1], "debug"))
+        emode = DEBUG;
+    else if(!strcmp(argv[1], "factory"))
+        emode = FACTORY;
+    else if(!strcmp(argv[1], "getversion"))
+        emode = VERSION;
+    else if(!strcmp(argv[1], "readwrite"))
+        emode = READWRITE;
+    else if(!strcmp(argv[1], "lowpower"))
+        emode = LOWPOWER_MODE;
+    else if(!strcmp(argv[1], "masserase"))
+        emode = MASS_ERASE_PART;
 
-	/* check if its a force download */
-	if (emode == BOOTLOADER && (argc == 3)) {
-		if(!strcmp(argv[2], "-f"))
-			versioncheck = false;
-	}
+    /* check if its a force download */
+    if (emode == BOOTLOADER && (argc == 3)) {
+        if(!strcmp(argv[2], "-f"))
+            versioncheck = false;
+    }
 
-	/* open the device */
-	fd = open(STM_DRIVER,O_RDONLY|O_WRONLY);
-	if( fd < 0) {
-		LOGERROR("Unable to open motosh driver: %s\n",strerror(errno))
-		ret = STM_FAILURE;
-		goto EXIT;
-	}
+    /* open the device */
+    fd = open(STM_DRIVER,O_RDONLY|O_WRONLY);
+    if( fd < 0) {
+        LOGERROR("Unable to open motosh driver: %s\n",strerror(errno))
+        ret = STM_FAILURE;
+        goto EXIT;
+    }
 
 
-	if (emode == BOOTLOADER) {
-		if (emode == BOOTLOADER) {
-			ret = ioctl(fd, MOTOSH_IOCTL_GET_VERNAME, ver_string);
-			sprintf(fw_file_name, "%s%s.bin", STM_FIRMWARE_FILE, ver_string);
-			LOGINFO("MOTOSH file name %s\n", fw_file_name)
-			filep = fopen(fw_file_name,"r");
-		}
-		else
-			filep = fopen(STM_FIRMWARE_FACTORY_FILE,"r");
+    if (emode == BOOTLOADER) {
+        if (emode == BOOTLOADER) {
+            ret = ioctl(fd, MOTOSH_IOCTL_GET_VERNAME, ver_string);
+            sprintf(fw_file_name, "%s%s.bin", STM_FIRMWARE_FILE, ver_string);
+            LOGINFO("MOTOSH file name %s\n", fw_file_name)
+            filep = fopen(fw_file_name,"r");
+        }
+        else
+            filep = fopen(STM_FIRMWARE_FACTORY_FILE,"r");
 
-		/* check if new firmware available for download */
-		if( (filep != NULL) && (stm_version_check(fd, versioncheck) == STM_VERSION_MISMATCH)) {
-	        tries = 0;
-	       		while((tries < STM_DOWNLOADRETRIES )) {
-				if( (stm_downloadFirmware(fd, filep)) >= STM_SUCCESS) {
-					fclose(filep);
-					filep = NULL;
-					/* reset STM */
-					if (emode == BOOTLOADER) {
-						ret = ioctl(fd, MOTOSH_IOCTL_NORMALMODE, &temp);
-						printf("\n");
-						// IOCTLS will be briefly blocked during part reset
-						sleep(1);
-						if (stm_version_check(fd, true) != STM_VERSION_MATCH) {
-							/* try once more */
-							sleep(2);
-							if (stm_version_check(fd, true) == STM_VERSION_MATCH)
-								LOGINFO("Firmware download completed successfully\n")
-							else
-								LOGERROR("Firmware download error\n")
-						} else
-							LOGINFO("Firmware download completed successfully\n")
-					}
-					else
-						emode = FACTORY;
+        /* check if new firmware available for download */
+        if( (filep != NULL) && (stm_version_check(fd, versioncheck) == STM_VERSION_MISMATCH)) {
+            tries = 0;
+            while((tries < STM_DOWNLOADRETRIES )) {
+                if( (stm_downloadFirmware(fd, filep)) >= STM_SUCCESS) {
+                    fclose(filep);
+                    filep = NULL;
+                    /* reset STM */
+                    if (emode == BOOTLOADER) {
+                        ret = ioctl(fd, MOTOSH_IOCTL_NORMALMODE, &temp);
+                        printf("\n");
+                        // IOCTLS will be briefly blocked during part reset
+                        sleep(1);
+                        if (stm_version_check(fd, true) != STM_VERSION_MATCH) {
+                            /* try once more */
+                            sleep(2);
+                            if (stm_version_check(fd, true) == STM_VERSION_MATCH)
+                                LOGINFO("Firmware download completed successfully\n")
+                            else
+                                LOGERROR("Firmware download error\n")
+                        } else
+                            LOGINFO("Firmware download completed successfully\n")
+                    }
+                    else
+                        emode = FACTORY;
 
-					break;
-				}
-				//point the file pointer to the beginning of the file for the next try
-				tries++;
-				fseek(filep, 0, SEEK_SET);
-				// Need to use sleep as msleep is not available
-				sleep(1);
-	        	}
+                    break;
+                }
+                //point the file pointer to the beginning of the file for the next try
+                tries++;
+                fseek(filep, 0, SEEK_SET);
+                // Need to use sleep as msleep is not available
+                sleep(1);
+            }
 
-			if( tries >= STM_DOWNLOADRETRIES ) {
-				LOGERROR("Firmware download failed.\n")
-				ret = STM_FAILURE;
-				ioctl(fd,MOTOSH_IOCTL_NORMALMODE, &temp);
-			}
-		} else {
-			DEBUG("No new firmware to download \n");
-			/* reset STM in case for soft-reboot of device */
-			if (emode == BOOTLOADER)
-				emode = NORMAL;
-			else
-				emode = FACTORY;
-		}
-		property_set("hw.motosh.booted", "1");
-	}
-	if(emode == NORMAL) {
-		DEBUG("Ioctl call to reset STM\n");
-		ret = ioctl(fd,MOTOSH_IOCTL_NORMALMODE, &temp);
-		CHECK_RETURN_VALUE(ret, "STM reset failed");
-	}
-	if( emode == TBOOT) {
-		DEBUG("Ioctl call to send STM to boot mode\n");
+            if( tries >= STM_DOWNLOADRETRIES ) {
+                LOGERROR("Firmware download failed.\n")
+                ret = STM_FAILURE;
+                ioctl(fd,MOTOSH_IOCTL_NORMALMODE, &temp);
+            }
+        } else {
+            DEBUG("No new firmware to download \n");
+            /* reset STM in case for soft-reboot of device */
+            if (emode == BOOTLOADER)
+                emode = NORMAL;
+            else
+                emode = FACTORY;
+        }
+        property_set("hw.motosh.booted", "1");
+    }
+    if(emode == NORMAL) {
+        DEBUG("Ioctl call to reset STM\n");
+        ret = ioctl(fd,MOTOSH_IOCTL_NORMALMODE, &temp);
+        CHECK_RETURN_VALUE(ret, "STM reset failed");
+    }
+    if( emode == TBOOT) {
+        DEBUG("Ioctl call to send STM to boot mode\n");
                 ret = ioctl(fd,MOTOSH_IOCTL_TEST_BOOTMODE, &temp);
                 CHECK_RETURN_VALUE(ret, "STM not in bootloader mode");
-	}
-	if( emode == TREAD) {
-		if( argc < 4 )
-			help(1);
-		DEBUG("Test read\n");
-		// get the register to read from
+    }
+    if( emode == TREAD) {
+        if( argc < 4 )
+            help(1);
+        DEBUG("Test read\n");
+        // get the register to read from
                 stm_convertAsciiToHex(argv[2],hexinput,strlen(argv[2]));
-		DEBUG( "%02x: ", hexinput[0]);
+        DEBUG( "%02x: ", hexinput[0]);
                 ret = ioctl(fd,MOTOSH_IOCTL_TEST_WRITE,hexinput);
 
-		// get the number of bytes to be read
-		stm_convertAsciiToHex(argv[3],hexinput,strlen(argv[3]));
-		DEBUG( "count = %02x: \n ", hexinput[0]);
+        // get the number of bytes to be read
+        stm_convertAsciiToHex(argv[3],hexinput,strlen(argv[3]));
+        DEBUG( "count = %02x: \n ", hexinput[0]);
 
-		for( i= 0; i< hexinput[0]; i++) {
-			ret = ioctl(fd,MOTOSH_IOCTL_TEST_READ, &temp);
-			DEBUG( "%02x ", ret);
-		}
-	}
-	if( emode == TWRITE) {
-		DEBUG(" Test write\n");
-		for( i=0; i< (argc-2); i++) {
-			stm_convertAsciiToHex(argv[i+2],hexinput,strlen(argv[i+2]));
-			ret = ioctl(fd,MOTOSH_IOCTL_TEST_WRITE,hexinput);
-			if (ret >= 0) {
-				DEBUG( "%02x", hexinput[0]);
-			} else {
-				DEBUG( "TWrite Error %02x\n", ret);
-			}
-		}
-	}
-	if( emode == TMWRITE) {
-		count = argc-2;
-		DEBUG(" Writing data: ");
-		for( i=0; i< count; i++) {
-			stm_convertAsciiToHex(argv[i+2],hexinput+i,strlen(argv[i+2]));
-			DEBUG(" %02x",hexinput[i]);
-		}
+        for( i= 0; i< hexinput[0]; i++) {
+            ret = ioctl(fd,MOTOSH_IOCTL_TEST_READ, &temp);
+            DEBUG( "%02x ", ret);
+        }
+    }
+    if( emode == TWRITE) {
+        DEBUG(" Test write\n");
+        for( i=0; i< (argc-2); i++) {
+            stm_convertAsciiToHex(argv[i+2],hexinput,strlen(argv[i+2]));
+            ret = ioctl(fd,MOTOSH_IOCTL_TEST_WRITE,hexinput);
+            if (ret >= 0) {
+                DEBUG( "%02x", hexinput[0]);
+            } else {
+                DEBUG( "TWrite Error %02x\n", ret);
+            }
+        }
+    }
+    if( emode == TMWRITE) {
+        count = argc-2;
+        DEBUG(" Writing data: ");
+        for( i=0; i< count; i++) {
+            stm_convertAsciiToHex(argv[i+2],hexinput+i,strlen(argv[i+2]));
+            DEBUG(" %02x",hexinput[i]);
+        }
                 DEBUG("\n");
-		ret = write(fd,hexinput,count);
-		if( ret != count) {
-			DEBUG("Write FAILED\n");
-		}
-	}
-	if( emode == TMWRRD) {
-		if( argc < 4 )
-			help(1);
-		DEBUG( " Read from address ");
-		stm_convertAsciiToHex(argv[2],hexinput,strlen(argv[2]));
-		DEBUG (" %02x, ",hexinput[0]);
-		stm_convertAsciiToHex(argv[3],hexinput+1,strlen(argv[3]));
-		DEBUG (" %02x bytes: \n",hexinput[1]);
-		ret = ioctl(fd,MOTOSH_IOCTL_TEST_WRITE_READ,hexinput);
-	}
-	if( emode == VERSION) {
-		stm_version_check(fd, versioncheck);
-	}
-	if( emode == DEBUG ) {
-		if( argc < 3 )
-			help(1);
-		DEBUG( " Set debug to ");
-		stm_convertAsciiToHex(argv[2],hexinput,strlen(argv[2]));
-		delay = hexinput[0];
-		DEBUG(" %d\n", delay);
-		ret = ioctl(fd,MOTOSH_IOCTL_SET_DEBUG,&delay);
-		if (delay == 0) {
-			system("echo 'file motosh_core.c -p' > /sys/kernel/debug/dynamic_debug/control");
-			system("echo 'file motosh_flash.c -p' > /sys/kernel/debug/dynamic_debug/control");
-			system("echo 'file motosh_ioctl.c -p' > /sys/kernel/debug/dynamic_debug/control");
-			system("echo 'file motosh_irq.c -p' > /sys/kernel/debug/dynamic_debug/control");
-			system("echo 'file motosh_queue.c -p' > /sys/kernel/debug/dynamic_debug/control");
-			system("echo 'file motosh_reset.c -p' > /sys/kernel/debug/dynamic_debug/control");
-			system("echo 'file motosh_wake_irq.c -p' > /sys/kernel/debug/dynamic_debug/control");
-			system("echo 'file motosh_display.c -p' > /sys/kernel/debug/dynamic_debug/control");
-			system("echo 'file motosh_time.c -p' > /sys/kernel/debug/dynamic_debug/control");
-		}
-		else {
-			system("echo 'file motosh_core.c +p' > /sys/kernel/debug/dynamic_debug/control");
-			system("echo 'file motosh_flash.c +p' > /sys/kernel/debug/dynamic_debug/control");
-			system("echo 'file motosh_ioctl.c +p' > /sys/kernel/debug/dynamic_debug/control");
-			system("echo 'file motosh_irq.c +p' > /sys/kernel/debug/dynamic_debug/control");
-			system("echo 'file motosh_queue.c +p' > /sys/kernel/debug/dynamic_debug/control");
-			system("echo 'file motosh_reset.c +p' > /sys/kernel/debug/dynamic_debug/control");
-			system("echo 'file motosh_wake_irq.c +p' > /sys/kernel/debug/dynamic_debug/control");
-			system("echo 'file motosh_display.c +p' > /sys/kernel/debug/dynamic_debug/control");
-			system("echo 'file motosh_time.c +p' > /sys/kernel/debug/dynamic_debug/control");
-		}
-	}
-	if( emode == FACTORY ) {
-		DEBUG( "Switching to factory mode\n");
-		ret = ioctl(fd,MOTOSH_IOCTL_SET_FACTORY_MODE, &temp);
-	}
-	if( emode == INVALID ) {
-		LOGERROR("Invalid arguements passed: %d, %s\n",argc,argv[1])
-		ret = STM_FAILURE;
-	}
-	if (emode == READWRITE) {
-	    //                    1B      2B       2B    ...
-	    // motosh readwrite [type] [address] [size] [data]
-	    //
-	    // read version example: motosh readwrite 00 00 01 00 01
-	    // write example:        motosh readwrite 01 00 0D 00 02 CC DD
+        ret = write(fd,hexinput,count);
+        if( ret != count) {
+            DEBUG("Write FAILED\n");
+        }
+    }
+    if( emode == TMWRRD) {
+        if( argc < 4 )
+            help(1);
+        DEBUG( " Read from address ");
+        stm_convertAsciiToHex(argv[2],hexinput,strlen(argv[2]));
+        DEBUG (" %02x, ",hexinput[0]);
+        stm_convertAsciiToHex(argv[3],hexinput+1,strlen(argv[3]));
+        DEBUG (" %02x bytes: \n",hexinput[1]);
+        ret = ioctl(fd,MOTOSH_IOCTL_TEST_WRITE_READ,hexinput);
+    }
+    if( emode == VERSION) {
+        stm_version_check(fd, versioncheck);
+    }
+    if( emode == DEBUG ) {
+        if( argc < 3 )
+            help(1);
+        DEBUG( " Set debug to ");
+        stm_convertAsciiToHex(argv[2],hexinput,strlen(argv[2]));
+        delay = hexinput[0];
+        DEBUG(" %d\n", delay);
+        ret = ioctl(fd,MOTOSH_IOCTL_SET_DEBUG,&delay);
+        if (delay == 0) {
+            system("echo 'file motosh_core.c -p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file motosh_flash.c -p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file motosh_ioctl.c -p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file motosh_irq.c -p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file motosh_queue.c -p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file motosh_reset.c -p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file motosh_wake_irq.c -p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file motosh_display.c -p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file motosh_time.c -p' > /sys/kernel/debug/dynamic_debug/control");
+        }
+        else {
+            system("echo 'file motosh_core.c +p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file motosh_flash.c +p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file motosh_ioctl.c +p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file motosh_irq.c +p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file motosh_queue.c +p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file motosh_reset.c +p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file motosh_wake_irq.c +p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file motosh_display.c +p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file motosh_time.c +p' > /sys/kernel/debug/dynamic_debug/control");
+        }
+    }
+    if( emode == FACTORY ) {
+        DEBUG( "Switching to factory mode\n");
+        ret = ioctl(fd,MOTOSH_IOCTL_SET_FACTORY_MODE, &temp);
+    }
+    if( emode == INVALID ) {
+        LOGERROR("Invalid arguements passed: %d, %s\n",argc,argv[1])
+        ret = STM_FAILURE;
+    }
+    if (emode == READWRITE) {
+        //                    1B      2B       2B    ...
+        // motosh readwrite [type] [address] [size] [data]
+        //
+        // read version example: motosh readwrite 00 00 01 00 01
+        // write example:        motosh readwrite 01 00 0D 00 02 CC DD
 
-	    unsigned int arg_index = STM_MAX_GENERIC_COMMAND_LEN;
-	    unsigned char data_header[STM_MAX_GENERIC_HEADER];
-	    unsigned char *data_ptr;
-	    int result;
+        unsigned int arg_index = STM_MAX_GENERIC_COMMAND_LEN;
+        unsigned char data_header[STM_MAX_GENERIC_HEADER];
+        unsigned char *data_ptr;
+        int result;
 
-	    if (argc < 7)
-		help(1);
+        if (argc < 7)
+            help(1);
 
-	    // read in the header 2 bytes address, 2 bytes data_size
-	    DEBUG(" Header Input: ");
-	    for( i=0; i < STM_MAX_GENERIC_HEADER; i++) {
-	        result = stm_convertAsciiToHex(argv[arg_index],data_header+i,
-	                strlen(argv[arg_index]));
-	        if (result != 1) {
-	            printf("Header Input: stm_convertAsciiToHex failure\n");
-		    goto EXIT;
-	        }
-	        DEBUG(" %02x",data_header[i]);
-	        arg_index++;
-	    }
+        // read in the header 2 bytes address, 2 bytes data_size
+        DEBUG(" Header Input: ");
+        for( i=0; i < STM_MAX_GENERIC_HEADER; i++) {
+            result = stm_convertAsciiToHex(argv[arg_index],data_header+i,
+                    strlen(argv[arg_index]));
+            if (result != 1) {
+                printf("Header Input: stm_convertAsciiToHex failure\n");
+                goto EXIT;
+            }
+            DEBUG(" %02x",data_header[i]);
+            arg_index++;
+        }
 
-	    // read_write, 0 = read, 1 = write
-	    unsigned int read_write = atoi(argv[2]);
-	    int addr = (data_header[0] << 8) | data_header[1];
-	    int data_size = (data_header[2] << 8) | data_header[3];
+        // read_write, 0 = read, 1 = write
+        unsigned int read_write = atoi(argv[2]);
+        int addr = (data_header[0] << 8) | data_header[1];
+        int data_size = (data_header[2] << 8) | data_header[3];
 
-	    if (data_size > STM_MAX_GENERIC_DATA - 1) {
-	        printf("Data size too large, must be <= %d\n", STM_MAX_GENERIC_DATA - 1);
-		goto EXIT;
-	    } else if (data_size <= 0) {
-	        printf("Data size invalid,\n");
-		goto EXIT;
-	    } else if (read_write && data_size != (argc - STM_MAX_GENERIC_COMMAND_LEN
-	             - STM_MAX_GENERIC_HEADER)) {
-	        printf("Not enough data provided,\n");
-		goto EXIT;
-	    }
+        if (data_size > STM_MAX_GENERIC_DATA - 1) {
+            printf("Data size too large, must be <= %d\n", STM_MAX_GENERIC_DATA - 1);
+            goto EXIT;
+        } else if (data_size <= 0) {
+            printf("Data size invalid,\n");
+            goto EXIT;
+        } else if (read_write && data_size != (argc - STM_MAX_GENERIC_COMMAND_LEN
+                 - STM_MAX_GENERIC_HEADER)) {
+            printf("Not enough data provided,\n");
+            goto EXIT;
+        }
 
-	    // allocate data_ptr with read/write size + header
-	    data_ptr = (unsigned char *)malloc(data_size + STM_MAX_GENERIC_HEADER);
-	    memset(data_ptr, 0, data_size + STM_MAX_GENERIC_HEADER);
+        // allocate data_ptr with read/write size + header
+        data_ptr = (unsigned char *)malloc(data_size + STM_MAX_GENERIC_HEADER);
+        memset(data_ptr, 0, data_size + STM_MAX_GENERIC_HEADER);
 
-	    // copy header into data_ptr
-	    int data_index = STM_MAX_GENERIC_HEADER;
-	    memcpy(data_ptr, data_header, STM_MAX_GENERIC_HEADER);
+        // copy header into data_ptr
+        int data_index = STM_MAX_GENERIC_HEADER;
+        memcpy(data_ptr, data_header, STM_MAX_GENERIC_HEADER);
 
-	    // if writing, read in the data
-	    if (read_write) {
-	        DEBUG(" READWRITE Data Input:");
-	        for( i=0; i < data_size; i++) {
-	            result = stm_convertAsciiToHex(argv[arg_index],
-	                data_ptr + data_index,
-	                strlen(argv[arg_index]));
-	            if (result != 1) {
-	                printf("Data Input: stm_convertAsciiToHex failure\n");
-	                free(data_ptr);
-		        goto EXIT;
-	            }
-	            arg_index++;
-	            data_index++;
-	            DEBUG(" %02x",data_ptr[i]);
-	        }
-	    }
+        // if writing, read in the data
+        if (read_write) {
+            DEBUG(" READWRITE Data Input:");
+            for( i=0; i < data_size; i++) {
+                result = stm_convertAsciiToHex(argv[arg_index],
+                    data_ptr + data_index,
+                    strlen(argv[arg_index]));
+                if (result != 1) {
+                    printf("Data Input: stm_convertAsciiToHex failure\n");
+                    free(data_ptr);
+                    goto EXIT;
+                }
+                arg_index++;
+                data_index++;
+                DEBUG(" %02x",data_ptr[i]);
+            }
+        }
 
-	    if (read_write) {
-	        ret = ioctl(fd,MOTOSH_IOCTL_WRITE_REG,data_ptr);
-	        DEBUG ("Writing data returned: %d", ret);
-	    } else {
-	        ret = ioctl(fd,MOTOSH_IOCTL_READ_REG,data_ptr);
+        if (read_write) {
+            ret = ioctl(fd,MOTOSH_IOCTL_WRITE_REG,data_ptr);
+            DEBUG ("Writing data returned: %d", ret);
+        } else {
+            ret = ioctl(fd,MOTOSH_IOCTL_READ_REG,data_ptr);
 
-	        DEBUG ("Read data:");
-	        for ( i = 0; i < data_size; i++) {
-	            DEBUG (" %02x", data_ptr[i]);
-	        }
-	    }
+            DEBUG ("Read data:");
+            for ( i = 0; i < data_size; i++) {
+                DEBUG (" %02x", data_ptr[i]);
+            }
+        }
 
-	    free(data_ptr);
-	}
-	if(emode == LOWPOWER_MODE) {
-	    if( argc < 3 )
-		help(1);
-	    unsigned int setting = atoi(argv[2]);
-	    if (setting == 0 || setting == 1) {
-		LOGINFO(" lowpower mode set to: %d\n", setting);
-		ret = ioctl(fd, MOTOSH_IOCTL_SET_LOWPOWER_MODE, &setting);
-	    } else {
-		LOGERROR(" lowpower mode incorrect setting\n");
-		ret = STM_FAILURE;
-	    }
-	}
-	if(emode == MASS_ERASE_PART) {
-	    DEBUG("Ioctl call to switch to bootloader mode\n");
-	    ret = ioctl(fd, MOTOSH_IOCTL_BOOTLOADERMODE, &temp);
-	    CHECK_RETURN_VALUE(ret,"Failed to switch STM to bootloader mode\n");
+        free(data_ptr);
+    }
+    if(emode == LOWPOWER_MODE) {
+        if( argc < 3 )
+            help(1);
+        unsigned int setting = atoi(argv[2]);
+        if (setting == 0 || setting == 1) {
+            LOGINFO(" lowpower mode set to: %d\n", setting);
+            ret = ioctl(fd, MOTOSH_IOCTL_SET_LOWPOWER_MODE, &setting);
+        } else {
+            LOGERROR(" lowpower mode incorrect setting\n");
+            ret = STM_FAILURE;
+        }
+    }
+    if(emode == MASS_ERASE_PART) {
+        DEBUG("Ioctl call to switch to bootloader mode\n");
+        ret = ioctl(fd, MOTOSH_IOCTL_BOOTLOADERMODE, &temp);
+        CHECK_RETURN_VALUE(ret,"Failed to switch STM to bootloader mode\n");
 
-	    DEBUG("Ioctl call to erase flash on STM\n");
-	    ret = ioctl(fd, MOTOSH_IOCTL_MASSERASE, &temp);
-	    CHECK_RETURN_VALUE(ret,"Failed to erase STM \n");
-	    LOGINFO("Erased.\n");
+        DEBUG("Ioctl call to erase flash on STM\n");
+        ret = ioctl(fd, MOTOSH_IOCTL_MASSERASE, &temp);
+        CHECK_RETURN_VALUE(ret,"Failed to erase STM \n");
+        LOGINFO("Erased.\n");
 
-	}
+    }
 
 EXIT:
-	if( ret < STM_SUCCESS)
-		LOGERROR(" Command execution error \n")
-	close(fd);
-	if( filep != NULL)
-		fclose(filep);
-	return ret;
+    if( ret < STM_SUCCESS)
+        LOGERROR(" Command execution error \n")
+    close(fd);
+    if( filep != NULL)
+        fclose(filep);
+    return ret;
 }
 
