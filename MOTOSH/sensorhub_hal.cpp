@@ -415,7 +415,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
         /* these sensors are not supported, upload a bug2go if its been at least 10mins since previous bug2go*/
         /* remove this if-clause when corruption issue resolved */
         if (buff.type == DT_PRESSURE || buff.type == DT_TEMP || buff.type == DT_LIN_ACCEL ||
-            buff.type == DT_GRAVITY || buff.type == DT_DOCK || buff.type == DT_QUATERNION ||
+            buff.type == DT_GRAVITY || buff.type == DT_DOCK ||
             buff.type == DT_NFC || buff.type == DT_RESET) {
             count--;
             if (buff.type == DT_RESET) {
