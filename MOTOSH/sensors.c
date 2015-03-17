@@ -144,6 +144,16 @@ static const struct sensor_t sSensorList[] = {
                 SENSOR_TYPE_CHOPCHOP_GESTURE, USHRT_MAX*1.0f, 1.0f, 0.0f, 0, 0, 0, "",
                 "", 0, SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP, {0,0} },
 #endif
+    { "Rotation Vector",
+                "Motorola",
+                1, SENSORS_HANDLE_BASE+ID_QUAT_9AXIS,
+                SENSOR_TYPE_ROTATION_VECTOR, 1.0f, 1.0f/32767.f, 6.8f + 0.25f + 6.1f, 10000, 0, 0, "",
+                "", 0, SENSOR_FLAG_CONTINUOUS_MODE, {0,0} },
+    { "Geomagnetic Rotation Vector",
+                "Motorola",
+                1, SENSORS_HANDLE_BASE+ID_QUAT_6AXIS,
+                SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR, 1.0f, 1.0f/32767.f, 6.8f + 0.25f, 10000, 0, 0, "",
+                "", 0, SENSOR_FLAG_CONTINUOUS_MODE, {0,0} },
 };
 
 static int open_sensors(const struct hw_module_t* module, const char* name,

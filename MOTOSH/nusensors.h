@@ -69,7 +69,9 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 #define ID_UNCALIB_MAG   (25) /* Uncalibrated Magenetometer */
 #define ID_IR_OBJECT (26) /* IR Object Detect */
 #define ID_CHOPCHOP_GESTURE (27) /* ChopChop Gesture */
-#define MAX_SENSOR_ID (27)
+#define ID_QUAT_6AXIS (28)
+#define ID_QUAT_9AXIS (29)
+#define MAX_SENSOR_ID (29)
 
 /*****************************************************************************/
 
@@ -133,6 +135,7 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 #define CONVERT_BIAS_G_R            (CONVERT_G)
 #define CONVERT_BIAS_G_Y            (CONVERT_G)
 
+#define CONVERT_RV                  (1.0f/32767.f)
 #define CONVERT_B                   (1.0f/100.0f)
 
 #define CONVERT_T                   (1.0f/10.0f)

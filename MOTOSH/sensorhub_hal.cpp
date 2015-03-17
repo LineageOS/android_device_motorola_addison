@@ -227,6 +227,18 @@ int HubSensor::enable(int32_t handle, int en)
             found = 1;
             break;
 #endif
+        case ID_QUAT_6AXIS:
+            new_enabled &= ~M_QUAT_6AXIS;
+            if (newState)
+                new_enabled |= M_QUAT_6AXIS;
+            found = 1;
+            break;
+        case ID_QUAT_9AXIS:
+            new_enabled &= ~M_QUAT_9AXIS;
+            if (newState)
+                new_enabled |= M_QUAT_9AXIS;
+            found = 1;
+            break;
     } // end switch(handle)
 
     // Mag and orientation are tied to same physical sensor
@@ -332,6 +344,7 @@ int HubSensor::enable(int32_t handle, int en)
 
 int HubSensor::setDelay(int32_t handle, int64_t ns)
 {
+    int rateFd = 0;
     int status = -EINVAL;
 
     if (ns < 0)
@@ -384,6 +397,28 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
 #ifdef _ENABLE_CHOPCHOP
         case ID_CHOPCHOP_GESTURE: status = 0;                                     break;
 #endif
+        case ID_QUAT_6AXIS:
+            rateFd = open(QUAT_6AXIS_RATE_ATTR_NAME, O_WRONLY);
+            if (rateFd < 0) {
+                status = rateFd;
+                break;
+            }
+            status = write(rateFd, &delay, sizeof(uint8_t));
+            if (status == sizeof(uint8_t))
+                status = 0;
+            close(rateFd);
+            break;
+        case ID_QUAT_9AXIS:
+            rateFd = open(QUAT_9AXIS_RATE_ATTR_NAME, O_WRONLY);
+            if (rateFd < 0) {
+                status = rateFd;
+                break;
+            }
+            status = write(rateFd, &delay, sizeof(uint8_t));
+            if (status == sizeof(uint8_t))
+                status = 0;
+            close(rateFd);
+            break;
     }
 
     if( handle == ID_M || handle == ID_O || handle == ID_UNCALIB_MAG )
@@ -506,6 +541,34 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->uncalibrated_magnetic.x_bias = STM16TOH(buff.data + UNCALIB_MAGNETIC_X_BIAS) * CONVERT_BIAS_M_X;
                 data->uncalibrated_magnetic.y_bias = STM16TOH(buff.data + UNCALIB_MAGNETIC_Y_BIAS) * CONVERT_BIAS_M_Y;
                 data->uncalibrated_magnetic.z_bias = STM16TOH(buff.data + UNCALIB_MAGNETIC_Z_BIAS) * CONVERT_BIAS_M_Z;
+                data->timestamp = buff.timestamp;
+                data++;
+                count--;
+                numEventReceived++;
+                break;
+            case DT_QUAT_6AXIS:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor = ID_QUAT_6AXIS;
+                data->type = SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR;
+                data->data[0] = STM16TOH(buff.data + QUAT_6AXIS_A) * CONVERT_RV;
+                data->data[1] = STM16TOH(buff.data + QUAT_6AXIS_B) * CONVERT_RV;
+                data->data[2] = STM16TOH(buff.data + QUAT_6AXIS_C) * CONVERT_RV;
+                data->data[3] = STM16TOH(buff.data + QUAT_6AXIS_W) * CONVERT_RV;
+                data->data[4] = 5.f * (3.14159f/180.f); // 5 degrees accuracy?
+                data->timestamp = buff.timestamp;
+                data++;
+                count--;
+                numEventReceived++;
+                break;
+            case DT_QUAT_9AXIS:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor = ID_QUAT_9AXIS;
+                data->type = SENSOR_TYPE_ROTATION_VECTOR;
+                data->data[0] = STM16TOH(buff.data + QUAT_9AXIS_A) * CONVERT_RV;
+                data->data[1] = STM16TOH(buff.data + QUAT_9AXIS_B) * CONVERT_RV;
+                data->data[2] = STM16TOH(buff.data + QUAT_9AXIS_C) * CONVERT_RV;
+                data->data[3] = STM16TOH(buff.data + QUAT_9AXIS_W) * CONVERT_RV;
+                data->data[4] = 5.f * (3.14159f/180.f); // 5 degrees accuracy?
                 data->timestamp = buff.timestamp;
                 data++;
                 count--;
