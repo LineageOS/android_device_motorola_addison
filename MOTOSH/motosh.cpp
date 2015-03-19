@@ -15,11 +15,17 @@
 #include <cutils/log.h>
 #include <cutils/properties.h>
 #include <linux/motosh.h>
+#include <inttypes.h>
+#include <unistd.h>
 
 /******************************* # defines **************************************/
 #define STM_DRIVER "/dev/motosh"
+/** The stem of the firmware file generated at build time. */
 #define STM_FIRMWARE_FILE "/system/etc/firmware/sensorhubfw"
-#define STM_VERSION_FILE "/system/etc/firmware/sensorhubver"
+/** The stem of the firmware file uploaded/written by the PlayStore APK. */
+#define STM_FIRMWARE_FILE_APK "/data/misc/sensorhub/sensorhubfw"
+/** Maximum filesystem path length */
+#define STM_MAX_PATH 256
 #define STM_FIRMWARE_FACTORY_FILE "/system/etc/firmware/sensorhubfactory.bin"
 #define STM_SUCCESS 0
 #define STM_FAILURE -1
@@ -33,7 +39,6 @@
 #define STM_MAX_GENERIC_COMMAND_LEN 3
 #define STM_FORCE_DOWNLOAD_MSG  "Use -f option to ignore version check eg: motosh boot -f\n"
 #define FLASH_START_ADDRESS 0x08000000
-
 
 #define CHECK_RETURN_VALUE( ret, msg)  if (ret < 0) {\
                      ALOGE("%s: %s \n",msg, strerror(errno)); \
@@ -76,50 +81,140 @@ typedef enum tag_stmmode
     LOWPOWER_MODE,
     MASS_ERASE_PART,
     INVALID
-}eStm_Mode;
+} eStm_Mode;
 
-/****************************** function defitions ****************************/
-int stm_version_check(int fd, bool check)
-{
-    FILE * vfp = NULL;
-    int ret = STM_VERSION_MISMATCH;
-    int newversion;
-    int oldversion;
-    int temp;
+int stm_convertAsciiToHex(char * input, unsigned char * output, int inlen);
+
+/** Computes the absolute firmware file path.
+ *
+ * If the APK provided version is present, it will be preferred over the system
+ * build-time version.
+ *
+ * The kernel SH driver may give us a suffix to use (obtained from the device
+ * tree) so that different HW variants can be handled.
+ *
+ * @param fd A file descriptor for the ioctl
+ * @param fileName A pointer to a buffer of at least STM_MAX_PATH bytes. A
+ * null-terminated string containing the full/absolute path to the firmware
+ * binary will be written to this buffer.
+ * @return A negative value on error.
+ * */
+int stm_getFwFile(int fd, char *fileName) {
     char ver_string[FW_VERSION_SIZE];
-    char ver_file_name[256];
 
-    /*check if a version check is required */
-    if ( check == false)
-        return STM_VERSION_MISMATCH;
+    int ret = ioctl(fd, MOTOSH_IOCTL_GET_VERNAME, ver_string);
+    if (ret < 0) return -1;
 
-    /* read new version number from version file*/
-    ioctl(fd, MOTOSH_IOCTL_GET_VERNAME, ver_string);
-    sprintf(ver_file_name, "%s%s.txt", STM_VERSION_FILE, ver_string);
-    DEBUG("MOTOSH version file name %s\n", ver_file_name);
-    vfp = fopen(ver_file_name,"r");
-    if(vfp == NULL) {
-        LOGERROR(" version file not found at %s\n", ver_file_name)
-        DEBUG(STM_FORCE_DOWNLOAD_MSG);
-        return ret;
-    }
-    fscanf(vfp, "%02x", &newversion);
+    // Prefer the APK FW version if present.
+    ret = snprintf(fileName, STM_MAX_PATH, "%s%s.bin", STM_FIRMWARE_FILE_APK, ver_string);
+    if (ret >= STM_MAX_PATH) ret = -2; // Output was truncated.
 
-    /* get old version from firmware */
-    oldversion = ioctl(fd, MOTOSH_IOCTL_GET_VERSION, &temp);
-
-    /* check if the version in hardware is older */
-    if( oldversion < newversion)
-        ret = STM_VERSION_MISMATCH;
-    else {
-        DEBUG(STM_FORCE_DOWNLOAD_MSG);
-        ret = STM_VERSION_MATCH;
+    if (ret < 0 || access(fileName, R_OK) != 0) {
+        // Fallback to the system FW.
+        ret = snprintf(fileName, STM_MAX_PATH, "%s%s.bin", STM_FIRMWARE_FILE, ver_string);
+        if (ret >= STM_MAX_PATH) ret = -3; // Output was truncated.
     }
 
-    LOGINFO("Version info: version in filesystem = %d, version in hardware = %d\n",newversion, oldversion)
-
-    fclose(vfp);
+    if (ret > 0) {
+        LOGINFO("MOTOSH using firmware: %s\n", fileName);
+    }
     return ret;
+}
+
+/** Extract the firmware version from the filesystem binary containing the firmware.
+ *
+ * @param fd A file descriptor for the ioctl
+ * @param fwVersionStr A pointer to a buffer of at least FW_VERSION_STR_MAX_LEN
+ * bytes. A null-terminated string containing the firmware version (as
+ * extracted from the .bin file) will be written to this location.
+ * @return A negative value on error.
+ * */
+int stm_getFwVersionFromFile(int fd, char *fwVersionStr) {
+    char path[STM_MAX_PATH];
+    if (int res = stm_getFwFile(fd, path) < 0) {
+        LOGERROR("Error: getFwFile = %i\n", res);
+        return -1;
+    }
+    FILE *f = fopen(path, "r");
+    if (!f) return -2;
+
+    // The build system appends a 32 bit address as ASCII HEX (8 bytes),
+    // followed by \n, at the end of the file. This is the address of the
+    // version string in flash, so it's something like "080177d4".
+    const int OffsetLen = 9;
+    int seek = fseek(f, -OffsetLen, SEEK_END);
+    if (seek == -1) {
+        fclose(f);
+        return -3;
+    }
+
+    char offsetStr[OffsetLen];
+    size_t sz = fread(offsetStr, 1, OffsetLen - 1, f);
+    if (sz != OffsetLen - 1) {
+        fclose(f);
+        return -4;
+    }
+
+    unsigned char offsetHex[OffsetLen / 2];
+    stm_convertAsciiToHex(offsetStr, offsetHex, OffsetLen - 1);
+    uint32_t offset = 0;
+    // We ignore the MSB byte because that's the flash offset (typically
+    // 0x08000000) and we want instead the file offset which is relative to the
+    // start of the flash.
+    //offset += ((uint32_t)offsetHex[0]) << 24;
+    offset += ((uint32_t)offsetHex[1]) << 16;
+    offset += ((uint32_t)offsetHex[2]) <<  8;
+    offset += ((uint32_t)offsetHex[3]);
+
+    seek = fseek(f, offset, SEEK_SET);
+    if (seek == -1) {
+        fclose(f);
+        return -5;
+    }
+
+    // Read the null-terminated string
+    int c, i = 0;
+    fwVersionStr[0] = '\0'; // In case we don't read anything.
+    while ((c = fgetc(f)) != '\0' && c != EOF && i < FW_VERSION_STR_MAX_LEN) {
+        fwVersionStr[i++] = c;
+    }
+
+    fclose(f);
+
+    if (c == EOF || i >= FW_VERSION_STR_MAX_LEN - 1) return -6;
+
+    fwVersionStr[i] = '\0'; // Since we didn't copy the null
+
+    return 0;
+}
+
+int stm_versionCheck(int fd, bool check) {
+
+    // A check is not required
+    if (!check) return STM_VERSION_MISMATCH;
+
+    char fileVersion[FW_VERSION_STR_MAX_LEN];
+    char hwVersion[FW_VERSION_STR_MAX_LEN];
+
+    int res = stm_getFwVersionFromFile(fd, fileVersion);
+    if (res < 0) {
+        LOGERROR("Error: getFwVersionFromFile returned %i\n", res);
+        return STM_VERSION_MATCH; // Corrupt file?
+    }
+
+    res = ioctl(fd, MOTOSH_IOCTL_GET_VERSION_STR, hwVersion);
+    if (res < 0) {
+        LOGERROR("Error: MOTOSH_IOCTL_GET_VERSION_STR returned %i\n", res);
+        return STM_VERSION_MISMATCH; // Corrupt SH?
+    }
+
+    LOGINFO("Version info: version in filesystem = %s, version in hardware = %s\n", fileVersion, hwVersion)
+
+    if (strcmp(fileVersion, hwVersion) == 0) {
+        return STM_VERSION_MATCH;
+    } else {
+        return STM_VERSION_MISMATCH;
+    }
 }
 
 int stm_convertAsciiToHex(char * input, unsigned char * output, int inlen)
@@ -191,6 +286,8 @@ int stm_downloadFirmware( int fd, FILE *filep)
     CHECK_RETURN_VALUE(ret,"Failed to set address\n");
 
     DEBUG("Start sending firmware packets to the driver\n");
+    // Move the file pointer to the beginning of the file in case this is a re-try
+    fseek(filep, 0, SEEK_SET);
     do {
         packetlength = stm_getpacket (&filep, packet);
         if( packetlength == 0)
@@ -274,7 +371,7 @@ int  main(int argc, char *argv[])
     int enabledints = 0;
     bool versioncheck = true;
     char ver_string[FW_VERSION_SIZE];
-    char fw_file_name[256];
+    char fw_file_name[STM_MAX_PATH];
 
     DEBUG("Start MOTOSH  Version-1 service\n");
 
@@ -317,7 +414,7 @@ int  main(int argc, char *argv[])
     /* open the device */
     fd = open(STM_DRIVER,O_RDONLY|O_WRONLY);
     if( fd < 0) {
-        LOGERROR("Unable to open motosh driver: %s\n",strerror(errno))
+        LOGERROR("Unable to open motosh driver (are you root?): %s\n", strerror(errno))
         ret = STM_FAILURE;
         goto EXIT;
     }
@@ -325,16 +422,14 @@ int  main(int argc, char *argv[])
 
     if (emode == BOOTLOADER) {
         if (emode == BOOTLOADER) {
-            ret = ioctl(fd, MOTOSH_IOCTL_GET_VERNAME, ver_string);
-            sprintf(fw_file_name, "%s%s.bin", STM_FIRMWARE_FILE, ver_string);
-            LOGINFO("MOTOSH file name %s\n", fw_file_name)
-            filep = fopen(fw_file_name,"r");
+            ret = stm_getFwFile(fd, fw_file_name);
+            if (ret >= 0) filep = fopen(fw_file_name, "r");
         }
         else
             filep = fopen(STM_FIRMWARE_FACTORY_FILE,"r");
 
         /* check if new firmware available for download */
-        if( (filep != NULL) && (stm_version_check(fd, versioncheck) == STM_VERSION_MISMATCH)) {
+        if( (filep != NULL) && (stm_versionCheck(fd, versioncheck) == STM_VERSION_MISMATCH)) {
             tries = 0;
             while((tries < STM_DOWNLOADRETRIES )) {
                 if( (stm_downloadFirmware(fd, filep)) >= STM_SUCCESS) {
@@ -346,10 +441,10 @@ int  main(int argc, char *argv[])
                         printf("\n");
                         // IOCTLS will be briefly blocked during part reset
                         sleep(1);
-                        if (stm_version_check(fd, true) != STM_VERSION_MATCH) {
+                        if (stm_versionCheck(fd, true) != STM_VERSION_MATCH) {
                             /* try once more */
                             sleep(2);
-                            if (stm_version_check(fd, true) == STM_VERSION_MATCH)
+                            if (stm_versionCheck(fd, true) == STM_VERSION_MATCH)
                                 LOGINFO("Firmware download completed successfully\n")
                             else
                                 LOGERROR("Firmware download error\n")
@@ -361,9 +456,7 @@ int  main(int argc, char *argv[])
 
                     break;
                 }
-                //point the file pointer to the beginning of the file for the next try
                 tries++;
-                fseek(filep, 0, SEEK_SET);
                 // Need to use sleep as msleep is not available
                 sleep(1);
             }
@@ -447,7 +540,7 @@ int  main(int argc, char *argv[])
         ret = ioctl(fd,MOTOSH_IOCTL_TEST_WRITE_READ,hexinput);
     }
     if( emode == VERSION) {
-        stm_version_check(fd, versioncheck);
+        stm_versionCheck(fd, true);
     }
     if( emode == DEBUG ) {
         if( argc < 3 )
