@@ -38,12 +38,12 @@
 #define MAG_INT_FLAG_POS	11
 #define SETTING_FLAG_POS	12
 
-#define AKMD_MAG_MIN_INTERVAL	10000000	/*!< magnetometer interval */
-#define AKMD_ACC_MIN_INTERVAL	10000000	/*!< acceleration interval */
-#define AKMD_FUSION_MIN_INTERVAL	10000000	/*!< fusion interval */
+#define AKMD_MAG_MIN_INTERVAL	20000000	/*!< magnetometer interval */
+#define AKMD_ACC_MIN_INTERVAL	20000000	/*!< acceleration interval */
+#define AKMD_FUSION_MIN_INTERVAL	20000000	/*!< fusion interval */
 #define AKMD_MAG_INTERVAL		50000000	/*!< magnetometer interval */
 #define AKMD_ACC_INTERVAL		50000000	/*!< acceleration interval */
-#define AKMD_FUSION_INTERVAL	10000000	/*!< fusion interval */
+#define AKMD_FUSION_INTERVAL	20000000	/*!< fusion interval */
 #define AKMD_LOOP_MARGIN		3000000		/*!< Minimum sleep time */
 #define AKMD_SETTING_INTERVAL	500000000	/*!< Setting event interval */
 
