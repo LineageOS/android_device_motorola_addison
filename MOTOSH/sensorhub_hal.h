@@ -37,6 +37,8 @@
 #define SENSORHUB_AS_DATA_NAME      "/dev/motosh_as"
 #define QUAT_6AXIS_RATE_ATTR_NAME   "/sys/devices/virtual/motosh/motosh_as/rv_6axis_update_rate"
 #define QUAT_9AXIS_RATE_ATTR_NAME   "/sys/devices/virtual/motosh/motosh_as/rv_9axis_update_rate"
+#define GRAVITY_RATE_ATTR_NAME      "/sys/devices/virtual/motosh/motosh_as/gravity_update_rate"
+#define LINEAR_ACCEL_RATE_ATTR_NAME "/sys/devices/virtual/motosh/motosh_as/linear_accel_update_rate"
 
 #define SENSORS_EVENT_T_SIZE sizeof(sensors_event_t);
 #define MAG_CAL_FILE "/data/misc/sensorhub/akmd_set.bin"
@@ -52,6 +54,10 @@
 #define ACCEL_X (0 * sizeof(int16_t))
 #define ACCEL_Y (1 * sizeof(int16_t))
 #define ACCEL_Z (2 * sizeof(int16_t))
+
+#define GRAVITY_X (0 * sizeof(int16_t))
+#define GRAVITY_Y (1 * sizeof(int16_t))
+#define GRAVITY_Z (2 * sizeof(int16_t))
 
 #define GYRO_X (0 * sizeof(int16_t))
 #define GYRO_Y (1 * sizeof(int16_t))

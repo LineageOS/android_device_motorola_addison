@@ -48,7 +48,7 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 
 #define ID_LA (7)  /* Linear Acceleration */
 #define ID_Q  (8)  /* Quaternion */
-#define ID_GR (9)  /* Gravity */
+#define ID_GRAVITY (9)  /* Gravity */
 #define ID_DR (10) /* Display Rotate */
 #define ID_DB (11) /* Display Brightness */
 
@@ -93,10 +93,10 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 #define CONVERT_A_Z                 (CONVERT_A)
 
 // conversion of linear accel data
-#define CONVERT_A_LIN               (1.0f/512.0f)
+#define CONVERT_A_LIN               (CONVERT_A)
 
 // conversion of gravity data
-#define CONVERT_A_GRAV              (1.0f/512.0f)
+#define CONVERT_GRAVITY             (GRAVITY_EARTH/((float)INT16_MAX))
 
 // conversion of Quaternion data
 #define CONVERT_QUA                 (1.0f/16384.0f)

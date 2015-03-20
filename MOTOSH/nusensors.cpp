@@ -69,7 +69,7 @@ private:
             case ID_LA:
 #endif
 #ifdef _ENABLE_GR
-            case ID_GR:
+            case ID_GRAVITY:
 #endif
             case ID_DR:
             case ID_P:

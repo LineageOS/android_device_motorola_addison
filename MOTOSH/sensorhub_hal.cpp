@@ -189,7 +189,7 @@ int HubSensor::enable(int32_t handle, int en)
             break;
 #endif
 #ifdef _ENABLE_GR
-        case ID_GR:
+        case ID_GRAVITY:
             new_enabled &= ~M_GRAVITY;
             if (newState)
                 new_enabled |= M_GRAVITY;
@@ -412,10 +412,30 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
         case ID_T: status = 0;                                                    break;
         case ID_L: status = 0;                                                    break;
 #ifdef _ENABLE_LA
-        case ID_LA: status = 0;                                                   break;
+        case ID_LA:
+            rateFd = open(LINEAR_ACCEL_RATE_ATTR_NAME, O_WRONLY);
+            if (rateFd < 0) {
+                status = rateFd;
+                break;
+            }
+            status = write(rateFd, &delay, sizeof(uint8_t));
+            if (status == sizeof(uint8_t))
+                status = 0;
+            close(rateFd);
+            break;
 #endif
 #ifdef _ENABLE_GR
-        case ID_GR: status = 0;                                                   break;
+	case ID_GRAVITY:
+            rateFd = open(GRAVITY_RATE_ATTR_NAME, O_WRONLY);
+            if (rateFd < 0) {
+                status = rateFd;
+                break;
+            }
+            status = write(rateFd, &delay, sizeof(uint8_t));
+            if (status == sizeof(uint8_t))
+                status = 0;
+            close(rateFd);
+            break;
 #endif
         case ID_DR: status = 0;                                                   break;
         case ID_P: status = 0;                                                    break;
@@ -507,8 +527,8 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
 
     while (count && ((ret = read(data_fd, &buff, sizeof(struct motosh_android_sensor_data))) != 0)) {
         /* these sensors are not supported, upload a bug2go if its been at least 24hrs since previous bug2go*/
-        if (buff.type == DT_PRESSURE || buff.type == DT_TEMP || buff.type == DT_LIN_ACCEL ||
-            buff.type == DT_GRAVITY || buff.type == DT_DOCK ||
+        if (buff.type == DT_PRESSURE || buff.type == DT_TEMP ||
+            buff.type == DT_DOCK ||
             buff.type == DT_NFC || buff.type == DT_RESET) {
             count--;
             if (buff.type == DT_RESET) {
@@ -733,11 +753,11 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
 #ifdef _ENABLE_GR
             case DT_GRAVITY:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_GR;
+                data->sensor = ID_GRAVITY;
                 data->type = SENSOR_TYPE_GRAVITY;
-                data->acceleration.x = STM16TOH(buff.data + ACCEL_X) * CONVERT_A_GRAV;
-                data->acceleration.y = STM16TOH(buff.data + ACCEL_Y) * CONVERT_A_GRAV;
-                data->acceleration.z = STM16TOH(buff.data + ACCEL_Z) * CONVERT_A_GRAV;
+                data->acceleration.x = STM16TOH(buff.data + GRAVITY_X) * CONVERT_GRAVITY;
+                data->acceleration.y = STM16TOH(buff.data + GRAVITY_Y) * CONVERT_GRAVITY;
+                data->acceleration.z = STM16TOH(buff.data + GRAVITY_Z) * CONVERT_GRAVITY;
                 data->acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
                 data->timestamp = buff.timestamp;
                 data++;

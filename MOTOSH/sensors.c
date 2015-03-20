@@ -34,6 +34,9 @@
 #define VENDOR_MOT  "Motorola"
 #define VENDOR_TAOS "TAOS"
 
+/* Range settings */
+#define ACCEL_FULLSCALE_G  (16)
+
 /* Min delays */
 #define ACCEL_MIN_DELAY_US 5000
 #define GYRO_MIN_DELAY_US  5000
@@ -65,6 +68,7 @@
 #define CAM_ACT_ALGO_MA 1.0f
 #define MOT_9AXIS_MA    1.0f
 #define MOT_6AXIS_MA    1.0f
+#define MOT_LAGRAV_MA   1.0f
 
 static const struct sensor_t sSensorList[] = {
     { .name = ACCEL_PART_NO " 3-axis Accelerometer",
@@ -72,8 +76,8 @@ static const struct sensor_t sSensorList[] = {
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_A,
                 .type = SENSOR_TYPE_ACCELEROMETER,
-                .maxRange = 16.0f*9.81f,
-                .resolution = 9.81f/2048.0f,
+                .maxRange = ACCEL_FULLSCALE_G*GRAVITY_EARTH,
+                .resolution = GRAVITY_EARTH/LSG,
                 .power = ICM20645_ACCEL_MA,
                 .minDelay = ACCEL_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
@@ -444,6 +448,42 @@ static const struct sensor_t sSensorList[] = {
                 .maxDelay = 0,
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
+#ifdef _ENABLE_GR
+    { .name = "Gravity",
+                .vendor = "Motorola",
+                .version = 1,
+                .handle = SENSORS_HANDLE_BASE+ID_GRAVITY,
+                .type = SENSOR_TYPE_GRAVITY,
+                .maxRange = GRAVITY_EARTH,
+                .resolution = GRAVITY_EARTH/32767.f,
+                .power = ICM20645_ACCEL_MA + ICM20645_GYRO_MA + AK09912_MA + MOT_LAGRAV_MA,
+                .minDelay = 10000,
+                .fifoReservedEventCount = 0,
+                .fifoMaxEventCount = 0,
+                .stringType = "",
+                .requiredPermission = "",
+                .maxDelay = 0,
+                .flags = SENSOR_FLAG_CONTINUOUS_MODE,
+                .reserved = {0,0} },
+#endif
+#ifdef _ENABLE_LA
+    { .name = "Linear Acceleration",
+                .vendor = "Motorola",
+                .version = 1,
+                .handle = SENSORS_HANDLE_BASE+ID_LA,
+                .type = SENSOR_TYPE_LINEAR_ACCELERATION,
+                .maxRange = ACCEL_FULLSCALE_G*GRAVITY_EARTH,
+                .resolution = GRAVITY_EARTH/LSG,
+                .power = ICM20645_ACCEL_MA + ICM20645_GYRO_MA + AK09912_MA + MOT_LAGRAV_MA,
+                .minDelay = 10000,
+                .fifoReservedEventCount = 0,
+                .fifoMaxEventCount = 0,
+                .stringType = "",
+                .requiredPermission = "",
+                .maxDelay = 0,
+                .flags = SENSOR_FLAG_CONTINUOUS_MODE,
+                .reserved = {0,0} },
+#endif
 };
 
 /* Clean up definitions */
