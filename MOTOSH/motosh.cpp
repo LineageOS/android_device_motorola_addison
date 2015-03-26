@@ -19,6 +19,9 @@
 #include <unistd.h>
 
 /******************************* # defines **************************************/
+#define CAPSENSE_FW_UPDATE  "/sys/class/capsense/fw_update"
+#define CS_MAX_LEN 8
+
 #define STM_DRIVER "/dev/motosh"
 /** The stem of the firmware file generated at build time. */
 #define STM_FIRMWARE_FILE "/system/etc/firmware/sensorhubfw"
@@ -84,6 +87,54 @@ typedef enum tag_stmmode
 } eStm_Mode;
 
 int stm_convertAsciiToHex(char * input, unsigned char * output, int inlen);
+
+/* force a check and flash of capsense if needed */
+void flash_capsense(void) {
+
+    char checksum[CS_MAX_LEN];
+    int cs = 0;
+    int checks = 5;
+    char *end;
+    int c;
+    FILE *fp;
+    struct stat buf;
+
+    /* exit if there is no capsense flash control path available */
+    if (stat(CAPSENSE_FW_UPDATE, &buf) < 0)
+	return;
+
+    fp = fopen(CAPSENSE_FW_UPDATE, "w");
+    if(fp){
+	LOGINFO("Opened capsense flash control\n")
+	fputc('1',fp);
+	fclose(fp);
+    } else
+	 LOGERROR("Failed to open capsense flash control\n")
+
+    /* look for a non-zero checksum on the same fd */
+    while(checks--) {
+	sleep(1);
+	fp = fopen(CAPSENSE_FW_UPDATE, "r");
+	if (fp) {
+	    int i = 0;
+	    while ((c = fgetc(fp)) != '\0' &&
+		   c != EOF &&
+		   i < CS_MAX_LEN-1) {
+		checksum[i++] = c;
+	    }
+	    checksum[i] = '\0';
+
+	    cs = (int)strtol(checksum, &end, 16);
+	    if (cs != 0)
+	        checks = 0;
+
+	    fclose(fp);
+	} else
+	    LOGERROR("Failed to read capsense flash status\n")
+    }
+    LOGINFO("Capsense checksum 0x%X\n", cs)
+    sleep(2);
+}
 
 /** Computes the absolute firmware file path.
  *
@@ -421,6 +472,12 @@ int  main(int argc, char *argv[])
 
 
     if (emode == BOOTLOADER) {
+
+	/* trigger capsense check and flash if this is a normal
+	   boot up check (no -f option applied) */
+	if (versioncheck)
+		flash_capsense();
+
         if (emode == BOOTLOADER) {
             ret = stm_getFwFile(fd, fw_file_name);
             if (ret >= 0) filep = fopen(fw_file_name, "r");
