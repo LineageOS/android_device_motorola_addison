@@ -71,7 +71,9 @@ int init_nusensors(hw_module_t const* module, hw_device_t** device);
 #define ID_CHOPCHOP_GESTURE (27) /* ChopChop Gesture */
 #define ID_QUAT_6AXIS (28)
 #define ID_QUAT_9AXIS (29)
-#define MAX_SENSOR_ID (29)
+#define ID_LIFT_GESTURE (30)
+#define MAX_SENSOR_ID (30)
+
 
 /*****************************************************************************/
 

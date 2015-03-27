@@ -329,6 +329,14 @@ int HubSensor::enable(int32_t handle, int en)
             found = 1;
             break;
 #endif
+#ifdef _ENABLE_LIFT
+        case ID_LIFT_GESTURE:
+            new_enabled &= ~M_LIFT;
+            if (newState)
+                new_enabled |= M_LIFT;
+            found = 1;
+            break;
+#endif
     }
 
     if (found && (new_enabled != mWakeEnabled)) {
@@ -396,6 +404,9 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
 #endif
 #ifdef _ENABLE_CHOPCHOP
         case ID_CHOPCHOP_GESTURE: status = 0;                                     break;
+#endif
+#ifdef _ENABLE_LIFT
+        case ID_LIFT_GESTURE: status = 0;                                         break;
 #endif
         case ID_QUAT_6AXIS:
             rateFd = open(QUAT_6AXIS_RATE_ATTR_NAME, O_WRONLY);
@@ -828,6 +839,20 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->sensor = ID_CHOPCHOP_GESTURE;
                 data->type = SENSOR_TYPE_CHOPCHOP_GESTURE;
                 data->data[0] = STM16TOH(buff.data + CHOPCHOP_CHOPCHOP);
+                data->timestamp = buff.timestamp;
+                data++;
+                count--;
+                numEventReceived++;
+                break;
+#endif
+#ifdef _ENABLE_LIFT
+            case DT_LIFT:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor = ID_LIFT_GESTURE;
+                data->type = SENSOR_TYPE_LIFT_GESTURE;
+                data->data[0] = STM32TOH(buff.data + LIFT_DISTANCE);
+                data->data[1] = STM32TOH(buff.data + LIFT_ROTATION);
+                data->data[2] = STM32TOH(buff.data + LIFT_GRAV_DIFF);
                 data->timestamp = buff.timestamp;
                 data++;
                 count--;
