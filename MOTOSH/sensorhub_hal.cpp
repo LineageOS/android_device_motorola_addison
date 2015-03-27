@@ -50,7 +50,8 @@ HubSensor::HubSensor()
 {
     // read the actual value of all sensors if they're enabled already
     struct input_absinfo absinfo;
-    short flags = 0;
+    short flags16 = 0;
+    uint32_t flags24 = 0;
     FILE *fp;
     int i;
     int mag_data;
@@ -62,12 +63,12 @@ HubSensor::HubSensor()
 
     open_device();
 
-    if (!ioctl(dev_fd, MOTOSH_IOCTL_GET_SENSORS, &flags))  {
-        mEnabled = flags;
+    if (!ioctl(dev_fd, MOTOSH_IOCTL_GET_SENSORS, &flags16))  {
+        mEnabled = flags16;
     }
 
-    if (!ioctl(dev_fd, MOTOSH_IOCTL_GET_WAKESENSORS, &flags))  {
-        mWakeEnabled = flags;
+    if (!ioctl(dev_fd, MOTOSH_IOCTL_GET_WAKESENSORS, &flags24))  {
+        mWakeEnabled = flags24;
     }
 
     if ((fp = fopen(MAG_CAL_FILE, "r")) != NULL) {
