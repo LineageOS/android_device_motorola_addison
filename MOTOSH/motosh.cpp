@@ -17,6 +17,7 @@
 #include <linux/motosh.h>
 #include <inttypes.h>
 #include <unistd.h>
+#include "CRC32.h"
 
 /******************************* # defines **************************************/
 #define CAPSENSE_FW_UPDATE  "/sys/class/capsense/fw_update"
@@ -41,7 +42,11 @@
 #define STM_MAX_GENERIC_HEADER 4
 #define STM_MAX_GENERIC_COMMAND_LEN 3
 #define STM_FORCE_DOWNLOAD_MSG  "Use -f option to ignore version check eg: motosh boot -f\n"
-#define FLASH_START_ADDRESS 0x08000000
+#define FLASH_START_ADDRESS (0x08000000)
+#define FLASH_SIZE (0x0FffFFUL)
+// The value used to fill unused buffer space / flash.
+#define FLASH_FILL (0xff)
+
 
 #define CHECK_RETURN_VALUE( ret, msg)  if (ret < 0) {\
                      ALOGE("%s: %s \n",msg, strerror(errno)); \
@@ -101,36 +106,36 @@ void flash_capsense(void) {
 
     /* exit if there is no capsense flash control path available */
     if (stat(CAPSENSE_FW_UPDATE, &buf) < 0)
-	return;
+        return;
 
     fp = fopen(CAPSENSE_FW_UPDATE, "w");
     if(fp){
-	LOGINFO("Opened capsense flash control\n")
-	fputc('1',fp);
-	fclose(fp);
+        LOGINFO("Opened capsense flash control\n")
+        fputc('1',fp);
+        fclose(fp);
     } else
-	 LOGERROR("Failed to open capsense flash control\n")
+         LOGERROR("Failed to open capsense flash control\n")
 
     /* look for a non-zero checksum on the same fd */
     while(checks--) {
-	sleep(1);
-	fp = fopen(CAPSENSE_FW_UPDATE, "r");
-	if (fp) {
-	    int i = 0;
-	    while ((c = fgetc(fp)) != '\0' &&
-		   c != EOF &&
-		   i < CS_MAX_LEN-1) {
-		checksum[i++] = c;
-	    }
-	    checksum[i] = '\0';
+        sleep(1);
+        fp = fopen(CAPSENSE_FW_UPDATE, "r");
+        if (fp) {
+            int i = 0;
+            while ((c = fgetc(fp)) != '\0' &&
+                   c != EOF &&
+                   i < CS_MAX_LEN-1) {
+                checksum[i++] = c;
+            }
+            checksum[i] = '\0';
 
-	    cs = (int)strtol(checksum, &end, 16);
-	    if (cs != 0)
-	        checks = 0;
+            cs = (int)strtol(checksum, &end, 16);
+            if (cs != 0)
+                checks = 0;
 
-	    fclose(fp);
-	} else
-	    LOGERROR("Failed to read capsense flash status\n")
+            fclose(fp);
+        } else
+            LOGERROR("Failed to read capsense flash status\n")
     }
     LOGINFO("Capsense checksum 0x%X\n", cs)
     sleep(2);
@@ -151,6 +156,7 @@ void flash_capsense(void) {
  * @return A negative value on error.
  * */
 int stm_getFwFile(int fd, char *fileName) {
+    static bool reported = false;
     char ver_string[FW_VERSION_SIZE];
 
     int ret = ioctl(fd, MOTOSH_IOCTL_GET_VERNAME, ver_string);
@@ -166,8 +172,9 @@ int stm_getFwFile(int fd, char *fileName) {
         if (ret >= STM_MAX_PATH) ret = -3; // Output was truncated.
     }
 
-    if (ret > 0) {
+    if (ret > 0 && !reported) {
         LOGINFO("MOTOSH using firmware: %s\n", fileName);
+        reported = true;
     }
     return ret;
 }
@@ -239,17 +246,56 @@ int stm_getFwVersionFromFile(int fd, char *fwVersionStr) {
     return 0;
 }
 
-int stm_versionCheck(int fd, bool check) {
+/** Computes the pseudo-CRC of a firmware binary file. This is not a simplistic
+ * CRC over the file contents. Instead this function will compute the CRC that
+ * would be computed by the SensorHub if the firmware binary file were to be
+ * loaded in flash on the SensorHub and the CRC computed over the whole flash.
+ *
+ * @param fd A file descriptor for the ioctl
+ * @param crc The computed CRC.
+ * @return Returns 0 on success or a negative value on error.
+ */
+int stm_calcFwFileCrc(int fd, uint32_t &crc) {
+    int res;
+    char path[STM_MAX_PATH];
+    if ((res = stm_getFwFile(fd, path)) < 0) {
+        LOGERROR("Error: getFwFile = %i\n", res);
+        return -1;
+    }
 
-    // A check is not required
-    if (!check) return STM_VERSION_MISMATCH;
+    res = calculateFileCrc32(path, FLASH_SIZE, FLASH_FILL, &crc);
+    return res;
+}
 
+/**
+ * Compares the version string and CRC of the firmware in the AP file system
+ * and in the SensorHub hardware.
+ *
+ * Given the CRC check, the version string check is redundant, but is being
+ * done for informative purposes. It is possible for different firmwares to
+ * be built with the same version string (for example, different developer
+ * iterations that all have the "-dirty" flag), but if the contents are trully
+ * different the CRC will not match.
+ *
+ * @param fd A file descriptor for the ioctl to communicate with the SensorHub.
+ * @return One of STM_VERSION_MISMATCH (which could indicate an actual mismatch
+ * or an error in obtaining one or more pieces of data required for the check)
+ * or STM_VERSION_MATCH which indicates the version string and CRC matches.
+ */
+int stm_versionCheck(int fd) {
     char fileVersion[FW_VERSION_STR_MAX_LEN];
     char hwVersion[FW_VERSION_STR_MAX_LEN];
+    uint32_t fileCrc = 0, hwCrc = 0;
 
     int res = stm_getFwVersionFromFile(fd, fileVersion);
     if (res < 0) {
         LOGERROR("Error: getFwVersionFromFile returned %i\n", res);
+        return STM_VERSION_MATCH; // Corrupt file?
+    }
+
+    res = stm_calcFwFileCrc(fd, fileCrc);
+    if (res < 0) {
+        LOGERROR("Error: calcFwFileCrc returned %i\n", res);
         return STM_VERSION_MATCH; // Corrupt file?
     }
 
@@ -259,9 +305,16 @@ int stm_versionCheck(int fd, bool check) {
         return STM_VERSION_MISMATCH; // Corrupt SH?
     }
 
-    LOGINFO("Version info: version in filesystem = %s, version in hardware = %s\n", fileVersion, hwVersion)
+    res = ioctl(fd, MOTOSH_IOCTL_GET_FLASH_CRC, &hwCrc);
+    if (res < 0) {
+        LOGERROR("Error: MOTOSH_IOCTL_GET_FLASH_CRC returned %i\n", res);
+        return STM_VERSION_MISMATCH; // Corrupt SH?
+    }
 
-    if (strcmp(fileVersion, hwVersion) == 0) {
+    LOGINFO("Version info: in filesystem = %s, in hardware = %s\n", fileVersion, hwVersion)
+    LOGINFO("FW CRC value: in filesystem = 0x%08X, in hardware = 0x%08X\n", fileCrc, hwCrc)
+
+    if ((strcmp(fileVersion, hwVersion) == 0) && (fileCrc == hwCrc)) {
         return STM_VERSION_MATCH;
     } else {
         return STM_VERSION_MISMATCH;
@@ -305,7 +358,7 @@ int stm_getpacket( FILE ** filepointer, unsigned char * databuff)
     /* packet size needs to be a multiple of 8 bytes (64 bits) */
     while(len < STM_MAX_PACKET_LENGTH &&
           len % 8 > 0){
-        databuff[len] = 0xFF;
+        databuff[len] = FLASH_FILL;
         len++;
     }
     return len;
@@ -420,7 +473,7 @@ int  main(int argc, char *argv[])
     int count, i;
     short delay = 0;
     int enabledints = 0;
-    bool versioncheck = true;
+    bool forceBoot = false;
     char ver_string[FW_VERSION_SIZE];
     char fw_file_name[STM_MAX_PATH];
 
@@ -458,8 +511,9 @@ int  main(int argc, char *argv[])
 
     /* check if its a force download */
     if (emode == BOOTLOADER && (argc == 3)) {
-        if(!strcmp(argv[2], "-f"))
-            versioncheck = false;
+        if (!strcmp(argv[2], "-f")) {
+            forceBoot = true;
+        }
     }
 
     /* open the device */
@@ -473,10 +527,10 @@ int  main(int argc, char *argv[])
 
     if (emode == BOOTLOADER) {
 
-	/* trigger capsense check and flash if this is a normal
-	   boot up check (no -f option applied) */
-	if (versioncheck)
-		flash_capsense();
+        /* trigger capsense check and flash if this is a normal
+           boot up check (no -f option applied) */
+        if (!forceBoot)
+            flash_capsense();
 
         if (emode == BOOTLOADER) {
             ret = stm_getFwFile(fd, fw_file_name);
@@ -486,7 +540,7 @@ int  main(int argc, char *argv[])
             filep = fopen(STM_FIRMWARE_FACTORY_FILE,"r");
 
         /* check if new firmware available for download */
-        if( (filep != NULL) && (stm_versionCheck(fd, versioncheck) == STM_VERSION_MISMATCH)) {
+        if( (filep != NULL) && (forceBoot || stm_versionCheck(fd) == STM_VERSION_MISMATCH)) {
             tries = 0;
             while((tries < STM_DOWNLOADRETRIES )) {
                 if( (stm_downloadFirmware(fd, filep)) >= STM_SUCCESS) {
@@ -498,10 +552,10 @@ int  main(int argc, char *argv[])
                         printf("\n");
                         // IOCTLS will be briefly blocked during part reset
                         sleep(1);
-                        if (stm_versionCheck(fd, true) != STM_VERSION_MATCH) {
+                        if (stm_versionCheck(fd) != STM_VERSION_MATCH) {
                             /* try once more */
                             sleep(2);
-                            if (stm_versionCheck(fd, true) == STM_VERSION_MATCH)
+                            if (stm_versionCheck(fd) == STM_VERSION_MATCH)
                                 LOGINFO("Firmware download completed successfully\n")
                             else
                                 LOGERROR("Firmware download error\n")
@@ -597,7 +651,7 @@ int  main(int argc, char *argv[])
         ret = ioctl(fd,MOTOSH_IOCTL_TEST_WRITE_READ,hexinput);
     }
     if( emode == VERSION) {
-        stm_versionCheck(fd, true);
+        stm_versionCheck(fd);
     }
     if( emode == DEBUG ) {
         if( argc < 3 )
