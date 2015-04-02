@@ -40,12 +40,17 @@ HubSensor::HubSensor()
       mEnabled(0),
       mWakeEnabled(0),
       mPendingMask(0),
+      mGyroEnabled(0),
+      mUncalGyroEnabled(0),
       mOrientEnabled(0),
       mMagEnabled(0),
       mUncalMagEnabled(0),
+      mGyroReqDelay(USHRT_MAX),
+      mUncalGyroReqDelay(USHRT_MAX),
       mMagReqDelay(USHRT_MAX),
       mUncalMagReqDelay(USHRT_MAX),
       mOrientReqDelay(USHRT_MAX),
+      mGyroDelay(USHRT_MAX),
       mEcompassDelay(USHRT_MAX)
 {
     // read the actual value of all sensors if they're enabled already
@@ -110,9 +115,12 @@ int HubSensor::enable(int32_t handle, int en)
             found = 1;
             break;
         case ID_G:
+            mGyroEnabled = newState;
             new_enabled &= ~M_GYRO;
-            if (newState)
+            if (mGyroEnabled)
                 new_enabled |= M_GYRO;
+            else
+                mGyroReqDelay = USHRT_MAX;
             found = 1;
             break;
         case ID_PR:
@@ -196,9 +204,12 @@ int HubSensor::enable(int32_t handle, int en)
             found = 1;
             break;
         case ID_UNCALIB_GYRO:
+            mUncalGyroEnabled = newState;
             new_enabled &= ~M_UNCALIB_GYRO;
-            if (newState)
+            if (mUncalGyroEnabled)
                 new_enabled |= M_UNCALIB_GYRO;
+            else
+                mUncalGyroReqDelay = USHRT_MAX;
             found = 1;
             break;
 	case ID_UNCALIB_MAG:
@@ -273,6 +284,10 @@ int HubSensor::enable(int32_t handle, int en)
         else
             new_enabled |= M_ECOMPASS;
     } // end if( handle == ID_M || handle == ID_O )
+
+    // May need to update the gyro rate
+    if( handle == ID_G || handle == ID_UNCALIB_GYRO )
+        updateGyroRate();
 
     if (found && (new_enabled != mEnabled)) {
         err = ioctl(dev_fd, MOTOSH_IOCTL_SET_SENSORS, &new_enabled);
@@ -363,7 +378,9 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
     unsigned short delay = int64_t(ns) / 1000000;
     switch (handle) {
         case ID_A: status = ioctl(dev_fd,  MOTOSH_IOCTL_SET_ACC_DELAY, &delay);   break;
-        case ID_G: status = ioctl(dev_fd,  MOTOSH_IOCTL_SET_GYRO_DELAY, &delay);  break;
+        case ID_G:
+            mGyroReqDelay = delay;
+            break;
         case ID_PR: status = ioctl(dev_fd,  MOTOSH_IOCTL_SET_PRES_DELAY, &delay); break;
         case ID_M:
             mMagReqDelay = delay;
@@ -389,7 +406,9 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
         case ID_IR_RAW: status = ioctl(dev_fd, MOTOSH_IOCTL_SET_IR_RAW_DELAY, &delay); break;
         case ID_IR_OBJECT: status = 0;                                            break;
         case ID_SIM: status = 0;                                                  break;
-        case ID_UNCALIB_GYRO: status = ioctl(dev_fd,  MOTOSH_IOCTL_SET_GYRO_DELAY, &delay); break;
+        case ID_UNCALIB_GYRO:
+            mUncalGyroReqDelay = delay;
+            break;
         case ID_UNCALIB_MAG:
             mUncalMagReqDelay = delay;
             break;
@@ -434,6 +453,8 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
 
     if( handle == ID_M || handle == ID_O || handle == ID_UNCALIB_MAG )
         status = updateEcompassRate();
+    else if( handle == ID_G || handle == ID_UNCALIB_GYRO )
+        status = updateGyroRate();
 
     return status;
 }
@@ -955,6 +976,36 @@ int HubSensor::updateEcompassRate()
     {
         mEcompassDelay = minReqDelay;
         ret = ioctl(dev_fd,  MOTOSH_IOCTL_SET_MAG_DELAY, &mEcompassDelay);
+    }
+
+    return ret;
+}
+
+int HubSensor::updateGyroRate()
+{
+    int ret = 0;
+
+    const size_t reqDelays_len = 2;
+    unsigned short reqDelays[reqDelays_len] = {
+        mGyroEnabled      ? mGyroReqDelay      : (unsigned short)USHRT_MAX,
+        mUncalGyroEnabled ? mUncalGyroReqDelay : (unsigned short)USHRT_MAX
+    };
+    unsigned short minReqDelay = USHRT_MAX;
+
+    // Get minReqDelay
+    for( size_t i = 0; i < reqDelays_len; ++i )
+    {
+        if( reqDelays[i] < minReqDelay )
+            minReqDelay = reqDelays[i];
+    }
+
+    // Do ioctl if we have a valid delay and it's different
+    if( minReqDelay == USHRT_MAX )
+        mGyroDelay = USHRT_MAX;
+    else if( mGyroDelay != minReqDelay )
+    {
+        mGyroDelay = minReqDelay;
+        ret = ioctl(dev_fd,  MOTOSH_IOCTL_SET_GYRO_DELAY, &mGyroDelay);
     }
 
     return ret;

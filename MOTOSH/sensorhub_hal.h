@@ -167,18 +167,31 @@ private:
     uint32_t mPendingMask;
     uint8_t mMagCal[MOTOSH_MAG_CAL_SIZE];
     uint8_t mErrorCnt[ERROR_TYPES];
+    //! \brief last value passed to \c enable() on gyro sensor
+    uint8_t mGyroEnabled;
+    //! \brief last value passed to \c enable() on uncal gyro sensor
+    uint8_t mUncalGyroEnabled;
     //! \brief last value passed to \c enable() on orientation sensor
     uint8_t mOrientEnabled;
     //! \brief last value passed to \c enable() on mag sensor
     uint8_t mMagEnabled;
     //! \brief last value passed to \c enable() on uncal mag sensor
     uint8_t mUncalMagEnabled;
+
+    //! \brief \c USHRT_MAX if unset or gyro disabled, o.w. the requested gyro delay in ms.
+    unsigned short mGyroReqDelay;
+    //! \brief \c USHRT_MAX if unset or uncal gyro disabled, o.w. the requested uncal gyro delay in ms.
+    unsigned short mUncalGyroReqDelay;
     //! \brief \c USHRT_MAX if unset or mag disabled, o.w. the requested mag delay in ms.
     unsigned short mMagReqDelay;
     //! \brief \c USHRT_MAX if unset or uncal mag disabled, o.w. the requested uncal mag delay in ms.
     unsigned short mUncalMagReqDelay;
     //! \brief \c USHRT_MAX if unset or orientation disabled, o.w. the requested orientation delay in ms.
     unsigned short mOrientReqDelay;
+
+
+    //! \brief Currently-set gyro delay in ms, or \c USHRT_MAX if unset.
+    unsigned short mGyroDelay;
     //! \brief Currently-set eCompass delay in ms, or \c USHRT_MAX if unset.
     unsigned short mEcompassDelay;
     gzFile open_dropbox_file(const char* timestamp, const char* dst, const int flags);
@@ -196,6 +209,20 @@ private:
      * \returns ioctl() status resulting from ecompass rate set
      */
     int updateEcompassRate();
+
+    /*!
+     * \brief Helper to update gyro rate
+     *
+     * Reads \c mGyroReqDelay, and \c mUncalGyroReqDelay.
+     * Sets \c mGyroDelay to the value passed through the ioctl(), or
+     * back to \c USHRT_MAX if all requested delays are USHRT_MAX.
+     *
+     * Only issues a new delay-change ioctl() if the computed rate is
+     * different from the currently-set \c mGyroDelay.
+     *
+     * \returns ioctl() status resulting from gyro rate set
+     */
+    int updateGyroRate();
 };
 
 /*****************************************************************************/
