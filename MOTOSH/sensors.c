@@ -34,12 +34,22 @@
 #define VENDOR_MOT  "Motorola"
 #define VENDOR_TAOS "TAOS"
 
+/* Min delays */
+#define ACCEL_MIN_DELAY_US 5000
+#define GYRO_MIN_DELAY_US  5000
+#define MAG_MIN_DELAY_US   20000
+
+/* Max delays */
+#define ACCEL_MAX_DELAY_US 200000
+#define GYRO_MAX_DELAY_US  200000
+#define MAG_MAX_DELAY_US   200000
+
 /* Part numbers to use in sensor names */
 #define ACCEL_PART_NO "ICM20645"
 #define GYRO_PART_NO  "ICM20645"
 #define MAG_PART_NO   "AKM09912"
-#define ALS_PART_NO   "CT406"
-#define PROX_PART_NO  "CT406"
+#define ALS_PART_NO   "CT1011"
+#define PROX_PART_NO  "CT1011"
 
 /* Various current draw figures from spec sheets in mA */
 #define ICM20645_6AXIS_MA          3.4f
@@ -47,8 +57,8 @@
 #define ICM20645_ACCEL_MA          0.45f
 #define ICM20645_ACCEL_LOWPOWER_MA 0.019f
 #define AK09912_MA                 1.0f
-#define CT406_ALS_MA               0.25f
-#define CT406_PROX_MA              3.0f
+#define CT1011_ALS_MA              0.25f
+#define CT1011_PROX_MA             0.0467f /* 100mA (LED drive) * (7us/pulse * 4 pulses)/60ms */
 
 /* Estimated algorithm current draw in mA*/
 #define ORIENT_ALGO_MA  1.0f
@@ -65,12 +75,12 @@ static const struct sensor_t sSensorList[] = {
                 .maxRange = 16.0f*9.81f,
                 .resolution = 9.81f/2048.0f,
                 .power = ICM20645_ACCEL_MA,
-                .minDelay = 5000,
+                .minDelay = ACCEL_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
                 .stringType = "",
                 .requiredPermission = "",
-                .maxDelay = 200000,
+                .maxDelay = ACCEL_MAX_DELAY_US,
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
     { .name = GYRO_PART_NO " Gyroscope",
@@ -81,12 +91,12 @@ static const struct sensor_t sSensorList[] = {
                 .maxRange = 2000.0f,
                 .resolution = 1.0f,
                 .power = ICM20645_GYRO_MA,
-                .minDelay = 5000,
+                .minDelay = GYRO_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
                 .stringType = "",
                 .requiredPermission = "",
-                .maxDelay = 200000,
+                .maxDelay = GYRO_MAX_DELAY_US,
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
     { .name = MAG_PART_NO " 3-axis Magnetometer",
@@ -97,12 +107,12 @@ static const struct sensor_t sSensorList[] = {
                 .maxRange = 2000.0f,
                 .resolution = 1.0f/10.0f,
                 .power = AK09912_MA,
-                .minDelay = 20000,
+                .minDelay = MAG_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
                 .stringType = "",
                 .requiredPermission = "",
-                .maxDelay = 200000,
+                .maxDelay = MAG_MAX_DELAY_US,
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
     { .name = MAG_PART_NO " Orientation",
@@ -113,12 +123,12 @@ static const struct sensor_t sSensorList[] = {
                 .maxRange = 360.0f,
                 .resolution = 1.0f/64.0f,
                 .power = AK09912_MA + ICM20645_ACCEL_MA + ORIENT_ALGO_MA,
-                .minDelay = 20000,
+                .minDelay = MAG_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
                 .stringType = "",
                 .requiredPermission = "",
-                .maxDelay = 200000,
+                .maxDelay = MAG_MAX_DELAY_US,
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
     { .name = ALS_PART_NO " Ambient Light",
@@ -128,7 +138,7 @@ static const struct sensor_t sSensorList[] = {
                 .type = SENSOR_TYPE_LIGHT,
                 .maxRange = 27000.0f,
                 .resolution = 1.0f,
-                .power = CT406_ALS_MA,
+                .power = CT1011_ALS_MA,
                 .minDelay = 0,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -160,7 +170,7 @@ static const struct sensor_t sSensorList[] = {
                 .type = SENSOR_TYPE_PROXIMITY,
                 .maxRange = 100.0f,
                 .resolution = 100.0f,
-                .power = CT406_PROX_MA,
+                .power = CT1011_PROX_MA,
                 .minDelay = 0,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -208,7 +218,7 @@ static const struct sensor_t sSensorList[] = {
                 .type = SENSOR_TYPE_STOWED,
                 .maxRange = 1.0f,
                 .resolution = 1.0f,
-                .power = CT406_ALS_MA + CT406_PROX_MA,
+                .power = CT1011_ALS_MA + CT1011_PROX_MA,
                 .minDelay = 0,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -340,12 +350,12 @@ static const struct sensor_t sSensorList[] = {
                 .maxRange = 2000.0f,
                 .resolution = 1.0f,
                 .power = ICM20645_GYRO_MA,
-                .minDelay = 20000,
+                .minDelay = GYRO_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
                 .stringType = "",
                 .requiredPermission = "",
-                .maxDelay = 200000,
+                .maxDelay = GYRO_MAX_DELAY_US,
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
     { .name = MAG_PART_NO " 3-axis Uncalibrated Magnetometer",
@@ -356,12 +366,12 @@ static const struct sensor_t sSensorList[] = {
                 .maxRange = 2000.0f,
                 .resolution = 1.0f/10.0f,
                 .power = AK09912_MA,
-                .minDelay = 20000,
+                .minDelay = MAG_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
                 .stringType = "",
                 .requiredPermission = "",
-                .maxDelay = 200000,
+                .maxDelay = MAG_MAX_DELAY_US,
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
 #ifdef _ENABLE_CHOPCHOP
@@ -408,7 +418,7 @@ static const struct sensor_t sSensorList[] = {
                 .maxRange = 1.0f,
                 .resolution = 1.0f/32767.f,
                 .power = ICM20645_6AXIS_MA + AK09912_MA + MOT_9AXIS_MA,
-                .minDelay = 10000,
+                .minDelay = ACCEL_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
                 .stringType = "",
@@ -424,7 +434,7 @@ static const struct sensor_t sSensorList[] = {
                 .maxRange = 1.0f,
                 .resolution = 1.0f/32767.f,
                 .power = ICM20645_6AXIS_MA + MOT_6AXIS_MA,
-                .minDelay = 10000,
+                .minDelay = ACCEL_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
                 .stringType = "",
@@ -440,6 +450,14 @@ static const struct sensor_t sSensorList[] = {
 #undef VENDOR_MOT
 #undef VENDOR_TAOS
 
+#undef ACCEL_MIN_DELAY_US
+#undef GYRO_MIN_DELAY_US
+#undef MAG_MIN_DELAY_US
+
+#undef ACCEL_MAX_DELAY_US
+#undef GYRO_MAX_DELAY_US
+#undef MAG_MAX_DELAY_US
+
 #undef ACCEL_PART_NO
 #undef GYRO_PART_NO
 #undef MAG_PART_NO
@@ -450,8 +468,8 @@ static const struct sensor_t sSensorList[] = {
 #undef ICM20645_ACCEL_MA
 #undef ICM20645_ACCEL_LOWPOWER_MA
 #undef AK09912_MA
-#undef CT406_ALS_MA
-#undef CT406_PROX_MA
+#undef CT1011_ALS_MA
+#undef CT1011_PROX_MA
 
 #undef ORIENT_ALGO_MA
 #undef CAM_ACT_ALGO_MA
