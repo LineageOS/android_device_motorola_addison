@@ -62,6 +62,7 @@
 #define LIFT_DISTANCE (0 * sizeof(int8_t))
 #define LIFT_ROTATION (4 * sizeof(int8_t))
 #define LIFT_GRAV_DIFF (8 * sizeof(int8_t))
+#define CHOPCHOP_CHOPCHOP (0 * sizeof(int8_t))
 
 #define STM16TOH(p) (int16_t) be16toh(*((uint16_t *) (p)))
 #define STM32TOH(p) (int32_t) be32toh(*((uint32_t *) (p)))

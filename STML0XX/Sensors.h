@@ -56,6 +56,9 @@ typedef enum sensor_handle {
 	ID_OR,	/* Orientation */
 	ID_RV, 	/* Rotation Vector */
 #endif
+#ifdef _ENABLE_CHOPCHOP
+	ID_CC,
+#endif
 #ifdef _ENABLE_LIFT
 	ID_LF, 	/* Lift Gesture */
 #endif

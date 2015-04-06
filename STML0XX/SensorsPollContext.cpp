@@ -110,6 +110,9 @@ int SensorsPollContext::handleToDriver(int handle)
 		case ID_S:
 		case ID_CA:
 		case ID_A2:
+#ifdef _ENABLE_CHOPCHOP
+		case ID_CC:
+#endif
 #ifdef _ENABLE_LIFT
 		case ID_LF:
 #endif
