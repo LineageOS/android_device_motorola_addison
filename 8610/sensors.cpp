@@ -46,7 +46,7 @@ static const struct sensor_t sSensorList[] = {
 		(2.0f * 9.81f),
 		(9.81f / 1024),
 		0.2f,		/* mA */
-		2000,	/* microseconds */
+		5000,	/* microseconds */
 		0,0,	/* fifo reserved events, fifo max events */
 		"", "", 200000, SENSOR_FLAG_CONTINUOUS_MODE, { }
 	},
