@@ -30,6 +30,7 @@
 #include <cutils/log.h>
 
 #include "AkmSensor.h"
+#include <utils/SystemClock.h>
 
 #define AKMD_DEFAULT_INTERVAL	200000000
 #define AKM_SYSFS_PATH	"/sys/class/compass/akm09912/"
@@ -263,7 +264,7 @@ int AkmSensor::readEvents(sensors_event_t* data, int count)
 			processEvent(event->code, event->value);
 			mInputReader.next();
 		} else if (type == EV_SYN) {
-			int64_t time = timevalToNano(event->time);
+			int64_t time = android::elapsedRealtimeNano();
 			for (int j=0 ; count && mPendingMask && j<numSensors ; j++) {
 				if (mPendingMask & (1<<j)) {
 					mPendingMask &= ~(1<<j);
@@ -331,6 +332,9 @@ int AkmSensor::handle2id(int32_t handle)
 
 void AkmSensor::processEvent(int code, int value)
 {
+	/* Decode encoded value */
+	value >>= 1;
+
 	switch (code) {
 /* Accel data is only reported through the Hub sensor
 	case EVENT_TYPE_ACCEL_X:

@@ -39,11 +39,13 @@ static struct AKMD_INTERVAL s_interval[] = {
 	 { 16666667,  6 }, /*  60Hz */
 	 { 20000000,  5 }, /*  50Hz SENSOR_DELAY_GAME */
 	 { 25000000,  4 }, /*  40Hz */
+	 { 40000000,  3 }, /*  25Hz */
 	 { 50000000,  2 }, /*  20Hz */
 	 { 66667000,  2 }, /*  15Hz SENSOR_DELAY_UI */
 	{ 100000000,  1 }, /*  10Hz */
 	{ 125000000,  1 }, /*   8Hz */
-	{ 200000000,  1 }  /*   5Hz SENSOR_DELAY_NORMAL */
+	{ 200000000,  1 }, /*   5Hz SENSOR_DELAY_NORMAL */
+	{1000000000,  1 }  /*   1Hz */
 };
 
 /*!
