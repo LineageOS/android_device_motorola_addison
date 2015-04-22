@@ -59,7 +59,7 @@ HubSensor::HubSensor()
     uint32_t flags24 = 0;
     FILE *fp;
     int i;
-    int mag_data;
+    int cal_data;
     int err = 0;
 
     memset(mMagCal, 0, sizeof(mMagCal));
@@ -78,17 +78,33 @@ HubSensor::HubSensor()
 
     if ((fp = fopen(MAG_CAL_FILE, "r")) != NULL) {
         for (i=0; i<MOTOSH_MAG_CAL_SIZE; i++) {
-            mag_data = fgetc(fp);
-            if (mag_data == EOF) {
+            cal_data = fgetc(fp);
+            if (cal_data == EOF) {
                 memset(mMagCal, 0, sizeof(mMagCal));
                 break;
             }
-            mMagCal[i] = mag_data;
+            mMagCal[i] = cal_data;
         }
         fclose(fp);
         err = ioctl(dev_fd, MOTOSH_IOCTL_SET_MAG_CAL, &mMagCal);
         if (err < 0) {
            ALOGE("Can't send Mag Cal data");
+        }
+    }
+
+    if ((fp = fopen(GYRO_CAL_FILE, "r")) != NULL) {
+        for (i=0; i<MOTOSH_GYRO_CAL_SIZE; i++) {
+            cal_data = fgetc(fp);
+            if (cal_data == EOF) {
+                memset(mGyroCal, 0, sizeof(mGyroCal));
+                break;
+            }
+            mGyroCal[i] = cal_data;
+        }
+        fclose(fp);
+        err = ioctl(dev_fd, MOTOSH_IOCTL_SET_GYRO_CAL, &mGyroCal);
+        if (err < 0) {
+           ALOGE("Can't send Gyro Cal data");
         }
     }
 }
@@ -881,6 +897,24 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 numEventReceived++;
                 break;
 #endif
+            case DT_GYRO_CAL:
+                count--;
+                FILE *fp;
+                int i;
+                ret = ioctl(dev_fd, MOTOSH_IOCTL_GET_GYRO_CAL, &mGyroCal);
+                if (ret < 0) {
+                    ALOGE("Can't read Gyro Cal data");
+                } else {
+                    if ((fp = fopen(GYRO_CAL_FILE, "w")) == NULL) {
+                        ALOGE("Can't open Gyro Cal file");
+                    } else {
+                        for (i=0; i<MOTOSH_GYRO_CAL_SIZE; i++) {
+                            fputc(mGyroCal[i], fp);
+                        }
+                        fclose(fp);
+                    }
+                }
+                break;
             case DT_RESET:
                 count--;
                 // put timestamp in dropbox file
