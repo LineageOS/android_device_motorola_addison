@@ -137,13 +137,14 @@ endif /* surnia || otus || lux || osprey */
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SH_PATH)
 LOCAL_C_INCLUDES += external/zlib
 
-ifeq ($(SH_MODULE), motosh)
+ifneq (,$(filter $(SH_MODULE), motosh ,stml0xx))
 	LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
-	# Need the UAPI output directory to be populated with motosh.h
+	# Need the UAPI output directory to be populated with motosh.h/stml0xx.h
 	LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
 else
 	LOCAL_C_INCLUDES += bionic/libc/kernel/common
-endif # SH_MODULE == "motosh"
+endif # SH_MODULE == "motosh"/"stml0xx"
+
 
 LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_RELATIVE_PATH := hw
@@ -164,13 +165,13 @@ LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_SRC_FILES := $(SH_PATH)/sensorhub.c
 
-ifeq ($(SH_MODULE), motosh)
-	LOCAL_C_INCLUDES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
-	# Need the UAPI output directory to be populated with motosh.h
+ifneq (,$(filter $(SH_MODULE), motosh ,stml0xx))
+	LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
+	# Need the UAPI output directory to be populated with motosh.h/stml0xx.h
 	LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
 else
-	LOCAL_C_INCLUDES := bionic/libc/kernel/common
-endif # SH_MODULE == "motosh"
+	LOCAL_C_INCLUDES += bionic/libc/kernel/common
+endif # SH_MODULE == "motosh"/"stml0xx"
 
 LOCAL_SHARED_LIBRARIES := libcutils libc
 LOCAL_MODULE := sensorhub.$(TARGET_BOARD_PLATFORM)
@@ -247,16 +248,16 @@ LOCAL_SRC_FILES := $(SH_PATH)/$(SH_MODULE).cpp
 LOCAL_MODULE:= $(SH_MODULE)
 #LOCAL_CFLAGS+= -D_DEBUG
 LOCAL_SHARED_LIBRARIES := libcutils libc
-ifeq ($(SH_MODULE), motosh)
+ifneq (,$(filter $(SH_MODULE), motosh ,stml0xx))
 LOCAL_SRC_FILES += \
 	$(SH_PATH)/CRC32.c
 	LOCAL_C_INCLUDES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
-	# Need the UAPI output directory to be populated with motosh.h
+	# Need the UAPI output directory to be populated with motosh.h/stml0xx.h
 	LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
 else
 	# For other flash loaders still relying on bionic
 	LOCAL_C_INCLUDES += bionic/libc/kernel/common
-endif # SH_MODULE == "motosh"
+endif # SH_MODULE == "motosh"/"stml0xx.h"
 
 include $(BUILD_EXECUTABLE)
 
