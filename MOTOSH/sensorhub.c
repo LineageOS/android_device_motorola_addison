@@ -327,15 +327,9 @@ static int sensorhub_poll(struct sensorhub_device_t* device, struct sensorhub_ev
             }
             break;
         case DT_GENERIC_INT:
-#if 0
-            // packaging irq3_status into ertime field
-            // of the event
             event->type = SENSORHUB_EVENT_GENERIC_CB;
             event->time = get_wall_clock();
             event->ertime = buff.data[GENERIC_INT_OFFSET];
-#endif
-            context->data_pollfd.revents = 0;
-            return 0;
             break;
         case DT_RESET:
             event->type = SENSORHUB_EVENT_RESET;
