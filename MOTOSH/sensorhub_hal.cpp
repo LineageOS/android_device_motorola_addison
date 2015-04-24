@@ -309,9 +309,11 @@ int HubSensor::enable(int32_t handle, int en)
     if (found && (new_enabled != mEnabled)) {
         err = ioctl(dev_fd, MOTOSH_IOCTL_SET_SENSORS, &new_enabled);
         ALOGE_IF(err, "Could not change sensor state (%s)", strerror(-err));
-        if (!err) {
-            mEnabled = new_enabled;
-        }
+        // Never return this error to the caller. This would result in a
+        // failure to registerListener(), but regardless of failure, we
+        // will consider these sensors 'registered' in the kernel driver.
+        err = 0;
+        mEnabled = new_enabled;
     }
 
     new_enabled = mWakeEnabled;
@@ -374,9 +376,11 @@ int HubSensor::enable(int32_t handle, int en)
     if (found && (new_enabled != mWakeEnabled)) {
         err = ioctl(dev_fd, MOTOSH_IOCTL_SET_WAKESENSORS, &new_enabled);
         ALOGE_IF(err, "Could not change sensor state (%s)", strerror(-err));
-        if (!err) {
-            mWakeEnabled = new_enabled;
-        }
+        // Never return this error to the caller. This would result in a
+        // failure to registerListener(), but regardless of failure, we
+        // will consider these sensors 'registered' in the kernel driver.
+        err = 0;
+        mWakeEnabled = new_enabled;
     }
 
     return err;
@@ -473,6 +477,12 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
     else if( handle == ID_G || handle == ID_UNCALIB_GYRO )
         status = updateGyroRate();
 
+    // Never return this error to the caller. This would result in a
+    // failure to registerListener(), but regardless of failure, we
+    // will consider these sensors 'registered' at the rate we tried
+    // to write in the kernel driver.
+    if( status == -EIO )
+        status = 0;
     return status;
 }
 
