@@ -496,15 +496,14 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
     }
 
     while (count && ((ret = read(data_fd, &buff, sizeof(struct motosh_android_sensor_data))) != 0)) {
-        /* these sensors are not supported, upload a bug2go if its been at least 10mins since previous bug2go*/
-        /* remove this if-clause when corruption issue resolved */
+        /* these sensors are not supported, upload a bug2go if its been at least 24hrs since previous bug2go*/
         if (buff.type == DT_PRESSURE || buff.type == DT_TEMP || buff.type == DT_LIN_ACCEL ||
             buff.type == DT_GRAVITY || buff.type == DT_DOCK ||
             buff.type == DT_NFC || buff.type == DT_RESET) {
             count--;
             if (buff.type == DT_RESET) {
-                //reset reason should be between 1 and 4
-                if (buff.data[0] >= 1 && buff.data[0] <= 4)
+                //reset reason should be between 1 and ERROR_TYPES-1
+                if (buff.data[0] >= 1 && buff.data[0] < ERROR_TYPES)
                     mErrorCnt[buff.data[0]]++;
             } else {
                 //index 0 is for counting invalid sensor type occurrences

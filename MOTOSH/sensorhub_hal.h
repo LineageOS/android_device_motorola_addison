@@ -147,7 +147,7 @@
 #define STM16TOH(p) (int16_t) be16toh(*((uint16_t *) (p)))
 #define STM32TOH(p) (int32_t) be32toh(*((uint32_t *) (p)))
 
-#define ERROR_TYPES    5
+#define ERROR_TYPES    9
 
 struct input_event;
 
