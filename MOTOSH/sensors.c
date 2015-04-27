@@ -259,6 +259,7 @@ static const struct sensor_t sSensorList[] = {
                 .maxDelay = 0,
                 .flags = SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
                 .reserved = {0,0}},
+#ifdef _ENABLE_RAW_IR_DATA
     { .name = "IR Raw Data",
                 .vendor = VENDOR_MOT,
                 .version = 1,
@@ -275,6 +276,7 @@ static const struct sensor_t sSensorList[] = {
                 .maxDelay = 200000,
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
+#endif
     { .name = "IR Object Detect",
                 .vendor = VENDOR_MOT,
                 .version = 1,
