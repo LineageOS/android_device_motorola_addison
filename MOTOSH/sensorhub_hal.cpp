@@ -589,7 +589,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->timestamp = 0;
                 data->meta_data.what = META_DATA_FLUSH_COMPLETE;
                 data->meta_data.sensor = sensorId;
-                *data++;
+                data++;
                 count--;
                 numEventReceived++;
                 break;
