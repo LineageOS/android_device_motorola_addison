@@ -20,6 +20,7 @@
 #include <stdint.h>
 #include <errno.h>
 #include <endian.h>
+#include <map>
 #include <sys/cdefs.h>
 #include <sys/types.h>
 #include <zlib.h>
@@ -202,6 +203,9 @@ private:
     unsigned short mGyroDelay;
     //! \brief Currently-set eCompass delay in ms, or \c USHRT_MAX if unset.
     unsigned short mEcompassDelay;
+    //! \brief Map from sensor id (handle) to sensor_t entry
+    std::map<int32_t, const sensor_t*> mIdToSensor;
+
     gzFile open_dropbox_file(const char* timestamp, const char* dst, const int flags);
     short capture_dump(char* timestamp, const int id, const char* dst, const int flags);
     /*!

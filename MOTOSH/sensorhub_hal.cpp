@@ -25,12 +25,16 @@
 #include <dlfcn.h>
 #include <limits.h>
 
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
+
 #include <linux/motosh.h>
 
 #include <cutils/log.h>
 
 #include <hardware/mot_sensorhub_motosh.h>
 
+#include "nusensors.h"
 #include "sensorhub_hal.h"
 
 /*****************************************************************************/
@@ -107,6 +111,11 @@ HubSensor::HubSensor()
            ALOGE("Can't send Gyro Cal data");
         }
     }
+
+    // Add all supported sensors to the mIdToSensor map
+    for( i = 0; i < sSensorListSize; ++i ) {
+        mIdToSensor.insert(std::make_pair(sSensorList[i].handle, sSensorList+i));
+    }
 }
 
 HubSensor::~HubSensor()
@@ -120,6 +129,11 @@ int HubSensor::enable(int32_t handle, int en)
     uint32_t new_enabled;
     int found = 0;
     int err = 0;
+
+    if( !mIdToSensor.count(handle) ) {
+        ALOGE("Sensorhub hal enable: %d - %d (bad handle)", handle, en);
+        return -EINVAL;
+    }
 
     ALOGE("Sensorhub hal enable: %d - %d", handle, en);
 
@@ -393,8 +407,12 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
 
     if (ns < 0)
         return -EINVAL;
+    if( !mIdToSensor.count(handle) ) {
+        ALOGE("Sensorhub hal setdelay: %d - %" PRId64 " (bad handle)", handle, ns);
+        return -EINVAL;
+    }
 
-    ALOGE("Sensorhub hal setdelay: %d - %ld", handle, ns);
+    ALOGE("Sensorhub hal setdelay: %d - %" PRId64, handle, ns);
 
     unsigned short delay = int64_t(ns) / 1000000;
     switch (handle) {
@@ -515,6 +533,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
     struct tm* ptm = NULL;
     struct timeval timeutc;
     static long int sent_bug2go_sec = 0;
+    int32_t sensorId;
 
     if (!data) {
         ALOGE("HubSensor::readEvents - null data buffer");
@@ -558,13 +577,18 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
 
         switch (buff.type) {
             case DT_FLUSH:
+                sensorId = STM32TOH(buff.data + FLUSH_FLUSH);
+                if( !mIdToSensor.count(sensorId) ) {
+                    --count;
+                    break;
+                }
                 data->version = META_DATA_VERSION;
                 data->sensor = 0;
                 data->type = SENSOR_TYPE_META_DATA;
                 data->reserved0 = 0;
                 data->timestamp = 0;
                 data->meta_data.what = META_DATA_FLUSH_COMPLETE;
-                data->meta_data.sensor = STM32TOH(buff.data + FLUSH_FLUSH);
+                data->meta_data.sensor = sensorId;
                 *data++;
                 count--;
                 numEventReceived++;
@@ -965,10 +989,17 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
 
 int HubSensor::flush(int32_t handle)
 {
-    int ret = 0;
-    if (handle >= MIN_SENSOR_ID && handle <= MAX_SENSOR_ID) {
-        ret = ioctl(dev_fd,  MOTOSH_IOCTL_SET_FLUSH, &handle);
+    int ret = -EINVAL;
+
+    if (!mIdToSensor.count(handle)) {
+        ALOGE("Sensorhub hal flush: %d (bad handle)", handle);
+        return ret;
     }
+    // Have to return -EINVAL for one-shot sensors per Android spec
+    if (mIdToSensor[handle]->flags & SENSOR_FLAG_ONE_SHOT_MODE)
+        return ret;
+
+    ret = ioctl(dev_fd, MOTOSH_IOCTL_SET_FLUSH, &handle);
     return ret;
 }
 

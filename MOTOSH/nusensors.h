@@ -31,6 +31,8 @@ __BEGIN_DECLS
 
 /*****************************************************************************/
 
+extern const struct sensor_t sSensorList[];
+extern const int sSensorListSize;
 int init_nusensors(hw_module_t const* module, hw_device_t** device);
 
 /*****************************************************************************/

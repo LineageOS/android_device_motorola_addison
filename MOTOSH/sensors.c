@@ -70,7 +70,7 @@
 #define MOT_6AXIS_MA    1.0f
 #define MOT_LAGRAV_MA   1.0f
 
-static const struct sensor_t sSensorList[] = {
+const struct sensor_t sSensorList[] = {
     { .name = ACCEL_PART_NO " 3-axis Accelerometer",
                 .vendor = VENDOR_INVN,
                 .version = 1,
@@ -485,6 +485,7 @@ static const struct sensor_t sSensorList[] = {
                 .reserved = {0,0} },
 #endif
 };
+const int sSensorListSize = sizeof(sSensorList)/sizeof(*sSensorList);
 
 /* Clean up definitions */
 #undef VENDOR_AK

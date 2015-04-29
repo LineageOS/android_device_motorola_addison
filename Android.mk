@@ -149,7 +149,8 @@ endif # SH_MODULE == "motosh"/"stml0xx"
 LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_MODULE_TAGS := optional
-LOCAL_SHARED_LIBRARIES := liblog libcutils libz libdl libutils
+LOCAL_SHARED_LIBRARIES := liblog libcutils libz libdl libutils libstlport
+include external/stlport/libstlport.mk
 LOCAL_MODULE := sensors.$(TARGET_BOARD_PLATFORM)
 
 include $(BUILD_SHARED_LIBRARY)
