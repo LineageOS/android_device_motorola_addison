@@ -294,26 +294,27 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
     return err;
 }
 
-int HubSensor::readEvents(sensors_event_t* data, int count)
+int HubSensor::readEvents(sensors_event_t* d, int dLen)
 {
-    int numEventReceived = 0;
     struct stml0xx_android_sensor_data buff;
     int ret;
     char timeBuf[32];
     struct tm* ptm = NULL;
     struct timeval timeutc;
     static long int sent_bug2go_sec = 0;
+    sensors_event_t* data = d;
+    sensors_event_t const* const dataEnd = d + dLen;
 
     if (!data) {
         ALOGE("HubSensor::readEvents - null data buffer");
         return -EINVAL;
     }
-    if (count < 1) {
-        ALOGE("HubSensor::readEvents - bad count %d", count);
+    if (dLen < 1) {
+        ALOGE("HubSensor::readEvents - bad length %d", dLen);
         return -EINVAL;
     }
 
-    while (count && ((ret = read(data_fd, &buff, sizeof(struct stml0xx_android_sensor_data))) != 0)) {
+    while (data < dataEnd && ((ret = read(data_fd, &buff, sizeof(struct stml0xx_android_sensor_data))) != 0)) {
         /* Sensorhub reset occurred, upload a bug2go if its been at least 10mins since previous bug2go*/
         /* remove this if-clause when corruption issue resolved */
         switch (buff.type) {
@@ -326,8 +327,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->meta_data.what = META_DATA_FLUSH_COMPLETE;
                 data->meta_data.sensor = STM32TOH(buff.data + FLUSH);
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_ACCEL:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -339,8 +338,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_ACCEL2:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -352,8 +349,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_ALS:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -362,8 +357,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->light = (uint16_t)STM16TOH(buff.data + LIGHT_LIGHT);
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_DISP_ROTATE:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -376,8 +369,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
 
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_PROX:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -395,8 +386,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 }
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_FLAT_UP:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -408,8 +397,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                     data->data[0] = FLAT_NOTDETECTED;
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_FLAT_DOWN:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -421,8 +408,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                     data->data[0] = FLAT_NOTDETECTED;
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_STOWED:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -431,8 +416,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->data[0] = buff.data[STOWED_STOWED];
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_CAMERA_ACT:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -442,11 +425,8 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->data[1] = STM16TOH(buff.data + CAMERA_CAMERA);
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_RESET:
-                count--;
                 time(&timeutc.tv_sec);
                 if (buff.data[0] > 0 && buff.data[0] <= ERROR_TYPES)
                     mErrorCnt[buff.data[0] - 1]++;
@@ -472,8 +452,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->data[2] = STM32TOH(buff.data + LIFT_GRAV_DIFF);
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
 #endif
 #ifdef _ENABLE_CHOPCHOP
@@ -484,8 +462,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->data[0] = STM32TOH(buff.data + CHOPCHOP_CHOPCHOP);
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
 #endif
             default:
@@ -493,7 +469,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
         }
     }
 
-    return numEventReceived;
+    return data - d;
 }
 
 int HubSensor::flush(int32_t handle)

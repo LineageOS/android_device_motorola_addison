@@ -52,10 +52,33 @@ static int poll__setDelay(struct sensors_poll_device_t *dev,
 	return ctx->setDelay(handle, ns);
 }
 
+/*!
+ * \brief Implement Android HAL poll()
+ *
+ * From [source.android.com](https://source.android.com/devices/sensors/hal-interface.html)
+ *
+ * Returns an array of sensor data by filling the data argument. This function
+ * must block until events are available. It will return the number of events
+ * read on success, or a negative error number in case of an error.
+ *
+ * The number of events returned in data must be less or equal to the count
+ * argument. This function shall never return 0 (no event).
+ *
+ * \param[in]  dev   the device to poll
+ * \param[out] data  the returned data items
+ * \param[in]  count the maximum number of returned data items
+ *
+ * \returns negative on failure, the number of returned data items on success,
+ *          and never 0.
+ */
 static int poll__poll(struct sensors_poll_device_t *dev,
 		sensors_event_t* data, int count) {
 	SensorsPollContext *ctx = (SensorsPollContext *)dev;
-	return ctx->pollEvents(data, count);
+	int ret = 0;
+	do {
+		ret = ctx->pollEvents(data, count);
+	} while( ret == 0 );
+	return ret;
 }
 
 static int poll__batch(sensors_poll_device_1_t *dev,

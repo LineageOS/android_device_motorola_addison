@@ -524,9 +524,8 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
     return status;
 }
 
-int HubSensor::readEvents(sensors_event_t* data, int count)
+int HubSensor::readEvents(sensors_event_t* d, int dLen)
 {
-    int numEventReceived = 0;
     struct motosh_android_sensor_data buff;
     int ret;
     char timeBuf[32];
@@ -534,22 +533,23 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
     struct timeval timeutc;
     static long int sent_bug2go_sec = 0;
     int32_t sensorId;
+    sensors_event_t* data = d;
+    sensors_event_t const* const dataEnd = d + dLen;
 
     if (!data) {
         ALOGE("HubSensor::readEvents - null data buffer");
         return -EINVAL;
     }
-    if (count < 1) {
-        ALOGE("HubSensor::readEvents - bad count %d", count);
+    if (dLen < 1) {
+        ALOGE("HubSensor::readEvents - bad length %d", dLen);
         return -EINVAL;
     }
 
-    while (count && ((ret = read(data_fd, &buff, sizeof(struct motosh_android_sensor_data))) != 0)) {
+    while (data < dataEnd && ((ret = read(data_fd, &buff, sizeof(struct motosh_android_sensor_data))) != 0)) {
         /* these sensors are not supported, upload a bug2go if its been at least 24hrs since previous bug2go*/
         if (buff.type == DT_PRESSURE || buff.type == DT_TEMP ||
             buff.type == DT_DOCK ||
             buff.type == DT_NFC || buff.type == DT_RESET) {
-            count--;
             if (buff.type == DT_RESET) {
                 //reset reason should be between 1 and ERROR_TYPES-1
                 if (buff.data[0] >= 1 && buff.data[0] < ERROR_TYPES)
@@ -578,10 +578,8 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
         switch (buff.type) {
             case DT_FLUSH:
                 sensorId = STM32TOH(buff.data + FLUSH_FLUSH);
-                if( !mIdToSensor.count(sensorId) ) {
-                    --count;
+                if( !mIdToSensor.count(sensorId) )
                     break;
-                }
                 data->version = META_DATA_VERSION;
                 data->sensor = 0;
                 data->type = SENSOR_TYPE_META_DATA;
@@ -590,8 +588,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->meta_data.what = META_DATA_FLUSH_COMPLETE;
                 data->meta_data.sensor = sensorId;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_ACCEL:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -603,8 +599,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_GYRO:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -615,8 +609,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->gyro.z = STM16TOH(buff.data + GYRO_Z) * CONVERT_G_Y;
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_UNCALIB_GYRO:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -630,8 +622,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->uncalibrated_gyro.z_bias = STM16TOH(buff.data + UNCALIB_GYRO_Z_BIAS) * CONVERT_BIAS_G_Y;
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_UNCALIB_MAG:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -645,8 +635,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->uncalibrated_magnetic.z_bias = STM16TOH(buff.data + UNCALIB_MAGNETIC_Z_BIAS) * CONVERT_BIAS_M_Z;
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_QUAT_6AXIS:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -659,8 +647,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->data[4] = 5.f * (3.14159f/180.f); // 5 degrees accuracy?
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_QUAT_9AXIS:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -673,8 +659,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->data[4] = 5.f * (3.14159f/180.f); // 5 degrees accuracy?
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
 #ifdef _ENABLE_PEDO
             case DT_STEP_COUNTER:
@@ -688,8 +672,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                         (((uint64_t)STM16TOH(buff.data + STEP_COUNTER_0))) );
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_STEP_DETECTOR:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -698,8 +680,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->data[0] = STM16TOH(buff.data + STEP_DETECTOR);
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
 #endif
             case DT_PRESSURE:
@@ -709,8 +689,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->pressure = STM32TOH(buff.data + PRESSURE_PRESSURE) * CONVERT_B;
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_MAG:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -722,8 +700,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->magnetic.status = buff.status;
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_ORIENT:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -736,8 +712,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->orientation.status = buff.status;
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_TEMP:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -746,8 +720,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->temperature = STM16TOH(buff.data + TEMPERATURE_TEMPERATURE) * CONVERT_T;
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_ALS:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -756,8 +728,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->light = (uint16_t)STM16TOH(buff.data + LIGHT_LIGHT);
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
 #ifdef _ENABLE_LA
             case DT_LIN_ACCEL:
@@ -770,8 +740,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
 #endif
 #ifdef _ENABLE_GR
@@ -785,8 +753,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
 #endif
             case DT_DISP_ROTATE:
@@ -800,8 +766,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
 
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_PROX:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -819,8 +783,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 }
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_FLAT_UP:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -832,8 +794,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                     data->data[0] = FLAT_NOTDETECTED;
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_FLAT_DOWN:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -845,8 +805,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                     data->data[0] = FLAT_NOTDETECTED;
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_STOWED:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -855,8 +813,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->data[0] = buff.data[STOWED_STOWED];
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_CAMERA_ACT:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -866,8 +822,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->data[1] = STM16TOH(buff.data + CAMERA_CAMERA);
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_IR_GESTURE:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -880,8 +834,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->ir_gesture.motion = buff.data[IR_MOTION];
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_IR_RAW:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -899,8 +851,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->ir_raw.ambient_low = STM16TOH(buff.data + IR_AMBIENT_L);
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
             case DT_IR_OBJECT:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -909,8 +859,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->data[0] = (*(buff.data + IR_OBJ) >> IR_OBJ_SHIFT) & 0x01;
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 enable(ID_IR_OBJECT, 0); /* One-shot sensor. Disable now */
                 break;
             case DT_SIM:
@@ -920,8 +868,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->data[0] = 1;
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 enable(ID_SIM, 0);
                 break;
 #ifdef _ENABLE_CHOPCHOP
@@ -932,8 +878,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->data[0] = STM16TOH(buff.data + CHOPCHOP_CHOPCHOP);
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
 #endif
 #ifdef _ENABLE_LIFT
@@ -946,12 +890,9 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 data->data[2] = STM32TOH(buff.data + LIFT_GRAV_DIFF);
                 data->timestamp = buff.timestamp;
                 data++;
-                count--;
-                numEventReceived++;
                 break;
 #endif
             case DT_GYRO_CAL:
-                count--;
                 FILE *fp;
                 int i;
                 ret = ioctl(dev_fd, MOTOSH_IOCTL_GET_GYRO_CAL, &mGyroCal);
@@ -969,7 +910,6 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
                 }
                 break;
             case DT_RESET:
-                count--;
                 // put timestamp in dropbox file
                 time(&timeutc.tv_sec);
                 ptm = localtime(&(timeutc.tv_sec));
@@ -984,7 +924,7 @@ int HubSensor::readEvents(sensors_event_t* data, int count)
         }
     }
 
-    return numEventReceived;
+    return data - d;
 }
 
 int HubSensor::flush(int32_t handle)
