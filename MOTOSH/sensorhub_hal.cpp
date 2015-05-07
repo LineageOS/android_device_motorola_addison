@@ -936,7 +936,7 @@ int HubSensor::flush(int32_t handle)
         return ret;
     }
     // Have to return -EINVAL for one-shot sensors per Android spec
-    if (mIdToSensor[handle]->flags & SENSOR_FLAG_ONE_SHOT_MODE)
+    if (mIdToSensor[handle]->flags & REPORTING_MODE_MASK == SENSOR_FLAG_ONE_SHOT_MODE)
         return ret;
 
     ret = ioctl(dev_fd, MOTOSH_IOCTL_SET_FLUSH, &handle);
