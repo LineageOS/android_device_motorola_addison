@@ -136,7 +136,7 @@ endif /* surnia || otus || lux || osprey */
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SH_PATH)
 LOCAL_C_INCLUDES += external/zlib
 
-ifneq (,$(filter $(SH_MODULE), motosh ,stml0xx))
+ifneq (,$(filter motosh stml0xx,$(SH_MODULE)))
 	LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
 	# Need the UAPI output directory to be populated with motosh.h/stml0xx.h
 	LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
@@ -165,7 +165,7 @@ LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_SRC_FILES := $(SH_PATH)/sensorhub.c
 
-ifneq (,$(filter $(SH_MODULE), motosh ,stml0xx))
+ifneq (,$(filter motosh stml0xx,$(SH_MODULE)))
 	LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
 	# Need the UAPI output directory to be populated with motosh.h/stml0xx.h
 	LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
@@ -248,9 +248,11 @@ LOCAL_SRC_FILES := $(SH_PATH)/$(SH_MODULE).cpp
 LOCAL_MODULE:= $(SH_MODULE)
 #LOCAL_CFLAGS+= -D_DEBUG
 LOCAL_SHARED_LIBRARIES := libcutils libc
-ifneq (,$(filter $(SH_MODULE), motosh ,stml0xx))
+ifeq ($(SH_MODULE),motosh)
 LOCAL_SRC_FILES += \
 	$(SH_PATH)/CRC32.c
+endif
+ifneq (,$(filter motosh stml0xx,$(SH_MODULE)))
 	LOCAL_C_INCLUDES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
 	# Need the UAPI output directory to be populated with motosh.h/stml0xx.h
 	LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
