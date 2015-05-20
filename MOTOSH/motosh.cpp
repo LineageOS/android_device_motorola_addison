@@ -47,6 +47,8 @@
 // The value used to fill unused buffer space / flash.
 #define FLASH_FILL (0xff)
 
+#define ANTCAP_CAL_FILE "/persist/antcap/captouch_caldata.bin"
+
 
 #define CHECK_RETURN_VALUE( ret, msg)  if (ret < 0) {\
                      ALOGE("%s: %s \n",msg, strerror(errno)); \
@@ -92,6 +94,69 @@ typedef enum tag_stmmode
 } eStm_Mode;
 
 int stm_convertAsciiToHex(char * input, unsigned char * output, int inlen);
+
+/* download cal/cfg data and enable capsense */
+void configure_capsense(int fd) {
+
+    FILE *fp;
+    int i;
+    int ant_data;
+    int err = 0;
+    unsigned char enable;
+    unsigned char buf[MOTOSH_ANTCAP_CAL_BUFF_SIZE] = {0};
+
+    LOGINFO("Sensorhub hal antcap disable");
+    enable = 0;
+    err = ioctl(fd, MOTOSH_IOCTL_SET_ANTCAP_ENABLE, &enable);
+    if (err) {
+        LOGERROR("Can't send Ant Disable: %d\n", err);
+    }
+
+    if (!err) {
+        LOGINFO("Sensorhub hal antcap cfg");
+        /* note:  antcap_cfg is now resident in device tree, mAntCfg unused */
+        err = ioctl(fd, MOTOSH_IOCTL_SET_ANTCAP_CFG, &buf);
+        if (err) {
+            LOGERROR("Unable to send SET_ANTCAP_ENABLE ioctl: %d\n", err);
+        }
+    }
+
+    if (!err) {
+        LOGINFO("Sensorhub hal antcap cal");
+        if ((fp = fopen(ANTCAP_CAL_FILE, "r")) == NULL) {
+            LOGERROR("Unable to open antcap cal file %s, exiting", ANTCAP_CAL_FILE);
+            err = 1;
+        }
+        else {
+            LOGINFO("Using antcap cal file %s", ANTCAP_CAL_FILE);
+        }
+
+        if (fp != NULL) {
+            for (i=0; i<MOTOSH_ANTCAP_CAL_BUFF_SIZE; i++) {
+                ant_data = fgetc(fp);
+                if (ant_data == EOF) {
+                    memset(buf, 0xff, sizeof(buf));
+                    break;
+                }
+                buf[i] = ant_data;
+            }
+            fclose(fp);
+            err = ioctl(fd, MOTOSH_IOCTL_SET_ANTCAP_CAL, &buf);
+            if (err < 0) {
+                LOGERROR("Unable to send SET_ANTCAP_CAL ioctl: %d\n", err);
+            }
+        }
+    }
+
+    if (!err) {
+        LOGINFO("Sensorhub hal antcap enable");
+        enable = 1;
+        err = ioctl(fd, MOTOSH_IOCTL_SET_ANTCAP_ENABLE, &enable);
+        if (err) {
+            LOGERROR("Unable to send SET_ANTCAP_ENABLE ioctl: %d\n", err);
+        }
+    }
+}
 
 /* force a check and flash of capsense if needed */
 void flash_capsense(void) {
@@ -585,6 +650,10 @@ int  main(int argc, char *argv[])
             else
                 emode = FACTORY;
         }
+
+        if (!forceBoot)
+            configure_capsense(fd);
+
         property_set("hw.motosh.booted", "1");
     }
     if(emode == NORMAL) {
@@ -671,6 +740,7 @@ int  main(int argc, char *argv[])
             system("echo 'file motosh_wake_irq.c -p' > /sys/kernel/debug/dynamic_debug/control");
             system("echo 'file motosh_display.c -p' > /sys/kernel/debug/dynamic_debug/control");
             system("echo 'file motosh_time.c -p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file motosh_antcap.c -p' > /sys/kernel/debug/dynamic_debug/control");
         }
         else {
             system("echo 'file motosh_core.c +p' > /sys/kernel/debug/dynamic_debug/control");
@@ -682,6 +752,7 @@ int  main(int argc, char *argv[])
             system("echo 'file motosh_wake_irq.c +p' > /sys/kernel/debug/dynamic_debug/control");
             system("echo 'file motosh_display.c +p' > /sys/kernel/debug/dynamic_debug/control");
             system("echo 'file motosh_time.c +p' > /sys/kernel/debug/dynamic_debug/control");
+            system("echo 'file motosh_antcap.c +p' > /sys/kernel/debug/dynamic_debug/control");
         }
     }
     if( emode == FACTORY ) {
