@@ -428,7 +428,9 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
             mOrientReqDelay = delay;
             break;
         case ID_T: status = 0;                                                    break;
-        case ID_L: status = 0;                                                    break;
+        case ID_L:
+            status = ioctl(dev_fd, MOTOSH_IOCTL_SET_ALS_DELAY, &delay);
+            break;
 #ifdef _ENABLE_LA
         case ID_LA:
             rateFd = open(LINEAR_ACCEL_RATE_ATTR_NAME, O_WRONLY);
