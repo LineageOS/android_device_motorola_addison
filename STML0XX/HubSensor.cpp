@@ -27,7 +27,6 @@
 #include <sys/select.h>
 #include <dlfcn.h>
 
-#include <linux/akm8975.h>
 #include <linux/stml0xx.h>
 
 #include <cutils/log.h>
@@ -247,6 +246,8 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
 		err = ioctl(dev_fd, STML0XX_IOCTL_SET_ACC2_DELAY, &delay);
 		break;
         case ID_L:
+	        err = ioctl(dev_fd, STML0XX_IOCTL_SET_ALS_DELAY, &delay);
+                break;
         case ID_DR:
         case ID_P:
         case ID_FU:

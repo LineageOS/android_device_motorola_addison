@@ -30,7 +30,7 @@
 #include <time.h>
 #include <private/android_filesystem_config.h>
 
-#include "linux/stml0xx.h"
+#include <linux/stml0xx.h>
 
 #include "Sensors.h"
 #include "SensorBase.h"
