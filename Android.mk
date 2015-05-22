@@ -140,6 +140,8 @@ ifneq (,$(filter motosh stml0xx,$(SH_MODULE)))
 	LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
 	# Need the UAPI output directory to be populated with motosh.h/stml0xx.h
 	LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+	# This is only needed for 8x10
+	LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include/uapi
 else
 	LOCAL_C_INCLUDES += bionic/libc/kernel/common
 endif # SH_MODULE == "motosh"/"stml0xx"
@@ -169,6 +171,8 @@ ifneq (,$(filter motosh stml0xx,$(SH_MODULE)))
 	LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
 	# Need the UAPI output directory to be populated with motosh.h/stml0xx.h
 	LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+	# This is only needed for 8x10
+	LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include/uapi
 else
 	LOCAL_C_INCLUDES += bionic/libc/kernel/common
 endif # SH_MODULE == "motosh"/"stml0xx"
@@ -256,6 +260,8 @@ ifneq (,$(filter motosh stml0xx,$(SH_MODULE)))
 	LOCAL_C_INCLUDES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
 	# Need the UAPI output directory to be populated with motosh.h/stml0xx.h
 	LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+	# This is only needed for 8x10
+	LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include/uapi
 else
 	# For other flash loaders still relying on bionic
 	LOCAL_C_INCLUDES += bionic/libc/kernel/common
