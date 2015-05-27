@@ -97,10 +97,15 @@ typedef enum {
     FW_APK      //< Firmware uploaded by a PlayStore APK
 } FirmwareType;
 
+/****************************** globals ****************************************/
+
+ /** A file descriptor for the ioctl to communicate with the SensorHub. */
+int devFd = -1;
+
 int stm_convertAsciiToHex(char * input, unsigned char * output, int inlen);
 
 /* download cal/cfg data and enable capsense */
-void configure_capsense(int fd) {
+void configure_capsense() {
 
     FILE *fp;
     int i;
@@ -111,7 +116,7 @@ void configure_capsense(int fd) {
 
     LOGINFO("Sensorhub hal antcap disable");
     enable = 0;
-    err = ioctl(fd, MOTOSH_IOCTL_SET_ANTCAP_ENABLE, &enable);
+    err = ioctl(devFd, MOTOSH_IOCTL_SET_ANTCAP_ENABLE, &enable);
     if (err) {
         LOGERROR("Can't send Ant Disable: %d\n", err);
     }
@@ -119,7 +124,7 @@ void configure_capsense(int fd) {
     if (!err) {
         LOGINFO("Sensorhub hal antcap cfg");
         /* note:  antcap_cfg is now resident in device tree, mAntCfg unused */
-        err = ioctl(fd, MOTOSH_IOCTL_SET_ANTCAP_CFG, &buf);
+        err = ioctl(devFd, MOTOSH_IOCTL_SET_ANTCAP_CFG, &buf);
         if (err) {
             LOGERROR("Unable to send SET_ANTCAP_ENABLE ioctl: %d\n", err);
         }
@@ -145,7 +150,7 @@ void configure_capsense(int fd) {
                 buf[i] = ant_data;
             }
             fclose(fp);
-            err = ioctl(fd, MOTOSH_IOCTL_SET_ANTCAP_CAL, &buf);
+            err = ioctl(devFd, MOTOSH_IOCTL_SET_ANTCAP_CAL, &buf);
             if (err < 0) {
                 LOGERROR("Unable to send SET_ANTCAP_CAL ioctl: %d\n", err);
             }
@@ -155,7 +160,7 @@ void configure_capsense(int fd) {
     if (!err) {
         LOGINFO("Sensorhub hal antcap enable");
         enable = 1;
-        err = ioctl(fd, MOTOSH_IOCTL_SET_ANTCAP_ENABLE, &enable);
+        err = ioctl(devFd, MOTOSH_IOCTL_SET_ANTCAP_ENABLE, &enable);
         if (err) {
             LOGERROR("Unable to send SET_ANTCAP_ENABLE ioctl: %d\n", err);
         }
@@ -212,9 +217,9 @@ void flash_capsense(void) {
 
 /** Computes the absolute firmware file path for firmware of the given type.
  *
- * @param fd A file descriptor for the ioctl. The kernel SH driver may give us
- * a suffix to use (obtained from the device tree) so that different HW
- * variants can be handled.
+ * The kernel SH driver may give us a suffix to use (obtained from the device
+ * tree) so that different HW variants can be handled.
+ *
  * @param fileName A pointer to a buffer of at least STM_MAX_PATH bytes. A
  * null-terminated string containing the full/absolute path to the firmware
  * binary will be written to this buffer.
@@ -222,10 +227,10 @@ void flash_capsense(void) {
  *
  * @return A negative value on error.
  */
-int stm_getFwFile(int fd, char *fileName, FirmwareType type) {
+int stm_getFwFile(char *fileName, FirmwareType type) {
     char ver_string[FW_VERSION_SIZE];
 
-    int ret = ioctl(fd, MOTOSH_IOCTL_GET_VERNAME, ver_string);
+    int ret = ioctl(devFd, MOTOSH_IOCTL_GET_VERNAME, ver_string);
     if (ret < 0) return -1;
 
     if (strlen(ver_string) == 0) {
@@ -259,22 +264,22 @@ int stm_getFwFile(int fd, char *fileName, FirmwareType type) {
  * If the APK provided version is present, it will be preferred over the system
  * build-time version.
  *
- * @param fd A file descriptor for the ioctl. The kernel SH driver may give us
- * a suffix to use (obtained from the device tree) so that different HW
- * variants can be handled.
+ * The kernel SH driver may give us a suffix to use (obtained from the device
+ * tree) so that different HW variants can be handled.
+ *
  * @param fileName A pointer to a buffer of at least STM_MAX_PATH bytes. A
  * null-terminated string containing the full/absolute path to the firmware
  * binary will be written to this buffer.
  *
  * @return A negative value on error.
  * */
-int stm_getFwFile(int fd, char *fileName) {
+int stm_getFwFile(char *fileName) {
     static bool reported = false;
     int ret;
 
     // Prefer the APK FW version if present.
-    if ((ret = stm_getFwFile(fd, fileName, FW_APK)) < 0) {
-        ret = stm_getFwFile(fd, fileName, FW_STOCK);
+    if ((ret = stm_getFwFile(fileName, FW_APK)) < 0) {
+        ret = stm_getFwFile(fileName, FW_STOCK);
     }
 
     if (ret >= 0 && !reported) {
@@ -286,16 +291,16 @@ int stm_getFwFile(int fd, char *fileName) {
 }
 
 /**
- * Processes the firmware black list and deletes any firmware installed by an
- * APK that is in the list.
+ * Processes the firmware black list and deletes any APK installed firmware
+ * that is in the list.
  */
-void stm_processBlackList(int fd) {
+void stm_processBlackList() {
     int res;
     char path[STM_MAX_PATH];
 
     if (access(STM_FIRMWARE_BLACKLIST, R_OK) != 0) return; // We don't have a blacklist
 
-    if ((res = stm_getFwFile(fd, path, FW_APK)) < 0) {
+    if ((res = stm_getFwFile(path, FW_APK)) < 0) {
         return; // No APK firmware to check/delete
     }
 
@@ -319,26 +324,25 @@ void stm_processBlackList(int fd) {
         if (fileCrc == blCrc) {
             LOGINFO("Deleting blacklist firmware: %08x %s\n", blCrc, path);
             res = unlink(path);
-            goto finished;
+            goto EXIT;
         }
     }
 
-finished:
+EXIT:
     fclose(blackListFp);
     if (line) free(line);
 }
 
 /** Extract the firmware version from the filesystem binary containing the firmware.
  *
- * @param fd A file descriptor for the ioctl
  * @param fwVersionStr A pointer to a buffer of at least FW_VERSION_STR_MAX_LEN
  * bytes. A null-terminated string containing the firmware version (as
  * extracted from the .bin file) will be written to this location.
  * @return A negative value on error.
  * */
-int stm_getFwVersionFromFile(int fd, char *fwVersionStr) {
+int stm_getFwVersionFromFile(char *fwVersionStr) {
     char path[STM_MAX_PATH];
-    if (int res = stm_getFwFile(fd, path) < 0) {
+    if (int res = stm_getFwFile(path) < 0) {
         LOGERROR("Error: getFwFile = %i\n", res);
         return -1;
     }
@@ -400,14 +404,13 @@ int stm_getFwVersionFromFile(int fd, char *fwVersionStr) {
  * would be computed by the SensorHub if the firmware binary file were to be
  * loaded in flash on the SensorHub and the CRC computed over the whole flash.
  *
- * @param fd A file descriptor for the ioctl
  * @param crc The computed CRC.
  * @return Returns 0 on success or a negative value on error.
  */
-int stm_calcFwFileCrc(int fd, uint32_t &crc) {
+int stm_calcFwFileCrc(uint32_t &crc) {
     int res;
     char path[STM_MAX_PATH];
-    if ((res = stm_getFwFile(fd, path)) < 0) {
+    if ((res = stm_getFwFile(path)) < 0) {
         LOGERROR("Error: getFwFile = %i\n", res);
         return -1;
     }
@@ -426,35 +429,34 @@ int stm_calcFwFileCrc(int fd, uint32_t &crc) {
  * iterations that all have the "-dirty" flag), but if the contents are trully
  * different the CRC will not match.
  *
- * @param fd A file descriptor for the ioctl to communicate with the SensorHub.
  * @return One of STM_VERSION_MISMATCH (which could indicate an actual mismatch
  * or an error in obtaining one or more pieces of data required for the check)
  * or STM_VERSION_MATCH which indicates the version string and CRC matches.
  */
-int stm_versionCheck(int fd) {
+int stm_versionCheck() {
     char fileVersion[FW_VERSION_STR_MAX_LEN];
     char hwVersion[FW_VERSION_STR_MAX_LEN];
     uint32_t fileCrc = 0, hwCrc = 0;
 
-    int res = stm_getFwVersionFromFile(fd, fileVersion);
+    int res = stm_getFwVersionFromFile(fileVersion);
     if (res < 0) {
         LOGERROR("Error: getFwVersionFromFile returned %i\n", res);
         return STM_VERSION_MATCH; // Corrupt file?
     }
 
-    res = stm_calcFwFileCrc(fd, fileCrc);
+    res = stm_calcFwFileCrc(fileCrc);
     if (res < 0) {
         LOGERROR("Error: calcFwFileCrc returned %i\n", res);
         return STM_VERSION_MATCH; // Corrupt file?
     }
 
-    res = ioctl(fd, MOTOSH_IOCTL_GET_VERSION_STR, hwVersion);
+    res = ioctl(devFd, MOTOSH_IOCTL_GET_VERSION_STR, hwVersion);
     if (res < 0) {
         LOGERROR("Error: MOTOSH_IOCTL_GET_VERSION_STR returned %i\n", res);
         return STM_VERSION_MISMATCH; // Corrupt SH?
     }
 
-    res = ioctl(fd, MOTOSH_IOCTL_GET_FLASH_CRC, &hwCrc);
+    res = ioctl(devFd, MOTOSH_IOCTL_GET_FLASH_CRC, &hwCrc);
     if (res < 0) {
         LOGERROR("Error: MOTOSH_IOCTL_GET_FLASH_CRC returned %i\n", res);
         return STM_VERSION_MISMATCH; // Corrupt SH?
@@ -516,7 +518,7 @@ int stm_getpacket( FILE ** filepointer, unsigned char * databuff)
 
 }
 
-int stm_downloadFirmware( int fd, FILE *filep)
+int stm_downloadFirmware(FILE *filep)
 {
 
     unsigned int address;
@@ -529,15 +531,15 @@ int stm_downloadFirmware( int fd, FILE *filep)
     int temp = 100; // this is only a dummy variable for the 3rd parameter of ioctl call
 
     DEBUG("Ioctl call to switch to bootloader mode\n");
-    ret = ioctl(fd, MOTOSH_IOCTL_BOOTLOADERMODE, &temp);
+    ret = ioctl(devFd, MOTOSH_IOCTL_BOOTLOADERMODE, &temp);
     CHECK_RETURN_VALUE(ret,"Failed to switch STM to bootloader mode\n");
 
     DEBUG("Ioctl call to erase flash on STM\n");
-    ret = ioctl(fd, MOTOSH_IOCTL_MASSERASE, &temp);
+    ret = ioctl(devFd, MOTOSH_IOCTL_MASSERASE, &temp);
     CHECK_RETURN_VALUE(ret,"Failed to erase STM \n");
 
     address = FLASH_START_ADDRESS;
-    ret = ioctl(fd, MOTOSH_IOCTL_SETSTARTADDR, &address);
+    ret = ioctl(devFd, MOTOSH_IOCTL_SETSTARTADDR, &address);
     CHECK_RETURN_VALUE(ret,"Failed to set address\n");
 
     DEBUG("Start sending firmware packets to the driver\n");
@@ -556,7 +558,7 @@ int stm_downloadFirmware( int fd, FILE *filep)
         printf(".");
         fflush(stdout);
 
-        ret = write(fd, packet, packetlength);
+        ret = write(devFd, packet, packetlength);
         CHECK_RETURN_VALUE(ret,"Packet download failed\n");
     } while(packetlength != 0);
 
@@ -616,7 +618,7 @@ void help(int terminate)
 int  main(int argc, char *argv[])
 {
 
-    int fd = -1, tries, ret = STM_SUCCESS;
+    int tries, ret = STM_SUCCESS;
     FILE * filep = NULL;
     eStm_Mode emode = INVALID;
     int temp = 100; // this is only a dummy variable for the 3rd parameter of ioctl call
@@ -668,8 +670,8 @@ int  main(int argc, char *argv[])
     }
 
     /* open the device */
-    fd = open(STM_DRIVER,O_RDONLY|O_WRONLY);
-    if( fd < 0) {
+    devFd = open(STM_DRIVER,O_RDONLY|O_WRONLY);
+    if (devFd < 0) {
         LOGERROR("Unable to open motosh driver (are you root?): %s\n", strerror(errno))
         ret = STM_FAILURE;
         goto EXIT;
@@ -683,32 +685,32 @@ int  main(int argc, char *argv[])
         if (!forceBoot)
             flash_capsense();
 
-        stm_processBlackList(fd);
+        stm_processBlackList();
 
         if (emode == BOOTLOADER) {
-            ret = stm_getFwFile(fd, fw_file_name);
+            ret = stm_getFwFile(fw_file_name);
             if (ret >= 0) filep = fopen(fw_file_name, "r");
         }
         else
             filep = fopen(STM_FIRMWARE_FACTORY_FILE,"r");
 
         /* check if new firmware available for download */
-        if( (filep != NULL) && (forceBoot || stm_versionCheck(fd) == STM_VERSION_MISMATCH)) {
+        if( (filep != NULL) && (forceBoot || stm_versionCheck() == STM_VERSION_MISMATCH)) {
             tries = 0;
             while((tries < STM_DOWNLOADRETRIES )) {
-                if( (stm_downloadFirmware(fd, filep)) >= STM_SUCCESS) {
+                if( (stm_downloadFirmware(filep)) >= STM_SUCCESS) {
                     fclose(filep);
                     filep = NULL;
                     /* reset STM */
                     if (emode == BOOTLOADER) {
-                        ret = ioctl(fd, MOTOSH_IOCTL_NORMALMODE, &temp);
+                        ret = ioctl(devFd, MOTOSH_IOCTL_NORMALMODE, &temp);
                         printf("\n");
                         // IOCTLS will be briefly blocked during part reset
                         sleep(1);
-                        if (stm_versionCheck(fd) != STM_VERSION_MATCH) {
+                        if (stm_versionCheck() != STM_VERSION_MATCH) {
                             /* try once more */
                             sleep(2);
-                            if (stm_versionCheck(fd) == STM_VERSION_MATCH)
+                            if (stm_versionCheck() == STM_VERSION_MATCH)
                                 LOGINFO("Firmware download completed successfully\n")
                             else
                                 LOGERROR("Firmware download error\n")
@@ -728,7 +730,7 @@ int  main(int argc, char *argv[])
             if( tries >= STM_DOWNLOADRETRIES ) {
                 LOGERROR("Firmware download failed.\n")
                 ret = STM_FAILURE;
-                ioctl(fd,MOTOSH_IOCTL_NORMALMODE, &temp);
+                ioctl(devFd,MOTOSH_IOCTL_NORMALMODE, &temp);
             }
         } else {
             DEBUG("No new firmware to download \n");
@@ -740,18 +742,18 @@ int  main(int argc, char *argv[])
         }
 
         if (!forceBoot)
-            configure_capsense(fd);
+            configure_capsense();
 
         property_set("hw.motosh.booted", "1");
     }
     if(emode == NORMAL) {
         DEBUG("Ioctl call to reset STM\n");
-        ret = ioctl(fd,MOTOSH_IOCTL_NORMALMODE, &temp);
+        ret = ioctl(devFd,MOTOSH_IOCTL_NORMALMODE, &temp);
         CHECK_RETURN_VALUE(ret, "STM reset failed");
     }
     if( emode == TBOOT) {
         DEBUG("Ioctl call to send STM to boot mode\n");
-                ret = ioctl(fd,MOTOSH_IOCTL_TEST_BOOTMODE, &temp);
+                ret = ioctl(devFd,MOTOSH_IOCTL_TEST_BOOTMODE, &temp);
                 CHECK_RETURN_VALUE(ret, "STM not in bootloader mode");
     }
     if( emode == TREAD) {
@@ -761,14 +763,14 @@ int  main(int argc, char *argv[])
         // get the register to read from
                 stm_convertAsciiToHex(argv[2],hexinput,strlen(argv[2]));
         DEBUG( "%02x: ", hexinput[0]);
-                ret = ioctl(fd,MOTOSH_IOCTL_TEST_WRITE,hexinput);
+                ret = ioctl(devFd,MOTOSH_IOCTL_TEST_WRITE,hexinput);
 
         // get the number of bytes to be read
         stm_convertAsciiToHex(argv[3],hexinput,strlen(argv[3]));
         DEBUG( "count = %02x: \n ", hexinput[0]);
 
         for( i= 0; i< hexinput[0]; i++) {
-            ret = ioctl(fd,MOTOSH_IOCTL_TEST_READ, &temp);
+            ret = ioctl(devFd,MOTOSH_IOCTL_TEST_READ, &temp);
             DEBUG( "%02x ", ret);
         }
     }
@@ -776,7 +778,7 @@ int  main(int argc, char *argv[])
         DEBUG(" Test write\n");
         for( i=0; i< (argc-2); i++) {
             stm_convertAsciiToHex(argv[i+2],hexinput,strlen(argv[i+2]));
-            ret = ioctl(fd,MOTOSH_IOCTL_TEST_WRITE,hexinput);
+            ret = ioctl(devFd,MOTOSH_IOCTL_TEST_WRITE,hexinput);
             if (ret >= 0) {
                 DEBUG( "%02x", hexinput[0]);
             } else {
@@ -792,7 +794,7 @@ int  main(int argc, char *argv[])
             DEBUG(" %02x",hexinput[i]);
         }
                 DEBUG("\n");
-        ret = write(fd,hexinput,count);
+        ret = write(devFd,hexinput,count);
         if( ret != count) {
             DEBUG("Write FAILED\n");
         }
@@ -805,10 +807,10 @@ int  main(int argc, char *argv[])
         DEBUG (" %02x, ",hexinput[0]);
         stm_convertAsciiToHex(argv[3],hexinput+1,strlen(argv[3]));
         DEBUG (" %02x bytes: \n",hexinput[1]);
-        ret = ioctl(fd,MOTOSH_IOCTL_TEST_WRITE_READ,hexinput);
+        ret = ioctl(devFd,MOTOSH_IOCTL_TEST_WRITE_READ,hexinput);
     }
     if( emode == VERSION) {
-        stm_versionCheck(fd);
+        stm_versionCheck();
     }
     if( emode == DEBUG ) {
         if( argc < 3 )
@@ -817,7 +819,7 @@ int  main(int argc, char *argv[])
         stm_convertAsciiToHex(argv[2],hexinput,strlen(argv[2]));
         delay = hexinput[0];
         DEBUG(" %d\n", delay);
-        ret = ioctl(fd,MOTOSH_IOCTL_SET_DEBUG,&delay);
+        ret = ioctl(devFd,MOTOSH_IOCTL_SET_DEBUG,&delay);
         if (delay == 0) {
             system("echo 'file motosh_core.c -p' > /sys/kernel/debug/dynamic_debug/control");
             system("echo 'file motosh_flash.c -p' > /sys/kernel/debug/dynamic_debug/control");
@@ -845,7 +847,7 @@ int  main(int argc, char *argv[])
     }
     if( emode == FACTORY ) {
         DEBUG( "Switching to factory mode\n");
-        ret = ioctl(fd,MOTOSH_IOCTL_SET_FACTORY_MODE, &temp);
+        ret = ioctl(devFd,MOTOSH_IOCTL_SET_FACTORY_MODE, &temp);
     }
     if( emode == INVALID ) {
         LOGERROR("Invalid arguements passed: %d, %s\n",argc,argv[1])
@@ -923,10 +925,10 @@ int  main(int argc, char *argv[])
         }
 
         if (read_write) {
-            ret = ioctl(fd,MOTOSH_IOCTL_WRITE_REG,data_ptr);
+            ret = ioctl(devFd,MOTOSH_IOCTL_WRITE_REG,data_ptr);
             DEBUG ("Writing data returned: %d", ret);
         } else {
-            ret = ioctl(fd,MOTOSH_IOCTL_READ_REG,data_ptr);
+            ret = ioctl(devFd,MOTOSH_IOCTL_READ_REG,data_ptr);
 
             DEBUG ("Read data:");
             for ( i = 0; i < data_size; i++) {
@@ -942,7 +944,7 @@ int  main(int argc, char *argv[])
         unsigned int setting = atoi(argv[2]);
         if (setting == 0 || setting == 1) {
             LOGINFO(" lowpower mode set to: %d\n", setting);
-            ret = ioctl(fd, MOTOSH_IOCTL_SET_LOWPOWER_MODE, &setting);
+            ret = ioctl(devFd, MOTOSH_IOCTL_SET_LOWPOWER_MODE, &setting);
         } else {
             LOGERROR(" lowpower mode incorrect setting\n");
             ret = STM_FAILURE;
@@ -950,11 +952,11 @@ int  main(int argc, char *argv[])
     }
     if(emode == MASS_ERASE_PART) {
         DEBUG("Ioctl call to switch to bootloader mode\n");
-        ret = ioctl(fd, MOTOSH_IOCTL_BOOTLOADERMODE, &temp);
+        ret = ioctl(devFd, MOTOSH_IOCTL_BOOTLOADERMODE, &temp);
         CHECK_RETURN_VALUE(ret,"Failed to switch STM to bootloader mode\n");
 
         DEBUG("Ioctl call to erase flash on STM\n");
-        ret = ioctl(fd, MOTOSH_IOCTL_MASSERASE, &temp);
+        ret = ioctl(devFd, MOTOSH_IOCTL_MASSERASE, &temp);
         CHECK_RETURN_VALUE(ret,"Failed to erase STM \n");
         LOGINFO("Erased.\n");
 
@@ -963,7 +965,7 @@ int  main(int argc, char *argv[])
 EXIT:
     if( ret < STM_SUCCESS)
         LOGERROR(" Command execution error \n")
-    close(fd);
+    close(devFd);
     if( filep != NULL)
         fclose(filep);
     return ret;
