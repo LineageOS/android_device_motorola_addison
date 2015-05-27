@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <stdint.h>     // sscanf
 #include <string.h>
 #include <errno.h>
 #include <sys/ioctl.h>
@@ -24,10 +25,8 @@
 #define CS_MAX_LEN 8
 
 #define STM_DRIVER "/dev/motosh"
-/** The stem of the firmware file generated at build time. */
-#define STM_FIRMWARE_FILE "/system/etc/firmware/sensorhubfw"
-/** The stem of the firmware file uploaded/written by the PlayStore APK. */
-#define STM_FIRMWARE_FILE_APK "/data/misc/sensorhub/sensorhubfw"
+/** The firmware blacklist that this flasher will ignore */
+#define STM_FIRMWARE_BLACKLIST "/system/etc/firmware/sensorhub-blacklist.txt"
 /** Maximum filesystem path length */
 #define STM_MAX_PATH 256
 #define STM_FIRMWARE_FACTORY_FILE "/system/etc/firmware/sensorhubfactory.bin"
@@ -92,6 +91,11 @@ typedef enum tag_stmmode
     MASS_ERASE_PART,
     INVALID
 } eStm_Mode;
+
+typedef enum {
+    FW_STOCK,   //< Stock firmware
+    FW_APK      //< Firmware uploaded by a PlayStore APK
+} FirmwareType;
 
 int stm_convertAsciiToHex(char * input, unsigned char * output, int inlen);
 
@@ -206,42 +210,122 @@ void flash_capsense(void) {
     sleep(2);
 }
 
-/** Computes the absolute firmware file path.
+/** Computes the absolute firmware file path for firmware of the given type.
  *
- * If the APK provided version is present, it will be preferred over the system
- * build-time version.
- *
- * The kernel SH driver may give us a suffix to use (obtained from the device
- * tree) so that different HW variants can be handled.
- *
- * @param fd A file descriptor for the ioctl
+ * @param fd A file descriptor for the ioctl. The kernel SH driver may give us
+ * a suffix to use (obtained from the device tree) so that different HW
+ * variants can be handled.
  * @param fileName A pointer to a buffer of at least STM_MAX_PATH bytes. A
  * null-terminated string containing the full/absolute path to the firmware
  * binary will be written to this buffer.
+ * @param type The firmware type to obtain the path for.
+ *
  * @return A negative value on error.
- * */
-int stm_getFwFile(int fd, char *fileName) {
-    static bool reported = false;
+ */
+int stm_getFwFile(int fd, char *fileName, FirmwareType type) {
     char ver_string[FW_VERSION_SIZE];
 
     int ret = ioctl(fd, MOTOSH_IOCTL_GET_VERNAME, ver_string);
     if (ret < 0) return -1;
 
-    // Prefer the APK FW version if present.
-    ret = snprintf(fileName, STM_MAX_PATH, "%s%s.bin", STM_FIRMWARE_FILE_APK, ver_string);
-    if (ret >= STM_MAX_PATH) ret = -2; // Output was truncated.
-
-    if (ret < 0 || access(fileName, R_OK) != 0) {
-        // Fallback to the system FW.
-        ret = snprintf(fileName, STM_MAX_PATH, "%s%s.bin", STM_FIRMWARE_FILE, ver_string);
-        if (ret >= STM_MAX_PATH) ret = -3; // Output was truncated.
+    if (strlen(ver_string) == 0) {
+        strncpy(ver_string, "undefined", FW_VERSION_SIZE - 1);
+        ver_string[FW_VERSION_SIZE - 1] = 0;
     }
 
-    if (ret > 0 && !reported) {
+    switch (type) {
+        case FW_APK:
+            ret = snprintf(fileName, STM_MAX_PATH, "/data/misc/sensorhub/%s/sensorhubfw.bin", ver_string);
+            break;
+        case FW_STOCK:
+            ret = snprintf(fileName, STM_MAX_PATH, "/system/etc/firmware/SensorHub-%s/sensorhubfw.bin", ver_string);
+            break;
+        default:
+            return -2; // Invalid firmware type
+    }
+
+    if (ret >= STM_MAX_PATH) return -3; // Output was truncated.
+
+    if (access(fileName, R_OK) != 0) {
+        return -4; // No read access (file doesn't exist)
+    }
+
+    return 0;
+}
+
+/** Computes the absolute firmware file path for the firmware binary that
+ * should be loaded on the SensorHub.
+ *
+ * If the APK provided version is present, it will be preferred over the system
+ * build-time version.
+ *
+ * @param fd A file descriptor for the ioctl. The kernel SH driver may give us
+ * a suffix to use (obtained from the device tree) so that different HW
+ * variants can be handled.
+ * @param fileName A pointer to a buffer of at least STM_MAX_PATH bytes. A
+ * null-terminated string containing the full/absolute path to the firmware
+ * binary will be written to this buffer.
+ *
+ * @return A negative value on error.
+ * */
+int stm_getFwFile(int fd, char *fileName) {
+    static bool reported = false;
+    int ret;
+
+    // Prefer the APK FW version if present.
+    if ((ret = stm_getFwFile(fd, fileName, FW_APK)) < 0) {
+        ret = stm_getFwFile(fd, fileName, FW_STOCK);
+    }
+
+    if (ret >= 0 && !reported) {
         LOGINFO("MOTOSH using firmware: %s\n", fileName);
         reported = true;
     }
+
     return ret;
+}
+
+/**
+ * Processes the firmware black list and deletes any firmware installed by an
+ * APK that is in the list.
+ */
+void stm_processBlackList(int fd) {
+    int res;
+    char path[STM_MAX_PATH];
+
+    if (access(STM_FIRMWARE_BLACKLIST, R_OK) != 0) return; // We don't have a blacklist
+
+    if ((res = stm_getFwFile(fd, path, FW_APK)) < 0) {
+        return; // No APK firmware to check/delete
+    }
+
+    uint32_t fileCrc, blCrc;
+    res = calculateFileCrc32(path, FLASH_SIZE, FLASH_FILL, &fileCrc);
+
+    if (res < 0) return; // No CRC to check against
+
+    FILE *blackListFp = fopen(STM_FIRMWARE_BLACKLIST, "r");
+    if (blackListFp == NULL) return; // Huh?
+
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t read;
+    while ((read = getline(&line, &len, blackListFp)) != -1) {
+        if (len > 0 && line[0] == '#') continue;    // Skip comments
+
+        res = sscanf(line, "%" SCNx32, &blCrc);
+        if (res == EOF || res != 1) continue;
+
+        if (fileCrc == blCrc) {
+            LOGINFO("Deleting blacklist firmware: %08x %s\n", blCrc, path);
+            res = unlink(path);
+            goto finished;
+        }
+    }
+
+finished:
+    fclose(blackListFp);
+    if (line) free(line);
 }
 
 /** Extract the firmware version from the filesystem binary containing the firmware.
@@ -376,8 +460,10 @@ int stm_versionCheck(int fd) {
         return STM_VERSION_MISMATCH; // Corrupt SH?
     }
 
-    LOGINFO("Version info: in filesystem = %s, in hardware = %s\n", fileVersion, hwVersion)
-    LOGINFO("FW CRC value: in filesystem = 0x%08X, in hardware = 0x%08X\n", fileCrc, hwCrc)
+    LOGINFO("Version info: in filesystem = %s\n", fileVersion);
+    LOGINFO("Version info: in hardware   = %s\n", hwVersion);
+    LOGINFO("FW CRC value: in filesystem = 0x%08X\n", fileCrc);
+    LOGINFO("FW CRC value: in hardware   = 0x%08X\n", hwCrc);
 
     if ((strcmp(fileVersion, hwVersion) == 0) && (fileCrc == hwCrc)) {
         return STM_VERSION_MATCH;
@@ -596,6 +682,8 @@ int  main(int argc, char *argv[])
            boot up check (no -f option applied) */
         if (!forceBoot)
             flash_capsense();
+
+        stm_processBlackList(fd);
 
         if (emode == BOOTLOADER) {
             ret = stm_getFwFile(fd, fw_file_name);

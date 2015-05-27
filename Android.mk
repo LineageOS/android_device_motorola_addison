@@ -119,19 +119,19 @@ ifneq (,$(filter lux_% osprey_%, $(strip $(TARGET_PRODUCT))))
 LOCAL_SRC_FILES += \
 		$(SH_PATH)/AkmSensor.cpp  \
 		$(SH_PATH)/InputEventReader.cpp
-endif /* lux || osprey */
+endif # lux || osprey
 
 # This file must be last
 LOCAL_SRC_FILES += \
 		$(SH_PATH)/SensorsPollContext.cpp
-else /* surnia || otus || lux || osprey */
+else # surnia || otus || lux || osprey
 # Sensor HAL files for M4 and L4 products
 LOCAL_SRC_FILES := \
 		SensorBase.cpp \
 		$(SH_PATH)/nusensors.cpp \
 		$(SH_PATH)/sensors.c \
 		$(SH_PATH)/sensorhub_hal.cpp
-endif /* surnia || otus || lux || osprey */
+endif # surnia || otus || lux || osprey
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SH_PATH)
 LOCAL_C_INCLUDES += external/zlib
@@ -251,6 +251,7 @@ LOCAL_CFLAGS := -DLOG_TAG=$(SH_LOGTAG)
 LOCAL_SRC_FILES := $(SH_PATH)/$(SH_MODULE).cpp
 LOCAL_MODULE:= $(SH_MODULE)
 #LOCAL_CFLAGS+= -D_DEBUG
+LOCAL_CFLAGS += -Wall -Wextra -Weffc++
 LOCAL_SHARED_LIBRARIES := libcutils libc
 ifeq ($(SH_MODULE),motosh)
 LOCAL_SRC_FILES += \
