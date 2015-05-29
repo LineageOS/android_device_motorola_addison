@@ -217,9 +217,6 @@ void flash_capsense(void) {
 
 /** Computes the absolute firmware file path for firmware of the given type.
  *
- * The kernel SH driver may give us a suffix to use (obtained from the device
- * tree) so that different HW variants can be handled.
- *
  * @param fileName A pointer to a buffer of at least STM_MAX_PATH bytes. A
  * null-terminated string containing the full/absolute path to the firmware
  * binary will be written to this buffer.
@@ -228,31 +225,23 @@ void flash_capsense(void) {
  * @return A negative value on error.
  */
 int stm_getFwFile(char *fileName, FirmwareType type) {
-    char ver_string[FW_VERSION_SIZE];
-
-    int ret = ioctl(devFd, MOTOSH_IOCTL_GET_VERNAME, ver_string);
-    if (ret < 0) return -1;
-
-    if (strlen(ver_string) == 0) {
-        strncpy(ver_string, "undefined", FW_VERSION_SIZE - 1);
-        ver_string[FW_VERSION_SIZE - 1] = 0;
-    }
+    int ret;
 
     switch (type) {
         case FW_APK:
-            ret = snprintf(fileName, STM_MAX_PATH, "/data/misc/sensorhub/%s/sensorhubfw.bin", ver_string);
+            ret = snprintf(fileName, STM_MAX_PATH, "/data/misc/sensorhub/sensorhubfw.bin");
             break;
         case FW_STOCK:
-            ret = snprintf(fileName, STM_MAX_PATH, "/system/etc/firmware/SensorHub-%s/sensorhubfw.bin", ver_string);
+            ret = snprintf(fileName, STM_MAX_PATH, "/system/etc/firmware/sensorhubfw.bin");
             break;
         default:
-            return -2; // Invalid firmware type
+            return -1; // Invalid firmware type
     }
 
-    if (ret >= STM_MAX_PATH) return -3; // Output was truncated.
+    if (ret >= STM_MAX_PATH) return -2; // Output was truncated.
 
     if (access(fileName, R_OK) != 0) {
-        return -4; // No read access (file doesn't exist)
+        return -3; // No read access (file doesn't exist)
     }
 
     return 0;
@@ -263,9 +252,6 @@ int stm_getFwFile(char *fileName, FirmwareType type) {
  *
  * If the APK provided version is present, it will be preferred over the system
  * build-time version.
- *
- * The kernel SH driver may give us a suffix to use (obtained from the device
- * tree) so that different HW variants can be handled.
  *
  * @param fileName A pointer to a buffer of at least STM_MAX_PATH bytes. A
  * null-terminated string containing the full/absolute path to the firmware
