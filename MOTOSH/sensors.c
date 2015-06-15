@@ -35,7 +35,17 @@
 #define VENDOR_TAOS "TAOS"
 
 /* Range settings */
-#define ACCEL_FULLSCALE_G  (16)
+#define ACCEL_FULLSCALE_G  (16.f)
+#define GYRO_FULLSCALE_DPS (2000.f)
+#define MAG_FULLSCALE_UT   (4900.f)
+#define ALS_FULLSCALE_LUX  ((float)UINT16_MAX)
+
+/* Resolution settings */
+#define GYRO_QUANTIZATION_LEVELS  (INT16_MAX)
+#define MAG_QUANTIZATION_LEVELS   (INT16_MAX)
+#define ALS_QUANTIZATION_LEVELS   (UINT16_MAX)
+#define RV_QUANTIZATION_LEVELS    (INT16_MAX)
+#define GRAV_QUANTIZATION_LEVELS  (INT16_MAX)
 
 /* Min delays */
 #define ACCEL_MIN_DELAY_US 5000
@@ -92,8 +102,8 @@ const struct sensor_t sSensorList[] = {
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_G,
                 .type = SENSOR_TYPE_GYROSCOPE,
-                .maxRange = 2000.0f,
-                .resolution = 1.0f,
+                .maxRange = GYRO_FULLSCALE_DPS,
+                .resolution = GYRO_FULLSCALE_DPS / GYRO_QUANTIZATION_LEVELS,
                 .power = ICM20645_GYRO_MA,
                 .minDelay = GYRO_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
@@ -108,8 +118,8 @@ const struct sensor_t sSensorList[] = {
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_M,
                 .type = SENSOR_TYPE_MAGNETIC_FIELD,
-                .maxRange = 2000.0f,
-                .resolution = 1.0f/10.0f,
+                .maxRange = MAG_FULLSCALE_UT,
+                .resolution = MAG_FULLSCALE_UT / MAG_QUANTIZATION_LEVELS,
                 .power = AK09912_MA,
                 .minDelay = MAG_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
@@ -140,8 +150,8 @@ const struct sensor_t sSensorList[] = {
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_L,
                 .type = SENSOR_TYPE_LIGHT,
-                .maxRange = 27000.0f,
-                .resolution = 1.0f,
+                .maxRange = ALS_FULLSCALE_LUX,
+                .resolution = ALS_FULLSCALE_LUX / ALS_QUANTIZATION_LEVELS,
                 .power = CT1011_ALS_MA,
                 .minDelay = 0,
                 .fifoReservedEventCount = 0,
@@ -353,8 +363,8 @@ const struct sensor_t sSensorList[] = {
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_UNCALIB_GYRO,
                 .type = SENSOR_TYPE_GYROSCOPE_UNCALIBRATED,
-                .maxRange = 2000.0f,
-                .resolution = 1.0f,
+                .maxRange = GYRO_FULLSCALE_DPS,
+                .resolution = GYRO_FULLSCALE_DPS / GYRO_QUANTIZATION_LEVELS,
                 .power = ICM20645_GYRO_MA,
                 .minDelay = GYRO_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
@@ -369,8 +379,8 @@ const struct sensor_t sSensorList[] = {
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_UNCALIB_MAG,
                 .type = SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED,
-                .maxRange = 2000.0f,
-                .resolution = 1.0f/10.0f,
+                .maxRange = MAG_FULLSCALE_UT,
+                .resolution = MAG_FULLSCALE_UT / MAG_QUANTIZATION_LEVELS,
                 .power = AK09912_MA,
                 .minDelay = MAG_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
@@ -422,7 +432,7 @@ const struct sensor_t sSensorList[] = {
                 .handle = SENSORS_HANDLE_BASE+ID_QUAT_9AXIS,
                 .type = SENSOR_TYPE_ROTATION_VECTOR,
                 .maxRange = 1.0f,
-                .resolution = 1.0f/32767.f,
+                .resolution = 1.0f / RV_QUANTIZATION_LEVELS,
                 .power = ICM20645_6AXIS_MA + AK09912_MA + MOT_9AXIS_MA,
                 .minDelay = ACCEL_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
@@ -438,7 +448,7 @@ const struct sensor_t sSensorList[] = {
                 .handle = SENSORS_HANDLE_BASE+ID_QUAT_6AXIS,
                 .type = SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR,
                 .maxRange = 1.0f,
-                .resolution = 1.0f/32767.f,
+                .resolution = 1.0f / RV_QUANTIZATION_LEVELS,
                 .power = ICM20645_6AXIS_MA + MOT_6AXIS_MA,
                 .minDelay = ACCEL_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
@@ -455,7 +465,7 @@ const struct sensor_t sSensorList[] = {
                 .handle = SENSORS_HANDLE_BASE+ID_GRAVITY,
                 .type = SENSOR_TYPE_GRAVITY,
                 .maxRange = GRAVITY_EARTH,
-                .resolution = GRAVITY_EARTH/32767.f,
+                .resolution = GRAVITY_EARTH / GRAV_QUANTIZATION_LEVELS,
                 .power = ICM20645_ACCEL_MA + ICM20645_GYRO_MA + AK09912_MA + MOT_LAGRAV_MA,
                 .minDelay = 10000,
                 .fifoReservedEventCount = 0,
