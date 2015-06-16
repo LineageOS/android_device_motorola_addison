@@ -17,40 +17,43 @@
 
 LOCAL_PATH:= $(call my-dir)
 
-ifneq ($(TARGET_SIMULATOR),true)
+ifneq ($(BOARD_USES_MOT_SENSOR_HUB), true)
+    # For non SensorHub version of sensors (sensors connected directly to AP)
 
-# HAL module implemenation, not prelinked, and stored in
-# hw/<SENSORS_HARDWARE_MODULE_ID>.<ro.product.board>.so
-include $(CLEAR_VARS)
+    ifeq ($(TARGET_BOARD_PLATFORM),msm8226)
 
-#LOCAL_MODULE := sensors.$(TARGET_DEVICE)
-LOCAL_MODULE := sensors.msm8226
+        # HAL module implemenation, not prelinked, and stored in
+        # hw/<SENSORS_HARDWARE_MODULE_ID>.<ro.product.board>.so
+        include $(CLEAR_VARS)
 
-LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
+        LOCAL_MODULE := sensors.msm8226
 
-LOCAL_MODULE_TAGS := optional
+        LOCAL_MODULE_RELATIVE_PATH := hw
 
-LOCAL_CFLAGS := -DLOG_TAG=\"Sensors\"
+        LOCAL_MODULE_TAGS := optional
 
-LOCAL_SRC_FILES := 						\
-				sensors.c 			\
-				nusensors.cpp 			\
-				InputEventReader.cpp		\
-				SensorBase.cpp			\
-				AkmSensor.cpp			\
-				lis3dh_hal.cpp			\
-				ct406_hal.cpp
+        LOCAL_CFLAGS := -DLOG_TAG=\"Sensors\"
 
-LOCAL_C_INCLUDES := bionic/libc/kernel/common
+        LOCAL_SRC_FILES :=          \
+            sensors.c               \
+            nusensors.cpp           \
+            InputEventReader.cpp    \
+            SensorBase.cpp          \
+            AkmSensor.cpp           \
+            lis3dh_hal.cpp          \
+            ct406_hal.cpp
 
-ifeq ($(FEATURE_GYRO_L3D4200), true)
-    LOCAL_SRC_FILES += l3g4200d_hal.cpp
-    LOCAL_CFLAGS += -DFEATURE_GYRO_L3D4200_SUPPORTED
-endif
+        LOCAL_C_INCLUDES := bionic/libc/kernel/common
 
-LOCAL_SHARED_LIBRARIES := liblog libcutils libdl
-LOCAL_PRELINK_MODULE := false
+        ifeq ($(FEATURE_GYRO_L3D4200), true)
+            LOCAL_SRC_FILES += l3g4200d_hal.cpp
+            LOCAL_CFLAGS += -DFEATURE_GYRO_L3D4200_SUPPORTED
+        endif
 
-include $(BUILD_SHARED_LIBRARY)
+        LOCAL_SHARED_LIBRARIES := liblog libcutils libdl
+        LOCAL_PRELINK_MODULE := false
 
-endif # !TARGET_SIMULATOR
+        include $(BUILD_SHARED_LIBRARY)
+
+    endif # msm8226
+endif # BOARD_USES_MOT_SENSOR_HUB

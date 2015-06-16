@@ -3,7 +3,7 @@
 #
 # This file should contain the CRC32 (as computed by motosh) of all firmware
 # versions released through the PlayStore. The assumption is that any features
-# or bugs present in these firmware versions have already been incorporated
+# or fixes present in these firmware versions have already been incorporated
 # into the build containing this blacklist, and therefore should be deleted
 # by motosh if encountered.
 #
