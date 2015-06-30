@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011- 2012 Motorola, Inc.
+ * Copyright (C) 2011-2015 Motorola Mobility
+ *
  * Copyright (C) 2008 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,13 +35,15 @@
 
 #include <hardware/mot_sensorhub_motosh.h>
 
-#include "nusensors.h"
-#include "sensorhub_hal.h"
+#include "SensorList.h"
+#include "HubSensors.h"
 
 /*****************************************************************************/
 
-HubSensor::HubSensor()
-: SensorBase(SENSORHUB_DEVICE_NAME, SENSORHUB_AS_DATA_NAME),
+HubSensors HubSensors::self;
+
+HubSensors::HubSensors()
+: SensorBase(SENSORHUB_DEVICE_NAME, NULL, SENSORHUB_AS_DATA_NAME),
       mEnabled(0),
       mWakeEnabled(0),
       mPendingMask(0),
@@ -118,12 +121,17 @@ HubSensor::HubSensor()
     }
 }
 
-HubSensor::~HubSensor()
+HubSensors::~HubSensors()
 {
   ALOGE("Sensorhub hal destroyed");
 }
 
-int HubSensor::enable(int32_t handle, int en)
+HubSensors *HubSensors::getInstance()
+{
+    return &self;
+}
+
+int HubSensors::setEnable(int32_t handle, int en)
 {
     int newState  = en ? 1 : 0;
     uint32_t new_enabled;
@@ -400,7 +408,7 @@ int HubSensor::enable(int32_t handle, int en)
     return err;
 }
 
-int HubSensor::setDelay(int32_t handle, int64_t ns)
+int HubSensors::setDelay(int32_t handle, int64_t ns)
 {
     int rateFd = 0;
     int status = -EINVAL;
@@ -526,7 +534,7 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
     return status;
 }
 
-int HubSensor::readEvents(sensors_event_t* d, int dLen)
+int HubSensors::readEvents(sensors_event_t* d, int dLen)
 {
     struct motosh_android_sensor_data buff;
     int ret;
@@ -539,11 +547,11 @@ int HubSensor::readEvents(sensors_event_t* d, int dLen)
     sensors_event_t const* const dataEnd = d + dLen;
 
     if (!data) {
-        ALOGE("HubSensor::readEvents - null data buffer");
+        ALOGE("HubSensors::readEvents - null data buffer");
         return -EINVAL;
     }
     if (dLen < 1) {
-        ALOGE("HubSensor::readEvents - bad length %d", dLen);
+        ALOGE("HubSensors::readEvents - bad length %d", dLen);
         return -EINVAL;
     }
 
@@ -861,7 +869,7 @@ int HubSensor::readEvents(sensors_event_t* d, int dLen)
                 data->data[0] = (*(buff.data + IR_OBJ) >> IR_OBJ_SHIFT) & 0x01;
                 data->timestamp = buff.timestamp;
                 data++;
-                enable(ID_IR_OBJECT, 0); /* One-shot sensor. Disable now */
+                setEnable(ID_IR_OBJECT, 0); /* One-shot sensor. Disable now */
                 break;
             case DT_SIM:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -870,7 +878,7 @@ int HubSensor::readEvents(sensors_event_t* d, int dLen)
                 data->data[0] = 1;
                 data->timestamp = buff.timestamp;
                 data++;
-                enable(ID_SIM, 0);
+                setEnable(ID_SIM, 0);
                 break;
 #ifdef _ENABLE_CHOPCHOP
             case DT_CHOPCHOP:
@@ -929,7 +937,7 @@ int HubSensor::readEvents(sensors_event_t* d, int dLen)
     return data - d;
 }
 
-int HubSensor::flush(int32_t handle)
+int HubSensors::flush(int32_t handle)
 {
     int ret = -EINVAL;
 
@@ -938,15 +946,16 @@ int HubSensor::flush(int32_t handle)
         return ret;
     }
     // Have to return -EINVAL for one-shot sensors per Android spec
-    if (mIdToSensor[handle]->flags & REPORTING_MODE_MASK == SENSOR_FLAG_ONE_SHOT_MODE)
+    if ((mIdToSensor[handle]->flags & REPORTING_MODE_MASK) == SENSOR_FLAG_ONE_SHOT_MODE)
         return ret;
 
     ret = ioctl(dev_fd, MOTOSH_IOCTL_SET_FLUSH, &handle);
     return ret;
 }
 
-gzFile HubSensor::open_dropbox_file(const char* timestamp, const char* dst, const int flags)
+gzFile HubSensors::open_dropbox_file(const char* timestamp, const char* dst, const int flags)
 {
+    (void)dst;
     char dropbox_path[128];
     pid_t pid = getpid();
 
@@ -957,7 +966,7 @@ gzFile HubSensor::open_dropbox_file(const char* timestamp, const char* dst, cons
     return gzopen(dropbox_path, "wb");
 }
 
-short HubSensor::capture_dump(char* timestamp, const int id, const char* dst, const int flags)
+short HubSensors::capture_dump(char* timestamp, const int id, const char* dst, const int flags)
 {
     char buffer[COPYSIZE] = {0};
     int rc = 0, i = 0;
@@ -987,7 +996,7 @@ short HubSensor::capture_dump(char* timestamp, const int id, const char* dst, co
     return 0;
 }
 
-int HubSensor::updateEcompassRate()
+int HubSensors::updateEcompassRate()
 {
     int ret = 0;
 
@@ -1018,7 +1027,7 @@ int HubSensor::updateEcompassRate()
     return ret;
 }
 
-int HubSensor::updateGyroRate()
+int HubSensors::updateGyroRate()
 {
     int ret = 0;
 
@@ -1047,3 +1056,9 @@ int HubSensor::updateGyroRate()
 
     return ret;
 }
+
+bool HubSensors::hasSensor(int handle)
+{
+    return mIdToSensor.count(handle);
+}
+

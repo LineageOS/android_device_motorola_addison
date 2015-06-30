@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2015 Motorola Mobility
+ *
  * Copyright (C) 2008 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +23,7 @@
 #include <errno.h>
 #include <sys/cdefs.h>
 #include <sys/types.h>
+#include <linux/limits.h>
 
 
 /*****************************************************************************/
@@ -28,36 +31,42 @@
 struct sensors_event_t;
 
 class SensorBase {
-protected:
-    const char* dev_name;
-    const char* data_name;
-    int         dev_fd;
-    int         data_fd;
-
-    static int openInput(const char* inputName);
-    static int64_t getTimestamp();
-
-
-    static int64_t timevalToNano(timeval const& t) {
-        return t.tv_sec*1000000000LL + t.tv_usec*1000;
-    }
-
-    int open_device();
-    int close_device();
-
 public:
-            SensorBase(
-                    const char* dev_name,
-                    const char* data_name);
+	SensorBase(
+		const char* dev_name,
+		const char* data_name,
+		const char* mot_data_name);
 
-    virtual ~SensorBase();
+	virtual ~SensorBase();
 
-    virtual int readEvents(sensors_event_t* data, int count) = 0;
-    virtual bool hasPendingEvents() const;
-    virtual int getFd() const;
-    virtual int setDelay(int32_t handle, int64_t ns);
-    virtual int enable(int32_t handle, int enabled) = 0;
-    virtual int flush(int32_t handle) = 0;
+	virtual int readEvents(sensors_event_t* data, int count) = 0;
+	virtual bool hasPendingEvents() const;
+	virtual int getFd() const;
+
+	/* When this function is called, increments the reference counter. */
+	virtual int setEnable(int32_t handle, int enabled) = 0;
+	virtual int setDelay(int32_t handle, int64_t ns);
+	virtual int flush(int32_t handle) = 0;
+	virtual bool hasSensor(int handle) = 0;
+
+protected:
+	const char* dev_name;
+	const char* data_name;
+	const char* mot_data_name;
+	int dev_fd;
+	int data_fd;
+
+	int openInput(const char* inputName);
+	static int64_t getTimestamp();
+
+	static int64_t timevalToNano(timeval const& t) {
+		return t.tv_sec*1000000000LL + t.tv_usec*1000;
+	}
+
+	int open_device();
+	int close_device();
+	int write_sys_attribute(
+		char const *path, char const *value, int bytes);
 };
 
 /*****************************************************************************/

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2009-2012 Motorola, Inc.
+ * Copyright (C) 2009-2015 Motorola Mobility
+ *
  * Copyright (C) 2008 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +21,8 @@
 #include <float.h>
 #include <limits.h>
 
-#include "nusensors.h"
+#include "Sensors.h"
+#include "SensorList.h"
 
 /*****************************************************************************/
 
@@ -527,40 +529,3 @@ const int sSensorListSize = sizeof(sSensorList)/sizeof(*sSensorList);
 #undef ORIENT_ALGO_MA
 #undef CAM_ACT_ALGO_MA
 #undef MOT_9AXIS_MA
-
-static int open_sensors(const struct hw_module_t* module, const char* name,
-        struct hw_device_t** device);
-
-static int sensors__get_sensors_list(struct sensors_module_t* module,
-        struct sensor_t const** list)
-{
-    (void)module;
-    *list = sSensorList;
-    return ARRAY_SIZE(sSensorList);
-}
-
-static struct hw_module_methods_t sensors_module_methods = {
-    .open = open_sensors
-};
-
-struct sensors_module_t HAL_MODULE_INFO_SYM = {
-    .common = {
-        .tag = HARDWARE_MODULE_TAG,
-        .version_major = 2,
-        .version_minor = 0,
-        .id = SENSORS_HARDWARE_MODULE_ID,
-        .name = "Motorola Sensors Module",
-        .author = "Motorola",
-        .methods = &sensors_module_methods,
-    },
-    .get_sensors_list = sensors__get_sensors_list
-};
-
-/*****************************************************************************/
-
-static int open_sensors(const struct hw_module_t* module, const char* name,
-        struct hw_device_t** device)
-{
-    (void)name;
-    return init_nusensors(module, device);
-}

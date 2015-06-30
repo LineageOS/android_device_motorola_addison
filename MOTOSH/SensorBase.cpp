@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2015 Motorola Mobility
+ *
  * Copyright (C) 2008 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,10 +34,19 @@
 
 SensorBase::SensorBase(
         const char* dev_name,
-        const char* data_name)
+        const char* data_name,
+        const char* mot_data_name)
     : dev_name(dev_name), data_name(data_name),
-      dev_fd(-1), data_fd(-1)
+        mot_data_name(mot_data_name),
+        dev_fd(-1), data_fd(-1)
 {
+    if (data_name) {
+        data_fd = openInput(data_name);
+        ALOGE_IF(data_fd<0, "Couldn't open %s (%s)", data_name, strerror(errno));
+    } else if (mot_data_name) {
+        data_fd = open(mot_data_name, O_RDONLY);
+        ALOGE_IF(data_fd<0, "Couldn't open %s (%s)", mot_data_name, strerror(errno));
+    }
 }
 
 SensorBase::~SensorBase() {
@@ -52,18 +63,10 @@ int SensorBase::open_device() {
         dev_fd = open(dev_name, O_RDONLY);
         ALOGE_IF(dev_fd<0, "Couldn't open %s (%s)", dev_name, strerror(errno));
     }
-    if (data_fd<0 && data_name) {
-        data_fd = open(data_name, O_RDONLY);
-        ALOGE_IF(data_fd<0, "Couldn't open %s (%s)", data_name, strerror(errno));
-    }
     return 0;
 }
 
 int SensorBase::close_device() {
-    if (data_fd >= 0) {
-        close(data_fd);
-        data_fd = -1;
-    }
     if (dev_fd >= 0) {
         close(dev_fd);
         dev_fd = -1;
@@ -71,11 +74,36 @@ int SensorBase::close_device() {
     return 0;
 }
 
+int SensorBase::write_sys_attribute(
+    const char *path, const char *value, int bytes)
+{
+    int fd, amt;
+
+    fd = open(path, O_WRONLY);
+    if (fd < 0) {
+        ALOGE("SensorBase::write_attr failed to open %s (%s)",
+            path, strerror(errno));
+        return -1;
+    }
+
+    amt = write(fd, value, bytes);
+    amt = ((amt == -1) ? -errno : 0);
+    ALOGE_IF(amt < 0, "SensorBase::write_attr failed to write %s (%s)",
+        path, strerror(errno));
+    close(fd);
+    return amt;
+}
+
 int SensorBase::getFd() const {
-    return data_fd;
+    if (data_fd >= 0)
+        return data_fd;
+
+    return dev_fd;
 }
 
 int SensorBase::setDelay(int32_t handle, int64_t ns) {
+    (void)handle;
+    (void)ns;
     return 0;
 }
 
@@ -106,7 +134,7 @@ int SensorBase::openInput(const char* inputName) {
     while((de = readdir(dir))) {
         if(de->d_name[0] == '.' &&
                 (de->d_name[1] == '\0' ||
-                        (de->d_name[1] == '.' && de->d_name[2] == '\0')))
+                (de->d_name[1] == '.' && de->d_name[2] == '\0')))
             continue;
         strcpy(filename, de->d_name);
         fd = open(devname, O_RDONLY);
@@ -121,6 +149,8 @@ int SensorBase::openInput(const char* inputName) {
                 close(fd);
                 fd = -1;
             }
+        } else {
+            ALOGE("SensorBase::openInput open error");
         }
     }
     closedir(dir);

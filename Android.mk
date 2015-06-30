@@ -135,9 +135,10 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
             # Sensor HAL files for M4 and L4 (high-tier) products
             LOCAL_SRC_FILES := \
                 $(SH_PATH)/SensorBase.cpp \
-                $(SH_PATH)/nusensors.cpp \
-                $(SH_PATH)/sensors.c \
-                $(SH_PATH)/sensorhub_hal.cpp
+                $(SH_PATH)/HubSensors.cpp \
+                $(SH_PATH)/SensorHal.cpp \
+                $(SH_PATH)/SensorList.cpp \
+                $(SH_PATH)/SensorsPollContext.cpp
         endif # surnia || otus || lux || osprey
 
         LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SH_PATH)

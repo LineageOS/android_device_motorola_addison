@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2009-2015 Motorola Mobility
+ *
  * Copyright (C) 2008 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,16 +30,6 @@
 #include <hardware/sensors.h>
 
 __BEGIN_DECLS
-
-/*****************************************************************************/
-
-extern const struct sensor_t sSensorList[];
-extern const int sSensorListSize;
-int init_nusensors(hw_module_t const* module, hw_device_t** device);
-
-/*****************************************************************************/
-
-#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
 #define MIN_SENSOR_ID (0)
 #define ID_A  (0)  /* Accelerometer */

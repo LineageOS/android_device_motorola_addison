@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2011-2015 Motorola Mobility
+ *
  * Copyright (C) 2008 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +16,8 @@
  * limitations under the License.
  */
 
-#ifndef ANDROID_HUB_SENSOR_H
-#define ANDROID_HUB_SENSOR_H
+#ifndef HUBSENSORS_H
+#define HUBSENSORS_H
 
 #include <stdint.h>
 #include <errno.h>
@@ -29,7 +31,7 @@
 
 #include <linux/motosh.h>
 
-#include "nusensors.h"
+#include "Sensors.h"
 #include "SensorBase.h"
 
 /*****************************************************************************/
@@ -158,17 +160,20 @@
 
 struct input_event;
 
-class HubSensor : public SensorBase {
+class HubSensors : public SensorBase {
 public:
-            HubSensor();
-    virtual ~HubSensor();
-
+    static HubSensors* getInstance();
+    virtual int setEnable(int32_t handle, int enabled);
     virtual int setDelay(int32_t handle, int64_t ns);
-    virtual int enable(int32_t handle, int enabled);
     virtual int readEvents(sensors_event_t* data, int count);
     virtual int flush(int32_t handle);
+    bool hasSensor(int handle);
 
 private:
+            HubSensors();
+    virtual ~HubSensors();
+
+    static HubSensors self;
     int update_delay();
     uint32_t mEnabled;
     uint32_t mWakeEnabled;
@@ -239,4 +244,4 @@ private:
 
 /*****************************************************************************/
 
-#endif  // ANDROID_HUB_SENSOR_H
+#endif  // HUBSENSORS_H
