@@ -16,14 +16,13 @@
  * limitations under the License.
  */
 
-#include <fcntl.h>
-#include <errno.h>
 #include <dirent.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <math.h>
-#include <new>
-
 #include <poll.h>
 #include <pthread.h>
+#include <string.h>
 
 #include <cutils/atomic.h>
 #include <cutils/log.h>

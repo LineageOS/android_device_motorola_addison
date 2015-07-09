@@ -16,22 +16,24 @@
  * limitations under the License.
  */
 
-#include <fcntl.h>
+#define __STDC_FORMAT_MACROS
+
+#include <dirent.h>
+#include <dlfcn.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <inttypes.h>
+#include <limits.h>
 #include <math.h>
 #include <poll.h>
+#include <string.h>
 #include <unistd.h>
-#include <dirent.h>
-#include <sys/select.h>
-#include <dlfcn.h>
-#include <limits.h>
-
-#define __STDC_FORMAT_MACROS
-#include <inttypes.h>
-
-#include <linux/motosh.h>
 
 #include <cutils/log.h>
+
+#include <sys/select.h>
+
+#include <linux/motosh.h>
 
 #include <hardware/mot_sensorhub_motosh.h>
 
@@ -62,25 +64,25 @@ HubSensors::HubSensors()
 {
     // read the actual value of all sensors if they're enabled already
     struct input_absinfo absinfo;
-    short flags16 = 0;
-    uint32_t flags24 = 0;
+    char flags[3];
     FILE *fp;
     int i;
     int cal_data;
     int err = 0;
 
     memset(mMagCal, 0, sizeof(mMagCal));
+    memset(mGyroCal, 0, sizeof(mGyroCal));
     memset(mErrorCnt, 0, sizeof(mErrorCnt));
     ALOGI("Sensorhub hal created");
 
     open_device();
 
-    if (!ioctl(dev_fd, MOTOSH_IOCTL_GET_SENSORS, &flags16))  {
-        mEnabled = flags16;
+    if (!ioctl(dev_fd, MOTOSH_IOCTL_GET_SENSORS, flags))  {
+        mEnabled = flags[0] | (flags[1] << 8) | (flags[2] << 16);
     }
 
-    if (!ioctl(dev_fd, MOTOSH_IOCTL_GET_WAKESENSORS, &flags24))  {
-        mWakeEnabled = flags24;
+    if (!ioctl(dev_fd, MOTOSH_IOCTL_GET_WAKESENSORS, flags))  {
+        mWakeEnabled = flags[0] | (flags[1] << 8) | (flags[2] << 16);
     }
 
     if ((fp = fopen(MAG_CAL_FILE, "r")) != NULL) {
@@ -93,7 +95,7 @@ HubSensors::HubSensors()
             mMagCal[i] = cal_data;
         }
         fclose(fp);
-        err = ioctl(dev_fd, MOTOSH_IOCTL_SET_MAG_CAL, &mMagCal);
+        err = ioctl(dev_fd, MOTOSH_IOCTL_SET_MAG_CAL, mMagCal);
         if (err < 0) {
            ALOGE("Can't send Mag Cal data");
         }
@@ -109,7 +111,7 @@ HubSensors::HubSensors()
             mGyroCal[i] = cal_data;
         }
         fclose(fp);
-        err = ioctl(dev_fd, MOTOSH_IOCTL_SET_GYRO_CAL, &mGyroCal);
+        err = ioctl(dev_fd, MOTOSH_IOCTL_SET_GYRO_CAL, mGyroCal);
         if (err < 0) {
            ALOGE("Can't send Gyro Cal data");
         }
@@ -306,7 +308,7 @@ int HubSensors::setEnable(int32_t handle, int en)
             FILE *fp;
             int i;
 
-            err = ioctl(dev_fd, MOTOSH_IOCTL_GET_MAG_CAL, &mMagCal);
+            err = ioctl(dev_fd, MOTOSH_IOCTL_GET_MAG_CAL, mMagCal);
             if (err < 0) {
                 ALOGE("Can't read Mag Cal data");
             } else {
@@ -905,7 +907,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
             case DT_GYRO_CAL:
                 FILE *fp;
                 int i;
-                ret = ioctl(dev_fd, MOTOSH_IOCTL_GET_GYRO_CAL, &mGyroCal);
+                ret = ioctl(dev_fd, MOTOSH_IOCTL_GET_GYRO_CAL, mGyroCal);
                 if (ret < 0) {
                     ALOGE("Can't read Gyro Cal data");
                 } else {

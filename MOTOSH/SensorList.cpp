@@ -16,10 +16,12 @@
  * limitations under the License.
  */
 
-#include <hardware/sensors.h>
-#include <hardware/mot_sensorhub_motosh.h>
 #include <float.h>
 #include <limits.h>
+#include <string.h>
+
+#include <hardware/sensors.h>
+#include <hardware/mot_sensorhub_motosh.h>
 
 #include "Sensors.h"
 #include "SensorList.h"

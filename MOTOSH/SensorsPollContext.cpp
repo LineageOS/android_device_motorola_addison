@@ -16,22 +16,22 @@
  * limitations under the License.
  */
 
-#include <hardware/sensors.h>
-#include <fcntl.h>
-#include <errno.h>
 #include <dirent.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <math.h>
-#include <new>
-
 #include <poll.h>
 #include <pthread.h>
-
-#include <linux/input.h>
+#include <string.h>
 
 #include <cutils/atomic.h>
 #include <cutils/log.h>
 
+#include <linux/input.h>
+
 #include <sys/select.h>
+
+#include <hardware/sensors.h>
 
 #include "SensorsPollContext.h"
 
