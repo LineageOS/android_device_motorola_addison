@@ -20,6 +20,7 @@
 #define ANDROID_SENSORS_H
 
 #include <stdint.h>
+#include <stdarg.h>
 #include <errno.h>
 #include <sys/cdefs.h>
 #include <sys/types.h>
@@ -30,6 +31,23 @@
 #include <hardware/sensors.h>
 
 __BEGIN_DECLS
+
+static inline int motosh_ioctl (int fd, int ioctl_number, ...) {
+    va_list ap;
+    void * arg;
+    int status = 0;
+    int error = 0;
+
+    va_start(ap, ioctl_number);
+    arg = va_arg(ap, void *);
+    va_end(ap);
+
+    do {
+        status = ioctl(fd, ioctl_number, arg);
+        error = errno;
+    } while ((status != 0) && (error == -EINTR));
+    return status;
+}
 
 #define MIN_SENSOR_ID (0)
 #define ID_A  (0)  /* Accelerometer */

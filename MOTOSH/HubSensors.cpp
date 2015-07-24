@@ -77,11 +77,11 @@ HubSensors::HubSensors()
 
     open_device();
 
-    if (!ioctl(dev_fd, MOTOSH_IOCTL_GET_SENSORS, flags))  {
+    if (!motosh_ioctl(dev_fd, MOTOSH_IOCTL_GET_SENSORS, flags))  {
         mEnabled = flags[0] | (flags[1] << 8) | (flags[2] << 16);
     }
 
-    if (!ioctl(dev_fd, MOTOSH_IOCTL_GET_WAKESENSORS, flags))  {
+    if (!motosh_ioctl(dev_fd, MOTOSH_IOCTL_GET_WAKESENSORS, flags))  {
         mWakeEnabled = flags[0] | (flags[1] << 8) | (flags[2] << 16);
     }
 
@@ -95,7 +95,7 @@ HubSensors::HubSensors()
             mMagCal[i] = cal_data;
         }
         fclose(fp);
-        err = ioctl(dev_fd, MOTOSH_IOCTL_SET_MAG_CAL, mMagCal);
+        err = motosh_ioctl(dev_fd, MOTOSH_IOCTL_SET_MAG_CAL, mMagCal);
         if (err < 0) {
            ALOGE("Can't send Mag Cal data");
         }
@@ -111,7 +111,7 @@ HubSensors::HubSensors()
             mGyroCal[i] = cal_data;
         }
         fclose(fp);
-        err = ioctl(dev_fd, MOTOSH_IOCTL_SET_GYRO_CAL, mGyroCal);
+        err = motosh_ioctl(dev_fd, MOTOSH_IOCTL_SET_GYRO_CAL, mGyroCal);
         if (err < 0) {
            ALOGE("Can't send Gyro Cal data");
         }
@@ -308,7 +308,7 @@ int HubSensors::setEnable(int32_t handle, int en)
             FILE *fp;
             int i;
 
-            err = ioctl(dev_fd, MOTOSH_IOCTL_GET_MAG_CAL, mMagCal);
+            err = motosh_ioctl(dev_fd, MOTOSH_IOCTL_GET_MAG_CAL, mMagCal);
             if (err < 0) {
                 ALOGE("Can't read Mag Cal data");
             } else {
@@ -331,7 +331,7 @@ int HubSensors::setEnable(int32_t handle, int en)
         updateGyroRate();
 
     if (found && (new_enabled != mEnabled)) {
-        err = ioctl(dev_fd, MOTOSH_IOCTL_SET_SENSORS, &new_enabled);
+        err = motosh_ioctl(dev_fd, MOTOSH_IOCTL_SET_SENSORS, &new_enabled);
         ALOGE_IF(err, "Could not change sensor state (%s)", strerror(-err));
         // Never return this error to the caller. This would result in a
         // failure to registerListener(), but regardless of failure, we
@@ -398,7 +398,7 @@ int HubSensors::setEnable(int32_t handle, int en)
     }
 
     if (found && (new_enabled != mWakeEnabled)) {
-        err = ioctl(dev_fd, MOTOSH_IOCTL_SET_WAKESENSORS, &new_enabled);
+        err = motosh_ioctl(dev_fd, MOTOSH_IOCTL_SET_WAKESENSORS, &new_enabled);
         ALOGE_IF(err, "Could not change sensor state (%s)", strerror(-err));
         // Never return this error to the caller. This would result in a
         // failure to registerListener(), but regardless of failure, we
@@ -426,11 +426,11 @@ int HubSensors::setDelay(int32_t handle, int64_t ns)
 
     unsigned short delay = int64_t(ns) / 1000000;
     switch (handle) {
-        case ID_A: status = ioctl(dev_fd,  MOTOSH_IOCTL_SET_ACC_DELAY, &delay);   break;
+        case ID_A: status = motosh_ioctl(dev_fd,  MOTOSH_IOCTL_SET_ACC_DELAY, &delay);   break;
         case ID_G:
             mGyroReqDelay = delay;
             break;
-        case ID_PR: status = ioctl(dev_fd,  MOTOSH_IOCTL_SET_PRES_DELAY, &delay); break;
+        case ID_PR: status = motosh_ioctl(dev_fd,  MOTOSH_IOCTL_SET_PRES_DELAY, &delay); break;
         case ID_M:
             mMagReqDelay = delay;
             break;
@@ -439,7 +439,7 @@ int HubSensors::setDelay(int32_t handle, int64_t ns)
             break;
         case ID_T: status = 0;                                                    break;
         case ID_L:
-            status = ioctl(dev_fd, MOTOSH_IOCTL_SET_ALS_DELAY, &delay);
+            status = motosh_ioctl(dev_fd, MOTOSH_IOCTL_SET_ALS_DELAY, &delay);
             break;
 #ifdef _ENABLE_LA
         case ID_LA:
@@ -473,8 +473,8 @@ int HubSensors::setDelay(int32_t handle, int64_t ns)
         case ID_FD: status = 0;                                                   break;
         case ID_S: status = 0;                                                    break;
         case ID_CA: status = 0;                                                   break;
-        case ID_IR_GESTURE: status = ioctl(dev_fd, MOTOSH_IOCTL_SET_IR_GESTURE_DELAY, &delay); break;
-        case ID_IR_RAW: status = ioctl(dev_fd, MOTOSH_IOCTL_SET_IR_RAW_DELAY, &delay); break;
+        case ID_IR_GESTURE: status = motosh_ioctl(dev_fd, MOTOSH_IOCTL_SET_IR_GESTURE_DELAY, &delay); break;
+        case ID_IR_RAW: status = motosh_ioctl(dev_fd, MOTOSH_IOCTL_SET_IR_RAW_DELAY, &delay); break;
         case ID_IR_OBJECT: status = 0;                                            break;
         case ID_SIM: status = 0;                                                  break;
         case ID_UNCALIB_GYRO:
@@ -488,7 +488,7 @@ int HubSensors::setDelay(int32_t handle, int64_t ns)
 		    delay /= 1000; // convert to seconds for pedometer rate
 		    if (delay == 0)
 		        delay = 1;
-		    status = ioctl(dev_fd,  MOTOSH_IOCTL_SET_STEP_COUNTER_DELAY, &delay);
+		    status = motosh_ioctl(dev_fd,  MOTOSH_IOCTL_SET_STEP_COUNTER_DELAY, &delay);
 		    break;
         case ID_STEP_DETECTOR:status = 0;                                         break;
 #endif
@@ -907,7 +907,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
             case DT_GYRO_CAL:
                 FILE *fp;
                 int i;
-                ret = ioctl(dev_fd, MOTOSH_IOCTL_GET_GYRO_CAL, mGyroCal);
+                ret = motosh_ioctl(dev_fd, MOTOSH_IOCTL_GET_GYRO_CAL, mGyroCal);
                 if (ret < 0) {
                     ALOGE("Can't read Gyro Cal data");
                 } else {
@@ -951,7 +951,7 @@ int HubSensors::flush(int32_t handle)
     if ((mIdToSensor[handle]->flags & REPORTING_MODE_MASK) == SENSOR_FLAG_ONE_SHOT_MODE)
         return ret;
 
-    ret = ioctl(dev_fd, MOTOSH_IOCTL_SET_FLUSH, &handle);
+    ret = motosh_ioctl(dev_fd, MOTOSH_IOCTL_SET_FLUSH, &handle);
     return ret;
 }
 
@@ -1023,7 +1023,7 @@ int HubSensors::updateEcompassRate()
     else if( mEcompassDelay != minReqDelay )
     {
         mEcompassDelay = minReqDelay;
-        ret = ioctl(dev_fd,  MOTOSH_IOCTL_SET_MAG_DELAY, &mEcompassDelay);
+        ret = motosh_ioctl(dev_fd,  MOTOSH_IOCTL_SET_MAG_DELAY, &mEcompassDelay);
     }
 
     return ret;
@@ -1053,7 +1053,7 @@ int HubSensors::updateGyroRate()
     else if( mGyroDelay != minReqDelay )
     {
         mGyroDelay = minReqDelay;
-        ret = ioctl(dev_fd,  MOTOSH_IOCTL_SET_GYRO_DELAY, &mGyroDelay);
+        ret = motosh_ioctl(dev_fd,  MOTOSH_IOCTL_SET_GYRO_DELAY, &mGyroDelay);
     }
 
     return ret;

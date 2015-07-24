@@ -62,6 +62,23 @@
 
 static pthread_mutex_t g_lock = PTHREAD_MUTEX_INITIALIZER;
 
+static inline int motosh_ioctl (int fd, int ioctl_number, ...) {
+    va_list ap;
+    void * arg;
+    int status = 0;
+    int error = 0;
+
+    va_start(ap, ioctl_number);
+    arg = va_arg(ap, void *);
+    va_end(ap);
+
+    do {
+        status = ioctl(fd, ioctl_number, arg);
+        error = errno;
+    } while ((status != 0) && (error == -EINTR));
+    return status;
+}
+
 static uint8_t num_parts[SENSORHUB_NUM_ALGOS] = {
     SENSORHUB_NUM_MODALITIES, SENSORHUB_NUM_ORIENTATIONS, SENSORHUB_NUM_STOWED,
     SENSORHUB_NUM_ACCUM_REQS, 0, 0 };
@@ -94,7 +111,7 @@ static int64_t get_elapsed_realtime()
     if (fd < 0)
         return fd;
 
-   result = ioctl(fd, ANDROID_ALARM_GET_TIME(ANDROID_ALARM_ELAPSED_REALTIME), &ts);
+   result = motosh_ioctl(fd, ANDROID_ALARM_GET_TIME(ANDROID_ALARM_ELAPSED_REALTIME), &ts);
    close(fd);
 
     if (result == 0)
@@ -114,12 +131,12 @@ static int sensorhub_enable(struct sensorhub_device_t* device, struct sensorhub_
     case SENSORHUB_ALGO_MOVEMENT:
         if (algo->enable) {
             data = algo->parameter[0];
-            if (ioctl(context->control_fd, MOTOSH_IOCTL_SET_MOTION_DUR, &data) < 0) {
+            if (motosh_ioctl(context->control_fd, MOTOSH_IOCTL_SET_MOTION_DUR, &data) < 0) {
                 ALOGE("MOTOSH_IOCTL_SET_MOTION_DUR error (%s)", strerror(errno));
                 error = -errno;
             }
             data = algo->parameter[1];
-            if (ioctl(context->control_fd, MOTOSH_IOCTL_SET_ZRMOTION_DUR, &data) < 0) {
+            if (motosh_ioctl(context->control_fd, MOTOSH_IOCTL_SET_ZRMOTION_DUR, &data) < 0) {
                 ALOGE("MOTOSH_IOCTL_SET_ZRMOTION_DUR error (%s)", strerror(errno));
                 error = -errno;
             }
@@ -131,7 +148,7 @@ static int sensorhub_enable(struct sensorhub_device_t* device, struct sensorhub_
     }
 
     if (!error) {
-        if (ioctl(context->control_fd, MOTOSH_IOCTL_SET_ALGOS, &data) < 0) {
+        if (motosh_ioctl(context->control_fd, MOTOSH_IOCTL_SET_ALGOS, &data) < 0) {
             ALOGE("MOTOSH_IOCTL_SET_ALGOS error (%s)", strerror(errno));
             error = -errno;
         }
@@ -201,14 +218,14 @@ static int sensorhub_algo_req(struct sensorhub_device_t* device, uint16_t algo,
         }
     }
 
-    if (ioctl(context->control_fd, MOTOSH_IOCTL_SET_ALGO_REQ, bytes) < 0) {
+    if (motosh_ioctl(context->control_fd, MOTOSH_IOCTL_SET_ALGO_REQ, bytes) < 0) {
         ALOGE("MOTOSH_IOCTL_SET_ALGO_REQ error (%s)", strerror(errno));
         error = -errno;
     } else {
         context->active_parts[algo] = active_parts;
 
         // ioctl set algos
-        if (ioctl(context->control_fd, MOTOSH_IOCTL_SET_ALGOS, &algos) < 0) {
+        if (motosh_ioctl(context->control_fd, MOTOSH_IOCTL_SET_ALGOS, &algos) < 0) {
             ALOGE("MOTOSH_IOCTL_SET_ALGOS error (%s)", strerror(errno));
             error = -errno;
         } else {
@@ -238,7 +255,7 @@ static int sensorhub_algo_query(struct sensorhub_device_t* device, uint16_t algo
 
     memcpy(bytes, &algo, sizeof(algo));
 
-    if (ioctl(context->control_fd, MOTOSH_IOCTL_GET_ALGO_EVT, bytes) < 0) {
+    if (motosh_ioctl(context->control_fd, MOTOSH_IOCTL_GET_ALGO_EVT, bytes) < 0) {
         ALOGE("MOTOSH_IOCTL_GET_ALGO_EVT error (%s)", strerror(errno));
         error = -errno;
     } else {

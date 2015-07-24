@@ -102,7 +102,26 @@ typedef enum {
  /** A file descriptor for the ioctl to communicate with the SensorHub. */
 int devFd = -1;
 
+/****************************** functions **************************************/
+
 int stm_convertAsciiToHex(char * input, unsigned char * output, int inlen);
+
+static inline int motosh_ioctl (int fd, int ioctl_number, ...) {
+    va_list ap;
+    void * arg;
+    int status = 0;
+    int error = 0;
+
+    va_start(ap, ioctl_number);
+    arg = va_arg(ap, void *);
+    va_end(ap);
+
+    do {
+        status = ioctl(fd, ioctl_number, arg);
+        error = errno;
+    } while ((status != 0) && (error == -EINTR));
+    return status;
+}
 
 /* download cal/cfg data and enable capsense */
 void configure_capsense() {
@@ -116,7 +135,7 @@ void configure_capsense() {
 
     LOGINFO("Sensorhub hal antcap disable");
     enable = 0;
-    err = ioctl(devFd, MOTOSH_IOCTL_SET_ANTCAP_ENABLE, &enable);
+    err = motosh_ioctl(devFd, MOTOSH_IOCTL_SET_ANTCAP_ENABLE, &enable);
     if (err) {
         LOGERROR("Can't send Ant Disable: %d\n", err);
     }
@@ -124,7 +143,7 @@ void configure_capsense() {
     if (!err) {
         LOGINFO("Sensorhub hal antcap cfg");
         /* note:  antcap_cfg is now resident in device tree, mAntCfg unused */
-        err = ioctl(devFd, MOTOSH_IOCTL_SET_ANTCAP_CFG, &buf);
+        err = motosh_ioctl(devFd, MOTOSH_IOCTL_SET_ANTCAP_CFG, &buf);
         if (err) {
             LOGERROR("Unable to send SET_ANTCAP_ENABLE ioctl: %d\n", err);
         }
@@ -150,7 +169,7 @@ void configure_capsense() {
                 buf[i] = ant_data;
             }
             fclose(fp);
-            err = ioctl(devFd, MOTOSH_IOCTL_SET_ANTCAP_CAL, &buf);
+            err = motosh_ioctl(devFd, MOTOSH_IOCTL_SET_ANTCAP_CAL, &buf);
             if (err < 0) {
                 LOGERROR("Unable to send SET_ANTCAP_CAL ioctl: %d\n", err);
             }
@@ -160,7 +179,7 @@ void configure_capsense() {
     if (!err) {
         LOGINFO("Sensorhub hal antcap enable");
         enable = 1;
-        err = ioctl(devFd, MOTOSH_IOCTL_SET_ANTCAP_ENABLE, &enable);
+        err = motosh_ioctl(devFd, MOTOSH_IOCTL_SET_ANTCAP_ENABLE, &enable);
         if (err) {
             LOGERROR("Unable to send SET_ANTCAP_ENABLE ioctl: %d\n", err);
         }
@@ -436,13 +455,13 @@ int stm_versionCheck() {
         return STM_VERSION_MATCH; // Corrupt file?
     }
 
-    res = ioctl(devFd, MOTOSH_IOCTL_GET_VERSION_STR, hwVersion);
+    res = motosh_ioctl(devFd, MOTOSH_IOCTL_GET_VERSION_STR, hwVersion);
     if (res < 0) {
         LOGERROR("Error: MOTOSH_IOCTL_GET_VERSION_STR returned %i\n", res);
         return STM_VERSION_MISMATCH; // Corrupt SH?
     }
 
-    res = ioctl(devFd, MOTOSH_IOCTL_GET_FLASH_CRC, &hwCrc);
+    res = motosh_ioctl(devFd, MOTOSH_IOCTL_GET_FLASH_CRC, &hwCrc);
     if (res < 0) {
         LOGERROR("Error: MOTOSH_IOCTL_GET_FLASH_CRC returned %i\n", res);
         return STM_VERSION_MISMATCH; // Corrupt SH?
@@ -517,15 +536,15 @@ int stm_downloadFirmware(FILE *filep)
     int temp = 100; // this is only a dummy variable for the 3rd parameter of ioctl call
 
     DEBUG("Ioctl call to switch to bootloader mode\n");
-    ret = ioctl(devFd, MOTOSH_IOCTL_BOOTLOADERMODE, &temp);
+    ret = motosh_ioctl(devFd, MOTOSH_IOCTL_BOOTLOADERMODE, &temp);
     CHECK_RETURN_VALUE(ret,"Failed to switch STM to bootloader mode\n");
 
     DEBUG("Ioctl call to erase flash on STM\n");
-    ret = ioctl(devFd, MOTOSH_IOCTL_MASSERASE, &temp);
+    ret = motosh_ioctl(devFd, MOTOSH_IOCTL_MASSERASE, &temp);
     CHECK_RETURN_VALUE(ret,"Failed to erase STM \n");
 
     address = FLASH_START_ADDRESS;
-    ret = ioctl(devFd, MOTOSH_IOCTL_SETSTARTADDR, &address);
+    ret = motosh_ioctl(devFd, MOTOSH_IOCTL_SETSTARTADDR, &address);
     CHECK_RETURN_VALUE(ret,"Failed to set address\n");
 
     DEBUG("Start sending firmware packets to the driver\n");
@@ -689,7 +708,7 @@ int  main(int argc, char *argv[])
                     filep = NULL;
                     /* reset STM */
                     if (emode == BOOTLOADER) {
-                        ret = ioctl(devFd, MOTOSH_IOCTL_NORMALMODE, &temp);
+                        ret = motosh_ioctl(devFd, MOTOSH_IOCTL_NORMALMODE, &temp);
                         printf("\n");
                         // IOCTLS will be briefly blocked during part reset
                         sleep(1);
@@ -716,7 +735,7 @@ int  main(int argc, char *argv[])
             if( tries >= STM_DOWNLOADRETRIES ) {
                 LOGERROR("Firmware download failed.\n")
                 ret = STM_FAILURE;
-                ioctl(devFd,MOTOSH_IOCTL_NORMALMODE, &temp);
+                motosh_ioctl(devFd,MOTOSH_IOCTL_NORMALMODE, &temp);
             }
         } else {
             DEBUG("No new firmware to download \n");
@@ -734,12 +753,12 @@ int  main(int argc, char *argv[])
     }
     if(emode == NORMAL) {
         DEBUG("Ioctl call to reset STM\n");
-        ret = ioctl(devFd,MOTOSH_IOCTL_NORMALMODE, &temp);
+        ret = motosh_ioctl(devFd,MOTOSH_IOCTL_NORMALMODE, &temp);
         CHECK_RETURN_VALUE(ret, "STM reset failed");
     }
     if( emode == TBOOT) {
         DEBUG("Ioctl call to send STM to boot mode\n");
-                ret = ioctl(devFd,MOTOSH_IOCTL_TEST_BOOTMODE, &temp);
+                ret = motosh_ioctl(devFd,MOTOSH_IOCTL_TEST_BOOTMODE, &temp);
                 CHECK_RETURN_VALUE(ret, "STM not in bootloader mode");
     }
     if( emode == TREAD) {
@@ -749,14 +768,14 @@ int  main(int argc, char *argv[])
         // get the register to read from
                 stm_convertAsciiToHex(argv[2],hexinput,strlen(argv[2]));
         DEBUG( "%02x: ", hexinput[0]);
-                ret = ioctl(devFd,MOTOSH_IOCTL_TEST_WRITE,hexinput);
+                ret = motosh_ioctl(devFd,MOTOSH_IOCTL_TEST_WRITE,hexinput);
 
         // get the number of bytes to be read
         stm_convertAsciiToHex(argv[3],hexinput,strlen(argv[3]));
         DEBUG( "count = %02x: \n ", hexinput[0]);
 
         for( i= 0; i< hexinput[0]; i++) {
-            ret = ioctl(devFd,MOTOSH_IOCTL_TEST_READ, &temp);
+            ret = motosh_ioctl(devFd,MOTOSH_IOCTL_TEST_READ, &temp);
             DEBUG( "%02x ", ret);
         }
     }
@@ -764,7 +783,7 @@ int  main(int argc, char *argv[])
         DEBUG(" Test write\n");
         for( i=0; i< (argc-2); i++) {
             stm_convertAsciiToHex(argv[i+2],hexinput,strlen(argv[i+2]));
-            ret = ioctl(devFd,MOTOSH_IOCTL_TEST_WRITE,hexinput);
+            ret = motosh_ioctl(devFd,MOTOSH_IOCTL_TEST_WRITE,hexinput);
             if (ret >= 0) {
                 DEBUG( "%02x", hexinput[0]);
             } else {
@@ -793,7 +812,7 @@ int  main(int argc, char *argv[])
         DEBUG (" %02x, ",hexinput[0]);
         stm_convertAsciiToHex(argv[3],hexinput+1,strlen(argv[3]));
         DEBUG (" %02x bytes: \n",hexinput[1]);
-        ret = ioctl(devFd,MOTOSH_IOCTL_TEST_WRITE_READ,hexinput);
+        ret = motosh_ioctl(devFd,MOTOSH_IOCTL_TEST_WRITE_READ,hexinput);
     }
     if( emode == VERSION) {
         stm_versionCheck();
@@ -805,7 +824,7 @@ int  main(int argc, char *argv[])
         stm_convertAsciiToHex(argv[2],hexinput,strlen(argv[2]));
         delay = hexinput[0];
         DEBUG(" %d\n", delay);
-        ret = ioctl(devFd,MOTOSH_IOCTL_SET_DEBUG,&delay);
+        ret = motosh_ioctl(devFd,MOTOSH_IOCTL_SET_DEBUG,&delay);
         if (delay == 0) {
             system("echo 'file motosh_core.c -p' > /sys/kernel/debug/dynamic_debug/control");
             system("echo 'file motosh_flash.c -p' > /sys/kernel/debug/dynamic_debug/control");
@@ -833,7 +852,7 @@ int  main(int argc, char *argv[])
     }
     if( emode == FACTORY ) {
         DEBUG( "Switching to factory mode\n");
-        ret = ioctl(devFd,MOTOSH_IOCTL_SET_FACTORY_MODE, &temp);
+        ret = motosh_ioctl(devFd,MOTOSH_IOCTL_SET_FACTORY_MODE, &temp);
     }
     if( emode == INVALID ) {
         LOGERROR("Invalid arguements passed: %d, %s\n",argc,argv[1])
@@ -911,11 +930,11 @@ int  main(int argc, char *argv[])
         }
 
         if (read_write) {
-            ret = ioctl(devFd,MOTOSH_IOCTL_WRITE_REG,data_ptr);
+            ret = motosh_ioctl(devFd,MOTOSH_IOCTL_WRITE_REG,data_ptr);
             DEBUG ("Writing data returned: %d", ret);
             printf ("Writing data returned: %d", ret);
         } else {
-            ret = ioctl(devFd,MOTOSH_IOCTL_READ_REG,data_ptr);
+            ret = motosh_ioctl(devFd,MOTOSH_IOCTL_READ_REG,data_ptr);
             DEBUG ("Read data:");
             printf ("Read data:");
             for ( i = 0; i < data_size; i++) {
@@ -933,7 +952,7 @@ int  main(int argc, char *argv[])
         unsigned int setting = atoi(argv[2]);
         if (setting == 0 || setting == 1) {
             LOGINFO(" lowpower mode set to: %d\n", setting);
-            ret = ioctl(devFd, MOTOSH_IOCTL_SET_LOWPOWER_MODE, &setting);
+            ret = motosh_ioctl(devFd, MOTOSH_IOCTL_SET_LOWPOWER_MODE, &setting);
         } else {
             LOGERROR(" lowpower mode incorrect setting\n");
             ret = STM_FAILURE;
@@ -941,11 +960,11 @@ int  main(int argc, char *argv[])
     }
     if(emode == MASS_ERASE_PART) {
         DEBUG("Ioctl call to switch to bootloader mode\n");
-        ret = ioctl(devFd, MOTOSH_IOCTL_BOOTLOADERMODE, &temp);
+        ret = motosh_ioctl(devFd, MOTOSH_IOCTL_BOOTLOADERMODE, &temp);
         CHECK_RETURN_VALUE(ret,"Failed to switch STM to bootloader mode\n");
 
         DEBUG("Ioctl call to erase flash on STM\n");
-        ret = ioctl(devFd, MOTOSH_IOCTL_MASSERASE, &temp);
+        ret = motosh_ioctl(devFd, MOTOSH_IOCTL_MASSERASE, &temp);
         CHECK_RETURN_VALUE(ret,"Failed to erase STM \n");
         LOGINFO("Erased.\n");
 
