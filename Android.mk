@@ -80,6 +80,21 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
             endif
         endif
 
+        # 8996
+        ifeq ($(call is-board-platform,msm8996),true)
+            SH_MODULE := motosh
+            SH_PATH := MOTOSH
+            SH_LOGTAG := \"MOTOSH\"
+            SH_CFLAGS += -D_ENABLE_LA
+            SH_CFLAGS += -D_ENABLE_GR
+            SH_CFLAGS += -D_ENABLE_CHOPCHOP
+            SH_CFLAGS += -D_ENABLE_LIFT
+            ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
+                # Expose IR raw data for non-user builds
+                SH_CFLAGS += -D_ENABLE_RAW_IR_DATA
+            endif
+        endif
+
         # 8916
         ifeq ($(call is-board-platform,msm8916),true)
             SH_MODULE := stml0xx
