@@ -240,6 +240,8 @@ private:
      * \returns ioctl() status resulting from gyro rate set
      */
     int updateGyroRate();
+
+    void logAlsEvent(int16_t lux, int64_t ts_ns);
 };
 
 /*****************************************************************************/

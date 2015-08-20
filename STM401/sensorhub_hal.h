@@ -196,6 +196,8 @@ private:
      * \returns ioctl() status resulting from ecompass rate set
      */
     int updateEcompassRate();
+
+    void logAlsEvent(int16_t lux, int64_t ts_ns);
 };
 
 /*****************************************************************************/
