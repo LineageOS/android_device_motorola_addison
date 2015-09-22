@@ -368,6 +368,7 @@ static int sensorhub_close(struct hw_device_t* device)
 
 static int sensorhub_open(const struct hw_module_t* module, char const* name, struct hw_device_t** device)
 {
+    (void*)name;
     struct sensorhub_context_t* context = calloc(1, sizeof(struct sensorhub_context_t));
     int fd;
 

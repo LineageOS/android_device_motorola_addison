@@ -15,16 +15,56 @@
 #include <fcntl.h>
 #include <cutils/log.h>
 #include <cutils/properties.h>
-#include <linux/motosh.h>
 #include <inttypes.h>
 #include <unistd.h>
+
+#include <type_traits>
+#include <memory>
+#include <algorithm>
+
 #include "CRC32.h"
+
+#ifdef MODULE_stml0xx
+    #include <linux/stml0xx.h>
+    #define STM_DRIVER "/dev/stml0xx"
+    #define FLASH_SIZE (0x00ffFFUL) // L0 = 64k
+    // The value used to fill unused buffer space / flash.
+    #define FLASH_FILL (0x00)
+    #define STM_MAX_PACKET_LENGTH 256
+
+    // IOCTL mappings
+    #define MOTOSH_IOCTL_BOOTLOADERMODE     STML0XX_IOCTL_BOOTLOADERMODE
+    #define MOTOSH_IOCTL_NORMALMODE         STML0XX_IOCTL_NORMALMODE
+    #define MOTOSH_IOCTL_MASSERASE          STML0XX_IOCTL_MASSERASE
+    #define MOTOSH_IOCTL_SETSTARTADDR       STML0XX_IOCTL_SETSTARTADDR
+    #define MOTOSH_IOCTL_TEST_READ          STML0XX_IOCTL_TEST_READ
+    #define MOTOSH_IOCTL_TEST_WRITE         STML0XX_IOCTL_TEST_WRITE
+    #define MOTOSH_IOCTL_TEST_WRITE_READ    STML0XX_IOCTL_TEST_WRITE_READ
+    #define MOTOSH_IOCTL_TEST_BOOTMODE      STML0XX_IOCTL_TEST_BOOTMODE
+    #define MOTOSH_IOCTL_SET_DEBUG          STML0XX_IOCTL_SET_DEBUG
+    #define MOTOSH_IOCTL_SET_FACTORY_MODE   STML0XX_IOCTL_SET_FACTORY_MODE
+    #define MOTOSH_IOCTL_WRITE_REG          STML0XX_IOCTL_WRITE_REG
+    #define MOTOSH_IOCTL_READ_REG           STML0XX_IOCTL_READ_REG
+    #define MOTOSH_IOCTL_SET_LOWPOWER_MODE  STML0XX_IOCTL_SET_LOWPOWER_MODE
+#else // MODULE_motosh
+    #include <linux/motosh.h>
+    #define STM_DRIVER "/dev/motosh"
+    #define FLASH_SIZE (0x0FffFFUL) // L4 = 1M
+    // The value used to fill unused buffer space / flash.
+    #define FLASH_FILL (0xff)
+    #define STM_MAX_PACKET_LENGTH 248
+#endif
+
+#define VMM_ENTRY(reg, id, writable, addr, size) id,
+enum struct VmmIDs : uint8_t {
+#include "linux/motosh_vmm.h"
+};
+#undef VMM_ENTRY
 
 /******************************* # defines **************************************/
 #define CAPSENSE_FW_UPDATE  "/sys/class/capsense/fw_update"
 #define CS_MAX_LEN 8
 
-#define STM_DRIVER "/dev/motosh"
 /** The firmware blacklist that this flasher will ignore */
 #define STM_FIRMWARE_BLACKLIST "/system/etc/firmware/sensorhub-blacklist.txt"
 /** Maximum filesystem path length */
@@ -35,16 +75,12 @@
 #define STM_VERSION_MISMATCH -1
 #define STM_VERSION_MATCH 1
 #define STM_DOWNLOADRETRIES 3
-#define STM_MAX_PACKET_LENGTH 248
 /* 512 matches the read buffer in kernel */
 #define STM_MAX_GENERIC_DATA 512
 #define STM_MAX_GENERIC_HEADER 4
 #define STM_MAX_GENERIC_COMMAND_LEN 3
 #define STM_FORCE_DOWNLOAD_MSG  "Use -f option to ignore version check eg: motosh boot -f\n"
 #define FLASH_START_ADDRESS (0x08000000)
-#define FLASH_SIZE (0x0FffFFUL)
-// The value used to fill unused buffer space / flash.
-#define FLASH_FILL (0xff)
 
 #define ANTCAP_CAL_FILE "/persist/antcap/captouch_caldata.bin"
 
@@ -56,6 +92,8 @@
                         }
 
 #define CHECKIFHEX(c)  ((c >= 'A' && c <= 'F') || ( c >= '0' && c <='9') || ( c >= 'a' && c <= 'f'))
+
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
 #define LOGERROR(format, ...) {\
         ALOGE(format,## __VA_ARGS__); \
@@ -102,6 +140,8 @@ typedef enum {
  /** A file descriptor for the ioctl to communicate with the SensorHub. */
 int devFd = -1;
 
+using namespace std;
+
 /****************************** functions **************************************/
 
 int stm_convertAsciiToHex(char * input, unsigned char * output, int inlen);
@@ -123,6 +163,7 @@ static inline int motosh_ioctl (int fd, int ioctl_number, ...) {
     return status;
 }
 
+#ifdef MODULE_motosh
 /* download cal/cfg data and enable capsense */
 void configure_capsense() {
 
@@ -232,6 +273,78 @@ void flash_capsense(void) {
     }
     LOGINFO("Capsense checksum 0x%X\n", cs)
     sleep(2);
+}
+#endif
+
+/**
+ * Reads the contents of a register from the SensorHub.
+ *
+ * The template uses std::enable_if to remove overload ambiguity.
+ *
+ * @param reg The register to read.
+ * @param data An integral type into which to store the results.
+ *
+ * @return Success or failure.
+ */
+template<typename T, typename = typename enable_if<is_integral<T>::value>::type >
+bool readReg(VmmIDs reg, T& data, bool endianConv = false) {
+    // No support for structures or arrays. Only integral types.
+    static_assert(is_integral<T>::value, "Integer required");
+    constexpr uint16_t dataSize = sizeof(T);
+
+    unsigned char msg[max<uint16_t>(dataSize, STM_MAX_GENERIC_HEADER)];
+
+    uint16_t regN       = htons(static_cast<uint16_t>(reg));
+    uint16_t dataSizeN  = htons(dataSize);
+    memcpy(msg, &regN, 2);
+    memcpy(msg + 2, &dataSizeN, 2);
+
+    int ret = motosh_ioctl(devFd, MOTOSH_IOCTL_READ_REG, msg);
+
+    if (ret >= 0) {
+        memcpy(&data, msg, sizeof(T));
+        if (endianConv) {
+            // TODO: Convert endian
+        }
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * Reads the contents of a register from the SensorHub.
+ *
+ * @param reg The register to read.
+ * @param ptr A pointer to which to store the data read.
+ * @param dataSize The size of the data to read (in bytes).
+ *
+ * @returns Success or failure.
+ */
+template<typename T>
+bool readReg(VmmIDs reg, unique_ptr<T[]>& ptr, const size_t dataSize) {
+    static_assert(is_integral<T>::value, "Integer required");
+    if (dataSize > STM_MAX_GENERIC_DATA - 1) {
+        printf("Data size must be between 1 and %d\n", STM_MAX_GENERIC_DATA - 1);
+        return false;
+    }
+
+    char msg[max<uint16_t>(dataSize, STM_MAX_GENERIC_HEADER)] = {0};
+
+    uint16_t regN       = htons(static_cast<uint16_t>(reg));
+    uint16_t dataSizeN  = htons(dataSize);
+
+    memcpy(msg, &regN, 2);
+    memcpy(msg + 2, &dataSizeN, 2);
+
+    int ret = motosh_ioctl(devFd, MOTOSH_IOCTL_READ_REG, msg);
+
+    if (ret >= 0) {
+        memcpy(ptr.get(), msg, dataSize);
+        return true;
+    } else {
+        return false;
+    }
 }
 
 /** Computes the absolute firmware file path for firmware of the given type.
@@ -389,7 +502,8 @@ int stm_getFwVersionFromFile(char *fwVersionStr) {
     }
 
     // Read the null-terminated string
-    int c, i = 0;
+    int c;
+    unsigned i = 0;
     fwVersionStr[0] = '\0'; // In case we don't read anything.
     while ((c = fgetc(f)) != '\0' && c != EOF && i < FW_VERSION_STR_MAX_LEN) {
         fwVersionStr[i++] = c;
@@ -403,6 +517,34 @@ int stm_getFwVersionFromFile(char *fwVersionStr) {
 
     return 0;
 }
+
+/**
+ * Reads the firmware version string from the SensorHub HW.
+ *
+ * @return A pointer to a C-string containing the version string, or a null
+ * pointer if an error was encountered.
+ */
+unique_ptr<char[]> stm_getFwVersionFromHW(void) {
+    int err = 0;
+    int len;
+    uint8_t fwVerLen;
+
+    if (!readReg(VmmIDs::FW_VERSION_LEN, fwVerLen)) {
+        return nullptr;
+    }
+    fwVerLen = min<uint16_t>(fwVerLen, FW_VERSION_STR_MAX_LEN);
+
+    // Unfortunately, we don't have make_unique.
+    unique_ptr<char[]> verPtr(new char[fwVerLen + 1]);
+
+    if (readReg(VmmIDs::FW_VERSION_STR, verPtr, fwVerLen)) {
+        verPtr.get()[fwVerLen] = 0;
+        return verPtr;
+    } else {
+        return nullptr;
+    }
+}
+
 
 /** Computes the pseudo-CRC of a firmware binary file. This is not a simplistic
  * CRC over the file contents. Instead this function will compute the CRC that
@@ -440,7 +582,6 @@ int stm_calcFwFileCrc(uint32_t &crc) {
  */
 int stm_versionCheck() {
     char fileVersion[FW_VERSION_STR_MAX_LEN];
-    char hwVersion[FW_VERSION_STR_MAX_LEN];
     uint32_t fileCrc = 0, hwCrc = 0;
 
     int res = stm_getFwVersionFromFile(fileVersion);
@@ -455,24 +596,23 @@ int stm_versionCheck() {
         return STM_VERSION_MATCH; // Corrupt file?
     }
 
-    res = motosh_ioctl(devFd, MOTOSH_IOCTL_GET_VERSION_STR, hwVersion);
-    if (res < 0) {
-        LOGERROR("Error: MOTOSH_IOCTL_GET_VERSION_STR returned %i\n", res);
+    auto hwVersion = stm_getFwVersionFromHW();
+    if (!hwVersion) {
+        LOGERROR("Error: Unable to retrieve the FW version from the HW\n");
         return STM_VERSION_MISMATCH; // Corrupt SH?
     }
 
-    res = motosh_ioctl(devFd, MOTOSH_IOCTL_GET_FLASH_CRC, &hwCrc);
-    if (res < 0) {
-        LOGERROR("Error: MOTOSH_IOCTL_GET_FLASH_CRC returned %i\n", res);
+    if (!readReg(VmmIDs::FW_CRC, hwCrc)) {
+        LOGERROR("Error: Could not get FW CRC from HW\n");
         return STM_VERSION_MISMATCH; // Corrupt SH?
     }
 
     LOGINFO("Version info: in filesystem = %s\n", fileVersion);
-    LOGINFO("Version info: in hardware   = %s\n", hwVersion);
+    LOGINFO("Version info: in hardware   = %s\n", hwVersion.get());
     LOGINFO("FW CRC value: in filesystem = 0x%08X\n", fileCrc);
     LOGINFO("FW CRC value: in hardware   = 0x%08X\n", hwCrc);
 
-    if ((strcmp(fileVersion, hwVersion) == 0) && (fileCrc == hwCrc)) {
+    if ((strcmp(fileVersion, hwVersion.get()) == 0) && (fileCrc == hwCrc)) {
         return STM_VERSION_MATCH;
     } else {
         return STM_VERSION_MISMATCH;
@@ -685,10 +825,12 @@ int  main(int argc, char *argv[])
 
     if (emode == BOOTLOADER) {
 
+        #ifdef MODULE_motosh
         /* trigger capsense check and flash if this is a normal
            boot up check (no -f option applied) */
         if (!forceBoot)
             flash_capsense();
+        #endif
 
         stm_processBlackList();
 
@@ -746,8 +888,10 @@ int  main(int argc, char *argv[])
                 emode = FACTORY;
         }
 
+        #ifdef MODULE_motosh
         if (!forceBoot)
             configure_capsense();
+        #endif
 
         property_set("hw.motosh.booted", "1");
     }
@@ -798,7 +942,7 @@ int  main(int argc, char *argv[])
             stm_convertAsciiToHex(argv[i+2],hexinput+i,strlen(argv[i+2]));
             DEBUG(" %02x",hexinput[i]);
         }
-                DEBUG("\n");
+        DEBUG("\n");
         ret = write(devFd,hexinput,count);
         if( ret != count) {
             DEBUG("Write FAILED\n");
@@ -825,29 +969,24 @@ int  main(int argc, char *argv[])
         delay = hexinput[0];
         DEBUG(" %d\n", delay);
         ret = motosh_ioctl(devFd,MOTOSH_IOCTL_SET_DEBUG,&delay);
-        if (delay == 0) {
-            system("echo 'file motosh_core.c -p' > /sys/kernel/debug/dynamic_debug/control");
-            system("echo 'file motosh_flash.c -p' > /sys/kernel/debug/dynamic_debug/control");
-            system("echo 'file motosh_ioctl.c -p' > /sys/kernel/debug/dynamic_debug/control");
-            system("echo 'file motosh_irq.c -p' > /sys/kernel/debug/dynamic_debug/control");
-            system("echo 'file motosh_queue.c -p' > /sys/kernel/debug/dynamic_debug/control");
-            system("echo 'file motosh_reset.c -p' > /sys/kernel/debug/dynamic_debug/control");
-            system("echo 'file motosh_wake_irq.c -p' > /sys/kernel/debug/dynamic_debug/control");
-            system("echo 'file motosh_display.c -p' > /sys/kernel/debug/dynamic_debug/control");
-            system("echo 'file motosh_time.c -p' > /sys/kernel/debug/dynamic_debug/control");
-            system("echo 'file motosh_antcap.c -p' > /sys/kernel/debug/dynamic_debug/control");
-        }
-        else {
-            system("echo 'file motosh_core.c +p' > /sys/kernel/debug/dynamic_debug/control");
-            system("echo 'file motosh_flash.c +p' > /sys/kernel/debug/dynamic_debug/control");
-            system("echo 'file motosh_ioctl.c +p' > /sys/kernel/debug/dynamic_debug/control");
-            system("echo 'file motosh_irq.c +p' > /sys/kernel/debug/dynamic_debug/control");
-            system("echo 'file motosh_queue.c +p' > /sys/kernel/debug/dynamic_debug/control");
-            system("echo 'file motosh_reset.c +p' > /sys/kernel/debug/dynamic_debug/control");
-            system("echo 'file motosh_wake_irq.c +p' > /sys/kernel/debug/dynamic_debug/control");
-            system("echo 'file motosh_display.c +p' > /sys/kernel/debug/dynamic_debug/control");
-            system("echo 'file motosh_time.c +p' > /sys/kernel/debug/dynamic_debug/control");
-            system("echo 'file motosh_antcap.c +p' > /sys/kernel/debug/dynamic_debug/control");
+
+        const char * const files[] = {
+            #ifdef MODULE_stml0xx
+                "stml0xx",          // the prefix for each file
+                "spi", "led",       // stml0xx specific files
+            #else
+                "motosh",           // the prefix for each file
+                "time", "antcap",   // motosh specific files
+            #endif
+            "core", "flash", "ioctl", "irq", "queue", "reset", "wake_irq", "display"
+        };
+
+        char cmd[255];
+        for (unsigned int i = 1; i < ARRAY_SIZE(files); ++i) {
+            snprintf(cmd, sizeof(cmd), "echo 'file %s_%s.c %sp' > /sys/kernel/debug/dynamic_debug/control",
+                files[0], files[i], delay ? "+" : "-");
+            printf("Executing: %s\n", cmd);
+            system(cmd);
         }
     }
     if( emode == FACTORY ) {
@@ -935,8 +1074,8 @@ int  main(int argc, char *argv[])
             printf ("Writing data returned: %d", ret);
         } else {
             ret = motosh_ioctl(devFd,MOTOSH_IOCTL_READ_REG,data_ptr);
-            DEBUG ("Read data:");
-            printf ("Read data:");
+            DEBUG ("Read data (%d):", ret);
+            printf ("Read data (%d):", ret);
             for ( i = 0; i < data_size; i++) {
                 DEBUG (" %02x", data_ptr[i]);
                 printf (" %02x", data_ptr[i]);
@@ -972,7 +1111,7 @@ int  main(int argc, char *argv[])
 
 EXIT:
     if( ret < STM_SUCCESS)
-        LOGERROR(" Command execution error \n")
+        LOGERROR("Command execution error\n")
     close(devFd);
     if( filep != NULL)
         fclose(filep);
