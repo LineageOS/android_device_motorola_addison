@@ -32,11 +32,35 @@
  * The SENSORS Module
  */
 
+/* Combo part conditional compilation choices */
+#ifdef _USES_ICM20645_ACCGYR
+#define VENDOR_ACCEL  "InvenSense"
+#define VENDOR_GYRO   "InvenSense"
+#define ACCEL_PART_NO "ICM20645"
+#define GYRO_PART_NO  "ICM20645"
+/* Current drain figures from spec sheets in mA */
+#define ACCGYR_6AXIS_MA          3.4f
+#define ACCGYR_GYRO_MA           3.2f
+#define ACCGYR_ACCEL_MA          0.45f
+#define ACCGYR_ACCEL_LOWPOWER_MA 0.019f
+#endif
+
+#ifdef _USES_BMI160_ACCGYR
+#define VENDOR_ACCEL  "Bosch"
+#define VENDOR_GYRO   "Bosch"
+#define ACCEL_PART_NO "BMI160"
+#define GYRO_PART_NO  "BMI160"
+/* Current drain figures from spec sheets in mA */
+#define ACCGYR_6AXIS_MA          0.95f
+#define ACCGYR_GYRO_MA           0.90f
+#define ACCGYR_ACCEL_MA          0.55f
+#define ACCGYR_ACCEL_LOWPOWER_MA 0.02f
+#endif
+
 /* Vendor names */
-#define VENDOR_AK   "Asahi Kasei"
-#define VENDOR_INVN "InvenSense"
+#define VENDOR_MAG  "Asahi Kasei"
 #define VENDOR_MOT  "Motorola"
-#define VENDOR_TAOS "TAOS"
+#define VENDOR_PROXALS "TAOS"
 
 /* Range settings */
 #define ACCEL_FULLSCALE_G  (16.f)
@@ -62,20 +86,14 @@
 #define MAG_MAX_DELAY_US   200000
 
 /* Part numbers to use in sensor names */
-#define ACCEL_PART_NO "ICM20645"
-#define GYRO_PART_NO  "ICM20645"
 #define MAG_PART_NO   "AKM09912"
 #define ALS_PART_NO   "CT1011"
 #define PROX_PART_NO  "CT1011"
 
-/* Various current draw figures from spec sheets in mA */
-#define ICM20645_6AXIS_MA          3.4f
-#define ICM20645_GYRO_MA           3.2f
-#define ICM20645_ACCEL_MA          0.45f
-#define ICM20645_ACCEL_LOWPOWER_MA 0.019f
-#define AK09912_MA                 1.0f
-#define CT1011_ALS_MA              0.25f
-#define CT1011_PROX_MA             0.0467f /* 100mA (LED drive) * (7us/pulse * 4 pulses)/60ms */
+/* Various current drain figures from spec sheets in mA */
+#define MAG_MA              1.0f
+#define ALS_MA              0.25f
+#define PROX_MA             0.0467f /* 100mA (LED drive) * (7us/pulse * 4 pulses)/60ms */
 
 /* Estimated algorithm current draw in mA*/
 #define ORIENT_ALGO_MA  1.0f
@@ -86,13 +104,13 @@
 
 const struct sensor_t sSensorList[] = {
     { .name = ACCEL_PART_NO " 3-axis Accelerometer",
-                .vendor = VENDOR_INVN,
+                .vendor = VENDOR_ACCEL,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_A,
                 .type = SENSOR_TYPE_ACCELEROMETER,
                 .maxRange = ACCEL_FULLSCALE_G*GRAVITY_EARTH,
                 .resolution = GRAVITY_EARTH/LSG,
-                .power = ICM20645_ACCEL_MA,
+                .power = ACCGYR_ACCEL_MA,
                 .minDelay = ACCEL_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -102,13 +120,13 @@ const struct sensor_t sSensorList[] = {
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
     { .name = GYRO_PART_NO " Gyroscope",
-                .vendor = VENDOR_INVN,
+                .vendor = VENDOR_GYRO,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_G,
                 .type = SENSOR_TYPE_GYROSCOPE,
                 .maxRange = GYRO_FULLSCALE_DPS,
                 .resolution = GYRO_FULLSCALE_DPS / GYRO_QUANTIZATION_LEVELS,
-                .power = ICM20645_GYRO_MA,
+                .power = ACCGYR_GYRO_MA,
                 .minDelay = GYRO_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -118,13 +136,13 @@ const struct sensor_t sSensorList[] = {
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
     { .name = MAG_PART_NO " 3-axis Magnetometer",
-                .vendor = VENDOR_AK,
+                .vendor = VENDOR_MAG,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_M,
                 .type = SENSOR_TYPE_MAGNETIC_FIELD,
                 .maxRange = MAG_FULLSCALE_UT,
                 .resolution = MAG_FULLSCALE_UT / MAG_QUANTIZATION_LEVELS,
-                .power = AK09912_MA,
+                .power = MAG_MA,
                 .minDelay = MAG_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -134,13 +152,13 @@ const struct sensor_t sSensorList[] = {
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
     { .name = MAG_PART_NO " Orientation",
-                .vendor = VENDOR_AK,
+                .vendor = VENDOR_MAG,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_O,
                 .type = SENSOR_TYPE_ORIENTATION,
                 .maxRange = 360.0f,
                 .resolution = 1.0f/64.0f,
-                .power = AK09912_MA + ICM20645_ACCEL_MA + ORIENT_ALGO_MA,
+                .power = MAG_MA + ACCGYR_ACCEL_MA + ORIENT_ALGO_MA,
                 .minDelay = MAG_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -150,13 +168,13 @@ const struct sensor_t sSensorList[] = {
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
     { .name = ALS_PART_NO " Ambient Light",
-                .vendor = VENDOR_TAOS,
+                .vendor = VENDOR_PROXALS,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_L,
                 .type = SENSOR_TYPE_LIGHT,
                 .maxRange = ALS_FULLSCALE_LUX,
                 .resolution = ALS_FULLSCALE_LUX / ALS_QUANTIZATION_LEVELS,
-                .power = CT1011_ALS_MA,
+                .power = ALS_MA,
                 .minDelay = 0,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -172,7 +190,7 @@ const struct sensor_t sSensorList[] = {
                 .type = SENSOR_TYPE_DISPLAY_ROTATE,
                 .maxRange = 4.0f,
                 .resolution = 1.0f,
-                .power = ICM20645_ACCEL_MA,
+                .power = ACCGYR_ACCEL_MA,
                 .minDelay = 0,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -182,13 +200,13 @@ const struct sensor_t sSensorList[] = {
                 .flags = SENSOR_FLAG_ON_CHANGE_MODE,
                 .reserved = {0,0} },
     { .name = PROX_PART_NO " Proximity",
-                .vendor = VENDOR_TAOS,
+                .vendor = VENDOR_PROXALS,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_P,
                 .type = SENSOR_TYPE_PROXIMITY,
                 .maxRange = 100.0f,
                 .resolution = 100.0f,
-                .power = CT1011_PROX_MA,
+                .power = PROX_MA,
                 .minDelay = 0,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -204,7 +222,7 @@ const struct sensor_t sSensorList[] = {
                 .type = SENSOR_TYPE_FLAT_UP,
                 .maxRange = 1.0f,
                 .resolution = 1.0f,
-                .power = ICM20645_ACCEL_MA,
+                .power = ACCGYR_ACCEL_MA,
                 .minDelay = 0,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -220,7 +238,7 @@ const struct sensor_t sSensorList[] = {
                 .type = SENSOR_TYPE_FLAT_DOWN,
                 .maxRange = 1.0f,
                 .resolution = 1.0f,
-                .power = ICM20645_ACCEL_MA,
+                .power = ACCGYR_ACCEL_MA,
                 .minDelay = 0,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -236,7 +254,7 @@ const struct sensor_t sSensorList[] = {
                 .type = SENSOR_TYPE_STOWED,
                 .maxRange = 1.0f,
                 .resolution = 1.0f,
-                .power = CT1011_ALS_MA + CT1011_PROX_MA,
+                .power = ALS_MA + PROX_MA,
                 .minDelay = 0,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -363,13 +381,13 @@ const struct sensor_t sSensorList[] = {
                 .reserved = {0,0} },
 #endif
     { .name = GYRO_PART_NO " Uncalibrated Gyroscope",
-                .vendor = VENDOR_INVN,
+                .vendor = VENDOR_GYRO,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_UNCALIB_GYRO,
                 .type = SENSOR_TYPE_GYROSCOPE_UNCALIBRATED,
                 .maxRange = GYRO_FULLSCALE_DPS,
                 .resolution = GYRO_FULLSCALE_DPS / GYRO_QUANTIZATION_LEVELS,
-                .power = ICM20645_GYRO_MA,
+                .power = ACCGYR_GYRO_MA,
                 .minDelay = GYRO_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -379,13 +397,13 @@ const struct sensor_t sSensorList[] = {
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
     { .name = MAG_PART_NO " 3-axis Uncalibrated Magnetometer",
-                .vendor = VENDOR_AK,
+                .vendor = VENDOR_MAG,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_UNCALIB_MAG,
                 .type = SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED,
                 .maxRange = MAG_FULLSCALE_UT,
                 .resolution = MAG_FULLSCALE_UT / MAG_QUANTIZATION_LEVELS,
-                .power = AK09912_MA,
+                .power = MAG_MA,
                 .minDelay = MAG_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -437,7 +455,7 @@ const struct sensor_t sSensorList[] = {
                 .type = SENSOR_TYPE_ROTATION_VECTOR,
                 .maxRange = 1.0f,
                 .resolution = 1.0f / RV_QUANTIZATION_LEVELS,
-                .power = ICM20645_6AXIS_MA + AK09912_MA + MOT_9AXIS_MA,
+                .power = ACCGYR_6AXIS_MA + MAG_MA + MOT_9AXIS_MA,
                 .minDelay = ACCEL_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -453,7 +471,7 @@ const struct sensor_t sSensorList[] = {
                 .type = SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR,
                 .maxRange = 1.0f,
                 .resolution = 1.0f / RV_QUANTIZATION_LEVELS,
-                .power = ICM20645_6AXIS_MA + MOT_6AXIS_MA,
+                .power = ACCGYR_6AXIS_MA + MOT_6AXIS_MA,
                 .minDelay = ACCEL_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -470,7 +488,7 @@ const struct sensor_t sSensorList[] = {
                 .type = SENSOR_TYPE_GRAVITY,
                 .maxRange = GRAVITY_EARTH,
                 .resolution = GRAVITY_EARTH / GRAV_QUANTIZATION_LEVELS,
-                .power = ICM20645_ACCEL_MA + ICM20645_GYRO_MA + AK09912_MA + MOT_LAGRAV_MA,
+                .power = ACCGYR_ACCEL_MA + ACCGYR_GYRO_MA + MAG_MA + MOT_LAGRAV_MA,
                 .minDelay = 10000,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -488,7 +506,7 @@ const struct sensor_t sSensorList[] = {
                 .type = SENSOR_TYPE_LINEAR_ACCELERATION,
                 .maxRange = ACCEL_FULLSCALE_G*GRAVITY_EARTH,
                 .resolution = GRAVITY_EARTH/LSG,
-                .power = ICM20645_ACCEL_MA + ICM20645_GYRO_MA + AK09912_MA + MOT_LAGRAV_MA,
+                .power = ACCGYR_ACCEL_MA + ACCGYR_GYRO_MA + MAG_MA + MOT_LAGRAV_MA,
                 .minDelay = 10000,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
@@ -502,10 +520,11 @@ const struct sensor_t sSensorList[] = {
 const int sSensorListSize = sizeof(sSensorList)/sizeof(*sSensorList);
 
 /* Clean up definitions */
-#undef VENDOR_AK
-#undef VENDOR_INVN
+#undef VENDOR_MAG
+#undef VENDOR_ACCEL
+#undef VENDOR_GYRO
 #undef VENDOR_MOT
-#undef VENDOR_TAOS
+#undef VENDOR_PROXALS
 
 #undef ACCEL_MIN_DELAY_US
 #undef GYRO_MIN_DELAY_US
@@ -520,13 +539,13 @@ const int sSensorListSize = sizeof(sSensorList)/sizeof(*sSensorList);
 #undef MAG_PART_NO
 #undef ALS_PART_NO
 
-#undef ICM20645_6AXIS_MA
-#undef ICM20645_GYRO_MA
-#undef ICM20645_ACCEL_MA
-#undef ICM20645_ACCEL_LOWPOWER_MA
-#undef AK09912_MA
-#undef CT1011_ALS_MA
-#undef CT1011_PROX_MA
+#undef ACCGYR_6AXIS_MA
+#undef ACCGYR_GYRO_MA
+#undef ACCGYR_ACCEL_MA
+#undef ACCGYR_ACCEL_LOWPOWER_MA
+#undef MAG_MA
+#undef ALS_MA
+#undef PROX_MA
 
 #undef ORIENT_ALGO_MA
 #undef CAM_ACT_ALGO_MA
