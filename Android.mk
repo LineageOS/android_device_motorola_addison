@@ -35,6 +35,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
 
     ifneq ($(TARGET_SIMULATOR),true)
 
+        UTILS_PATH := utils
 
         ###################################
         # Select sensorhub processor type #
@@ -168,12 +169,13 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
     LOCAL_PRELINK_MODULE := false
     LOCAL_MODULE_RELATIVE_PATH := hw
     LOCAL_SRC_FILES := $(SH_PATH)/sensorhub.c
+    LOCAL_SRC_FILES += $(UTILS_PATH)/sensor_time.cpp
 
     LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
     # Need the UAPI output directory to be populated with motosh.h/stml0xx.h
     LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
 
-    LOCAL_SHARED_LIBRARIES := libcutils libc
+    LOCAL_SHARED_LIBRARIES := libcutils libc libutils
     LOCAL_MODULE := sensorhub.$(TARGET_BOARD_PLATFORM)
     LOCAL_MODULE_TAGS := optional
 
