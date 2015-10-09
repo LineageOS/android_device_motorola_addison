@@ -31,6 +31,7 @@
     // The value used to fill unused buffer space / flash.
     #define FLASH_FILL (0x00)
     #define STM_MAX_PACKET_LENGTH 256
+    #define STM_PASSTHROUGH_SIZE 16
 
     // IOCTL mappings
     #define MOTOSH_IOCTL_BOOTLOADERMODE     STML0XX_IOCTL_BOOTLOADERMODE
@@ -125,6 +126,9 @@ typedef enum tag_stmmode
     TMWRITE,
     TMWRRD,
     READWRITE,
+#ifdef MODULE_stml0xx
+    PASSTHROUGH,
+#endif
     LOWPOWER_MODE,
     MASS_ERASE_PART,
     INVALID
@@ -719,8 +723,13 @@ EXIT:
 void help(int terminate)
 {
     printf("\n");
+#ifdef MODULE_motosh
     printf("motosh - Moto sensorhub debug and control\n");
     printf("USAGE:  ./motosh <command> <command-options>\n");
+#else
+    printf("stml0xx - Moto sensorhub debug and control\n");
+    printf("USAGE:  ./stml0xx <command> <command-options>\n");
+#endif
     printf("  command:\n");
     printf("    help - print this message\n");
     printf("    boot - download new firmware to hub\n");
@@ -748,9 +757,31 @@ void help(int terminate)
     printf("        size    - 2 bytes size of read/write\n");
     printf("        data    - bytes to write\n");
     printf("      ex. -- read version\n");
+#ifdef MODULE_motosh
     printf("        ./motosh readwrite 00 00 01 00 01\n");
+#else
+    printf("        ./stml0xx readwrite 00 00 01 00 01\n");
+#endif
     printf("      ex. -- write 2 bytes\n");
+#ifdef MODULE_motosh
     printf("        ./motosh readwrite 01 00 0D 00 02 CC DD\n");
+#else
+    printf("        ./stml0xx readwrite 01 00 0D 00 02 CC DD\n");
+#endif
+#ifdef MODULE_stml0xx
+    printf("    passthrough\n");
+    printf("      options: <bus> <I2C addr> <reg addr> <r/w> <size> <data>\n");
+    printf("        bus      - 1 byte I2C bus number\n");
+    printf("        I2C addr - 1 byte I2C address of the sensor\n");
+    printf("        reg addr - 2 byte sensor register address\n");
+    printf("        r/w      - 1 byte read/write flag, 00 = read, 01 = write\n");
+    printf("        size     - 1 byte read or write size\n");
+    printf("        data     - bytes to be written (only used for write commmands)\n");
+    printf("      ex. -- read 6 bytes of accel data\n");
+    printf("        ./stml0xx passthrough 00 d0 00 12 00 06\n");
+    printf("      ex. -- write 1 byte config register\n");
+    printf("        ./stml0xx passthrough 00 d0 00 42 01 01 28\n");
+#endif
     printf("    lowpower - enable/disable low power mode\n");
     printf("      options: <state>\n");
     printf("        state - 1 for enable, 0 for disable\n");
@@ -802,6 +833,10 @@ int  main(int argc, char *argv[])
         emode = VERSION;
     else if(!strcmp(argv[1], "readwrite"))
         emode = READWRITE;
+#ifdef MODULE_stml0xx
+    else if(!strcmp(argv[1], "passthrough"))
+        emode = PASSTHROUGH;
+#endif
     else if(!strcmp(argv[1], "lowpower"))
         emode = LOWPOWER_MODE;
     else if(!strcmp(argv[1], "masserase"))
@@ -1085,6 +1120,83 @@ int  main(int argc, char *argv[])
 
         free(data_ptr);
     }
+#ifdef MODULE_stml0xx
+    if (emode == PASSTHROUGH) {
+        //                      1B      1B         2B       1B    1B     ...
+        // stml0xx passthrough [bus] [I2C addr] [reg addr] [r/w] [size] [data]
+        //
+        // read example:   stml0xx passthrough 00 d0 00 12 00 06
+        // write example:  stml0xx passthrough 00 d0 00 42 01 01 28
+
+        int result;
+
+        if (argc < 6)
+            help(1);
+
+        // Allocate space for the command and response data
+        unsigned char *pt_data;
+        pt_data = (unsigned char *)malloc(STM_PASSTHROUGH_SIZE);
+        if (pt_data == NULL) {
+            printf("Passthrough memory allocation failure\n");
+            goto EXIT;
+        }
+
+        // Convert the user input from ASCII to hex
+        unsigned char *data_ptr;
+        data_ptr = pt_data;
+        DEBUG("Passthrough Input: ");
+        for( i=2; i<argc; i++) {
+            result = stm_convertAsciiToHex(argv[i], data_ptr,
+                strlen(argv[i]));
+            DEBUG("%02x", *data_ptr);
+            data_ptr++;
+            if (result != 1) {
+                printf("Passthrough Input: stm_convertAsciiToHex failure\n");
+                free(pt_data);
+                goto EXIT;
+            }
+        }
+
+        // read_write, 0 = read, 1 = write
+        unsigned int read_write = pt_data[4];
+        unsigned int data_size = pt_data[5];
+
+        if (read_write == 0) {
+            if (data_size > STM_PASSTHROUGH_SIZE - 1) {
+                printf("Passthrough data size too large\n");
+                goto EXIT;
+            }
+        } else {
+            if (data_size > STM_PASSTHROUGH_SIZE - 6) {
+                printf("Passthrough data size too large\n");
+                goto EXIT;
+            }
+        }
+
+        // Pass the command to the hub
+        ret = ioctl(devFd, STML0XX_IOCTL_PASSTHROUGH, pt_data);
+        if (ret != 0) {
+            DEBUG ("Command failed: %d", ret);
+            printf ("Command failed: %d\n", ret);
+            free(pt_data);
+            goto EXIT;
+        }
+
+        DEBUG("Passthrough Output: ");
+        if (read_write == 0) {
+            for ( i = 0; i < data_size; i++) {
+                if (i != 0) {
+                    printf (" ");
+                }
+                DEBUG ("%02x", pt_data[i]);
+                printf ("%02x", pt_data[i]);
+            }
+            printf("\n");
+        }
+
+        free(pt_data);
+    }
+#endif
     if(emode == LOWPOWER_MODE) {
         if( argc < 3 )
             help(1);

@@ -103,6 +103,10 @@ int SensorsPollContext::handleToDriver(int handle)
 {
 	switch (handle) {
 		case ID_A:
+#ifdef _ENABLE_GYROSCOPE
+		case ID_G:
+		case ID_UNCALIB_GYRO:
+#endif
 		case ID_L:
 		case ID_DR:
 		case ID_P:
@@ -110,7 +114,9 @@ int SensorsPollContext::handleToDriver(int handle)
 		case ID_FD:
 		case ID_S:
 		case ID_CA:
+#ifdef _ENABLE_ACCEL_SECONDARY
 		case ID_A2:
+#endif
 #ifdef _ENABLE_CHOPCHOP
 		case ID_CC:
 #endif

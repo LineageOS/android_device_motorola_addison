@@ -42,6 +42,10 @@ __BEGIN_DECLS
 typedef enum sensor_handle {
 	MIN_SENSOR_ID,
 	ID_A,	/* Accelerometer */
+#ifdef _ENABLE_GYROSCOPE
+	ID_G,   /* Gyroscope */
+	ID_UNCALIB_GYRO,   /* Uncalibrated Gyroscope */
+#endif
 	ID_L,	/* Light */
 	ID_P,	/* Proximity */
 	ID_DR,	/* Display Rotate */
@@ -68,12 +72,27 @@ typedef enum sensor_handle {
 /*****************************************************************************/
 /* Sensor Hub definitions */
 
-/* KXTJ2 configured to +/-8G 14-bit mode
+#ifdef _ENABLE_KXCJ9
+/* KXCJ9 configured to +/-8G 14-bit mode
  * 14-bit Register Data range -8192 ~ +8191
  * 1024 LSG = 1G
 */
 #define RANGE_G                     (8.0f)
 #define LSG                         (1024.0f)
+#endif
+
+#ifdef _ENABLE_BMI160
+#define RANGE_G                     (16.0f)
+#define LSG                         (2048.0f)
+/* conversion of angular velocity(millidegrees/second) to rad/s */
+#define CONVERT_G                   ((2000.0f/32767.0f) * ((float)(M_PI/180.0f)))
+#define CONVERT_G_P                 (CONVERT_G)
+#define CONVERT_G_R                 (CONVERT_G)
+#define CONVERT_G_Y                 (CONVERT_G)
+#define CONVERT_BIAS_G_P            (CONVERT_G)
+#define CONVERT_BIAS_G_R            (CONVERT_G)
+#define CONVERT_BIAS_G_Y            (CONVERT_G)
+#endif
 
 /* Conversion of acceleration data to SI units (m/s^2) */
 #define CONVERT_A                   (GRAVITY_EARTH / LSG)
