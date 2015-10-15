@@ -18,11 +18,8 @@
 #include <inttypes.h>
 #include <unistd.h>
 
-#include <type_traits>
-#include <memory>
-#include <algorithm>
-
 #include "CRC32.h"
+#include "SensorHub.hpp"
 
 #ifdef MODULE_stml0xx
     #include <linux/stml0xx.h>
@@ -55,12 +52,6 @@
     #define FLASH_FILL (0xff)
     #define STM_MAX_PACKET_LENGTH 248
 #endif
-
-#define VMM_ENTRY(reg, id, writable, addr, size) id,
-enum struct VmmIDs : uint8_t {
-#include "linux/motosh_vmm.h"
-};
-#undef VMM_ENTRY
 
 /******************************* # defines **************************************/
 #define CAPSENSE_FW_UPDATE  "/sys/class/capsense/fw_update"
@@ -145,6 +136,9 @@ typedef enum {
 int devFd = -1;
 
 using namespace std;
+using namespace mot;
+
+SensorHub sensorHub;
 
 /****************************** functions **************************************/
 
@@ -280,76 +274,6 @@ void flash_capsense(void) {
 }
 #endif
 
-/**
- * Reads the contents of a register from the SensorHub.
- *
- * The template uses std::enable_if to remove overload ambiguity.
- *
- * @param reg The register to read.
- * @param data An integral type into which to store the results.
- *
- * @return Success or failure.
- */
-template<typename T, typename = typename enable_if<is_integral<T>::value>::type >
-bool readReg(VmmIDs reg, T& data, bool endianConv = false) {
-    // No support for structures or arrays. Only integral types.
-    static_assert(is_integral<T>::value, "Integer required");
-    constexpr uint16_t dataSize = sizeof(T);
-
-    unsigned char msg[max<uint16_t>(dataSize, STM_MAX_GENERIC_HEADER)];
-
-    uint16_t regN       = htons(static_cast<uint16_t>(reg));
-    uint16_t dataSizeN  = htons(dataSize);
-    memcpy(msg, &regN, 2);
-    memcpy(msg + 2, &dataSizeN, 2);
-
-    int ret = motosh_ioctl(devFd, MOTOSH_IOCTL_READ_REG, msg);
-
-    if (ret >= 0) {
-        memcpy(&data, msg, sizeof(T));
-        if (endianConv) {
-            // TODO: Convert endian
-        }
-        return true;
-    } else {
-        return false;
-    }
-}
-
-/**
- * Reads the contents of a register from the SensorHub.
- *
- * @param reg The register to read.
- * @param ptr A pointer to which to store the data read.
- * @param dataSize The size of the data to read (in bytes).
- *
- * @returns Success or failure.
- */
-template<typename T>
-bool readReg(VmmIDs reg, unique_ptr<T[]>& ptr, const size_t dataSize) {
-    static_assert(is_integral<T>::value, "Integer required");
-    if (dataSize > STM_MAX_GENERIC_DATA - 1) {
-        printf("Data size must be between 1 and %d\n", STM_MAX_GENERIC_DATA - 1);
-        return false;
-    }
-
-    char msg[max<uint16_t>(dataSize, STM_MAX_GENERIC_HEADER)] = {0};
-
-    uint16_t regN       = htons(static_cast<uint16_t>(reg));
-    uint16_t dataSizeN  = htons(dataSize);
-
-    memcpy(msg, &regN, 2);
-    memcpy(msg + 2, &dataSizeN, 2);
-
-    int ret = motosh_ioctl(devFd, MOTOSH_IOCTL_READ_REG, msg);
-
-    if (ret >= 0) {
-        memcpy(ptr.get(), msg, dataSize);
-        return true;
-    } else {
-        return false;
-    }
-}
 
 /** Computes the absolute firmware file path for firmware of the given type.
  *
@@ -457,19 +381,16 @@ EXIT:
 
 /** Extract the firmware version from the filesystem binary containing the firmware.
  *
- * @param fwVersionStr A pointer to a buffer of at least FW_VERSION_STR_MAX_LEN
- * bytes. A null-terminated string containing the firmware version (as
- * extracted from the .bin file) will be written to this location.
- * @return A negative value on error.
+ * @return A string containing the version, or an empty string.
  * */
-int stm_getFwVersionFromFile(char *fwVersionStr) {
+string stm_getFwVersionFromFile() {
     char path[STM_MAX_PATH];
     if (int res = stm_getFwFile(path) < 0) {
-        LOGERROR("Error: getFwFile = %i\n", res);
-        return -1;
+        LOGERROR("stm_getFwVersionFromFile: getFwFile = %i\n", res);
+        return string();
     }
     FILE *f = fopen(path, "r");
-    if (!f) return -2;
+    if (!f) return string();
 
     // The build system appends a 32 bit address as ASCII HEX (8 bytes),
     // followed by \n, at the end of the file. This is the address of the
@@ -478,14 +399,16 @@ int stm_getFwVersionFromFile(char *fwVersionStr) {
     int seek = fseek(f, -OffsetLen, SEEK_END);
     if (seek == -1) {
         fclose(f);
-        return -3;
+        LOGERROR("stm_getFwVersionFromFile: SEEK_END failed\n");
+        return string();
     }
 
     char offsetStr[OffsetLen];
     size_t sz = fread(offsetStr, 1, OffsetLen - 1, f);
     if (sz != OffsetLen - 1) {
         fclose(f);
-        return -4;
+        LOGERROR("stm_getFwVersionFromFile: offset read failed\n");
+        return string();
     }
 
     unsigned char offsetHex[OffsetLen / 2];
@@ -502,10 +425,12 @@ int stm_getFwVersionFromFile(char *fwVersionStr) {
     seek = fseek(f, offset, SEEK_SET);
     if (seek == -1) {
         fclose(f);
-        return -5;
+        LOGERROR("stm_getFwVersionFromFile: seek failed\n");
+        return string();
     }
 
     // Read the null-terminated string
+    char fwVersionStr[FW_VERSION_STR_MAX_LEN];
     int c;
     unsigned i = 0;
     fwVersionStr[0] = '\0'; // In case we don't read anything.
@@ -515,40 +440,11 @@ int stm_getFwVersionFromFile(char *fwVersionStr) {
 
     fclose(f);
 
-    if (c == EOF || i >= FW_VERSION_STR_MAX_LEN - 1) return -6;
+    if (c == EOF || i >= FW_VERSION_STR_MAX_LEN - 1) return string();
 
     fwVersionStr[i] = '\0'; // Since we didn't copy the null
-
-    return 0;
+    return fwVersionStr;
 }
-
-/**
- * Reads the firmware version string from the SensorHub HW.
- *
- * @return A pointer to a C-string containing the version string, or a null
- * pointer if an error was encountered.
- */
-unique_ptr<char[]> stm_getFwVersionFromHW(void) {
-    int err = 0;
-    int len;
-    uint8_t fwVerLen;
-
-    if (!readReg(VmmIDs::FW_VERSION_LEN, fwVerLen)) {
-        return nullptr;
-    }
-    fwVerLen = min<uint16_t>(fwVerLen, FW_VERSION_STR_MAX_LEN);
-
-    // Unfortunately, we don't have make_unique.
-    unique_ptr<char[]> verPtr(new char[fwVerLen + 1]);
-
-    if (readReg(VmmIDs::FW_VERSION_STR, verPtr, fwVerLen)) {
-        verPtr.get()[fwVerLen] = 0;
-        return verPtr;
-    } else {
-        return nullptr;
-    }
-}
-
 
 /** Computes the pseudo-CRC of a firmware binary file. This is not a simplistic
  * CRC over the file contents. Instead this function will compute the CRC that
@@ -585,38 +481,39 @@ int stm_calcFwFileCrc(uint32_t &crc) {
  * or STM_VERSION_MATCH which indicates the version string and CRC matches.
  */
 int stm_versionCheck() {
-    char fileVersion[FW_VERSION_STR_MAX_LEN];
+    int res;
     uint32_t fileCrc = 0, hwCrc = 0;
 
-    int res = stm_getFwVersionFromFile(fileVersion);
-    if (res < 0) {
-        LOGERROR("Error: getFwVersionFromFile returned %i\n", res);
+    string fileVersion = stm_getFwVersionFromFile();
+    if (fileVersion.empty()) {
+        LOGERROR("getFwVersionFromFile failed\n");
         return STM_VERSION_MATCH; // Corrupt file?
     }
 
     res = stm_calcFwFileCrc(fileCrc);
     if (res < 0) {
-        LOGERROR("Error: calcFwFileCrc returned %i\n", res);
+        LOGERROR("calcFwFileCrc returned %i\n", res);
         return STM_VERSION_MATCH; // Corrupt file?
     }
 
-    auto hwVersion = stm_getFwVersionFromHW();
-    if (!hwVersion) {
-        LOGERROR("Error: Unable to retrieve the FW version from the HW\n");
+    string hwVersion = sensorHub.getVersionStr();
+    if (hwVersion.empty()) {
+        LOGERROR("Unable to retrieve the FW version from the HW\n");
         return STM_VERSION_MISMATCH; // Corrupt SH?
     }
 
-    if (!readReg(VmmIDs::FW_CRC, hwCrc)) {
-        LOGERROR("Error: Could not get FW CRC from HW\n");
+    hwCrc = sensorHub.getFlashCrc();
+    if (!hwCrc) {
+        LOGERROR("Could not get FW CRC from HW\n");
         return STM_VERSION_MISMATCH; // Corrupt SH?
     }
 
-    LOGINFO("Version info: in filesystem = %s\n", fileVersion);
-    LOGINFO("Version info: in hardware   = %s\n", hwVersion.get());
+    LOGINFO("Version info: in filesystem = %s\n", fileVersion.c_str());
+    LOGINFO("Version info: in hardware   = %s\n", hwVersion.c_str());
     LOGINFO("FW CRC value: in filesystem = 0x%08X\n", fileCrc);
     LOGINFO("FW CRC value: in hardware   = 0x%08X\n", hwCrc);
 
-    if ((strcmp(fileVersion, hwVersion.get()) == 0) && (fileCrc == hwCrc)) {
+    if ((hwVersion == fileVersion) && (fileCrc == hwCrc)) {
         return STM_VERSION_MATCH;
     } else {
         return STM_VERSION_MISMATCH;
@@ -1184,7 +1081,7 @@ int  main(int argc, char *argv[])
 
         DEBUG("Passthrough Output: ");
         if (read_write == 0) {
-            for ( i = 0; i < data_size; i++) {
+            for (unsigned i = 0; i < data_size; i++) {
                 if (i != 0) {
                     printf (" ");
                 }

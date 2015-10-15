@@ -16,7 +16,8 @@
 LOCAL_TOP_DIR := $(call my-dir)
 LOCAL_PATH := $(LOCAL_TOP_DIR)
 
-# Must be called before including any other makefiles.
+# If other Android.mk files are included explicitly, this must be called before
+# including those.
 include $(call all-subdir-makefiles)
 
 # Restore LOCAL_PATH. Other makefiles probably modified it.
@@ -144,14 +145,17 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
     #LOCAL_CFLAGS+= -D_DEBUG
     LOCAL_CFLAGS += -Wall -Wextra
     LOCAL_CXXFLAGS += -Weffc++ -std=c++14
-    LOCAL_SHARED_LIBRARIES := libcutils libc
+    LOCAL_SHARED_LIBRARIES := libcutils libc libsensorhub
 
     LOCAL_SRC_FILES := \
         MOTOSH/motosh.cpp \
         MOTOSH/CRC32.c
     LOCAL_REQUIRED_MODULES += sensorhub-blacklist.txt
 
-    LOCAL_C_INCLUDES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
+    LOCAL_C_INCLUDES := \
+        $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
+        hardware/moto/sensors/libsensorhub
+
     # Need the UAPI output directory to be populated with motosh.h/stml0xx.h
     LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
 
@@ -166,7 +170,6 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
     LOCAL_SRC_FILES     := $(SH_PATH)/sensorhub-blacklist.txt
     include $(BUILD_PREBUILT)
     # ********************************************************************************
-
 
 else # For non sensorhub version of sensors
     ###########################################
