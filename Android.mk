@@ -60,6 +60,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
             SH_LOGTAG := \"STML0XX\"
             SH_CFLAGS += -D_ENABLE_BMI160
             SH_CFLAGS += -D_ENABLE_GYROSCOPE
+            SH_CFLAGS += -D_ENABLE_CHOPCHOP
         endif
 
         ######################
