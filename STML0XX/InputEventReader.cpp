@@ -18,7 +18,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <poll.h>
-
+#include <string.h>
 #include <sys/cdefs.h>
 #include <sys/types.h>
 
@@ -29,7 +29,6 @@
 #include "InputEventReader.h"
 
 /*****************************************************************************/
-
 struct input_event;
 
 InputEventCircularReader::InputEventCircularReader(size_t numEvents)

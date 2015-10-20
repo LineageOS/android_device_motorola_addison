@@ -131,6 +131,7 @@ static const struct sensor_t sSensorList[] = {
 		.flags = SENSOR_FLAG_CONTINUOUS_MODE,
 		.reserved = {0,0} },
 #endif
+
 #ifdef _ENABLE_MAGNETOMETER
 	{ .name = "3-axis Calibrated Magnetic field sensor",
 		.vendor = VENDOR_MAG,
@@ -346,5 +347,24 @@ static const struct sensor_t sSensorList[] = {
 		.maxDelay = ACCEL_MAX_DELAY_US,
 		.flags = SENSOR_FLAG_CONTINUOUS_MODE,
 		.reserved = {0,0} },
+#endif
+
+#ifdef _ENABLE_REARPROX
+	{ .name = "Rear Proximity sensor",
+		.vendor = VENDOR_MOT,
+		.version = 1,
+		.handle = SENSORS_HANDLE_BASE + ID_RP,
+		.type = SENSOR_TYPE_PROXIMITY,
+		.maxRange = 100.0f,
+		.resolution = 100.0f,
+		.power = 0.35f,
+		.minDelay = 0,
+		.fifoReservedEventCount = 0,
+		.fifoMaxEventCount = 0,
+		.stringType = "",
+		.requiredPermission = "",
+		.maxDelay = 10000000,
+		.flags = SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
+		.reserved = { 0, 0 } },
 #endif
 };

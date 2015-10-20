@@ -39,8 +39,11 @@
 
 #include "Sensors.h"
 #include "SensorsPollContext.h"
-#ifdef _ENABLE_MAGNETOMETER
+#if defined(_ENABLE_MAGNETOMETER) || defined(_ENABLE_REARPROX)
 #include "SensorBase.h"
+#endif
+#ifdef _ENABLE_REARPROX
+#include "RearProxSensor.h"
 #endif
 #include "AkmSensor.h"
 #include "HubSensor.h"
@@ -80,6 +83,17 @@ SensorsPollContext::SensorsPollContext()
 	mPollFds[wake].fd = wakeFds[0];
 	mPollFds[wake].events = POLLIN;
 	mPollFds[wake].revents = 0;
+#endif
+#ifdef _ENABLE_REARPROX
+	mSensors[rearprox] = RearProxSensor::getInstance();
+	ALOGE("rearprox sensor created");
+	if (mSensors[rearprox]) {
+		mPollFds[rearprox].fd = mSensors[rearprox]->getFd();
+		mPollFds[rearprox].events = POLLIN;
+		mPollFds[rearprox].revents = 0;
+	} else {
+		ALOGE("out of memory: new failed for rearprox sensor");
+	}
 #endif
 }
 
@@ -130,6 +144,10 @@ int SensorsPollContext::handleToDriver(int handle)
 		case ID_OR:
 		case ID_RV:
 			return akm;
+#endif
+#ifdef _ENABLE_REARPROX
+		case ID_RP:
+			return rearprox;
 #endif
 	}
 	return -EINVAL;

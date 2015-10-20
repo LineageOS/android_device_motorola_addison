@@ -60,6 +60,9 @@ private:
 #ifdef _ENABLE_MAGNETOMETER
 		akm,
 #endif
+#ifdef _ENABLE_REARPROX
+		rearprox,
+#endif
 		numSensorDrivers,
 		numFds,
 	};

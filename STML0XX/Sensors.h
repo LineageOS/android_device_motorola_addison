@@ -66,6 +66,9 @@ typedef enum sensor_handle {
 #ifdef _ENABLE_LIFT
 	ID_LF, 	/* Lift Gesture */
 #endif
+#ifdef _ENABLE_REARPROX
+	ID_RP, 	/* moto rear proximity */
+#endif
 	MAX_SENSOR_ID
 } sensor_handle_t;
 

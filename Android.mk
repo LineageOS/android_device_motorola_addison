@@ -61,6 +61,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
             SH_CFLAGS += -D_ENABLE_BMI160
             SH_CFLAGS += -D_ENABLE_GYROSCOPE
             SH_CFLAGS += -D_ENABLE_CHOPCHOP
+            SH_CFLAGS += -D_ENABLE_REARPROX
         endif
 
         ######################
@@ -77,6 +78,9 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
 
         ifneq (,$(filter athene_%, $(strip $(TARGET_PRODUCT))))
             # Sensor HAL file for M0 hub (low-tier) products (athene, etc...)
+            LOCAL_SRC_FILES +=              \
+                    $(SH_PATH)/RearProxSensor.cpp    \
+                    $(SH_PATH)/InputEventReader.cpp
             LOCAL_SRC_FILES += \
                 $(SH_PATH)/HubSensor.cpp
         else
