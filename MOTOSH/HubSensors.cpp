@@ -486,11 +486,14 @@ int HubSensors::setDelay(int32_t handle, int64_t ns)
             break;
 #ifdef _ENABLE_PEDO
         case ID_STEP_COUNTER:
-		    delay /= 1000; // convert to seconds for pedometer rate
-		    if (delay == 0)
-		        delay = 1;
-		    status = motosh_ioctl(dev_fd,  MOTOSH_IOCTL_SET_STEP_COUNTER_DELAY, &delay);
-		    break;
+            delay /= 1000; // convert to seconds for pedometer rate
+            if (delay == 0)
+                delay = 1;
+            else if (delay > 3600) // 1 hour
+                delay = 3600;
+
+            status = motosh_ioctl(dev_fd,  MOTOSH_IOCTL_SET_STEP_COUNTER_DELAY, &delay);
+            break;
         case ID_STEP_DETECTOR:status = 0;                                         break;
 #endif
 #ifdef _ENABLE_CHOPCHOP
@@ -691,11 +694,11 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = ID_STEP_COUNTER;
                 data->type = SENSOR_TYPE_STEP_COUNTER;
-                data->u64.step_counter =  (
-                        (((uint64_t)STM16TOH(buff.data + STEP_COUNTER_3)) << 48) |
-                        (((uint64_t)STM16TOH(buff.data + STEP_COUNTER_2)) << 32) |
-                        (((uint64_t)STM16TOH(buff.data + STEP_COUNTER_1)) << 16) |
-                        (((uint64_t)STM16TOH(buff.data + STEP_COUNTER_0))) );
+		/* data from sensors sent as 4 bytes. Thats plenty of steps */
+                data->u64.step_counter = (uint64_t) (buff.data[0] << 24 |
+						     buff.data[1] << 16 |
+						     buff.data[2] << 8  |
+						     buff.data[3]);
                 data->timestamp = buff.timestamp;
                 data++;
                 break;
@@ -703,7 +706,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = ID_STEP_DETECTOR;
                 data->type = SENSOR_TYPE_STEP_DETECTOR;
-                data->data[0] = STM16TOH(buff.data + STEP_DETECTOR);
+                data->data[0] = (uint16_t)buff.data[0];
                 data->timestamp = buff.timestamp;
                 data++;
                 break;

@@ -79,11 +79,13 @@
 #define ACCEL_MIN_DELAY_US 5000
 #define GYRO_MIN_DELAY_US  5000
 #define MAG_MIN_DELAY_US   20000
+#define STEP_MIN_DELAY_US  1000000 /* 1 sec */
 
 /* Max delays */
 #define ACCEL_MAX_DELAY_US 200000
 #define GYRO_MAX_DELAY_US  200000
 #define MAG_MAX_DELAY_US   200000
+#define STEP_MAX_DELAY_US  0
 
 /* Part numbers to use in sensor names */
 #define MAG_PART_NO   "AKM09912"
@@ -347,7 +349,7 @@ const struct sensor_t sSensorList[] = {
                 .reserved = {0,0}},
 #ifdef _ENABLE_PEDO
     { .name = "Step Detector sensor",
-                .vendor = VENDOR_MOT,
+                .vendor = VENDOR_ACCEL,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_STEP_DETECTOR,
                 .type = SENSOR_TYPE_STEP_DETECTOR,
@@ -360,24 +362,24 @@ const struct sensor_t sSensorList[] = {
                 .stringType = "",
                 .requiredPermission = "",
                 .maxDelay = 0,
-                .flags = SENSOR_FLAG_ON_CHANGE_MODE,
+                .flags = SENSOR_FLAG_SPECIAL_REPORTING_MODE,
                 .reserved = {0,0} },
 
     { .name = "Step Counter sensor",
-                .vendor = VENDOR_MOT,
+                .vendor = VENDOR_ACCEL,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_STEP_COUNTER,
                 .type = SENSOR_TYPE_STEP_COUNTER,
                 .maxRange = FLT_MAX,
                 .resolution = 0,
                 .power = 0,
-                .minDelay = 0,
+                .minDelay = STEP_MIN_DELAY_US,
                 .fifoReservedEventCount = 0,
                 .fifoMaxEventCount = 0,
                 .stringType = "",
                 .requiredPermission = "",
-                .maxDelay = 0,
-                .flags = SENSOR_FLAG_SPECIAL_REPORTING_MODE,
+                .maxDelay = STEP_MAX_DELAY_US,
+                .flags = SENSOR_FLAG_ON_CHANGE_MODE,
                 .reserved = {0,0} },
 #endif
     { .name = GYRO_PART_NO " Uncalibrated Gyroscope",

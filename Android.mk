@@ -48,6 +48,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
             SH_CFLAGS += -D_ENABLE_CHOPCHOP
             SH_CFLAGS += -D_ENABLE_LIFT
             SH_CFLAGS += -D_USES_BMI160_ACCGYR
+            SH_CFLAGS += -D_ENABLE_PEDO
             ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
                 # Expose IR raw data for non-user builds
                 SH_CFLAGS += -D_ENABLE_RAW_IR_DATA
