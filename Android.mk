@@ -145,7 +145,8 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
     LOCAL_MODULE := $(SH_MODULE)
     #LOCAL_CFLAGS+= -D_DEBUG
     LOCAL_CFLAGS += -Wall -Wextra
-    LOCAL_CXXFLAGS += -Weffc++ -std=c++14
+    # Added by top level make files: -std=gnu++11
+    LOCAL_CXXFLAGS += -Weffc++
     LOCAL_SHARED_LIBRARIES := libcutils libc libsensorhub
 
     LOCAL_SRC_FILES := \

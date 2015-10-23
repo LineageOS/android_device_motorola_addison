@@ -61,7 +61,6 @@
 #define STM_FIRMWARE_BLACKLIST "/system/etc/firmware/sensorhub-blacklist.txt"
 /** Maximum filesystem path length */
 #define STM_MAX_PATH 256
-#define STM_FIRMWARE_FACTORY_FILE "/system/etc/firmware/sensorhubfactory.bin"
 #define STM_SUCCESS 0
 #define STM_FAILURE -1
 #define STM_VERSION_MISMATCH -1
@@ -77,7 +76,7 @@
 #define ANTCAP_CAL_FILE "/persist/antcap/captouch_caldata.bin"
 
 
-#define CHECK_RETURN_VALUE( ret, msg)  if (ret < 0) {\
+#define CHECK_RETURN_VALUE(ret, msg)  if ((ret) < 0) {\
                      ALOGE("%s: %s \n",msg, strerror(errno)); \
                      printf("%s: %s \n",msg, strerror(errno)); \
                      goto EXIT; \
@@ -758,66 +757,73 @@ int  main(int argc, char *argv[])
     if (emode == BOOTLOADER) {
 
         #ifdef MODULE_motosh
-        /* trigger capsense check and flash if this is a normal
-           boot up check (no -f option applied) */
-        if (!forceBoot)
-            flash_capsense();
+            /* trigger capsense check and flash if this is a normal
+               boot up check (no -f option applied) */
+            if (!forceBoot)
+                flash_capsense();
         #endif
 
         stm_processBlackList();
 
-        if (emode == BOOTLOADER) {
-            ret = stm_getFwFile(fw_file_name);
-            if (ret >= 0) filep = fopen(fw_file_name, "r");
+        // Verify we have FW before taking the part out of reset/boot mode
+        ret = stm_getFwFile(fw_file_name);
+
+        CHECK_RETURN_VALUE(ret, "STM valid firmware not found");
+
+        // Take the part out of reset
+        ret = motosh_ioctl(devFd, MOTOSH_IOCTL_NORMALMODE, &temp);
+        CHECK_RETURN_VALUE(ret, "STM boot -> normal mode failed");
+
+        // Wait until the SensorHub boots
+        tries = 0;
+        ret = STM_FAILURE;
+        while (tries++ < 20) {
+            uint32_t hwCrc = sensorHub.getFlashCrc();
+            if (hwCrc) {
+                ret = STM_SUCCESS;
+                break;
+            }
+            usleep(100000); // Wait for a total of 2s
         }
-        else
-            filep = fopen(STM_FIRMWARE_FACTORY_FILE,"r");
+        if (ret != STM_SUCCESS) {
+            LOGINFO("STM getFlashCrc() after normal mode failed. Blank part? (%d)", ret);
+        }
 
         /* check if new firmware available for download */
-        if( (filep != NULL) && (forceBoot || stm_versionCheck() == STM_VERSION_MISMATCH)) {
+        if (forceBoot || stm_versionCheck() == STM_VERSION_MISMATCH) {
+            filep = fopen(fw_file_name, "r");
+            CHECK_RETURN_VALUE(ret = filep ? 0 : -1, "STM could not open FW file");
+
             tries = 0;
             while((tries < STM_DOWNLOADRETRIES )) {
                 if( (stm_downloadFirmware(filep)) >= STM_SUCCESS) {
                     fclose(filep);
                     filep = NULL;
                     /* reset STM */
-                    if (emode == BOOTLOADER) {
-                        ret = motosh_ioctl(devFd, MOTOSH_IOCTL_NORMALMODE, &temp);
-                        printf("\n");
-                        // IOCTLS will be briefly blocked during part reset
-                        sleep(1);
-                        if (stm_versionCheck() != STM_VERSION_MATCH) {
-                            /* try once more */
-                            sleep(2);
-                            if (stm_versionCheck() == STM_VERSION_MATCH)
-                                LOGINFO("Firmware download completed successfully\n")
-                            else
-                                LOGERROR("Firmware download error\n")
-                        } else
+                    ret = motosh_ioctl(devFd, MOTOSH_IOCTL_NORMALMODE, &temp);
+                    printf("\n");
+                    // IOCTLS will be briefly blocked during part reset
+                    usleep(1000000);
+                    if (stm_versionCheck() != STM_VERSION_MATCH) {
+                        /* try once more */
+                        usleep(2000000);
+                        if (stm_versionCheck() == STM_VERSION_MATCH)
                             LOGINFO("Firmware download completed successfully\n")
-                    }
-                    else
-                        emode = FACTORY;
+                        else
+                            LOGERROR("Firmware download error\n")
+                    } else
+                        LOGINFO("Firmware download completed successfully\n")
 
                     break;
                 }
                 tries++;
-                // Need to use sleep as msleep is not available
-                sleep(1);
+                usleep(250000);
             }
 
-            if( tries >= STM_DOWNLOADRETRIES ) {
-                LOGERROR("Firmware download failed.\n")
-                ret = STM_FAILURE;
-                motosh_ioctl(devFd,MOTOSH_IOCTL_NORMALMODE, &temp);
-            }
+            CHECK_RETURN_VALUE(ret = (tries >= STM_DOWNLOADRETRIES ? -1 : 0),
+                    "Firmware download failed")
         } else {
             DEBUG("No new firmware to download \n");
-            /* reset STM in case for soft-reboot of device */
-            if (emode == BOOTLOADER)
-                emode = NORMAL;
-            else
-                emode = FACTORY;
         }
 
         #ifdef MODULE_motosh
