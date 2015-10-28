@@ -226,9 +226,9 @@ int HubSensor::setEnable(int32_t handle, int en)
             found = 1;
             break;
         case ID_CA:
-            new_enabled &= ~M_CAMERA_ACT;
+            new_enabled &= ~M_CAMERA_GESTURE;
             if (newState)
-                new_enabled |= M_CAMERA_ACT;
+                new_enabled |= M_CAMERA_GESTURE;
             found = 1;
             break;
 #ifdef _ENABLE_LIFT
