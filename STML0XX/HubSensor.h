@@ -113,7 +113,9 @@ private:
 	uint32_t mPendingMask;
 	uint32_t mFlushEnabled;
 
-        uint8_t mGyroCal[MOTOSH_GYRO_CAL_SIZE];
+#ifdef _ENABLE_GYROSCOPE
+        //! \brief gyroscope calibration table
+        uint8_t mGyroCal[STML0XX_GYRO_CAL_SIZE];
         //! \brief last value passed to \c enable() on gyro sensor
         uint8_t mGyroEnabled;
         //! \brief last value passed to \c enable() on uncal gyro sensor
@@ -124,12 +126,14 @@ private:
         unsigned short mUncalGyroReqDelay;
         //! \brief Currently-set gyro delay in ms, or \c USHRT_MAX if unset.
         unsigned short mGyroDelay;
+#endif
 
 	uint8_t mErrorCnt[ERROR_TYPES];
 	gzFile open_dropbox_file(const char* timestamp, const char* dst, const int flags);
 	short capture_dump(char* timestamp, const int id, const char* dst, const int flags);
 	void logAlsEvent(int16_t lux, int64_t ts_ns);
 
+#ifdef _ENABLE_GYROSCOPE
         /*!
          * \brief Helper to update gyro rate
          *
@@ -143,6 +147,7 @@ private:
          * \returns ioctl() status resulting from gyro rate set
          */
         int updateGyroRate();
+#endif
 };
 
 /*****************************************************************************/

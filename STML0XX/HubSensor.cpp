@@ -43,25 +43,27 @@ HubSensor HubSensor::self;
 
 HubSensor::HubSensor()
 : SensorBase(SENSORHUB_DEVICE_NAME, NULL, SENSORHUB_AS_DATA_NAME),
-    mEnabled(0),
-    mWakeEnabled(0),
-    mPendingMask(0),
+#ifdef _ENABLE_GYROSCOPE
     mGyroEnabled(0),
     mUncalGyroEnabled(0),
     mGyroReqDelay(USHRT_MAX),
     mUncalGyroReqDelay(USHRT_MAX),
-    mGyroDelay(USHRT_MAX)
+    mGyroDelay(USHRT_MAX),
+#endif
+    mEnabled(0),
+    mWakeEnabled(0),
+    mPendingMask(0)
 {
     // read the actual value of all sensors if they're enabled already
     struct input_absinfo absinfo;
     short flags16 = 0;
     uint32_t flags24 = 0;
-    FILE *fp;
-    int i;
     int err = 0;
 
     memset(mErrorCnt, 0, sizeof(mErrorCnt));
+#ifdef _ENABLE_MAGNETOMETER
     memset(mGyroCal, 0, sizeof(mGyroCal));
+#endif
 
     open_device();
 
@@ -69,6 +71,23 @@ HubSensor::HubSensor()
     for (i=0; i< NUM_FUSION_DEVICES; i++) {
         mFusionEnabled[i] = 0;
         mFusionDelay[i] = 200;
+    }
+#endif
+
+#ifdef _ENABLE_GYROSCOPE
+    FILE *fp;
+    if ((fp = fopen(GYRO_CAL_FILE, "r")) != NULL) {
+        int size;
+        size = fread(mGyroCal, 1, STML0XX_GYRO_CAL_SIZE, fp);
+        fclose(fp);
+        if (size != STML0XX_GYRO_CAL_SIZE) {
+            ALOGE("Gyro Cal file read failed");
+            memset(mGyroCal, 0, sizeof(mGyroCal));
+        } else {
+            err = ioctl(dev_fd, STML0XX_IOCTL_SET_GYRO_CAL, mGyroCal);
+            if (err < 0)
+                ALOGE("Can't send Gyro Cal data");
+        }
     }
 #endif
 
@@ -520,6 +539,25 @@ int HubSensor::readEvents(sensors_event_t* d, int dLen)
                 data->timestamp = buff.timestamp;
                 data++;
                 break;
+#ifdef _ENABLE_GYROSCOPE
+            case DT_GYRO_CAL:
+                FILE *fp;
+                int size;
+                ret = ioctl(dev_fd, STML0XX_IOCTL_GET_GYRO_CAL, mGyroCal);
+                if (ret < 0) {
+                    ALOGE("Can't read Gyro Cal data");
+                } else {
+                    if ((fp = fopen(GYRO_CAL_FILE, "w")) == NULL) {
+                        ALOGE("Can't open Gyro Cal file");
+                    } else {
+                        size = fwrite(mGyroCal, 1, STML0XX_GYRO_CAL_SIZE, fp);
+                        fclose(fp);
+                        if (size != STML0XX_GYRO_CAL_SIZE)
+                            ALOGE("Error writing Gyro Cal file");
+                    }
+                }
+                break;
+#endif
             case DT_RESET:
                 time(&timeutc.tv_sec);
                 if (buff.data[0] > 0 && buff.data[0] <= ERROR_TYPES)
@@ -619,6 +657,7 @@ short HubSensor::capture_dump(char* timestamp, const int id, const char* dst, co
     return 0;
 }
 
+#ifdef _ENABLE_GYROSCOPE
 int HubSensor::updateGyroRate()
 {
     int ret = 0;
@@ -648,3 +687,4 @@ int HubSensor::updateGyroRate()
 
     return ret;
 }
+#endif

@@ -97,7 +97,7 @@ static const struct sensor_t sSensorList[] = {
 		.maxDelay = ACCEL_MAX_DELAY_US,
 		.flags = SENSOR_FLAG_CONTINUOUS_MODE,
 		.reserved = {0,0} },
-#ifdef _ENABLE_BMI160
+#if defined(_ENABLE_BMI160) && defined(_ENABLE_GYROSCOPE)
 	{ .name = "3-axis Gyroscope",
 		.vendor = VENDOR_GYRO,
 		.version = 1,
