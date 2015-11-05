@@ -160,6 +160,20 @@ int HubSensor::setEnable(int32_t handle, int en)
                 new_enabled |= M_DISP_ROTATE;
             found = 1;
             break;
+#ifdef _ENABLE_PEDO
+        case ID_STEP_COUNTER:
+            new_enabled &= ~M_STEP_COUNTER;
+            if (newState)
+                new_enabled |= M_STEP_COUNTER;
+            found = 1;
+            break;
+        case ID_STEP_DETECTOR:
+            new_enabled &= ~M_STEP_DETECTOR;
+            if (newState)
+                new_enabled |= M_STEP_DETECTOR;
+            found = 1;
+            break;
+#endif
 #ifdef _ENABLE_ACCEL_SECONDARY
         case ID_A2:
             new_enabled &= ~M_ACCEL2;
@@ -334,6 +348,20 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
             mFusionDelay[ROTATION] = delay;
             break;
 #endif
+#ifdef _ENABLE_PEDO
+        case ID_STEP_COUNTER:
+            delay /= 1000; // convert to seconds for pedometer rate
+            if (delay == 0)
+                delay = 1;
+            else if (delay > 3600) // 1 hour
+                delay = 3600;
+
+            err = ioctl(dev_fd, STML0XX_IOCTL_SET_STEP_COUNTER_DELAY, &delay);
+            break;
+        case ID_STEP_DETECTOR:
+            err = 0;
+            break;
+#endif
         default:
                 err = -EINVAL;
     }
@@ -440,7 +468,7 @@ int HubSensor::readEvents(sensors_event_t* d, int dLen)
 #ifdef _ENABLE_GYROSCOPE
             case DT_GYRO:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_G;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_G;
                 data->type = SENSOR_TYPE_GYROSCOPE;
                 data->gyro.x = STM16TOH(buff.data + GYRO_X) * CONVERT_G_P;
                 data->gyro.y = STM16TOH(buff.data + GYRO_Y) * CONVERT_G_R;
@@ -450,7 +478,7 @@ int HubSensor::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_UNCALIB_GYRO:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_UNCALIB_GYRO;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_UNCALIB_GYRO;
                 data->type = SENSOR_TYPE_GYROSCOPE_UNCALIBRATED;
                 data->uncalibrated_gyro.x_uncalib = STM16TOH(buff.data + UNCALIB_GYRO_X) * CONVERT_G_P;
                 data->uncalibrated_gyro.y_uncalib = STM16TOH(buff.data + UNCALIB_GYRO_Y) * CONVERT_G_R;
@@ -592,6 +620,44 @@ int HubSensor::readEvents(sensors_event_t* d, int dLen)
                 data->sensor = SENSORS_HANDLE_BASE + ID_CC;
                 data->type = SENSOR_TYPE_CHOPCHOP_GESTURE;
                 data->data[0] = STM32TOH(buff.data + CHOPCHOP_CHOPCHOP);
+                data->timestamp = buff.timestamp;
+                data++;
+                break;
+#endif
+#ifdef _ENABLE_PEDO
+            case DT_STEP_COUNTER:
+            {
+                static uint32_t last_stepcount;
+                static uint32_t step_offset;
+                uint32_t stepcount;
+
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_STEP_COUNTER;
+                data->type = SENSOR_TYPE_STEP_COUNTER;
+                /* data from sensors sent as 4 bytes. Thats plenty of steps */
+                stepcount = (buff.data[0] << 24 |
+                             buff.data[1] << 16 |
+                             buff.data[2] << 8  |
+                             buff.data[3]);
+                if(stepcount + step_offset < last_stepcount)
+                {
+                    /* hub reset, determine offset and apply, so users
+                       only see contiguous steps */
+                    step_offset = last_stepcount;
+                    ALOGD("Saving %d footsteps", step_offset);
+                }
+                last_stepcount = stepcount + step_offset;
+
+                data->u64.step_counter = (uint64_t)(last_stepcount);
+                data->timestamp = buff.timestamp;
+                data++;
+                break;
+            }
+            case DT_STEP_DETECTOR:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_STEP_DETECTOR;
+                data->type = SENSOR_TYPE_STEP_DETECTOR;
+                data->data[0] = (uint16_t)buff.data[0];
                 data->timestamp = buff.timestamp;
                 data++;
                 break;

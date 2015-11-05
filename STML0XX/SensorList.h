@@ -63,11 +63,13 @@
 #define ACCEL_MIN_DELAY_US 10000
 #define GYRO_MIN_DELAY_US  5000
 #define MAG_MIN_DELAY_US   20000
+#define STEP_MIN_DELAY_US  1000000 /* 1 sec */
 
 /* Max delays */
 #define ACCEL_MAX_DELAY_US 200000
 #define GYRO_MAX_DELAY_US  200000
 #define MAG_MAX_DELAY_US   1000000
+#define STEP_MAX_DELAY_US  0
 
 /* Various current draw figures in mA */
 #define MAG_MA    0.10f
@@ -131,7 +133,41 @@ static const struct sensor_t sSensorList[] = {
 		.flags = SENSOR_FLAG_CONTINUOUS_MODE,
 		.reserved = {0,0} },
 #endif
+#ifdef _ENABLE_PEDO
+	{ .name = "Step Detector sensor",
+		.vendor = VENDOR_ACCEL,
+		.version = 1,
+		.handle = SENSORS_HANDLE_BASE+ID_STEP_DETECTOR,
+		.type = SENSOR_TYPE_STEP_DETECTOR,
+		.maxRange = 1.0f,
+		.resolution = 0,
+		.power = 0,
+		.minDelay = 0,
+		.fifoReservedEventCount = 0,
+		.fifoMaxEventCount = 0,
+		.stringType = "",
+		.requiredPermission = "",
+		.maxDelay = 0,
+		.flags = SENSOR_FLAG_SPECIAL_REPORTING_MODE,
+		.reserved = {0,0} },
 
+	{ .name = "Step Counter sensor",
+		.vendor = VENDOR_ACCEL,
+		.version = 1,
+		.handle = SENSORS_HANDLE_BASE+ID_STEP_COUNTER,
+		.type = SENSOR_TYPE_STEP_COUNTER,
+		.maxRange = FLT_MAX,
+		.resolution = 0,
+		.power = 0,
+		.minDelay = STEP_MIN_DELAY_US,
+		.fifoReservedEventCount = 0,
+		.fifoMaxEventCount = 0,
+		.stringType = "",
+		.requiredPermission = "",
+		.maxDelay = STEP_MAX_DELAY_US,
+		.flags = SENSOR_FLAG_ON_CHANGE_MODE,
+		.reserved = {0,0} },
+#endif
 #ifdef _ENABLE_MAGNETOMETER
 	{ .name = "3-axis Calibrated Magnetic field sensor",
 		.vendor = VENDOR_MAG,

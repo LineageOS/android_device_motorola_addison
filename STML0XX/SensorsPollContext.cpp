@@ -137,6 +137,10 @@ int SensorsPollContext::handleToDriver(int handle)
 #ifdef _ENABLE_LIFT
 		case ID_LF:
 #endif
+#ifdef _ENABLE_PEDO
+		case ID_STEP_COUNTER:
+		case ID_STEP_DETECTOR:
+#endif
 			return sensor_hub;
 #ifdef _ENABLE_MAGNETOMETER
 		case ID_M:

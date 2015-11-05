@@ -64,6 +64,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
             SH_CFLAGS += -D_ENABLE_GYROSCOPE
             SH_CFLAGS += -D_ENABLE_CHOPCHOP
             SH_CFLAGS += -D_ENABLE_REARPROX
+            SH_CFLAGS += -D_ENABLE_PEDO
         endif
 
         ######################

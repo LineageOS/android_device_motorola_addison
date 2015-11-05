@@ -620,7 +620,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_ACCEL:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_A;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_A;
                 data->type = SENSOR_TYPE_ACCELEROMETER;
                 data->acceleration.x = STM16TOH(buff.data+ACCEL_X) * CONVERT_A_X;
                 data->acceleration.y = STM16TOH(buff.data+ACCEL_Y) * CONVERT_A_Y;
@@ -631,7 +631,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_GYRO:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_G;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_G;
                 data->type = SENSOR_TYPE_GYROSCOPE;
                 data->gyro.x = STM16TOH(buff.data + GYRO_X) * CONVERT_G_P;
                 data->gyro.y = STM16TOH(buff.data + GYRO_Y) * CONVERT_G_R;
@@ -641,7 +641,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_UNCALIB_GYRO:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_UNCALIB_GYRO;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_UNCALIB_GYRO;
                 data->type = SENSOR_TYPE_GYROSCOPE_UNCALIBRATED;
                 data->uncalibrated_gyro.x_uncalib = STM16TOH(buff.data + UNCALIB_GYRO_X) * CONVERT_G_P;
                 data->uncalibrated_gyro.y_uncalib = STM16TOH(buff.data + UNCALIB_GYRO_Y) * CONVERT_G_R;
@@ -654,7 +654,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_UNCALIB_MAG:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_UNCALIB_MAG;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_UNCALIB_MAG;
                 data->type = SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED;
                 data->uncalibrated_magnetic.x_uncalib = STM16TOH(buff.data + UNCALIB_MAGNETIC_X) * CONVERT_M_X;
                 data->uncalibrated_magnetic.y_uncalib = STM16TOH(buff.data + UNCALIB_MAGNETIC_Y) * CONVERT_M_Y;
@@ -667,7 +667,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_QUAT_6AXIS:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_QUAT_6AXIS;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_QUAT_6AXIS;
                 data->type = SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR;
                 data->data[0] = STM16TOH(buff.data + QUAT_6AXIS_A) * CONVERT_RV;
                 data->data[1] = STM16TOH(buff.data + QUAT_6AXIS_B) * CONVERT_RV;
@@ -679,7 +679,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_QUAT_9AXIS:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_QUAT_9AXIS;
+                data->sensor = SENSORS_HANDLE_BASE + ID_QUAT_9AXIS;
                 data->type = SENSOR_TYPE_ROTATION_VECTOR;
                 data->data[0] = STM16TOH(buff.data + QUAT_9AXIS_A) * CONVERT_RV;
                 data->data[1] = STM16TOH(buff.data + QUAT_9AXIS_B) * CONVERT_RV;
@@ -691,20 +691,36 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
 #ifdef _ENABLE_PEDO
             case DT_STEP_COUNTER:
+            {
+                static uint32_t last_stepcount;
+                static uint32_t step_offset;
+                uint32_t stepcount;
+
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_STEP_COUNTER;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_STEP_COUNTER;
                 data->type = SENSOR_TYPE_STEP_COUNTER;
-		/* data from sensors sent as 4 bytes. Thats plenty of steps */
-                data->u64.step_counter = (uint64_t) (buff.data[0] << 24 |
-						     buff.data[1] << 16 |
-						     buff.data[2] << 8  |
-						     buff.data[3]);
+                /* data from sensors sent as 4 bytes. Thats plenty of steps */
+                stepcount = (buff.data[0] << 24 |
+                             buff.data[1] << 16 |
+                             buff.data[2] << 8  |
+                             buff.data[3]);
+                if(stepcount + step_offset < last_stepcount)
+                {
+                    /* hub reset, determine offset and apply, so users
+                       only see contiguous steps */
+                    step_offset = last_stepcount;
+                    ALOGD("Saving %d footsteps", step_offset);
+                }
+                last_stepcount = stepcount + step_offset;
+
+                data->u64.step_counter = (uint64_t)(last_stepcount);
                 data->timestamp = buff.timestamp;
                 data++;
                 break;
+            }
             case DT_STEP_DETECTOR:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_STEP_DETECTOR;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_STEP_DETECTOR;
                 data->type = SENSOR_TYPE_STEP_DETECTOR;
                 data->data[0] = (uint16_t)buff.data[0];
                 data->timestamp = buff.timestamp;
@@ -713,7 +729,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
 #endif
             case DT_PRESSURE:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_PR;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_PR;
                 data->type = SENSOR_TYPE_PRESSURE;
                 data->pressure = STM32TOH(buff.data + PRESSURE_PRESSURE) * CONVERT_B;
                 data->timestamp = buff.timestamp;
@@ -721,7 +737,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_MAG:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_M;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_M;
                 data->type = SENSOR_TYPE_MAGNETIC_FIELD;
                 data->magnetic.x = STM16TOH(buff.data + MAGNETIC_X) * CONVERT_M_X;
                 data->magnetic.y = STM16TOH(buff.data + MAGNETIC_Y) * CONVERT_M_Y;
@@ -732,7 +748,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_ORIENT:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_O;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_O;
                 data->type = SENSOR_TYPE_ORIENTATION;
                 data->orientation.azimuth = STM16TOH(buff.data + ORIENTATION_AZIMUTH) * CONVERT_O_Y;
                 data->orientation.pitch = STM16TOH(buff.data + ORIENTATION_PITCH) * CONVERT_O_P;
@@ -744,7 +760,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_TEMP:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_T;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_T;
                 data->type = SENSOR_TYPE_TEMPERATURE;
                 data->temperature = STM16TOH(buff.data + TEMPERATURE_TEMPERATURE) * CONVERT_T;
                 data->timestamp = buff.timestamp;
@@ -752,7 +768,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_ALS:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_L;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_L;
                 data->type = SENSOR_TYPE_LIGHT;
                 data->light = (uint16_t)STM16TOH(buff.data + LIGHT_LIGHT);
                 data->timestamp = buff.timestamp;
@@ -762,7 +778,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
 #ifdef _ENABLE_LA
             case DT_LIN_ACCEL:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_LA;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_LA;
                 data->type = SENSOR_TYPE_LINEAR_ACCELERATION;
                 data->acceleration.x = STM16TOH(buff.data + ACCEL_X) * CONVERT_A_LIN;
                 data->acceleration.y = STM16TOH(buff.data + ACCEL_Y) * CONVERT_A_LIN;
@@ -775,7 +791,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
 #ifdef _ENABLE_GR
             case DT_GRAVITY:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_GRAVITY;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_GRAVITY;
                 data->type = SENSOR_TYPE_GRAVITY;
                 data->acceleration.x = STM16TOH(buff.data + GRAVITY_X) * CONVERT_GRAVITY;
                 data->acceleration.y = STM16TOH(buff.data + GRAVITY_Y) * CONVERT_GRAVITY;
@@ -787,7 +803,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
 #endif
             case DT_DISP_ROTATE:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_DR;
+                data->sensor = SENSORS_HANDLE_BASE + ID_DR;
                 data->type = SENSOR_TYPE_DISPLAY_ROTATE;
                 if (buff.data[ROTATE_ROTATE] == DISP_FLAT)
                     data->data[0] = DISP_UNKNOWN;
@@ -799,7 +815,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_PROX:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_P;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_P;
                 data->type = SENSOR_TYPE_PROXIMITY;
                 if (buff.data[PROXIMITY_PROXIMITY] == 0) {
                     data->distance = PROX_UNCOVERED;
@@ -816,7 +832,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_FLAT_UP:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_FU;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_FU;
                 data->type = SENSOR_TYPE_FLAT_UP;
                 if (buff.data[FLAT_FLAT] == 0x01)
                     data->data[0] = FLAT_DETECTED;
@@ -827,7 +843,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_FLAT_DOWN:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_FD;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_FD;
                 data->type = SENSOR_TYPE_FLAT_DOWN;
                 if (buff.data[FLAT_FLAT] == 0x02)
                     data->data[0] = FLAT_DETECTED;
@@ -838,7 +854,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_STOWED:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_S;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_S;
                 data->type = SENSOR_TYPE_STOWED;
                 data->data[0] = buff.data[STOWED_STOWED];
                 data->timestamp = buff.timestamp;
@@ -846,7 +862,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_CAMERA_ACT:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_CA;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_CA;
                 data->type = SENSOR_TYPE_CAMERA_ACTIVATE;
                 data->data[0] = MOTOSH_CAMERA_DATA;
                 data->data[1] = STM16TOH(buff.data + CAMERA_CAMERA);
@@ -855,7 +871,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_IR_GESTURE:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_IR_GESTURE;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_IR_GESTURE;
                 data->type = SENSOR_TYPE_IR_GESTURE;
                 data->ir_gesture.event_id = buff.data[IR_EVENT];
                 data->ir_gesture.gesture_id = buff.data[IR_GESTURE];
@@ -867,7 +883,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_IR_RAW:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_IR_RAW;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_IR_RAW;
                 data->type = SENSOR_TYPE_IR_RAW;
                 data->ir_raw.top_right_high = STM16TOH(buff.data + IR_TR_H);
                 data->ir_raw.bottom_left_high = STM16TOH(buff.data + IR_BL_H);
@@ -884,7 +900,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_IR_OBJECT:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_IR_OBJECT;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_IR_OBJECT;
                 data->type = SENSOR_TYPE_IR_OBJECT;
                 data->data[0] = (*(buff.data + IR_OBJ) >> IR_OBJ_SHIFT) & 0x01;
                 data->timestamp = buff.timestamp;
@@ -893,7 +909,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_SIM:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_SIM;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_SIM;
                 data->type = SENSOR_TYPE_SIGNIFICANT_MOTION;
                 data->data[0] = 1;
                 data->timestamp = buff.timestamp;
@@ -903,7 +919,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
 #ifdef _ENABLE_CHOPCHOP
             case DT_CHOPCHOP:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_CHOPCHOP_GESTURE;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_CHOPCHOP_GESTURE;
                 data->type = SENSOR_TYPE_CHOPCHOP_GESTURE;
                 data->data[0] = STM16TOH(buff.data + CHOPCHOP_CHOPCHOP);
                 data->timestamp = buff.timestamp;
@@ -913,7 +929,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
 #ifdef _ENABLE_LIFT
             case DT_LIFT:
                 data->version = SENSORS_EVENT_T_SIZE;
-                data->sensor = ID_LIFT_GESTURE;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_LIFT_GESTURE;
                 data->type = SENSOR_TYPE_LIFT_GESTURE;
                 data->data[0] = STM32TOH(buff.data + LIFT_DISTANCE);
                 data->data[1] = STM32TOH(buff.data + LIFT_ROTATION);
