@@ -28,7 +28,7 @@
     // The value used to fill unused buffer space / flash.
     #define FLASH_FILL (0x00)
     #define STM_MAX_PACKET_LENGTH 256
-    #define STM_PASSTHROUGH_SIZE 16
+    #define MOTOSH_PASSTHROUGH_SIZE STML0XX_PASSTHROUGH_SIZE
 
     // IOCTL mappings
     #define MOTOSH_IOCTL_BOOTLOADERMODE     STML0XX_IOCTL_BOOTLOADERMODE
@@ -44,6 +44,7 @@
     #define MOTOSH_IOCTL_WRITE_REG          STML0XX_IOCTL_WRITE_REG
     #define MOTOSH_IOCTL_READ_REG           STML0XX_IOCTL_READ_REG
     #define MOTOSH_IOCTL_SET_LOWPOWER_MODE  STML0XX_IOCTL_SET_LOWPOWER_MODE
+    #define MOTOSH_IOCTL_PASSTHROUGH        STML0XX_IOCTL_PASSTHROUGH
 #else // MODULE_motosh
     #include <linux/motosh.h>
     #define STM_DRIVER "/dev/motosh"
@@ -116,9 +117,7 @@ typedef enum tag_stmmode
     TMWRITE,
     TMWRRD,
     READWRITE,
-#ifdef MODULE_stml0xx
     PASSTHROUGH,
-#endif
     LOWPOWER_MODE,
     MASS_ERASE_PART,
     INVALID
@@ -655,16 +654,13 @@ void help(int terminate)
     printf("      ex. -- read version\n");
 #ifdef MODULE_motosh
     printf("        ./motosh readwrite 00 00 01 00 01\n");
-#else
-    printf("        ./stml0xx readwrite 00 00 01 00 01\n");
-#endif
     printf("      ex. -- write 2 bytes\n");
-#ifdef MODULE_motosh
     printf("        ./motosh readwrite 01 00 0D 00 02 CC DD\n");
 #else
+    printf("        ./stml0xx readwrite 00 00 01 00 01\n");
+    printf("      ex. -- write 2 bytes\n");
     printf("        ./stml0xx readwrite 01 00 0D 00 02 CC DD\n");
 #endif
-#ifdef MODULE_stml0xx
     printf("    passthrough\n");
     printf("      options: <bus> <I2C addr> <reg addr> <r/w> <size> <data>\n");
     printf("        bus      - 1 byte I2C bus number\n");
@@ -674,6 +670,11 @@ void help(int terminate)
     printf("        size     - 1 byte read or write size\n");
     printf("        data     - bytes to be written (only used for write commmands)\n");
     printf("      ex. -- read 6 bytes of accel data\n");
+#ifdef MODULE_motosh
+    printf("        ./motosh passthrough 00 d0 00 12 00 06\n");
+    printf("      ex. -- write 1 byte config register\n");
+    printf("        ./motosh passthrough 00 d0 00 42 01 01 28\n");
+#else
     printf("        ./stml0xx passthrough 00 d0 00 12 00 06\n");
     printf("      ex. -- write 1 byte config register\n");
     printf("        ./stml0xx passthrough 00 d0 00 42 01 01 28\n");
@@ -729,10 +730,8 @@ int  main(int argc, char *argv[])
         emode = VERSION;
     else if(!strcmp(argv[1], "readwrite"))
         emode = READWRITE;
-#ifdef MODULE_stml0xx
     else if(!strcmp(argv[1], "passthrough"))
         emode = PASSTHROUGH;
-#endif
     else if(!strcmp(argv[1], "lowpower"))
         emode = LOWPOWER_MODE;
     else if(!strcmp(argv[1], "masserase"))
@@ -1023,13 +1022,16 @@ int  main(int argc, char *argv[])
 
         free(data_ptr);
     }
-#ifdef MODULE_stml0xx
     if (emode == PASSTHROUGH) {
+        // For stml0xx hub:
         //                      1B      1B         2B       1B    1B     ...
         // stml0xx passthrough [bus] [I2C addr] [reg addr] [r/w] [size] [data]
         //
         // read example:   stml0xx passthrough 00 d0 00 12 00 06
         // write example:  stml0xx passthrough 00 d0 00 42 01 01 28
+        //
+        // For motosh hub:
+        // motosh passthrough [bus] [I2C addr] [reg addr] [r/w] [size] [data]
 
         int result;
 
@@ -1038,7 +1040,7 @@ int  main(int argc, char *argv[])
 
         // Allocate space for the command and response data
         unsigned char *pt_data;
-        pt_data = (unsigned char *)malloc(STM_PASSTHROUGH_SIZE);
+        pt_data = (unsigned char *)malloc(MOTOSH_PASSTHROUGH_SIZE);
         if (pt_data == NULL) {
             printf("Passthrough memory allocation failure\n");
             goto EXIT;
@@ -1065,19 +1067,19 @@ int  main(int argc, char *argv[])
         unsigned int data_size = pt_data[5];
 
         if (read_write == 0) {
-            if (data_size > STM_PASSTHROUGH_SIZE - 1) {
+            if (data_size > MOTOSH_PASSTHROUGH_SIZE - 1) {
                 printf("Passthrough data size too large\n");
                 goto EXIT;
             }
         } else {
-            if (data_size > STM_PASSTHROUGH_SIZE - 6) {
+            if (data_size > MOTOSH_PASSTHROUGH_SIZE - 6) {
                 printf("Passthrough data size too large\n");
                 goto EXIT;
             }
         }
 
         // Pass the command to the hub
-        ret = ioctl(devFd, STML0XX_IOCTL_PASSTHROUGH, pt_data);
+        ret = motosh_ioctl(devFd, MOTOSH_IOCTL_PASSTHROUGH, pt_data);
         if (ret != 0) {
             DEBUG ("Command failed: %d", ret);
             printf ("Command failed: %d\n", ret);
@@ -1099,7 +1101,6 @@ int  main(int argc, char *argv[])
 
         free(pt_data);
     }
-#endif
     if(emode == LOWPOWER_MODE) {
         if( argc < 3 )
             help(1);
