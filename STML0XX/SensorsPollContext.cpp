@@ -120,6 +120,9 @@ int SensorsPollContext::handleToDriver(int handle)
 #ifdef _ENABLE_GYROSCOPE
 		case ID_G:
 		case ID_UNCALIB_GYRO:
+		case ID_GAME_RV:
+		case ID_LA:
+		case ID_GRAVITY:
 #endif
 		case ID_L:
 		case ID_DR:
@@ -146,7 +149,6 @@ int SensorsPollContext::handleToDriver(int handle)
 		case ID_M:
 		case ID_UM:
 		case ID_OR:
-		case ID_RV:
 			return akm;
 #endif
 #ifdef _ENABLE_REARPROX
@@ -168,11 +170,11 @@ int SensorsPollContext::activate(int handle, int enabled)
 	err = mSensors[drv]->setEnable(handle, enabled);
 
 #ifdef _ENABLE_MAGNETOMETER
-	if (!err && ((handle == ID_OR) || (handle == ID_RV))) {
+	if (!err && (handle == ID_OR)) {
 		err = mSensors[sensor_hub]->setEnable(handle, enabled);
 	}
 
-	if (((handle == ID_M) || (handle == ID_OR) || (handle == ID_RV))  && enabled && !err) {
+	if (((handle == ID_M) || (handle == ID_OR))  && enabled && !err) {
 		const char wakeMessage(WAKE_MESSAGE);
 		int result = write(mWritePipeFd, &wakeMessage, 1);
 		ALOGE_IF(result<0, "error sending wake message (%s)", strerror(errno));
@@ -193,7 +195,7 @@ int SensorsPollContext::setDelay(int handle, int64_t ns)
 	err = mSensors[drv]->setDelay(handle, ns);
 
 #ifdef _ENABLE_MAGNETOMETER
-	if (!err && ((handle == ID_OR) || (handle == ID_RV))) {
+	if (!err && (handle == ID_OR)) {
 		err = mSensors[sensor_hub]->setDelay(handle, ns);
 	}
 #endif

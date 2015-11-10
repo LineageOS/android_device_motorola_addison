@@ -58,6 +58,8 @@
 /* Resolution settings */
 #define GYRO_QUANTIZATION_LEVELS  (INT16_MAX)
 #define ALS_QUANTIZATION_LEVELS   (UINT16_MAX)
+#define RV_QUANTIZATION_LEVELS    (INT16_MAX)
+#define GRAV_QUANTIZATION_LEVELS  (INT16_MAX)
 
 /* Min delays */
 #define ACCEL_MIN_DELAY_US 10000
@@ -66,10 +68,11 @@
 #define STEP_MIN_DELAY_US  1000000 /* 1 sec */
 
 /* Max delays */
-#define ACCEL_MAX_DELAY_US 200000
-#define GYRO_MAX_DELAY_US  200000
-#define MAG_MAX_DELAY_US   1000000
-#define STEP_MAX_DELAY_US  0
+#define ACCEL_MAX_DELAY_US  200000
+#define GYRO_MAX_DELAY_US   200000
+#define MAG_MAX_DELAY_US    1000000
+#define STEP_MAX_DELAY_US   0
+#define FUSION_MAX_DELAY_US 20000
 
 /* Various current draw figures in mA */
 #define MAG_MA    0.10f
@@ -81,6 +84,8 @@
 #define CAM_ACT_ALGO_MA   1.0f
 #define CHOP_CHOP_ALGO_MA 1.0f
 #define LIFT_ALGO_MA      1.0f
+#define MOT_GAMERV_MA     1.0f
+#define MOT_LAGRAV_MA     1.0f
 
 static const struct sensor_t sSensorList[] = {
 	{ .name = "3-axis Accelerometer",
@@ -94,12 +99,12 @@ static const struct sensor_t sSensorList[] = {
 		.minDelay = ACCEL_MIN_DELAY_US,
 		.fifoReservedEventCount = 0,
 		.fifoMaxEventCount = 0,
-		.stringType = "",
+		.stringType = SENSOR_STRING_TYPE_ACCELEROMETER,
 		.requiredPermission = "",
 		.maxDelay = ACCEL_MAX_DELAY_US,
 		.flags = SENSOR_FLAG_CONTINUOUS_MODE,
 		.reserved = {0,0} },
-#if defined(_ENABLE_BMI160) && defined(_ENABLE_GYROSCOPE)
+#ifdef _ENABLE_GYROSCOPE
 	{ .name = "3-axis Gyroscope",
 		.vendor = VENDOR_GYRO,
 		.version = 1,
@@ -111,8 +116,8 @@ static const struct sensor_t sSensorList[] = {
 		.minDelay = GYRO_MIN_DELAY_US,
 		.fifoReservedEventCount = 0,
 		.fifoMaxEventCount = 0,
-		.stringType = "",
-		.requiredPermission = "",
+		.stringType = SENSOR_STRING_TYPE_GYROSCOPE,
+		.requiredPermission = SENSOR_STRING_TYPE_GYROSCOPE,
 		.maxDelay = GYRO_MAX_DELAY_US,
 		.flags = SENSOR_FLAG_CONTINUOUS_MODE,
 		.reserved = {0,0} },
@@ -127,12 +132,60 @@ static const struct sensor_t sSensorList[] = {
 		.minDelay = GYRO_MIN_DELAY_US,
 		.fifoReservedEventCount = 0,
 		.fifoMaxEventCount = 0,
-		.stringType = "",
+		.stringType = SENSOR_STRING_TYPE_GYROSCOPE_UNCALIBRATED,
 		.requiredPermission = "",
 		.maxDelay = GYRO_MAX_DELAY_US,
 		.flags = SENSOR_FLAG_CONTINUOUS_MODE,
 		.reserved = {0,0} },
-#endif
+	{ .name = "Game Rotation Vector",
+		.vendor = VENDOR_MOT,
+		.version = 1,
+		.handle = SENSORS_HANDLE_BASE + ID_GAME_RV,
+		.type = SENSOR_TYPE_GAME_ROTATION_VECTOR,
+		.maxRange = 1.0f,
+		.resolution = 1.0f / RV_QUANTIZATION_LEVELS,
+		.power = ACCEL_MA + GYRO_MA + MOT_GAMERV_MA,
+		.minDelay = GYRO_MIN_DELAY_US,
+		.fifoReservedEventCount = 0,
+		.fifoMaxEventCount = 0,
+		.stringType = SENSOR_STRING_TYPE_GAME_ROTATION_VECTOR,
+		.requiredPermission = "",
+		.maxDelay = FUSION_MAX_DELAY_US,
+		.flags = SENSOR_FLAG_CONTINUOUS_MODE,
+		.reserved = {0,0} },
+	{ .name = "Gravity",
+		.vendor = VENDOR_MOT,
+		.version = 1,
+		.handle = SENSORS_HANDLE_BASE + ID_GRAVITY,
+		.type = SENSOR_TYPE_GRAVITY,
+		.maxRange = GRAVITY_EARTH,
+		.resolution = GRAVITY_EARTH / GRAV_QUANTIZATION_LEVELS,
+		.power = ACCEL_MA + GYRO_MA + MOT_LAGRAV_MA,
+		.minDelay = ACCEL_MIN_DELAY_US,
+		.fifoReservedEventCount = 0,
+		.fifoMaxEventCount = 0,
+		.stringType = SENSOR_STRING_TYPE_GRAVITY,
+		.requiredPermission = "",
+		.maxDelay = FUSION_MAX_DELAY_US,
+		.flags = SENSOR_FLAG_CONTINUOUS_MODE,
+		.reserved = {0,0} },
+	{ .name = "Linear Acceleration",
+		.vendor = VENDOR_MOT,
+		.version = 1,
+		.handle = SENSORS_HANDLE_BASE+ID_LA,
+		.type = SENSOR_TYPE_LINEAR_ACCELERATION,
+		.maxRange = ACCEL_FULLSCALE_G * GRAVITY_EARTH,
+		.resolution = GRAVITY_EARTH / LSG,
+		.power = ACCEL_MA + GYRO_MA + MOT_LAGRAV_MA,
+		.minDelay = ACCEL_MIN_DELAY_US,
+		.fifoReservedEventCount = 0,
+		.fifoMaxEventCount = 0,
+		.stringType = SENSOR_STRING_TYPE_LINEAR_ACCELERATION,
+		.requiredPermission = "",
+		.maxDelay = FUSION_MAX_DELAY_US,
+		.flags = SENSOR_FLAG_CONTINUOUS_MODE,
+		.reserved = {0,0} },
+#endif /* _ENABLE_GYROSCOPE */
 #ifdef _ENABLE_PEDO
 	{ .name = "Step Detector sensor",
 		.vendor = VENDOR_ACCEL,
@@ -150,7 +203,6 @@ static const struct sensor_t sSensorList[] = {
 		.maxDelay = 0,
 		.flags = SENSOR_FLAG_SPECIAL_REPORTING_MODE,
 		.reserved = {0,0} },
-
 	{ .name = "Step Counter sensor",
 		.vendor = VENDOR_ACCEL,
 		.version = 1,
@@ -180,7 +232,7 @@ static const struct sensor_t sSensorList[] = {
 		.minDelay = MAG_MIN_DELAY_US,
 		.fifoReservedEventCount = 0,
 		.fifoMaxEventCount = 0,
-		.stringType = "",
+		.stringType = SENSOR_STRING_TYPE_MAGNETIC_FIELD,
 		.requiredPermission = "",
 		.maxDelay = MAG_MAX_DELAY_US,
 		.flags = SENSOR_FLAG_CONTINUOUS_MODE,
@@ -196,7 +248,7 @@ static const struct sensor_t sSensorList[] = {
 		.minDelay = MAG_MIN_DELAY_US,
 		.fifoReservedEventCount = 0,
 		.fifoMaxEventCount = 0,
-		.stringType = "",
+		.stringType = SENSOR_STRING_TYPE_MAGNETIC_FIELD_UNCALIBRATED,
 		.requiredPermission = "",
 		.maxDelay = MAG_MAX_DELAY_US,
 		.flags = SENSOR_FLAG_CONTINUOUS_MODE,
@@ -212,7 +264,7 @@ static const struct sensor_t sSensorList[] = {
 		.minDelay = MAG_MIN_DELAY_US,
 		.fifoReservedEventCount = 0,
 		.fifoMaxEventCount = 0,
-		.stringType = "",
+		.stringType = SENSOR_STRING_TYPE_ORIENTATION,
 		.requiredPermission = "",
 		.maxDelay = MAG_MAX_DELAY_US,
 		.flags = SENSOR_FLAG_CONTINUOUS_MODE,
@@ -229,7 +281,7 @@ static const struct sensor_t sSensorList[] = {
 		.minDelay = 0,
 		.fifoReservedEventCount = 0,
 		.fifoMaxEventCount = 0,
-		.stringType = "",
+		.stringType = SENSOR_STRING_TYPE_LIGHT,
 		.requiredPermission = "",
 		.maxDelay = 0,
 		.flags = SENSOR_FLAG_ON_CHANGE_MODE,
@@ -245,7 +297,7 @@ static const struct sensor_t sSensorList[] = {
 		.minDelay = 0,
 		.fifoReservedEventCount = 0,
 		.fifoMaxEventCount = 0,
-		.stringType = "",
+		.stringType = SENSOR_STRING_TYPE_PROXIMITY,
 		.requiredPermission = "",
 		.maxDelay = 0,
 		.flags = SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
@@ -378,13 +430,12 @@ static const struct sensor_t sSensorList[] = {
 		.minDelay = ACCEL_MIN_DELAY_US,
 		.fifoReservedEventCount = 0,
 		.fifoMaxEventCount = 0,
-		.stringType = "",
+		.stringType = SENSOR_STRING_TYPE_ACCELEROMETER,
 		.requiredPermission = "",
 		.maxDelay = ACCEL_MAX_DELAY_US,
 		.flags = SENSOR_FLAG_CONTINUOUS_MODE,
 		.reserved = {0,0} },
 #endif
-
 #ifdef _ENABLE_REARPROX
 	{ .name = "Rear Proximity sensor",
 		.vendor = VENDOR_MOT,
@@ -397,10 +448,40 @@ static const struct sensor_t sSensorList[] = {
 		.minDelay = 0,
 		.fifoReservedEventCount = 0,
 		.fifoMaxEventCount = 0,
-		.stringType = "",
+		.stringType = SENSOR_STRING_TYPE_PROXIMITY,
 		.requiredPermission = "",
 		.maxDelay = 10000000,
 		.flags = SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
 		.reserved = { 0, 0 } },
 #endif
 };
+
+/* Clean up definitions */
+#undef VENDOR_ACCEL
+#undef VENDOR_GYRO
+#undef VENDOR_MAG
+#undef VENDOR_MOT
+#undef VENDOR_PROXALS
+
+#undef ACCEL_MA
+#undef GYRO_MA
+#undef MAG_MA
+#undef ALS_MA
+#undef PROX_MA
+
+#undef ORIENT_ALGO_MA
+#undef CAM_ACT_ALGO_MA
+#undef CHOP_CHOP_ALGO_MA
+#undef LIFT_ALGO_MA
+#undef MOT_GAMERV_MA
+#undef MOT_LAGRAV_MA
+
+#undef ACCEL_FULLSCALE_G
+#undef GYRO_FULLSCALE_DPS
+#undef MAG_FULLSCALE_UT
+#undef ALS_FULLSCALE_LUX
+
+#undef GYRO_QUANTIZATION_LEVELS
+#undef ALS_QUANTIZATION_LEVELS
+#undef RV_QUANTIZATION_LEVELS
+#undef GRAV_QUANTIZATION_LEVELS

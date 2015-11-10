@@ -61,6 +61,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
             SH_PATH := STML0XX
             SH_LOGTAG := \"STML0XX\"
             SH_CFLAGS += -D_ENABLE_BMI160
+            # Game RV, Linear Accel, Gravity supported by default with gyroscope
             SH_CFLAGS += -D_ENABLE_GYROSCOPE
             SH_CFLAGS += -D_ENABLE_CHOPCHOP
             SH_CFLAGS += -D_ENABLE_REARPROX
@@ -81,11 +82,14 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
 
         ifneq (,$(filter athene_%, $(strip $(TARGET_PRODUCT))))
             # Sensor HAL file for M0 hub (low-tier) products (athene, etc...)
-            LOCAL_SRC_FILES +=              \
-                    $(SH_PATH)/RearProxSensor.cpp    \
-                    $(SH_PATH)/InputEventReader.cpp
             LOCAL_SRC_FILES += \
-                $(SH_PATH)/HubSensor.cpp
+                $(SH_PATH)/RearProxSensor.cpp \
+                $(SH_PATH)/InputEventReader.cpp \
+                $(SH_PATH)/HubSensor.cpp \
+                $(SH_PATH)/FusionSensorBase.cpp \
+                $(SH_PATH)/Quaternion.cpp \
+                $(SH_PATH)/GameRotationVector.cpp \
+                $(SH_PATH)/LinearAccelGravity.cpp
         else
             # Sensor HAL files for M4 and L4 (high-tier) products (vector, etc...)
             LOCAL_SRC_FILES += \

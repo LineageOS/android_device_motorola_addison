@@ -41,33 +41,35 @@ __BEGIN_DECLS
 
 typedef enum sensor_handle {
 	MIN_SENSOR_ID,
-	ID_A,	/* Accelerometer */
+	ID_A,              /* Accelerometer */
 #ifdef _ENABLE_GYROSCOPE
-	ID_G,   /* Gyroscope */
+	ID_G,              /* Gyroscope */
 	ID_UNCALIB_GYRO,   /* Uncalibrated Gyroscope */
-#endif
-	ID_L,	/* Light */
-	ID_P,	/* Proximity */
-	ID_DR,	/* Display Rotate */
-	ID_FU,	/* Flat Up */
-	ID_FD,	/* Flat Down */
-	ID_S,	/* Stowed */
-	ID_CA,	/* Camera Activate */
-	ID_A2,	/* Secondary Accel */
+	ID_GAME_RV,        /* Game Rotation Vector */
+	ID_GRAVITY,        /* Gravity */
+	ID_LA,             /* Linear Acceleration */
+#endif //_ENABLE_GYROSCOPE
+	ID_L,	           /* Light */
+	ID_P,	           /* Proximity */
+	ID_DR,	           /* Display Rotate */
+	ID_FU,	           /* Flat Up */
+	ID_FD,	           /* Flat Down */
+	ID_S,	           /* Stowed */
+	ID_CA,	           /* Camera Activate Gesture */
+	ID_A2,	           /* Secondary Accel */
 #ifdef _ENABLE_MAGNETOMETER
-	ID_M,	/* Magnetometer */
-	ID_UM,	/* Uncalibrated Magnetometer */
-	ID_OR,	/* Orientation */
-	ID_RV, 	/* Rotation Vector */
+	ID_M,	           /* Magnetometer */
+	ID_UM,	           /* Uncalibrated Magnetometer */
+	ID_OR,	           /* Orientation */
 #endif
 #ifdef _ENABLE_CHOPCHOP
-	ID_CC,
+	ID_CC,             /* Chopchop gesture */
 #endif
 #ifdef _ENABLE_LIFT
-	ID_LF, 	/* Lift Gesture */
+	ID_LF, 	           /* Lift Gesture */
 #endif
 #ifdef _ENABLE_REARPROX
-	ID_RP, 	/* moto rear proximity */
+	ID_RP, 	           /* Moto Rear Proximity */
 #endif
 #ifdef _ENABLE_PEDO
 	ID_STEP_DETECTOR, /* Step detector */

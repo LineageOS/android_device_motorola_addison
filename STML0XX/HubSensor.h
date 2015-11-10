@@ -34,6 +34,9 @@
 
 #include "Sensors.h"
 #include "SensorBase.h"
+#include "SensorList.h"
+#include "GameRotationVector.h"
+#include "LinearAccelGravity.h"
 
 /*****************************************************************************/
 
@@ -84,70 +87,82 @@ struct input_event;
 
 class HubSensor : public SensorBase {
 public:
-	HubSensor();
-	virtual ~HubSensor();
+    HubSensor();
+    virtual ~HubSensor();
 
-	static HubSensor* getInstance();
-	virtual int setEnable(int32_t handle, int enabled);
-	virtual int setDelay(int32_t handle, int64_t ns);
-	virtual int readEvents(sensors_event_t* data, int count);
-	virtual int flush(int32_t handle);
+    static HubSensor* getInstance();
+    virtual int setEnable(int32_t handle, int enabled);
+    virtual int setDelay(int32_t handle, int64_t ns);
+    virtual int readEvents(sensors_event_t* data, int count);
+    virtual int flush(int32_t handle);
 
 private:
+    enum fusion_enum
+    {
+        ACCEL,
 #ifdef _ENABLE_MAGNETOMETER
-	typedef enum fusion_enum
-	{
-		ACCEL,
-		ORIENTATION,
-		ROTATION,
-		NUM_FUSION_DEVICES
-	} Fusion_Device;
-
-	uint32_t mFusionEnabled[NUM_FUSION_DEVICES];
-	unsigned short mFusionDelay[NUM_FUSION_DEVICES];
+        ORIENTATION,
 #endif
+#ifdef _ENABLE_GYROSCOPE
+        GYRO,
+        UNCALIB_GYRO,
+        GAME_RV,
+        LINEAR_ACCEL,
+        GRAVITY,
+#endif
+        NUM_FUSION_DEVICES
+    };
 
-	static HubSensor self;
-	uint32_t mEnabled;
-	uint32_t mWakeEnabled;
-	uint32_t mPendingMask;
-	uint32_t mFlushEnabled;
+    typedef struct {
+        bool enabled;
+        bool usesAccel;
+        bool usesGyro;
+        bool usesMag;
+        unsigned short delay; // ms
+    } FusionSensor;
+
+    FusionSensor mFusionSensors[NUM_FUSION_DEVICES];
+
+    static HubSensor self;
+    uint32_t mEnabled;
+    uint32_t mWakeEnabled;
+    uint32_t mPendingMask;
+    uint32_t mFlushEnabled;
 
 #ifdef _ENABLE_GYROSCOPE
-        //! \brief gyroscope calibration table
-        uint8_t mGyroCal[STML0XX_GYRO_CAL_SIZE];
-        //! \brief last value passed to \c enable() on gyro sensor
-        uint8_t mGyroEnabled;
-        //! \brief last value passed to \c enable() on uncal gyro sensor
-        uint8_t mUncalGyroEnabled;
-        //! \brief \c USHRT_MAX if unset or gyro disabled, o.w. the requested gyro delay in ms.
-        unsigned short mGyroReqDelay;
-        //! \brief \c USHRT_MAX if unset or uncal gyro disabled, o.w. the requested uncal gyro delay in ms.
-        unsigned short mUncalGyroReqDelay;
-        //! \brief Currently-set gyro delay in ms, or \c USHRT_MAX if unset.
-        unsigned short mGyroDelay;
+    //! \brief gyroscope calibration table
+    uint8_t mGyroCal[STML0XX_GYRO_CAL_SIZE];
+    GameRotationVector *mGameRV;
+    LinearAccelGravity *mLAGravity;
 #endif
 
-	uint8_t mErrorCnt[ERROR_TYPES];
-	gzFile open_dropbox_file(const char* timestamp, const char* dst, const int flags);
-	short capture_dump(char* timestamp, const int id, const char* dst, const int flags);
-	void logAlsEvent(int16_t lux, int64_t ts_ns);
+    uint8_t mErrorCnt[ERROR_TYPES];
+    gzFile open_dropbox_file(const char* timestamp, const char* dst, const int flags);
+    short capture_dump(char* timestamp, const int id, const char* dst, const int flags);
+    void logAlsEvent(int16_t lux, int64_t ts_ns);
 
 #ifdef _ENABLE_GYROSCOPE
-        /*!
-         * \brief Helper to update gyro rate
-         *
-         * Reads \c mGyroReqDelay, and \c mUncalGyroReqDelay.
-         * Sets \c mGyroDelay to the value passed through the ioctl(), or
-         * back to \c USHRT_MAX if all requested delays are USHRT_MAX.
-         *
-         * Only issues a new delay-change ioctl() if the computed rate is
-         * different from the currently-set \c mGyroDelay.
-         *
-         * \returns ioctl() status resulting from gyro rate set
-         */
-        int updateGyroRate();
+    /*!
+     * \brief Helper to update gyro rate
+     *
+     * Determines the gyro rate based on the current registrations
+     * of one or more sensors that involve sensor fusion
+     *
+     * \returns ioctl() status resulting from gyro rate set
+     */
+    int updateGyroRate();
+    bool isGyroNeeded();
 #endif
+    /*!
+     * \brief Helper to update accel rate
+     *
+     * Determines the accel rate based on the current registrations
+     * of one or more sensors that involve sensor fusion
+     *
+     * \returns ioctl() status resulting from accel rate set
+     */
+    int updateAccelRate();
+    bool isAccelNeeded();
 };
 
 /*****************************************************************************/
