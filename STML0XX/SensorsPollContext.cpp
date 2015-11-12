@@ -46,7 +46,7 @@
 #include "RearProxSensor.h"
 #endif
 #include "AkmSensor.h"
-#include "HubSensor.h"
+#include "HubSensors.h"
 
 /*****************************************************************************/
 
@@ -54,13 +54,13 @@ SensorsPollContext SensorsPollContext::self;
 
 SensorsPollContext::SensorsPollContext()
 {
-	mSensors[sensor_hub] = HubSensor::getInstance();
+	mSensors[sensor_hub] = HubSensors::getInstance();
 	if (mSensors[sensor_hub]) {
 		mPollFds[sensor_hub].fd = mSensors[sensor_hub]->getFd();
 		mPollFds[sensor_hub].events = POLLIN;
 		mPollFds[sensor_hub].revents = 0;
 	} else {
-		ALOGE("out of memory: new failed for HubSensor");
+		ALOGE("out of memory: new failed for HubSensors");
 	}
 
 #ifdef _ENABLE_MAGNETOMETER

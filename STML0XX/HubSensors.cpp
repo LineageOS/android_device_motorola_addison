@@ -35,7 +35,7 @@
 
 #include <hardware/mot_sensorhub_stml0xx.h>
 
-#include "HubSensor.h"
+#include "HubSensors.h"
 
 /*****************************************************************************/
 
@@ -46,9 +46,9 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
-HubSensor HubSensor::self;
+HubSensors HubSensors::self;
 
-HubSensor::HubSensor()
+HubSensors::HubSensors()
 : SensorBase(SENSORHUB_DEVICE_NAME, NULL, SENSORHUB_AS_DATA_NAME),
     mEnabled(0),
     mWakeEnabled(0),
@@ -120,16 +120,16 @@ HubSensor::HubSensor()
     }
 }
 
-HubSensor::~HubSensor()
+HubSensors::~HubSensors()
 {
 }
 
-HubSensor *HubSensor::getInstance()
+HubSensors *HubSensors::getInstance()
 {
     return &self;
 }
 
-int HubSensor::setEnable(int32_t handle, int en)
+int HubSensors::setEnable(int32_t handle, int en)
 {
     int newState = en ? 1 : 0;
     uint32_t new_enabled;
@@ -318,7 +318,7 @@ int HubSensor::setEnable(int32_t handle, int en)
     return err;
 }
 
-int HubSensor::setDelay(int32_t handle, int64_t ns)
+int HubSensors::setDelay(int32_t handle, int64_t ns)
 {
     int err = 0;
     unsigned int i;
@@ -399,7 +399,7 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
 #endif
         default:
             // Unsupported sensor
-            ALOGE("HubSensor::setDelay - Unsupported sensor");
+            ALOGE("HubSensors::setDelay - Unsupported sensor");
             err = -EINVAL;
             break;
     }
@@ -421,7 +421,7 @@ int HubSensor::setDelay(int32_t handle, int64_t ns)
     return err;
 }
 
-void HubSensor::logAlsEvent(int16_t lux, int64_t ts_ns) {
+void HubSensors::logAlsEvent(int16_t lux, int64_t ts_ns) {
     static int16_t last_logged_val = -1;
     static int64_t last_logged_ts_ns;
     int16_t luxDelta = abs(lux - last_logged_val);
@@ -434,7 +434,7 @@ void HubSensor::logAlsEvent(int16_t lux, int64_t ts_ns) {
     }
 }
 
-int HubSensor::readEvents(sensors_event_t* d, int dLen)
+int HubSensors::readEvents(sensors_event_t* d, int dLen)
 {
     struct stml0xx_android_sensor_data buff;
     int ret;
@@ -447,11 +447,11 @@ int HubSensor::readEvents(sensors_event_t* d, int dLen)
     static bool reportLAGravity = false;
 
     if (!data) {
-        ALOGE("HubSensor::readEvents - null data buffer");
+        ALOGE("HubSensors::readEvents - null data buffer");
         return -EINVAL;
     }
     if (dLen < 1) {
-        ALOGE("HubSensor::readEvents - bad length %d", dLen);
+        ALOGE("HubSensors::readEvents - bad length %d", dLen);
         return -EINVAL;
     }
 
@@ -775,7 +775,7 @@ int HubSensor::readEvents(sensors_event_t* d, int dLen)
     return data - d;
 }
 
-int HubSensor::flush(int32_t handle)
+int HubSensors::flush(int32_t handle)
 {
     int ret = 0;
     if (handle > MIN_SENSOR_ID && handle < MAX_SENSOR_ID) {
@@ -784,7 +784,7 @@ int HubSensor::flush(int32_t handle)
     return ret;
 }
 
-gzFile HubSensor::open_dropbox_file(const char* timestamp, const char* dst, const int flags)
+gzFile HubSensors::open_dropbox_file(const char* timestamp, const char* dst, const int flags)
 {
     (void)dst;
 
@@ -798,7 +798,7 @@ gzFile HubSensor::open_dropbox_file(const char* timestamp, const char* dst, cons
     return gzopen(dropbox_path, "wb");
 }
 
-short HubSensor::capture_dump(char* timestamp, const int id, const char* dst, const int flags)
+short HubSensors::capture_dump(char* timestamp, const int id, const char* dst, const int flags)
 {
     char buffer[COPYSIZE] = {0};
     int rc = 0, i = 0;
@@ -829,7 +829,7 @@ short HubSensor::capture_dump(char* timestamp, const int id, const char* dst, co
 }
 
 #ifdef _ENABLE_GYROSCOPE
-int HubSensor::updateGyroRate()
+int HubSensors::updateGyroRate()
 {
     static unsigned short prev_delay;
     unsigned short delay = GYRO_MAX_DELAY_US / 1000; // convert to ms
@@ -853,7 +853,7 @@ int HubSensor::updateGyroRate()
     return err;
 }
 
-bool HubSensor::isGyroNeeded()
+bool HubSensors::isGyroNeeded()
 {
     int sensorIdx;
     for (sensorIdx = 0; sensorIdx < NUM_FUSION_DEVICES; sensorIdx++) {
@@ -865,7 +865,7 @@ bool HubSensor::isGyroNeeded()
 }
 #endif
 
-int HubSensor::updateAccelRate()
+int HubSensors::updateAccelRate()
 {
     static unsigned short prev_delay;
     unsigned short delay = ACCEL_MAX_DELAY_US / 1000; // convert to ms
@@ -889,7 +889,7 @@ int HubSensor::updateAccelRate()
     return err;
 }
 
-bool HubSensor::isAccelNeeded()
+bool HubSensors::isAccelNeeded()
 {
     for (int sensorIdx = 0; sensorIdx < NUM_FUSION_DEVICES; sensorIdx++) {
         if (mFusionSensors[sensorIdx].usesAccel &&

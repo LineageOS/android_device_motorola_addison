@@ -78,14 +78,14 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
 
         LOCAL_SRC_FILES :=              \
             $(SH_PATH)/SensorBase.cpp   \
-            $(SH_PATH)/SensorHal.cpp
+            $(SH_PATH)/SensorHal.cpp    \
+            $(SH_PATH)/HubSensors.cpp
 
         ifneq (,$(filter athene_%, $(strip $(TARGET_PRODUCT))))
             # Sensor HAL file for M0 hub (low-tier) products (athene, etc...)
             LOCAL_SRC_FILES += \
                 $(SH_PATH)/RearProxSensor.cpp \
                 $(SH_PATH)/InputEventReader.cpp \
-                $(SH_PATH)/HubSensor.cpp \
                 $(SH_PATH)/FusionSensorBase.cpp \
                 $(SH_PATH)/Quaternion.cpp \
                 $(SH_PATH)/GameRotationVector.cpp \
@@ -93,7 +93,6 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         else
             # Sensor HAL files for M4 and L4 (high-tier) products (vector, etc...)
             LOCAL_SRC_FILES += \
-                $(SH_PATH)/HubSensors.cpp \
                 $(SH_PATH)/SensorList.cpp
         endif
 

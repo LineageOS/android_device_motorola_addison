@@ -85,12 +85,12 @@
 
 struct input_event;
 
-class HubSensor : public SensorBase {
+class HubSensors : public SensorBase {
 public:
-    HubSensor();
-    virtual ~HubSensor();
+    HubSensors();
+    virtual ~HubSensors();
 
-    static HubSensor* getInstance();
+    static HubSensors* getInstance();
     virtual int setEnable(int32_t handle, int enabled);
     virtual int setDelay(int32_t handle, int64_t ns);
     virtual int readEvents(sensors_event_t* data, int count);
@@ -123,7 +123,7 @@ private:
 
     FusionSensor mFusionSensors[NUM_FUSION_DEVICES];
 
-    static HubSensor self;
+    static HubSensors self;
     uint32_t mEnabled;
     uint32_t mWakeEnabled;
     uint32_t mPendingMask;
