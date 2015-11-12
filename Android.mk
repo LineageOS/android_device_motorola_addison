@@ -41,7 +41,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         # 8996
         ifeq ($(call is-board-platform,msm8996),true)
             SH_MODULE := motosh
-            SH_PATH := MOTOSH
+            SH_PATH := motosh_hal
             SH_LOGTAG := \"MOTOSH\"
             SH_CFLAGS += -D_ENABLE_LA
             SH_CFLAGS += -D_ENABLE_GR
@@ -58,7 +58,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         # 8952
         ifeq ($(call is-board-platform,msm8952),true)
             SH_MODULE := stml0xx
-            SH_PATH := STML0XX
+            SH_PATH := stml0xx_hal
             SH_LOGTAG := \"STML0XX\"
             SH_CFLAGS += -D_ENABLE_BMI160
             # Game RV, Linear Accel, Gravity supported by default with gyroscope
@@ -154,8 +154,8 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
     LOCAL_SHARED_LIBRARIES := libcutils libc libsensorhub
 
     LOCAL_SRC_FILES := \
-        MOTOSH/motosh.cpp \
-        MOTOSH/CRC32.c
+        motosh_bin/motosh.cpp \
+        motosh_bin/CRC32.c
     LOCAL_REQUIRED_MODULES += sensorhub-blacklist.txt
 
     LOCAL_C_INCLUDES := \
@@ -173,7 +173,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
     LOCAL_MODULE_TAGS   := optional
     LOCAL_MODULE_CLASS  := ETC
     LOCAL_MODULE_PATH   := $(TARGET_OUT)/etc/firmware
-    LOCAL_SRC_FILES     := $(SH_PATH)/sensorhub-blacklist.txt
+    LOCAL_SRC_FILES     := motosh_bin/sensorhub-blacklist.txt
     include $(BUILD_PREBUILT)
     # ********************************************************************************
 
