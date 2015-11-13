@@ -98,9 +98,9 @@
 }
 
 #ifdef _DEBUG
-#define DEBUG(format, ...) ALOGE(format,## __VA_ARGS__);
+#define LOGDEBUG(format, ...) ALOGE(format,## __VA_ARGS__);
 #else
-#define DEBUG(format, ...) ;
+#define LOGDEBUG(format, ...) ;
 #endif
 
 /****************************** structures & enums *****************************/
@@ -574,11 +574,11 @@ int stm_downloadFirmware(FILE *filep)
     unsigned char packet[STM_MAX_PACKET_LENGTH];
     int temp = 100; // this is only a dummy variable for the 3rd parameter of ioctl call
 
-    DEBUG("Ioctl call to switch to bootloader mode\n");
+    LOGDEBUG("Ioctl call to switch to bootloader mode\n");
     ret = motosh_ioctl(devFd, MOTOSH_IOCTL_BOOTLOADERMODE, &temp);
     CHECK_RETURN_VALUE(ret,"Failed to switch STM to bootloader mode\n");
 
-    DEBUG("Ioctl call to erase flash on STM\n");
+    LOGDEBUG("Ioctl call to erase flash on STM\n");
     ret = motosh_ioctl(devFd, MOTOSH_IOCTL_MASSERASE, &temp);
     CHECK_RETURN_VALUE(ret,"Failed to erase STM \n");
 
@@ -586,7 +586,7 @@ int stm_downloadFirmware(FILE *filep)
     ret = motosh_ioctl(devFd, MOTOSH_IOCTL_SETSTARTADDR, &address);
     CHECK_RETURN_VALUE(ret,"Failed to set address\n");
 
-    DEBUG("Start sending firmware packets to the driver\n");
+    LOGDEBUG("Start sending firmware packets to the driver\n");
     // Move the file pointer to the beginning of the file in case this is a re-try
     fseek(filep, 0, SEEK_SET);
     do {
@@ -594,10 +594,10 @@ int stm_downloadFirmware(FILE *filep)
         if( packetlength == 0)
             break;
 #ifdef _DEBUG
-        DEBUG("Sending packet %d  of length %d:\n", packetno++, packetlength);
+        LOGDEBUG("Sending packet %d  of length %d:\n", packetno++, packetlength);
         int i;
         for( i=0; i<packetlength; i++)
-            DEBUG("%02x ",packet[i]);
+            LOGDEBUG("%02x ",packet[i]);
 #endif
         printf(".");
         fflush(stdout);
@@ -703,7 +703,7 @@ int  main(int argc, char *argv[])
     char ver_string[FW_VERSION_SIZE];
     char fw_file_name[STM_MAX_PATH];
 
-    DEBUG("Start MOTOSH  Version-1 service\n");
+    LOGDEBUG("Start MOTOSH  Version-1 service\n");
 
     /*parse command line arguements */
     if( argc < 2 || !strcmp(argv[1], "help") )
@@ -822,7 +822,7 @@ int  main(int argc, char *argv[])
             CHECK_RETURN_VALUE(ret = (tries >= STM_DOWNLOADRETRIES ? -1 : 0),
                     "Firmware download failed")
         } else {
-            DEBUG("No new firmware to download \n");
+            LOGDEBUG("No new firmware to download \n");
         }
 
         #ifdef MODULE_motosh
@@ -833,66 +833,66 @@ int  main(int argc, char *argv[])
         property_set("hw.motosh.booted", "1");
     }
     if(emode == NORMAL) {
-        DEBUG("Ioctl call to reset STM\n");
+        LOGDEBUG("Ioctl call to reset STM\n");
         ret = motosh_ioctl(devFd,MOTOSH_IOCTL_NORMALMODE, &temp);
         CHECK_RETURN_VALUE(ret, "STM reset failed");
     }
     if( emode == TBOOT) {
-        DEBUG("Ioctl call to send STM to boot mode\n");
+        LOGDEBUG("Ioctl call to send STM to boot mode\n");
                 ret = motosh_ioctl(devFd,MOTOSH_IOCTL_TEST_BOOTMODE, &temp);
                 CHECK_RETURN_VALUE(ret, "STM not in bootloader mode");
     }
     if( emode == TREAD) {
         if( argc < 4 )
             help(1);
-        DEBUG("Test read\n");
+        LOGDEBUG("Test read\n");
         // get the register to read from
                 stm_convertAsciiToHex(argv[2],hexinput,strlen(argv[2]));
-        DEBUG( "%02x: ", hexinput[0]);
+        LOGDEBUG( "%02x: ", hexinput[0]);
                 ret = motosh_ioctl(devFd,MOTOSH_IOCTL_TEST_WRITE,hexinput);
 
         // get the number of bytes to be read
         stm_convertAsciiToHex(argv[3],hexinput,strlen(argv[3]));
-        DEBUG( "count = %02x: \n ", hexinput[0]);
+        LOGDEBUG( "count = %02x: \n ", hexinput[0]);
 
         for( i= 0; i< hexinput[0]; i++) {
             ret = motosh_ioctl(devFd,MOTOSH_IOCTL_TEST_READ, &temp);
-            DEBUG( "%02x ", ret);
+            LOGDEBUG( "%02x ", ret);
         }
     }
     if( emode == TWRITE) {
-        DEBUG(" Test write\n");
+        LOGDEBUG(" Test write\n");
         for( i=0; i< (argc-2); i++) {
             stm_convertAsciiToHex(argv[i+2],hexinput,strlen(argv[i+2]));
             ret = motosh_ioctl(devFd,MOTOSH_IOCTL_TEST_WRITE,hexinput);
             if (ret >= 0) {
-                DEBUG( "%02x", hexinput[0]);
+                LOGDEBUG( "%02x", hexinput[0]);
             } else {
-                DEBUG( "TWrite Error %02x\n", ret);
+                LOGDEBUG( "TWrite Error %02x\n", ret);
             }
         }
     }
     if( emode == TMWRITE) {
         count = argc-2;
-        DEBUG(" Writing data: ");
+        LOGDEBUG(" Writing data: ");
         for( i=0; i< count; i++) {
             stm_convertAsciiToHex(argv[i+2],hexinput+i,strlen(argv[i+2]));
-            DEBUG(" %02x",hexinput[i]);
+            LOGDEBUG(" %02x",hexinput[i]);
         }
-        DEBUG("\n");
+        LOGDEBUG("\n");
         ret = write(devFd,hexinput,count);
         if( ret != count) {
-            DEBUG("Write FAILED\n");
+            LOGDEBUG("Write FAILED\n");
         }
     }
     if( emode == TMWRRD) {
         if( argc < 4 )
             help(1);
-        DEBUG( " Read from address ");
+        LOGDEBUG( " Read from address ");
         stm_convertAsciiToHex(argv[2],hexinput,strlen(argv[2]));
-        DEBUG (" %02x, ",hexinput[0]);
+        LOGDEBUG (" %02x, ",hexinput[0]);
         stm_convertAsciiToHex(argv[3],hexinput+1,strlen(argv[3]));
-        DEBUG (" %02x bytes: \n",hexinput[1]);
+        LOGDEBUG (" %02x bytes: \n",hexinput[1]);
         ret = motosh_ioctl(devFd,MOTOSH_IOCTL_TEST_WRITE_READ,hexinput);
     }
     if( emode == VERSION) {
@@ -901,10 +901,10 @@ int  main(int argc, char *argv[])
     if( emode == DEBUG ) {
         if( argc < 3 )
             help(1);
-        DEBUG( " Set debug to ");
+        LOGDEBUG( " Set debug to ");
         stm_convertAsciiToHex(argv[2],hexinput,strlen(argv[2]));
         delay = hexinput[0];
-        DEBUG(" %d\n", delay);
+        LOGDEBUG(" %d\n", delay);
         ret = motosh_ioctl(devFd,MOTOSH_IOCTL_SET_DEBUG,&delay);
 
         const char * const files[] = {
@@ -927,7 +927,7 @@ int  main(int argc, char *argv[])
         }
     }
     if( emode == FACTORY ) {
-        DEBUG( "Switching to factory mode\n");
+        LOGDEBUG( "Switching to factory mode\n");
         ret = motosh_ioctl(devFd,MOTOSH_IOCTL_SET_FACTORY_MODE, &temp);
     }
     if( emode == INVALID ) {
@@ -950,7 +950,7 @@ int  main(int argc, char *argv[])
             help(1);
 
         // read in the header 2 bytes address, 2 bytes data_size
-        DEBUG(" Header Input: ");
+        LOGDEBUG(" Header Input: ");
         for( i=0; i < STM_MAX_GENERIC_HEADER; i++) {
             result = stm_convertAsciiToHex(argv[arg_index],data_header+i,
                     strlen(argv[arg_index]));
@@ -958,7 +958,7 @@ int  main(int argc, char *argv[])
                 printf("Header Input: stm_convertAsciiToHex failure\n");
                 goto EXIT;
             }
-            DEBUG(" %02x",data_header[i]);
+            LOGDEBUG(" %02x",data_header[i]);
             arg_index++;
         }
 
@@ -989,7 +989,7 @@ int  main(int argc, char *argv[])
 
         // if writing, read in the data
         if (read_write) {
-            DEBUG(" READWRITE Data Input:");
+            LOGDEBUG(" READWRITE Data Input:");
             for( i=0; i < data_size; i++) {
                 result = stm_convertAsciiToHex(argv[arg_index],
                     data_ptr + data_index,
@@ -1001,20 +1001,20 @@ int  main(int argc, char *argv[])
                 }
                 arg_index++;
                 data_index++;
-                DEBUG(" %02x",data_ptr[i]);
+                LOGDEBUG(" %02x",data_ptr[i]);
             }
         }
 
         if (read_write) {
             ret = motosh_ioctl(devFd,MOTOSH_IOCTL_WRITE_REG,data_ptr);
-            DEBUG ("Writing data returned: %d", ret);
+            LOGDEBUG ("Writing data returned: %d", ret);
             printf ("Writing data returned: %d", ret);
         } else {
             ret = motosh_ioctl(devFd,MOTOSH_IOCTL_READ_REG,data_ptr);
-            DEBUG ("Read data (%d):", ret);
+            LOGDEBUG ("Read data (%d):", ret);
             printf ("Read data (%d):", ret);
             for ( i = 0; i < data_size; i++) {
-                DEBUG (" %02x", data_ptr[i]);
+                LOGDEBUG (" %02x", data_ptr[i]);
                 printf (" %02x", data_ptr[i]);
             }
         }
@@ -1049,11 +1049,11 @@ int  main(int argc, char *argv[])
         // Convert the user input from ASCII to hex
         unsigned char *data_ptr;
         data_ptr = pt_data;
-        DEBUG("Passthrough Input: ");
+        LOGDEBUG("Passthrough Input: ");
         for( i=2; i<argc; i++) {
             result = stm_convertAsciiToHex(argv[i], data_ptr,
                 strlen(argv[i]));
-            DEBUG("%02x", *data_ptr);
+            LOGDEBUG("%02x", *data_ptr);
             data_ptr++;
             if (result != 1) {
                 printf("Passthrough Input: stm_convertAsciiToHex failure\n");
@@ -1081,19 +1081,19 @@ int  main(int argc, char *argv[])
         // Pass the command to the hub
         ret = motosh_ioctl(devFd, MOTOSH_IOCTL_PASSTHROUGH, pt_data);
         if (ret != 0) {
-            DEBUG ("Command failed: %d", ret);
+            LOGDEBUG ("Command failed: %d", ret);
             printf ("Command failed: %d\n", ret);
             free(pt_data);
             goto EXIT;
         }
 
-        DEBUG("Passthrough Output: ");
+        LOGDEBUG("Passthrough Output: ");
         if (read_write == 0) {
             for (unsigned i = 0; i < data_size; i++) {
                 if (i != 0) {
                     printf (" ");
                 }
-                DEBUG ("%02x", pt_data[i]);
+                LOGDEBUG ("%02x", pt_data[i]);
                 printf ("%02x", pt_data[i]);
             }
             printf("\n");
@@ -1114,11 +1114,11 @@ int  main(int argc, char *argv[])
         }
     }
     if(emode == MASS_ERASE_PART) {
-        DEBUG("Ioctl call to switch to bootloader mode\n");
+        LOGDEBUG("Ioctl call to switch to bootloader mode\n");
         ret = motosh_ioctl(devFd, MOTOSH_IOCTL_BOOTLOADERMODE, &temp);
         CHECK_RETURN_VALUE(ret,"Failed to switch STM to bootloader mode\n");
 
-        DEBUG("Ioctl call to erase flash on STM\n");
+        LOGDEBUG("Ioctl call to erase flash on STM\n");
         ret = motosh_ioctl(devFd, MOTOSH_IOCTL_MASSERASE, &temp);
         CHECK_RETURN_VALUE(ret,"Failed to erase STM \n");
         LOGINFO("Erased.\n");
