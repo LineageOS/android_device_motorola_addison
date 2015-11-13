@@ -40,7 +40,7 @@ int16_t SensorHub::getRegisterNumber(const string regName) {
 
 
 unique_ptr<uint8_t[]> SensorHub::readReg(VmmID vmmId, uint16_t size) {
-    if (fd < 0) return nullptr;
+    if (fd < 0 || size > getMaxRx()) return nullptr;
 
     unique_ptr<uint8_t[]> res(new uint8_t[ max<uint16_t>(size, SENSORHUB_CMD_LENGTH) ]);
 
@@ -71,7 +71,7 @@ unique_ptr<uint8_t[]> SensorHub::readReg(const string regName, uint16_t size) {
 bool SensorHub::writeReg(string regName, uint16_t size,
         const uint8_t * const data) {
 
-    if (data == nullptr || size == 0) return false;
+    if (data == nullptr || size == 0 || size > getMaxTx()) return false;
 
     int16_t regNr = getRegisterNumber(regName);
     if (regNr < 0) return false;
@@ -98,10 +98,15 @@ string SensorHub::getVersionStr(void) {
     unique_ptr<uint8_t[]> verStr;
 
     unique_ptr<uint8_t[]> buff = readReg(VmmID::FW_VERSION_LEN, 1);
-    if (!buff || buff[0] == 0) return string();
+    if (!buff) return string();
 
-    verStr = readReg(VmmID::FW_VERSION_STR, buff[0] + 1); // read the \0
-    return verStr ? (char *)verStr.get() : string();
+    // Make sure we don't read more than the physical layer packet size.
+    uint8_t strLen = min<size_t>(buff[0], getMaxRx());
+    if (!strLen) return string();
+
+    verStr = readReg(VmmID::FW_VERSION_STR, strLen);
+    // verStr has no \0 terminator, so we must specify the string length.
+    return verStr ? string((char *)verStr.get(), strLen) : string();
 }
 
 uint32_t SensorHub::getFlashCrc(void) {

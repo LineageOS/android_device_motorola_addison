@@ -30,12 +30,16 @@
     #define SH_IOCTL_READ_REG   MOTOSH_IOCTL_READ_REG
     #define SH_IOCTL_WRITE_REG  MOTOSH_IOCTL_WRITE_REG
     #define SH_IOCTL_GET_VERNAME  MOTOSH_IOCTL_GET_VERNAME
+    static const size_t TX_PAYLOAD_LEN = MOTOSH_TX_PAYLOAD_LEN;
+    static const size_t RX_PAYLOAD_LEN = MOTOSH_RX_PAYLOAD_LEN;
 #elif defined(STML0XX) || defined(MODULE_stml0xx)
     #include "linux/stml0xx.h"
     #define SH_DRIVER "/dev/stml0xx"
     #define SH_IOCTL_READ_REG   STML0XX_IOCTL_READ_REG
     #define SH_IOCTL_WRITE_REG  STML0XX_IOCTL_WRITE_REG
     #define SH_IOCTL_GET_VERNAME STML0XX_IOCTL_GET_VERNAME
+    static const size_t TX_PAYLOAD_LEN = SPI_TX_PAYLOAD_LEN;
+    static const size_t RX_PAYLOAD_LEN = SPI_RX_PAYLOAD_LEN;
 #endif
 
 namespace mot {
@@ -84,13 +88,23 @@ class SensorHub {
          */
         int16_t getRegisterNumber(std::string regName);
 
+        /** Gets the maximum TX payload length that can be sent to the SensorHub.
+         * @return Maximum TX length. */
+        static inline size_t getMaxTx(void) { return TX_PAYLOAD_LEN; }
+        /** Gets the maximum RX payload length that can be received from the SensorHub.
+         * @return Maximum RX length. */
+        static inline size_t getMaxRx(void) { return RX_PAYLOAD_LEN; }
+
         /** Reads the contents of a SensorHub register.
          *
          * @param regNr The register number to read from.
-         * @param size The number of bytes to read.
+         * @param size The number of bytes to read. The caller must ensure that
+         * this is not larger than the maximum message size.
          *
          * @return An array of bytes with the register contents, or a null pointer if
          * an error was encountered.
+         *
+         * @see getMaxRx()
          */
         std::unique_ptr<uint8_t[]> readReg(VmmID vmmId, uint16_t size);
 
