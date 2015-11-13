@@ -123,6 +123,7 @@ int RearProxSensor::getEnable(int32_t handle)
 
 int RearProxSensor::setDelay(int32_t handle, int64_t ns)
 {
+	(void)handle;
 	int delay;
 	char buff[32];
 	int num_chars;
@@ -200,6 +201,7 @@ void RearProxSensor::processEvent(int code, int value)
 
 int RearProxSensor::flush(int32_t handle)
 {
+	(void)handle;
 
 	mFlushEnabled = 1;
 	return 0;

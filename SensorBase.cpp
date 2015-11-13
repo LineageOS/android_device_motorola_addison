@@ -159,3 +159,10 @@ int SensorBase::openInput(const char* inputName) {
     ALOGE_IF(fd<0, "couldn't find '%s' input device", inputName);
     return fd;
 }
+
+bool SensorBase::hasSensor(int handle)
+{
+    (void)handle;
+
+    return 1;
+}

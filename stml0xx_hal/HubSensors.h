@@ -90,11 +90,12 @@ public:
     HubSensors();
     virtual ~HubSensors();
 
+    virtual int setEnable(int32_t handle, int enabled) override;
+    virtual int setDelay(int32_t handle, int64_t ns) override;
+    virtual int readEvents(sensors_event_t* data, int count) override;
+    virtual int flush(int32_t handle) override;
+
     static HubSensors* getInstance();
-    virtual int setEnable(int32_t handle, int enabled);
-    virtual int setDelay(int32_t handle, int64_t ns);
-    virtual int readEvents(sensors_event_t* data, int count);
-    virtual int flush(int32_t handle);
 
 private:
     enum fusion_enum

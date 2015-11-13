@@ -77,7 +77,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         LOCAL_CFLAGS += $(SH_CFLAGS)
 
         LOCAL_SRC_FILES :=              \
-            $(SH_PATH)/SensorBase.cpp   \
+            SensorBase.cpp   \
             $(SH_PATH)/SensorHal.cpp    \
             $(SH_PATH)/HubSensors.cpp
 
@@ -85,7 +85,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
             # Sensor HAL file for M0 hub (low-tier) products (athene, etc...)
             LOCAL_SRC_FILES += \
                 $(SH_PATH)/RearProxSensor.cpp \
-                $(SH_PATH)/InputEventReader.cpp \
+                InputEventReader.cpp \
                 $(SH_PATH)/FusionSensorBase.cpp \
                 $(SH_PATH)/Quaternion.cpp \
                 $(SH_PATH)/GameRotationVector.cpp \

@@ -35,12 +35,13 @@ public:
 	RearProxSensor();
 	virtual ~RearProxSensor();
 
-	virtual int setEnable(int32_t handle, int enabled);
+	virtual int setEnable(int32_t handle, int enabled) override;
+	virtual int setDelay(int32_t handle, int64_t ns) override;
+	virtual int readEvents(sensors_event_t* data, int count) override;
+	virtual int flush(int32_t handle) override;
+
 	virtual int getEnable(int32_t handle);
-	virtual int setDelay(int32_t handle, int64_t ns);
-	virtual int readEvents(sensors_event_t* data, int count);
 	void processEvent(int code, int value);
-	virtual int flush(int32_t handle);
 	static RearProxSensor* getInstance();
 private:
 	uint32_t mEnabled;

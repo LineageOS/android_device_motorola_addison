@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2015 Motorola Mobility
+ *
  * Copyright (C) 2008 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-
-/*
- * Copyright (C) 2015 Motorola Mobility LLC
  */
 
 #ifndef ANDROID_SENSOR_BASE_H
@@ -49,6 +47,7 @@ public:
 	virtual int setEnable(int32_t handle, int enabled) = 0;
 	virtual int setDelay(int32_t handle, int64_t ns);
 	virtual int flush(int32_t handle) = 0;
+	virtual bool hasSensor(int handle);
 
 protected:
 	const char* dev_name;
