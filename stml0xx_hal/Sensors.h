@@ -37,8 +37,6 @@ __BEGIN_DECLS
 
 /*****************************************************************************/
 
-#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
-
 typedef enum sensor_handle {
 	MIN_SENSOR_ID,
 	ID_A,              /* Accelerometer */

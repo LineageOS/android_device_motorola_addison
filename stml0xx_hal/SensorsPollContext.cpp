@@ -22,6 +22,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <float.h>
+#include <inttypes.h>
 #include <math.h>
 #include <poll.h>
 #include <pthread.h>
@@ -37,6 +38,7 @@
 #include <hardware/sensors.h>
 #include <hardware/mot_sensorhub_stml0xx.h>
 
+#include "SensorList.h"
 #include "Sensors.h"
 #include "SensorsPollContext.h"
 #if defined(_ENABLE_MAGNETOMETER) || defined(_ENABLE_REARPROX)
@@ -54,233 +56,258 @@ SensorsPollContext SensorsPollContext::self;
 
 SensorsPollContext::SensorsPollContext()
 {
-	mSensors[sensor_hub] = HubSensors::getInstance();
-	if (mSensors[sensor_hub]) {
-		mPollFds[sensor_hub].fd = mSensors[sensor_hub]->getFd();
-		mPollFds[sensor_hub].events = POLLIN;
-		mPollFds[sensor_hub].revents = 0;
-	} else {
-		ALOGE("out of memory: new failed for HubSensors");
-	}
+    mSensors[sensor_hub] = HubSensors::getInstance();
+    if (mSensors[sensor_hub]) {
+        mPollFds[sensor_hub].fd = mSensors[sensor_hub]->getFd();
+        mPollFds[sensor_hub].events = POLLIN;
+        mPollFds[sensor_hub].revents = 0;
+    } else {
+        ALOGE("out of memory: new failed for HubSensors");
+    }
 
 #ifdef _ENABLE_MAGNETOMETER
-	mSensors[akm] = AkmSensor::getInstance();
-	if (mSensors[akm]) {
-		mPollFds[akm].fd = mSensors[akm]->getFd();
-		mPollFds[akm].events = POLLIN;
-		mPollFds[akm].revents = 0;
-	} else {
-		ALOGE("out of memory: new failed for AkmSensor");
-	}
+    mSensors[akm] = AkmSensor::getInstance();
+    if (mSensors[akm]) {
+        mPollFds[akm].fd = mSensors[akm]->getFd();
+        mPollFds[akm].events = POLLIN;
+        mPollFds[akm].revents = 0;
+    } else {
+        ALOGE("out of memory: new failed for AkmSensor");
+    }
 
-	int wakeFds[2];
-	int result = pipe(wakeFds);
-	ALOGE_IF(result<0, "error creating wake pipe (%s)", strerror(errno));
-	fcntl(wakeFds[0], F_SETFL, O_NONBLOCK);
-	fcntl(wakeFds[1], F_SETFL, O_NONBLOCK);
-	mWritePipeFd = wakeFds[1];
+    int wakeFds[2];
+    int result = pipe(wakeFds);
+    ALOGE_IF(result<0, "error creating wake pipe (%s)", strerror(errno));
+    fcntl(wakeFds[0], F_SETFL, O_NONBLOCK);
+    fcntl(wakeFds[1], F_SETFL, O_NONBLOCK);
+    mWritePipeFd = wakeFds[1];
 
-	mPollFds[wake].fd = wakeFds[0];
-	mPollFds[wake].events = POLLIN;
-	mPollFds[wake].revents = 0;
+    mPollFds[wake].fd = wakeFds[0];
+    mPollFds[wake].events = POLLIN;
+    mPollFds[wake].revents = 0;
 #endif
 #ifdef _ENABLE_REARPROX
-	mSensors[rearprox] = RearProxSensor::getInstance();
-	ALOGE("rearprox sensor created");
-	if (mSensors[rearprox]) {
-		mPollFds[rearprox].fd = mSensors[rearprox]->getFd();
-		mPollFds[rearprox].events = POLLIN;
-		mPollFds[rearprox].revents = 0;
-	} else {
-		ALOGE("out of memory: new failed for rearprox sensor");
-	}
+    mSensors[rearprox] = RearProxSensor::getInstance();
+    ALOGE("rearprox sensor created");
+    if (mSensors[rearprox]) {
+        mPollFds[rearprox].fd = mSensors[rearprox]->getFd();
+        mPollFds[rearprox].events = POLLIN;
+        mPollFds[rearprox].revents = 0;
+    } else {
+        ALOGE("out of memory: new failed for rearprox sensor");
+    }
 #endif
+
+    // Add all supported sensors to the mIdToSensor map
+    for( int i = 0; i < sSensorListSize; ++i ) {
+        mIdToSensor.insert(std::make_pair(sSensorList[i].handle, sSensorList+i));
+    }
 }
 
 SensorsPollContext::~SensorsPollContext()
 {
-	for (int i=0 ; i<numSensorDrivers ; i++) {
-		delete mSensors[i];
-	}
+    for (int i=0 ; i<numSensorDrivers ; i++) {
+        delete mSensors[i];
+    }
 #ifdef _ENABLE_MAGNETOMETER
-	close(mPollFds[wake].fd);
-	close(mWritePipeFd);
+    close(mPollFds[wake].fd);
+    close(mWritePipeFd);
 #endif
 }
 
 SensorsPollContext *SensorsPollContext::getInstance()
 {
-	return &self;
+    return &self;
 }
 
 int SensorsPollContext::handleToDriver(int handle)
 {
-	switch (handle) {
-		case ID_A:
+    switch (handle) {
+        case ID_A:
 #ifdef _ENABLE_GYROSCOPE
-		case ID_G:
-		case ID_UNCALIB_GYRO:
-		case ID_GAME_RV:
-		case ID_LA:
-		case ID_GRAVITY:
+        case ID_G:
+        case ID_UNCALIB_GYRO:
+        case ID_GAME_RV:
+        case ID_LA:
+        case ID_GRAVITY:
 #endif
-		case ID_L:
-		case ID_DR:
-		case ID_P:
-		case ID_FU:
-		case ID_FD:
-		case ID_S:
-		case ID_CA:
+        case ID_L:
+        case ID_DR:
+        case ID_P:
+        case ID_FU:
+        case ID_FD:
+        case ID_S:
+        case ID_CA:
 #ifdef _ENABLE_ACCEL_SECONDARY
-		case ID_A2:
+        case ID_A2:
 #endif
 #ifdef _ENABLE_CHOPCHOP
-		case ID_CC:
+        case ID_CC:
 #endif
 #ifdef _ENABLE_LIFT
-		case ID_LF:
+        case ID_LF:
 #endif
 #ifdef _ENABLE_PEDO
-		case ID_STEP_COUNTER:
-		case ID_STEP_DETECTOR:
+        case ID_STEP_COUNTER:
+        case ID_STEP_DETECTOR:
 #endif
-			return sensor_hub;
+            return sensor_hub;
 #ifdef _ENABLE_MAGNETOMETER
-		case ID_M:
-		case ID_UM:
-		case ID_OR:
-			return akm;
+        case ID_M:
+        case ID_UM:
+        case ID_OR:
+            return akm;
 #endif
 #ifdef _ENABLE_REARPROX
-		case ID_RP:
-			return rearprox;
+        case ID_RP:
+            return rearprox;
 #endif
-	}
-	return -EINVAL;
+    }
+    return -EINVAL;
 }
 
 int SensorsPollContext::activate(int handle, int enabled)
 {
-	int drv = handleToDriver(handle);
-	int err = 0;
+    int drv = handleToDriver(handle);
+    int err = 0;
 
-	if (drv < 0)
-		return -EINVAL;
+    if (drv < 0)
+        return -EINVAL;
 
-	err = mSensors[drv]->setEnable(handle, enabled);
+    if( !mIdToSensor.count(handle) ) {
+        ALOGE("Sensorhub hal activate: %d - %d (bad handle)", handle, enabled);
+        return -EINVAL;
+    }
+
+    err = mSensors[drv]->setEnable(handle, enabled);
 
 #ifdef _ENABLE_MAGNETOMETER
-	if (!err && (handle == ID_OR)) {
-		err = mSensors[sensor_hub]->setEnable(handle, enabled);
-	}
+    if (!err && (handle == ID_OR)) {
+        err = mSensors[sensor_hub]->setEnable(handle, enabled);
+    }
 
-	if (((handle == ID_M) || (handle == ID_OR))  && enabled && !err) {
-		const char wakeMessage(WAKE_MESSAGE);
-		int result = write(mWritePipeFd, &wakeMessage, 1);
-		ALOGE_IF(result<0, "error sending wake message (%s)", strerror(errno));
-	}
+    if (((handle == ID_M) || (handle == ID_OR))  && enabled && !err) {
+        const char wakeMessage(WAKE_MESSAGE);
+        int result = write(mWritePipeFd, &wakeMessage, 1);
+        ALOGE_IF(result<0, "error sending wake message (%s)", strerror(errno));
+    }
 #endif
 
-	return err;
+    return err;
 }
 
 int SensorsPollContext::setDelay(int handle, int64_t ns)
 {
-	int drv = handleToDriver(handle);
-	int err = 0;
+    int drv = handleToDriver(handle);
+    int err = 0;
 
-	if (drv < 0)
-		return -EINVAL;
+    if (drv < 0)
+        return -EINVAL;
 
-	err = mSensors[drv]->setDelay(handle, ns);
+    if( !mIdToSensor.count(handle) ) {
+        ALOGE("Sensorhub hal setDelay: %d - %" PRId64 " (bad handle)", handle, ns);
+        return -EINVAL;
+    }
+
+    err = mSensors[drv]->setDelay(handle, ns);
 
 #ifdef _ENABLE_MAGNETOMETER
-	if (!err && (handle == ID_OR)) {
-		err = mSensors[sensor_hub]->setDelay(handle, ns);
-	}
+    if (!err && (handle == ID_OR)) {
+        err = mSensors[sensor_hub]->setDelay(handle, ns);
+    }
 #endif
 
-	return err;
+    return err;
 }
 
 int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
 {
-	int nbEvents = 0;
-	int n = 0;
-	int ret;
-	int err;
+    int nbEvents = 0;
+    int n = 0;
+    int ret;
+    int err;
 
-	while (true) {
+    while (true) {
 #ifdef _ENABLE_MAGNETOMETER
-		ret = poll(mPollFds, numFds, nbEvents ? 0 : -1);
+        ret = poll(mPollFds, numFds, nbEvents ? 0 : -1);
 #else
-		ret = poll(mPollFds, numSensorDrivers, nbEvents ? 0 : -1);
+        ret = poll(mPollFds, numSensorDrivers, nbEvents ? 0 : -1);
 #endif
-		err = errno;
-		// Success
-		if (ret >= 0)
-			break;
-		// EINTR is OK
-		if (err == EINTR) {
-			ALOGE("poll() restart (%s)", strerror(err));
-			continue;
-		} else {
-			ALOGE("poll() failed (%s)", strerror(err));
-			return -err;
-		}
-	}
+        err = errno;
+        // Success
+        if (ret >= 0)
+            break;
+        // EINTR is OK
+        if (err == EINTR) {
+            ALOGE("poll() restart (%s)", strerror(err));
+            continue;
+        } else {
+            ALOGE("poll() failed (%s)", strerror(err));
+            return -err;
+        }
+    }
 
-	for (int i=0 ; count && i<numSensorDrivers ; i++) {
-		SensorBase* const sensor(mSensors[i]);
-		if ((mPollFds[i].revents & POLLIN) || (sensor->hasPendingEvents())) {
-			int nb = sensor->readEvents(data, count);
-			// Need to relay any errors upward.
-			if (nb < 0)
-				return nb;
-			count -= nb;
-			nbEvents += nb;
-			data += nb;
-			mPollFds[i].revents = 0;
+    for (int i=0 ; count && i<numSensorDrivers ; i++) {
+        SensorBase* const sensor(mSensors[i]);
+        if ((mPollFds[i].revents & POLLIN) || (sensor->hasPendingEvents())) {
+            int nb = sensor->readEvents(data, count);
+            // Need to relay any errors upward.
+            if (nb < 0)
+                return nb;
+            count -= nb;
+            nbEvents += nb;
+            data += nb;
+            mPollFds[i].revents = 0;
 
 #ifdef _ENABLE_MAGNETOMETER
-			if ((0 != nb) && (sensor_hub == i)) {
-				sensors_event_t* sensor_data = data - nb;
-				for (int j=0; j<nb; j++) {
-					if (ID_A == sensor_data->sensor) {
-						static_cast<AkmSensor*>(mSensors[akm])->setAccel(sensor_data);
-					}
-					sensor_data--;
-				}
-			}
+            if ((0 != nb) && (sensor_hub == i)) {
+                sensors_event_t* sensor_data = data - nb;
+                for (int j=0; j<nb; j++) {
+                    if (ID_A == sensor_data->sensor) {
+                        static_cast<AkmSensor*>(mSensors[akm])->setAccel(sensor_data);
+                    }
+                    sensor_data--;
+                }
+            }
 #endif
-		}
-	}
+        }
+    }
 
 #ifdef _ENABLE_MAGNETOMETER
-	if (mPollFds[wake].revents & POLLIN) {
-		char msg;
-		int result = read(mPollFds[wake].fd, &msg, 1);
-		ALOGE_IF(result<0,
-			"error reading from wake pipe (%s)",
-			strerror(errno));
-		ALOGE_IF(msg != WAKE_MESSAGE,
-			"unknown message on wake queue (0x%02x)",
-			int(msg));
-		mPollFds[wake].revents = 0;
-	}
+    if (mPollFds[wake].revents & POLLIN) {
+        char msg;
+        int result = read(mPollFds[wake].fd, &msg, 1);
+        ALOGE_IF(result<0,
+            "error reading from wake pipe (%s)",
+            strerror(errno));
+        ALOGE_IF(msg != WAKE_MESSAGE,
+            "unknown message on wake queue (0x%02x)",
+            int(msg));
+        mPollFds[wake].revents = 0;
+    }
 #endif
 
-	return nbEvents;
+    return nbEvents;
 }
 
 int SensorsPollContext::batch(int handle, int flags, int64_t ns, int64_t timeout)
 {
-	(void)flags;
-	(void)timeout;
-	return setDelay(handle, ns);
+    (void)flags;
+    (void)timeout;
+    return setDelay(handle, ns);
 }
 
 int SensorsPollContext::flush(int handle)
 {
-	return mSensors[sensor_hub]->flush(handle);
+    if (!mIdToSensor.count(handle)) {
+        ALOGE("Sensorhub hal flush: %d (bad handle)", handle);
+        return -EINVAL;
+    }
+
+    // Have to return -EINVAL for one-shot sensors per Android spec
+    if ((mIdToSensor[handle]->flags & REPORTING_MODE_MASK) == SENSOR_FLAG_ONE_SHOT_MODE) {
+        return -EINVAL;
+    }
+
+    return mSensors[sensor_hub]->flush(handle);
 }

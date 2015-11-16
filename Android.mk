@@ -79,7 +79,8 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         LOCAL_SRC_FILES :=              \
             SensorBase.cpp   \
             $(SH_PATH)/SensorHal.cpp    \
-            $(SH_PATH)/HubSensors.cpp
+            $(SH_PATH)/HubSensors.cpp   \
+            $(SH_PATH)/SensorList.cpp
 
         ifneq (,$(filter athene_%, $(strip $(TARGET_PRODUCT))))
             # Sensor HAL file for M0 hub (low-tier) products (athene, etc...)
@@ -90,10 +91,6 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
                 $(SH_PATH)/Quaternion.cpp \
                 $(SH_PATH)/GameRotationVector.cpp \
                 $(SH_PATH)/LinearAccelGravity.cpp
-        else
-            # Sensor HAL files for M4 and L4 (high-tier) products (vector, etc...)
-            LOCAL_SRC_FILES += \
-                $(SH_PATH)/SensorList.cpp
         endif
 
         # This file must be last, for some mysterious reason

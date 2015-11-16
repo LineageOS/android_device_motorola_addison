@@ -29,6 +29,7 @@
 #include <poll.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <map>
 #include <new>
 
 #include <linux/input.h>
@@ -43,42 +44,45 @@
 
 class SensorsPollContext {
 public:
-	sensors_poll_device_1_t device; // must be first
+    sensors_poll_device_1_t device; // must be first
 
-	SensorsPollContext();
-	~SensorsPollContext();
-	static SensorsPollContext* getInstance();
-	int activate(int handle, int enabled);
-	int setDelay(int handle, int64_t ns);
-	int pollEvents(sensors_event_t* data, int count);
-	int batch(int handle, int flags, int64_t ns, int64_t timeout);
-	int flush(int handle);
+    SensorsPollContext();
+    ~SensorsPollContext();
+    static SensorsPollContext* getInstance();
+    int activate(int handle, int enabled);
+    int setDelay(int handle, int64_t ns);
+    int pollEvents(sensors_event_t* data, int count);
+    int batch(int handle, int flags, int64_t ns, int64_t timeout);
+    int flush(int handle);
 
 private:
-	enum {
-		sensor_hub = 0,
+    enum {
+        sensor_hub = 0,
 #ifdef _ENABLE_MAGNETOMETER
-		akm,
+        akm,
 #endif
 #ifdef _ENABLE_REARPROX
-		rearprox,
+        rearprox,
 #endif
-		numSensorDrivers,
-		numFds,
-	};
+        numSensorDrivers,
+        numFds,
+    };
 
-	static SensorsPollContext self;
+    static SensorsPollContext self;
 #ifdef _ENABLE_MAGNETOMETER
-	static const size_t wake = numFds - 1;
-	static const char WAKE_MESSAGE = 'W';
-	int mWritePipeFd;
-	struct pollfd mPollFds[numFds];
+    static const size_t wake = numFds - 1;
+    static const char WAKE_MESSAGE = 'W';
+    int mWritePipeFd;
+    struct pollfd mPollFds[numFds];
 #else
-	struct pollfd mPollFds[numSensorDrivers];
+    struct pollfd mPollFds[numSensorDrivers];
 #endif
-	SensorBase* mSensors[numSensorDrivers];
+    SensorBase* mSensors[numSensorDrivers];
 
-	int handleToDriver(int handle);
+        //! \brief Map from sensor id (handle) to sensor_t entry
+        std::map<int32_t, const sensor_t*> mIdToSensor;
+
+    int handleToDriver(int handle);
 };
 
 #endif /* SENSORS_POLL_CONTEXT_H */

@@ -329,7 +329,7 @@ int HubSensors::setDelay(int32_t handle, int64_t ns)
     unsigned short delay = int64_t(ns) / 1000000;
 
     // Clamp delay to min/max
-    for (i = 0; i < ARRAY_SIZE(sSensorList); i++) {
+    for (i = 0; i < sSensorListSize; i++) {
         if ((SENSORS_HANDLE_BASE + handle) == sSensorList[i].handle) {
             delay = MAX(MIN(delay, sSensorList[i].maxDelay / 1000), sSensorList[i].minDelay / 1000);
             break;
