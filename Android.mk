@@ -42,7 +42,6 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         ifeq ($(call is-board-platform,msm8996),true)
             SH_MODULE := motosh
             SH_PATH := motosh_hal
-            SH_LOGTAG := \"MOTOSH\"
             SH_CFLAGS += -D_ENABLE_LA
             SH_CFLAGS += -D_ENABLE_GR
             SH_CFLAGS += -D_ENABLE_CHOPCHOP
@@ -59,7 +58,6 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         ifeq ($(call is-board-platform,msm8952),true)
             SH_MODULE := stml0xx
             SH_PATH := stml0xx_hal
-            SH_LOGTAG := \"STML0XX\"
             SH_CFLAGS += -D_ENABLE_BMI160
             # Game RV, Linear Accel, Gravity supported by default with gyroscope
             SH_CFLAGS += -D_ENABLE_GYROSCOPE
@@ -142,8 +140,8 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
     LOCAL_REQUIRED_MODULES += sensors.$(TARGET_BOARD_PLATFORM)
 
     LOCAL_MODULE_TAGS := optional
-    LOCAL_CFLAGS := -DLOG_TAG=$(SH_LOGTAG) -DMODULE_$(SH_MODULE)
-    LOCAL_MODULE := $(SH_MODULE)
+    LOCAL_CFLAGS := -DLOG_TAG=\"MOTOSH\" -DMODULE_$(SH_MODULE)
+    LOCAL_MODULE := motosh
     #LOCAL_CFLAGS+= -D_DEBUG
     LOCAL_CFLAGS += -Wall -Wextra
     # Added by top level make files: -std=gnu++11
@@ -163,6 +161,22 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
     LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
 
     include $(BUILD_EXECUTABLE)
+
+    ifneq (,$(filter athene_%, $(strip $(TARGET_PRODUCT))))
+	# This creates a link from stmloxx to motosh so that code that
+	# uses the old name will still work. This can be removed once
+	# everything has been updated to the new name.
+        OLD_SH_BIN := stml0xx
+        SH_SYMLINK := $(addprefix $(TARGET_OUT)/bin/,$(OLD_SH_BIN))
+        $(SH_SYMLINK): NEW_SH_BIN := $(LOCAL_MODULE)
+        $(SH_SYMLINK): $(LOCAL_INSTALLED_MODULE) $(LOCAL_PATH)/Android.mk
+        # WARNING - the below lines must be indented with a TAB, not spaces
+		@echo "Symlink: $@ -> $(NEW_SH_BIN)"
+		@mkdir -p $(dir $@)
+		@rm -rf $@
+		$(hide) ln -sf $(NEW_SH_BIN) $@
+        ALL_DEFAULT_INSTALLED_MODULES += $(SH_SYMLINK)
+    endif
 
     # ** Firmware BlackList **********************************************************
     include $(CLEAR_VARS)

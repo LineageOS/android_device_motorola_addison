@@ -618,13 +618,8 @@ EXIT:
 void help(int terminate)
 {
     printf("\n");
-#ifdef MODULE_motosh
     printf("motosh - Moto sensorhub debug and control\n");
     printf("USAGE:  ./motosh <command> <command-options>\n");
-#else
-    printf("stml0xx - Moto sensorhub debug and control\n");
-    printf("USAGE:  ./stml0xx <command> <command-options>\n");
-#endif
     printf("  command:\n");
     printf("    help - print this message\n");
     printf("    boot - download new firmware to hub\n");
@@ -652,15 +647,9 @@ void help(int terminate)
     printf("        size    - 2 bytes size of read/write\n");
     printf("        data    - bytes to write\n");
     printf("      ex. -- read version\n");
-#ifdef MODULE_motosh
     printf("        ./motosh readwrite 00 00 01 00 01\n");
     printf("      ex. -- write 2 bytes\n");
     printf("        ./motosh readwrite 01 00 0D 00 02 CC DD\n");
-#else
-    printf("        ./stml0xx readwrite 00 00 01 00 01\n");
-    printf("      ex. -- write 2 bytes\n");
-    printf("        ./stml0xx readwrite 01 00 0D 00 02 CC DD\n");
-#endif
     printf("    passthrough\n");
     printf("      options: <bus> <I2C addr> <reg addr> <r/w> <size> <data>\n");
     printf("        bus      - 1 byte I2C bus number\n");
@@ -670,15 +659,9 @@ void help(int terminate)
     printf("        size     - 1 byte read or write size\n");
     printf("        data     - bytes to be written (only used for write commmands)\n");
     printf("      ex. -- read 6 bytes of accel data\n");
-#ifdef MODULE_motosh
     printf("        ./motosh passthrough 00 d0 00 12 00 06\n");
     printf("      ex. -- write 1 byte config register\n");
     printf("        ./motosh passthrough 00 d0 00 42 01 01 28\n");
-#else
-    printf("        ./stml0xx passthrough 00 d0 00 12 00 06\n");
-    printf("      ex. -- write 1 byte config register\n");
-    printf("        ./stml0xx passthrough 00 d0 00 42 01 01 28\n");
-#endif
     printf("    lowpower - enable/disable low power mode\n");
     printf("      options: <state>\n");
     printf("        state - 1 for enable, 0 for disable\n");
@@ -1023,15 +1006,12 @@ int  main(int argc, char *argv[])
         free(data_ptr);
     }
     if (emode == PASSTHROUGH) {
-        // For stml0xx hub:
-        //                      1B      1B         2B       1B    1B     ...
-        // stml0xx passthrough [bus] [I2C addr] [reg addr] [r/w] [size] [data]
-        //
-        // read example:   stml0xx passthrough 00 d0 00 12 00 06
-        // write example:  stml0xx passthrough 00 d0 00 42 01 01 28
-        //
-        // For motosh hub:
+        // Passthrough command:
+        //                     1B      1B         2B       1B     1B    ...
         // motosh passthrough [bus] [I2C addr] [reg addr] [r/w] [size] [data]
+        //
+        // read example:   motosh passthrough 00 d0 00 12 00 06
+        // write example:  motosh passthrough 00 d0 00 42 01 01 28
 
         int result;
 
