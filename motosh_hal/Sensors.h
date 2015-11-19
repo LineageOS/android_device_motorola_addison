@@ -114,7 +114,7 @@ static inline int motosh_ioctl (int fd, int ioctl_number, ...) {
 #define CONVERT_QUA                 (1.0f/16384.0f)
 
 // conversion of magnetic data to uT units
-#define CONVERT_M                   (1.0f/16.0f)
+#define CONVERT_M                   (1.0f/8.0f)
 #define CONVERT_M_X                 (CONVERT_M)
 #define CONVERT_M_Y                 (CONVERT_M)
 #define CONVERT_M_Z                 (CONVERT_M)
