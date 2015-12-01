@@ -89,6 +89,7 @@
 #define LIFT_ALGO_MA      1.0f
 #define MOT_GAMERV_MA     1.0f
 #define MOT_LAGRAV_MA     1.0f
+#define GLANCE_ALGO_MA    (ACCEL_MA + PROX_MA + ALS_MA)
 
 const struct sensor_t sSensorList[] = {
     { .name = "3-axis Accelerometer",
@@ -457,6 +458,22 @@ const struct sensor_t sSensorList[] = {
         .flags = SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
         .reserved = { 0, 0 } },
 #endif
+    { .name = "Glance Gesture",
+      .vendor = VENDOR_MOT,
+      .version = 1,
+      .handle = SENSORS_HANDLE_BASE+ID_GLANCE_GESTURE,
+      .type = SENSOR_TYPE_GLANCE_GESTURE,
+      .maxRange = 1.0f,
+      .resolution = 1.0f,
+      .power = GLANCE_ALGO_MA,
+      .minDelay = -1,
+      .fifoReservedEventCount = 0,
+      .fifoMaxEventCount = 0,
+      .stringType = SENSOR_STRING_TYPE_GLANCE_GESTURE,
+      .requiredPermission = "",
+      .maxDelay = 0,
+      .flags = SENSOR_FLAG_ONE_SHOT_MODE | SENSOR_FLAG_WAKE_UP,
+      .reserved = {0,0}},
 };
 
 const int sSensorListSize = sizeof(sSensorList)/sizeof(*sSensorList);

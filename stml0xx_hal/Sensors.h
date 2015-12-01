@@ -73,6 +73,7 @@ typedef enum sensor_handle {
 	ID_STEP_DETECTOR, /* Step detector */
 	ID_STEP_COUNTER, /* Step counter */
 #endif
+	ID_GLANCE_GESTURE, /* Glance Gesture */
 	MAX_SENSOR_ID
 } sensor_handle_t;
 

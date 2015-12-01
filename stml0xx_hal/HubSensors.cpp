@@ -303,6 +303,12 @@ int HubSensors::setEnable(int32_t handle, int en)
             found = 1;
             break;
 #endif
+        case ID_GLANCE_GESTURE:
+            new_enabled &= ~M_GLANCE;
+            if (newState)
+                new_enabled |= M_GLANCE;
+            found = 1;
+            break;
     }
 
     if (found && (new_enabled != mWakeEnabled)) {
@@ -371,6 +377,7 @@ int HubSensors::setDelay(int32_t handle, int64_t ns)
         case ID_FD:
         case ID_S:
         case ID_CA:
+        case ID_GLANCE_GESTURE:
 #ifdef _ENABLE_LIFT
         case ID_LF:
 #endif
@@ -767,6 +774,19 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 data++;
                 break;
 #endif
+            case DT_GLANCE:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor = ID_GLANCE_GESTURE;
+                data->type = SENSOR_TYPE_GLANCE_GESTURE;
+                data->data[0] = 1;                   /* set to 1 for Android compatibility */
+                data->data[1] = STM16TOH(buff.data); /* Currently blocked by Android FW */
+                data->data[2] = 0;
+                data->timestamp = buff.timestamp;
+                data++;
+
+                /* Disable, because this is a one shot sensor */
+                setEnable(ID_GLANCE_GESTURE, 0);
+                break;
             default:
                 break;
         }
