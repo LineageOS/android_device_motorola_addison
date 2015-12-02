@@ -84,7 +84,8 @@ static inline int motosh_ioctl (int fd, int ioctl_number, ...) {
 #define ID_QUAT_6AXIS (28)
 #define ID_QUAT_9AXIS (29)
 #define ID_LIFT_GESTURE (30)
-#define MAX_SENSOR_ID (30)
+#define ID_GLANCE_GESTURE (31)
+#define MAX_SENSOR_ID (31)
 
 
 /*****************************************************************************/
