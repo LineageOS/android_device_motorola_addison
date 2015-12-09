@@ -31,7 +31,7 @@ RearProxSensor RearProxSensor::self;
 /*****************************************************************************/
 
 RearProxSensor::RearProxSensor()
-	: SensorBase("", "STM VL53L0 proximity sensor", ""),
+	: SensorBase("", "Rear proximity sensor", ""),
 	mEnabled(0),
 	mPendingMask(0),
 	mInputReader(8),
