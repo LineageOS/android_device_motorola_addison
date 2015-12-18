@@ -52,10 +52,22 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
                 # Expose IR raw data for non-user builds
                 SH_CFLAGS += -D_ENABLE_RAW_IR_DATA
             endif
-        endif
-
+		# Addison -- may be 8952-based
+        else ifneq (,$(filter addison_%, $(strip $(TARGET_PRODUCT))))
+            SH_MODULE := motosh
+            SH_PATH := motosh_hal
+            SH_CFLAGS += -D_ENABLE_LA
+            SH_CFLAGS += -D_ENABLE_GR
+            SH_CFLAGS += -D_ENABLE_CHOPCHOP
+            SH_CFLAGS += -D_ENABLE_LIFT
+            SH_CFLAGS += -D_USES_BMI160_ACCGYR
+            SH_CFLAGS += -D_ENABLE_PEDO
+            ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
+                # Expose IR raw data for non-user builds
+                SH_CFLAGS += -D_ENABLE_RAW_IR_DATA
+            endif
         # 8952
-        ifeq ($(call is-board-platform,msm8952),true)
+        else ifeq ($(call is-board-platform,msm8952),true)
             SH_MODULE := stml0xx
             SH_PATH := stml0xx_hal
             SH_CFLAGS += -D_ENABLE_BMI160
