@@ -62,6 +62,9 @@ private:
     ~SensorsPollContext();
     enum {
         sensor_hub    = 0,
+#ifdef _ENABLE_REARPROX
+        rearprox,
+#endif
         numSensorDrivers,
     };
 

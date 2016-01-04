@@ -78,6 +78,10 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
             SH_CFLAGS += -D_ENABLE_PEDO
         endif
 
+        ifneq (,$(filter griffin_%, $(strip $(TARGET_PRODUCT))))
+            SH_CFLAGS += -D_ENABLE_REARPROX
+        endif
+
         ######################
         # Sensors HAL module #
         ######################
@@ -101,6 +105,12 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
                 $(SH_PATH)/Quaternion.cpp \
                 $(SH_PATH)/GameRotationVector.cpp \
                 $(SH_PATH)/LinearAccelGravity.cpp
+        endif
+
+        ifneq (,$(filter griffin_%, $(strip $(TARGET_PRODUCT))))
+            LOCAL_SRC_FILES += \
+                $(SH_PATH)/RearProxSensor.cpp \
+                InputEventReader.cpp
         endif
 
         # This file must be last, for some mysterious reason

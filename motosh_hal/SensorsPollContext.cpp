@@ -35,6 +35,11 @@
 
 #include "SensorsPollContext.h"
 
+#if defined(_ENABLE_REARPROX)
+#include "SensorBase.h"
+#include "RearProxSensor.h"
+#endif
+
 /*****************************************************************************/
 
 SensorsPollContext SensorsPollContext::self;
@@ -45,6 +50,13 @@ SensorsPollContext::SensorsPollContext()
     mPollFds[sensor_hub].fd = mSensors[sensor_hub]->getFd();
     mPollFds[sensor_hub].events = POLLIN;
     mPollFds[sensor_hub].revents = 0;
+
+#ifdef _ENABLE_REARPROX
+    mSensors[rearprox] = RearProxSensor::getInstance();
+    mPollFds[rearprox].fd = mSensors[rearprox]->getFd();
+    mPollFds[rearprox].events = POLLIN;
+    mPollFds[rearprox].revents = 0;
+#endif
 }
 
 SensorsPollContext::~SensorsPollContext()
@@ -61,6 +73,18 @@ SensorsPollContext *SensorsPollContext::getInstance()
 
 int SensorsPollContext::handleToDriver(int handle)
 {
+    switch (handle) {
+#ifdef _ENABLE_REARPROX
+        case ID_RP:
+            if (mSensors[rearprox]->hasSensor(handle))
+                return rearprox;
+            else
+                return -EINVAL;
+#endif
+        default:
+            break;
+    }
+
     if (mSensors[sensor_hub]->hasSensor(handle))
         return sensor_hub;
 
@@ -99,16 +123,18 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
             return -err;
     }
 
-    if(mPollFds[sensor_hub].revents & POLLIN) {
-        SensorBase* const sensor(mSensors[sensor_hub]);
-        int nb = sensor->readEvents(data, count);
-        // Need to relay any errors upward.
-        if (nb < 0)
-            return nb;
-        count -= nb;
-        nbEvents += nb;
-        data += nb;
-        mPollFds[sensor_hub].revents = 0;
+    for (int i=0; count && i<numSensorDrivers; i++) {
+        if (mPollFds[i].revents & POLLIN) {
+            SensorBase* const sensor(mSensors[i]);
+            int nb = sensor->readEvents(data, count);
+            // Need to relay any errors upward.
+            if (nb < 0)
+                return nb;
+            count -= nb;
+            nbEvents += nb;
+            data += nb;
+            mPollFds[i].revents = 0;
+        }
     }
 
     return nbEvents;
