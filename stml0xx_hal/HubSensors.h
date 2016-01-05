@@ -90,6 +90,7 @@ public:
     HubSensors();
     virtual ~HubSensors();
 
+    virtual bool isHandleEnabled(uint64_t handle);
     virtual int setEnable(int32_t handle, int enabled) override;
     virtual int setDelay(int32_t handle, int64_t ns) override;
     virtual int readEvents(sensors_event_t* data, int count) override;
@@ -129,6 +130,7 @@ private:
     uint32_t mWakeEnabled;
     uint32_t mPendingMask;
     uint32_t mFlushEnabled;
+    uint64_t mEnabledHandles;
 
 #ifdef _ENABLE_GYROSCOPE
     //! \brief gyroscope calibration table

@@ -553,6 +553,22 @@ const struct sensor_t sSensorList[] = {
                 .maxDelay = 0,
                 .flags = SENSOR_FLAG_ONE_SHOT_MODE | SENSOR_FLAG_WAKE_UP,
                 .reserved = {0,0}},
+    { .name = "Moto Glance Gesture",
+                .vendor = VENDOR_MOT,
+                .version = 1,
+                .handle = SENSORS_HANDLE_BASE+ID_MOTO_GLANCE_GESTURE,
+                .type = SENSOR_TYPE_MOTO_GLANCE_GESTURE,
+                .maxRange = 1.0f,
+                .resolution = 1.0f,
+                .power = GLANCE_ALGO_MA,
+                .minDelay = -1,
+                .fifoReservedEventCount = 0,
+                .fifoMaxEventCount = 0,
+                .stringType = SENSOR_STRING_TYPE_MOTO_GLANCE_GESTURE,
+                .requiredPermission = "",
+                .maxDelay = 0,
+                .flags = SENSOR_FLAG_ONE_SHOT_MODE | SENSOR_FLAG_WAKE_UP,
+                .reserved = {0,0}},
 };
 const int sSensorListSize = sizeof(sSensorList)/sizeof(*sSensorList);
 

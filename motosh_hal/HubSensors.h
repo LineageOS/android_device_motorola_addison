@@ -162,6 +162,7 @@ struct input_event;
 
 class HubSensors : public SensorBase {
 public:
+    virtual bool isHandleEnabled(uint64_t handle);
     virtual int setEnable(int32_t handle, int enabled) override;
     virtual int setDelay(int32_t handle, int64_t ns) override;
     virtual int readEvents(sensors_event_t* data, int count) override;
@@ -179,6 +180,7 @@ private:
     uint32_t mEnabled;
     uint32_t mWakeEnabled;
     uint32_t mPendingMask;
+    uint64_t mEnabledHandles;
     uint8_t mMagCal[MOTOSH_MAG_CAL_SIZE];
     uint8_t mGyroCal[MOTOSH_GYRO_CAL_SIZE];
     uint8_t mErrorCnt[ERROR_TYPES];

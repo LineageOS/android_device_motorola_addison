@@ -86,7 +86,8 @@ static inline int motosh_ioctl (int fd, int ioctl_number, ...) {
 #define ID_LIFT_GESTURE (30)
 #define ID_GLANCE_GESTURE (31)
 #define ID_RP (32) /* Moto Rear Proximity */
-#define MAX_SENSOR_ID (32)
+#define ID_MOTO_GLANCE_GESTURE (33)
+#define MAX_SENSOR_ID (33)
 
 
 /*****************************************************************************/
