@@ -54,7 +54,8 @@ HubSensors::HubSensors()
     mEnabled(0),
     mWakeEnabled(0),
     mPendingMask(0),
-    mEnabledHandles(0)
+    mEnabledHandles(0),
+    mPendingBug2go(0)
 {
     // read the actual value of all sensors if they're enabled already
     struct input_absinfo absinfo;
@@ -736,8 +737,8 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
 #endif
             case DT_RESET:
                 time(&timeutc.tv_sec);
-                if (buff.data[0] > 0 && buff.data[0] <= ERROR_TYPES)
-                    mErrorCnt[buff.data[0] - 1]++;
+                if (buff.data[0] >= 0 && buff.data[0] <= RESET_REASON_MAX_CODE)
+                    mErrorCnt[buff.data[0]]++;
                 if ((sent_bug2go_sec == 0) ||
                     (timeutc.tv_sec - sent_bug2go_sec > 24*60*60)) {
                     // put timestamp in dropbox file
@@ -748,6 +749,8 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                             DROPBOX_FLAG_TEXT | DROPBOX_FLAG_GZIP);
                     }
                     sent_bug2go_sec = timeutc.tv_sec;
+                } else {
+                    mPendingBug2go = 1;
                 }
                 break;
 #ifdef _ENABLE_LIFT
@@ -844,6 +847,20 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
         }
     }
+    if (mPendingBug2go == 1) {
+        time(&timeutc.tv_sec);
+        if (timeutc.tv_sec - sent_bug2go_sec > 24*60*60) {
+            // put timestamp in dropbox file
+            ptm = localtime(&(timeutc.tv_sec));
+            if (ptm != NULL) {
+                strftime(timeBuf, sizeof(timeBuf), "%m-%d %H:%M:%S", ptm);
+                capture_dump(timeBuf, buff.type, SENSORHUB_DUMPFILE,
+                    DROPBOX_FLAG_TEXT | DROPBOX_FLAG_GZIP);
+            }
+            sent_bug2go_sec = timeutc.tv_sec;
+            mPendingBug2go = 0;
+        }
+    }
 
     return data - d;
 }
@@ -887,7 +904,7 @@ short HubSensors::capture_dump(char* timestamp, const int id, const char* dst, c
         rc = snprintf(buffer, COPYSIZE, "reason:%02d\n", id);
         gzwrite(dropbox_file, buffer, rc);
 
-        for (i = 0; i < ERROR_TYPES; i++) {
+        for (i = 0; i <= RESET_REASON_MAX_CODE; i++) {
             rc = snprintf(buffer, COPYSIZE, "[%d]:%d\n", i+1, mErrorCnt[i]);
             gzwrite(dropbox_file, buffer, rc);
         }

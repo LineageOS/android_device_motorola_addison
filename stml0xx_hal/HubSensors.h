@@ -81,8 +81,6 @@
 #define STM16TOH(p) (int16_t) be16toh(*((uint16_t *) (p)))
 #define STM32TOH(p) (int32_t) be32toh(*((uint32_t *) (p)))
 
-#define ERROR_TYPES    4
-
 struct input_event;
 
 class HubSensors : public SensorBase {
@@ -131,6 +129,7 @@ private:
     uint32_t mPendingMask;
     uint32_t mFlushEnabled;
     uint64_t mEnabledHandles;
+    uint32_t mPendingBug2go;
 
 #ifdef _ENABLE_GYROSCOPE
     //! \brief gyroscope calibration table
@@ -139,7 +138,7 @@ private:
     LinearAccelGravity *mLAGravity;
 #endif
 
-    uint8_t mErrorCnt[ERROR_TYPES];
+    uint8_t mErrorCnt[RESET_REASON_MAX_CODE + 1];
     gzFile open_dropbox_file(const char* timestamp, const char* dst, const int flags);
     short capture_dump(char* timestamp, const int id, const char* dst, const int flags);
     void logAlsEvent(int16_t lux, int64_t ts_ns);
