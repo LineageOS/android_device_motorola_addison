@@ -483,9 +483,11 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
     sensors_event_t* data = d;
     static bool reportLAGravity = false;
 
-    // Ensure there are at least 2 slots free in the buffer
-    // because we can send 2 events at once below.
-    sensors_event_t const* const dataEnd = d + dLen - 1;
+    // Ensure there are at least 4 slots free in the buffer
+    // The following sensors populate multiple events per read:
+    // DT_GYRO - upto 4 events
+    // DT_GLANCE - upto 2 events
+    sensors_event_t const* const dataEnd = d + dLen - 3;
 
     if (!data) {
         ALOGE("HubSensors::readEvents - null data buffer");
