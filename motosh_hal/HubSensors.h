@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Motorola Mobility
+ * Copyright (C) 2011-2016 Motorola Mobility
  *
  * Copyright (C) 2008 The Android Open Source Project
  *
@@ -156,7 +156,7 @@
 #define STM16TOH(p) (int16_t) be16toh(*((uint16_t *) (p)))
 #define STM32TOH(p) (int32_t) be32toh(*((uint32_t *) (p)))
 
-#define ERROR_TYPES    9
+#define ERROR_TYPES    9  /* Largest error code reported by the sensor hub */
 
 struct input_event;
 
@@ -183,7 +183,7 @@ private:
     uint64_t mEnabledHandles;
     uint8_t mMagCal[MOTOSH_MAG_CAL_SIZE];
     uint8_t mGyroCal[MOTOSH_GYRO_CAL_SIZE];
-    uint8_t mErrorCnt[ERROR_TYPES];
+    uint8_t mErrorCnt[ERROR_TYPES + 1];
     //! \brief last value passed to \c enable() on gyro sensor
     uint8_t mGyroEnabled;
     //! \brief last value passed to \c enable() on uncal gyro sensor

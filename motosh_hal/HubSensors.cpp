@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Motorola Mobility
+ * Copyright (C) 2011-2016 Motorola Mobility
  *
  * Copyright (C) 2008 The Android Open Source Project
  *
@@ -619,8 +619,8 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
             buff.type == DT_DOCK ||
             buff.type == DT_NFC || buff.type == DT_RESET) {
             if (buff.type == DT_RESET) {
-                //reset reason should be between 1 and ERROR_TYPES-1
-                if (buff.data[0] >= 1 && buff.data[0] < ERROR_TYPES)
+                //reset reason should be between 1 and ERROR_TYPES
+                if (buff.data[0] >= 1 && buff.data[0] <= ERROR_TYPES)
                     mErrorCnt[buff.data[0]]++;
             } else {
                 //index 0 is for counting invalid sensor type occurrences
@@ -1024,16 +1024,6 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                     }
                 }
                 break;
-            case DT_RESET:
-                // put timestamp in dropbox file
-                time(&timeutc.tv_sec);
-                ptm = localtime(&(timeutc.tv_sec));
-                if (ptm != NULL) {
-                    strftime(timeBuf, sizeof(timeBuf), "%m-%d %H:%M:%S", ptm);
-                    capture_dump(timeBuf, buff.data[0], SENSORHUB_DUMPFILE,
-                         DROPBOX_FLAG_TEXT | DROPBOX_FLAG_GZIP);
-                }
-                break;
             default:
                 break;
         }
@@ -1087,7 +1077,7 @@ short HubSensors::capture_dump(char* timestamp, const int id, const char* dst, c
         rc = snprintf(buffer, COPYSIZE, "reason:%02d\n", id);
         gzwrite(dropbox_file, buffer, rc);
 
-        for (i = 0; i < ERROR_TYPES; i++) {
+        for (i = 0; i <= ERROR_TYPES; i++) {
             rc = snprintf(buffer, COPYSIZE, "[%d]:%d\n", i, mErrorCnt[i]);
             gzwrite(dropbox_file, buffer, rc);
         }
