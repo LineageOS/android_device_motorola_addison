@@ -78,7 +78,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
             SH_CFLAGS += -D_ENABLE_PEDO
         endif
 
-        ifneq (,$(filter griffin_%, $(strip $(TARGET_PRODUCT))))
+        ifneq (,$(filter griffin_% factory_griffin%, $(strip $(TARGET_PRODUCT))))
             SH_CFLAGS += -D_ENABLE_REARPROX
         endif
 
@@ -107,7 +107,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
                 $(SH_PATH)/LinearAccelGravity.cpp
         endif
 
-        ifneq (,$(filter griffin_%, $(strip $(TARGET_PRODUCT))))
+        ifneq (,$(filter griffin_% factory_griffin%, $(strip $(TARGET_PRODUCT))))
             LOCAL_SRC_FILES += \
                 $(SH_PATH)/RearProxSensor.cpp \
                 InputEventReader.cpp
