@@ -35,51 +35,59 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
 
     ifneq ($(TARGET_SIMULATOR),true)
 
-        ###########################################
-        # Select sensorhub type based on platform #
-        ###########################################
-        # 8996
-        ifeq ($(call is-board-platform,msm8996),true)
+
+        ###################################
+        # Select sensorhub processor type #
+        ###################################
+        ifeq ($(MOT_SENSOR_HUB_HW_TYPE_L4), true)
             SH_MODULE := motosh
             SH_PATH := motosh_hal
-            SH_CFLAGS += -D_ENABLE_LA
-            SH_CFLAGS += -D_ENABLE_GR
-            SH_CFLAGS += -D_ENABLE_CHOPCHOP
-            SH_CFLAGS += -D_ENABLE_LIFT
-            SH_CFLAGS += -D_USES_BMI160_ACCGYR
-            SH_CFLAGS += -D_ENABLE_PEDO
             ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
                 # Expose IR raw data for non-user builds
                 SH_CFLAGS += -D_ENABLE_RAW_IR_DATA
             endif
-		# Addison -- may be 8952-based
-        else ifneq (,$(filter addison_%, $(strip $(TARGET_PRODUCT))))
-            SH_MODULE := motosh
-            SH_PATH := motosh_hal
-            SH_CFLAGS += -D_ENABLE_LA
-            SH_CFLAGS += -D_ENABLE_GR
-            SH_CFLAGS += -D_ENABLE_CHOPCHOP
-            SH_CFLAGS += -D_ENABLE_LIFT
-            SH_CFLAGS += -D_USES_BMI160_ACCGYR
-            SH_CFLAGS += -D_ENABLE_PEDO
-            ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
-                # Expose IR raw data for non-user builds
-                SH_CFLAGS += -D_ENABLE_RAW_IR_DATA
-            endif
-        # 8952
-        else ifeq ($(call is-board-platform,msm8952),true)
+        else ifeq ($(MOT_SENSOR_HUB_HW_TYPE_L0), true)
             SH_MODULE := stml0xx
             SH_PATH := stml0xx_hal
-            SH_CFLAGS += -D_ENABLE_BMI160
-            # Game RV, Linear Accel, Gravity supported by default with gyroscope
-            SH_CFLAGS += -D_ENABLE_GYROSCOPE
-            SH_CFLAGS += -D_ENABLE_CHOPCHOP
+        endif
+
+        ##########################
+        # Select sensor hardware #
+        ##########################
+        ifeq ($(MOT_SENSOR_HUB_HW_BMI160), true)
+            ifeq ($(MOT_SENSOR_HUB_HW_TYPE_L4), true)
+                SH_CFLAGS += -D_USES_BMI160_ACCGYR
+            else ifeq ($(MOT_SENSOR_HUB_HW_TYPE_L0), true)
+                SH_CFLAGS += -D_ENABLE_BMI160
+                SH_CFLAGS += -D_ENABLE_GYROSCOPE
+            endif
+        endif
+
+        ifeq ($(MOT_AP_SENSOR_REARPROX), true)
             SH_CFLAGS += -D_ENABLE_REARPROX
+        endif
+
+        ##########################
+        # Select sensorhub algos #
+        ##########################
+        ifeq ($(MOT_SENSOR_HUB_FEATURE_CHOPCHOP), true)
+            SH_CFLAGS += -D_ENABLE_CHOPCHOP
+        endif
+
+        ifeq ($(MOT_SENSOR_HUB_FEATURE_LIFT), true)
+            SH_CFLAGS += -D_ENABLE_LIFT
+        endif
+
+        ifeq ($(MOT_SENSOR_HUB_FEATURE_PEDO), true)
             SH_CFLAGS += -D_ENABLE_PEDO
         endif
 
-        ifneq (,$(filter griffin_% factory_griffin%, $(strip $(TARGET_PRODUCT))))
-            SH_CFLAGS += -D_ENABLE_REARPROX
+        ifeq ($(MOT_SENSOR_HUB_FEATURE_LA), true)
+            SH_CFLAGS += -D_ENABLE_LA
+        endif
+
+        ifeq ($(MOT_SENSOR_HUB_FEATURE_GR), true)
+            SH_CFLAGS += -D_ENABLE_GR
         endif
 
         ######################
@@ -96,18 +104,16 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
             $(SH_PATH)/HubSensors.cpp   \
             $(SH_PATH)/SensorList.cpp
 
-        ifneq (,$(filter athene_%, $(strip $(TARGET_PRODUCT))))
+        ifeq ($(MOT_SENSOR_HUB_HW_TYPE_L0), true)
             # Sensor HAL file for M0 hub (low-tier) products (athene, etc...)
             LOCAL_SRC_FILES += \
-                $(SH_PATH)/RearProxSensor.cpp \
-                InputEventReader.cpp \
                 $(SH_PATH)/FusionSensorBase.cpp \
                 $(SH_PATH)/Quaternion.cpp \
                 $(SH_PATH)/GameRotationVector.cpp \
                 $(SH_PATH)/LinearAccelGravity.cpp
         endif
 
-        ifneq (,$(filter griffin_% factory_griffin%, $(strip $(TARGET_PRODUCT))))
+        ifeq ($(MOT_AP_SENSOR_REARPROX), true)
             LOCAL_SRC_FILES += \
                 $(SH_PATH)/RearProxSensor.cpp \
                 InputEventReader.cpp
@@ -184,10 +190,10 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
 
     include $(BUILD_EXECUTABLE)
 
-    ifneq (,$(filter athene_%, $(strip $(TARGET_PRODUCT))))
-	# This creates a link from stmloxx to motosh so that code that
-	# uses the old name will still work. This can be removed once
-	# everything has been updated to the new name.
+    ifeq ($(MOT_SENSOR_HUB_HW_TYPE_L0), true)
+        # This creates a link from stml0xx to motosh so that code that
+        # uses the old name will still work. This can be removed once
+        # everything has been updated to the new name.
         OLD_SH_BIN := stml0xx
         SH_SYMLINK := $(addprefix $(TARGET_OUT)/bin/,$(OLD_SH_BIN))
         $(SH_SYMLINK): NEW_SH_BIN := $(LOCAL_MODULE)
