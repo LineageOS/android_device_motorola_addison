@@ -905,7 +905,7 @@ short HubSensors::capture_dump(char* timestamp, const int id, const char* dst, c
         gzwrite(dropbox_file, buffer, rc);
 
         for (i = 0; i <= RESET_REASON_MAX_CODE; i++) {
-            rc = snprintf(buffer, COPYSIZE, "[%d]:%d\n", i+1, mErrorCnt[i]);
+            rc = snprintf(buffer, COPYSIZE, "[%d]:%d\n", i, mErrorCnt[i]);
             gzwrite(dropbox_file, buffer, rc);
         }
         memset(mErrorCnt, 0, sizeof(mErrorCnt));
