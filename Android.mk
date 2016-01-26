@@ -63,7 +63,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
             endif
         endif
 
-        ifeq ($(MOT_AP_SENSOR_REARPROX), true)
+        ifeq ($(MOT_AP_SENSOR_HW_REARPROX), true)
             SH_CFLAGS += -D_ENABLE_REARPROX
         endif
 
@@ -113,7 +113,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
                 $(SH_PATH)/LinearAccelGravity.cpp
         endif
 
-        ifeq ($(MOT_AP_SENSOR_REARPROX), true)
+        ifeq ($(MOT_AP_SENSOR_HW_REARPROX), true)
             LOCAL_SRC_FILES += \
                 $(SH_PATH)/RearProxSensor.cpp \
                 InputEventReader.cpp
