@@ -430,7 +430,7 @@ const struct sensor_t sSensorList[] = {
                 .stringType = "",
                 .requiredPermission = "",
                 .maxDelay = 0,
-                .flags = SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
+                .flags = SENSOR_FLAG_SPECIAL_REPORTING_MODE | SENSOR_FLAG_WAKE_UP,
                 .reserved = {0,0} },
 #endif
 #ifdef _ENABLE_LIFT
