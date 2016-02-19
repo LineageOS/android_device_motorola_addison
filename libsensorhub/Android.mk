@@ -23,6 +23,9 @@ LOCAL_MODULE_TAGS := optional
 ifeq ($(call is-board-platform,msm8996),true)
     LOCAL_CFLAGS += -DMOTOSH
 endif
+ifeq ($(call is-board-platform,titanium),true)
+    LOCAL_CFLAGS += -DMOTOSH
+endif
 ifeq ($(call is-board-platform,msm8952),true)
     LOCAL_CFLAGS += -DSTML0XX
 endif
