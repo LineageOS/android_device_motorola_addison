@@ -62,6 +62,8 @@ HubSensors::HubSensors()
     short flags16 = 0;
     uint32_t flags24 = 0;
     int i, err = 0;
+    int size;
+    FILE *fp;
 
     static_assert(MAX_SENSOR_ID < (sizeof(mEnabledHandles) * CHAR_BIT),
         "enabled handlers bit mask can NOT hold all the handles");
@@ -70,6 +72,7 @@ HubSensors::HubSensors()
 #ifdef _ENABLE_GYROSCOPE
     memset(mGyroCal, 0, sizeof(mGyroCal));
 #endif
+    memset(mAccelCal, 0, sizeof(mAccelCal));
 
     open_device();
 
@@ -98,9 +101,7 @@ HubSensors::HubSensors()
 #endif
 
 #ifdef _ENABLE_GYROSCOPE
-    FILE *fp;
     if ((fp = fopen(GYRO_CAL_FILE, "r")) != NULL) {
-        int size;
         size = fread(mGyroCal, 1, STML0XX_GYRO_CAL_SIZE, fp);
         fclose(fp);
         if (size != STML0XX_GYRO_CAL_SIZE) {
@@ -116,6 +117,19 @@ HubSensors::HubSensors()
     mGameRV = GameRotationVector::getInstance();
     mLAGravity = LinearAccelGravity::getInstance();
 #endif
+
+    if ((fp = fopen(ACCEL_CAL_FILE, "r")) != NULL) {
+        size = fread(mAccelCal, 1, STML0XX_ACCEL_CAL_SIZE, fp);
+        fclose(fp);
+        if (size != STML0XX_ACCEL_CAL_SIZE) {
+            ALOGE("Accel Cal file read failed");
+            memset(mAccelCal, 0, sizeof(mAccelCal));
+        } else {
+            err = ioctl(dev_fd, STML0XX_IOCTL_SET_ACCEL_CAL, mAccelCal);
+            if (err < 0)
+                ALOGE("Can't send Accel Cal data");
+        }
+    }
 
     if (!ioctl(dev_fd, STML0XX_IOCTL_GET_SENSORS, &flags16))  {
         mEnabled = flags16;
@@ -483,6 +497,8 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
     static long int sent_bug2go_sec = 0;
     sensors_event_t* data = d;
     static bool reportLAGravity = false;
+    FILE *fp;
+    int size;
 
     // Ensure there are at least 4 slots free in the buffer
     // The following sensors populate multiple events per read:
@@ -718,8 +734,6 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
 #ifdef _ENABLE_GYROSCOPE
             case DT_GYRO_CAL:
-                FILE *fp;
-                int size;
                 ret = ioctl(dev_fd, STML0XX_IOCTL_GET_GYRO_CAL, mGyroCal);
                 if (ret < 0) {
                     ALOGE("Can't read Gyro Cal data");
@@ -735,6 +749,21 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 }
                 break;
 #endif
+            case DT_ACCEL_CAL:
+                ret = ioctl(dev_fd, STML0XX_IOCTL_GET_ACCEL_CAL, mAccelCal);
+                if (ret < 0) {
+                    ALOGE("Can't read Accel Cal data");
+                } else {
+                    if ((fp = fopen(ACCEL_CAL_FILE, "w")) == NULL) {
+                        ALOGE("Can't open Accel Cal file");
+                    } else {
+                        size = fwrite(mAccelCal, 1, STML0XX_ACCEL_CAL_SIZE, fp);
+                        fclose(fp);
+                        if (size != STML0XX_ACCEL_CAL_SIZE)
+                            ALOGE("Error writing Accel Cal file");
+                    }
+                }
+                break;
             case DT_RESET:
                 time(&timeutc.tv_sec);
                 if (buff.data[0] >= 0 && buff.data[0] <= RESET_REASON_MAX_CODE)
