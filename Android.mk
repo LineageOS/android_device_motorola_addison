@@ -67,6 +67,10 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
             SH_CFLAGS += -D_ENABLE_REARPROX
         endif
 
+        ifeq ($(MOT_SENSOR_HUB_HW_IR), true)
+            SH_CFLAGS += -D_ENABLE_IR
+        endif
+
         ##########################
         # Select sensorhub algos #
         ##########################

@@ -282,6 +282,7 @@ const struct sensor_t sSensorList[] = {
                 .maxDelay = 0,
                 .flags = SENSOR_FLAG_SPECIAL_REPORTING_MODE | SENSOR_FLAG_WAKE_UP,
                 .reserved = {0,0}},
+#ifdef _ENABLE_IR
     { .name = "IR Gestures",
                 .vendor = VENDOR_MOT,
                 .version = 1,
@@ -315,7 +316,7 @@ const struct sensor_t sSensorList[] = {
                 .maxDelay = 200000,
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
-#endif
+#endif /* _ENABLE_RAW_IR_DATA */
     { .name = "IR Object Detect",
                 .vendor = VENDOR_MOT,
                 .version = 1,
@@ -332,6 +333,7 @@ const struct sensor_t sSensorList[] = {
                 .maxDelay = 0,
                 .flags = SENSOR_FLAG_ONE_SHOT_MODE,
                 .reserved = {0,0} },
+#endif /* _ENABLE_IR */
     { .name = "Significant Motion",
                 .vendor = VENDOR_MOT,
                 .version = 1,
