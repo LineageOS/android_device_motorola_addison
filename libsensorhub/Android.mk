@@ -20,15 +20,12 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := libsensorhub
 LOCAL_MODULE_TAGS := optional
 
-ifeq ($(call is-board-platform,msm8996),true)
+ifeq ($(MOT_SENSOR_HUB_HW_TYPE_L4), true)
     LOCAL_CFLAGS += -DMOTOSH
-endif
-ifeq ($(call is-board-platform,titanium),true)
-    LOCAL_CFLAGS += -DMOTOSH
-endif
-ifeq ($(call is-board-platform,msm8952),true)
+else ifeq ($(MOT_SENSOR_HUB_HW_TYPE_L0), true)
     LOCAL_CFLAGS += -DSTML0XX
 endif
+
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
     LOCAL_CFLAGS += -DDEBUG
 endif
