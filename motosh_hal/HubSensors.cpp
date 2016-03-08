@@ -69,7 +69,7 @@ HubSensors::HubSensors()
     struct input_absinfo absinfo;
     char flags[3];
     FILE *fp;
-    int i;
+    int size;
     int cal_data;
     int err = 0;
 
@@ -78,6 +78,7 @@ HubSensors::HubSensors()
 
     memset(mMagCal, 0, sizeof(mMagCal));
     memset(mGyroCal, 0, sizeof(mGyroCal));
+    memset(mAccelCal, 0, sizeof(mAccelCal));
     memset(mErrorCnt, 0, sizeof(mErrorCnt));
     ALOGI("Sensorhub hal created");
 
@@ -92,13 +93,13 @@ HubSensors::HubSensors()
     }
 
     if ((fp = fopen(MAG_CAL_FILE, "r")) != NULL) {
-        for (i=0; i<MOTOSH_MAG_CAL_SIZE; i++) {
+        for (size=0; size<MOTOSH_MAG_CAL_SIZE; size++) {
             cal_data = fgetc(fp);
             if (cal_data == EOF) {
                 memset(mMagCal, 0, sizeof(mMagCal));
                 break;
             }
-            mMagCal[i] = cal_data;
+            mMagCal[size] = cal_data;
         }
         fclose(fp);
         err = motosh_ioctl(dev_fd, MOTOSH_IOCTL_SET_MAG_CAL, mMagCal);
@@ -108,13 +109,13 @@ HubSensors::HubSensors()
     }
 
     if ((fp = fopen(GYRO_CAL_FILE, "r")) != NULL) {
-        for (i=0; i<MOTOSH_GYRO_CAL_SIZE; i++) {
+        for (size=0; size<MOTOSH_GYRO_CAL_SIZE; size++) {
             cal_data = fgetc(fp);
             if (cal_data == EOF) {
                 memset(mGyroCal, 0, sizeof(mGyroCal));
                 break;
             }
-            mGyroCal[i] = cal_data;
+            mGyroCal[size] = cal_data;
         }
         fclose(fp);
         err = motosh_ioctl(dev_fd, MOTOSH_IOCTL_SET_GYRO_CAL, mGyroCal);
@@ -122,10 +123,21 @@ HubSensors::HubSensors()
            ALOGE("Can't send Gyro Cal data");
         }
     }
-
+    if ((fp = fopen(ACCEL_CAL_FILE, "r")) != NULL) {
+        size = fread(mAccelCal, 1, MOTOSH_ACCEL_CAL_SIZE, fp);
+        fclose(fp);
+        if (size != MOTOSH_ACCEL_CAL_SIZE) {
+            ALOGE("Accel Cal file read failed");
+            memset(mAccelCal, 0, sizeof(mAccelCal));
+        } else {
+            err = ioctl(dev_fd, MOTOSH_IOCTL_SET_ACCEL_CAL, mAccelCal);
+            if (err < 0)
+                ALOGE("Can't send Accel Cal data");
+        }
+    }
     // Add all supported sensors to the mIdToSensor map
-    for( i = 0; i < sSensorListSize; ++i ) {
-        mIdToSensor.insert(std::make_pair(sSensorList[i].handle, sSensorList+i));
+    for( size = 0; size < sSensorListSize; ++size ) {
+        mIdToSensor.insert(std::make_pair(sSensorList[size].handle, sSensorList+size));
     }
 }
 
@@ -201,12 +213,6 @@ int HubSensors::setEnable(int32_t handle, int en)
                 // Reset orientation requested rate if not enabled
                 mOrientReqDelay = USHRT_MAX;
             }
-            found = 1;
-            break;
-        case ID_T:
-            new_enabled &= ~M_TEMPERATURE;
-            if (newState)
-                new_enabled |= M_TEMPERATURE;
             found = 1;
             break;
         case ID_L:
@@ -603,6 +609,8 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
     static long int sent_bug2go_sec = 0;
     int32_t sensorId;
     sensors_event_t* data = d;
+    FILE *fp;
+    int size;
 
     // Ensure there are at least 2 slots free in the buffer
     // because we can send 2 events at once below.
@@ -1014,8 +1022,6 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
 
                 break;
             case DT_GYRO_CAL:
-                FILE *fp;
-                int i;
                 ret = motosh_ioctl(dev_fd, MOTOSH_IOCTL_GET_GYRO_CAL, mGyroCal);
                 if (ret < 0) {
                     ALOGE("Can't read Gyro Cal data");
@@ -1023,10 +1029,25 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                     if ((fp = fopen(GYRO_CAL_FILE, "w")) == NULL) {
                         ALOGE("Can't open Gyro Cal file");
                     } else {
-                        for (i=0; i<MOTOSH_GYRO_CAL_SIZE; i++) {
-                            fputc(mGyroCal[i], fp);
+                        for (size=0; size<MOTOSH_GYRO_CAL_SIZE; size++) {
+                            fputc(mGyroCal[size], fp);
                         }
                         fclose(fp);
+                    }
+                }
+                break;
+            case DT_ACCEL_CAL:
+                ret = ioctl(dev_fd, MOTOSH_IOCTL_GET_ACCEL_CAL, mAccelCal);
+                if (ret < 0) {
+                    ALOGE("Can't read Accel Cal data");
+                } else {
+                    if ((fp = fopen(ACCEL_CAL_FILE, "w")) == NULL) {
+                        ALOGE("Can't open Accel Cal file");
+                    } else {
+                        size = fwrite(mAccelCal, 1, MOTOSH_ACCEL_CAL_SIZE, fp);
+                        fclose(fp);
+                        if (size != MOTOSH_ACCEL_CAL_SIZE)
+                            ALOGE("Error writing Accel Cal file");
                     }
                 }
                 break;

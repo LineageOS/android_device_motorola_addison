@@ -46,6 +46,7 @@
 #define SENSORS_EVENT_T_SIZE sizeof(sensors_event_t);
 #define MAG_CAL_FILE "/data/misc/sensorhub/akmd_set.bin"
 #define GYRO_CAL_FILE "/data/misc/sensorhub/gyro_cal.bin"
+#define ACCEL_CAL_FILE "/data/misc/sensorhub/accel_cal.bin"
 #define DROPBOX_DIR "/data/system/dropbox-add"
 #define DROPBOX_TAG "SENSOR_HUB"
 #define SENSORHUB_DUMPFILE  "sensor_hub"
@@ -183,6 +184,7 @@ private:
     uint64_t mEnabledHandles;
     uint8_t mMagCal[MOTOSH_MAG_CAL_SIZE];
     uint8_t mGyroCal[MOTOSH_GYRO_CAL_SIZE];
+    uint8_t mAccelCal[MOTOSH_ACCEL_CAL_SIZE];
     uint8_t mErrorCnt[ERROR_TYPES + 1];
     //! \brief last value passed to \c enable() on gyro sensor
     uint8_t mGyroEnabled;
