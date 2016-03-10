@@ -15,9 +15,11 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/dir.h>
+typedef uint64_t u64;
+typedef int64_t s64;
+#include <linux/types.h>
+#include <linux/stat.h>
+#include <linux/dirent.h>
 #include "iio_utils.h"
 
 

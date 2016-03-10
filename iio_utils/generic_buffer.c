@@ -25,9 +25,11 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <errno.h>
-#include <sys/stat.h>
-#include <sys/dir.h>
+typedef uint64_t u64;
+typedef int64_t s64;
 #include <linux/types.h>
+#include <linux/stat.h>
+#include <linux/dirent.h>
 #include <string.h>
 #include <poll.h>
 #include <endian.h>
@@ -84,6 +86,22 @@ void print2byte(int input, struct iio_channel_info *info)
 		printf("%05f ", ((float)val + info->offset)*info->scale);
 	}
 }
+
+void print_hex(char *data, int len) {
+	int i;
+	for (i = 0; i < len; ++i) {
+		printf("%02x", data[i]);
+		if ((i + 1) % 16 == 0) {
+			printf("\n");
+		} else if ((i + 1) % 8 == 0) {
+			printf("  ");
+		} else {
+			printf(" ");
+		}
+	}
+	if (len % 16) printf("\n");
+}
+
 /**
  * process_scan() - print out the values in SI units
  * @data:		pointer to the start of the scan
@@ -165,6 +183,7 @@ int main(int argc, char **argv)
 	while ((c = getopt(argc, argv, "l:w:c:et:n:")) != -1) {
 		switch (c) {
 		case 'n':
+			// To see the name: cat /sys/bus/iio/devices/iio:device0/name
 			device_name = optarg;
 			break;
 		case 't':
@@ -194,7 +213,7 @@ int main(int argc, char **argv)
 	/* Find the device requested */
 	dev_num = find_type_by_name(device_name, "iio:device");
 	if (dev_num < 0) {
-		printf("Failed to find the %s\n", device_name);
+		printf("Failed to find the %s device\n", device_name);
 		ret = -ENODEV;
 		goto error_ret;
 	}
@@ -232,6 +251,15 @@ int main(int argc, char **argv)
 	if (ret) {
 		printf("Problem reading scan element information\n");
 		printf("diag %s\n", dev_dir_name);
+		goto error_free_triggername;
+	}
+	if (!num_channels) {
+		fprintf(stderr,
+			"No channels are enabled, we have nothing to scan.\n");
+		fprintf(stderr, "Enable channels manually in "
+			FORMAT_SCAN_ELEMENTS_DIR
+			"/*_en and try again.\n", dev_dir_name);
+		ret = -ENOENT;
 		goto error_free_triggername;
 	}
 
@@ -312,6 +340,8 @@ int main(int argc, char **argv)
 			} else
 				break;
 		}
+
+		print_hex(data, read_size);
 		for (i = 0; i < read_size/scan_size; i++)
 			process_scan(data + scan_size*i,
 				     channels,

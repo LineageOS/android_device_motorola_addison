@@ -224,8 +224,8 @@ int main(int argc, char **argv)
 
 	fd = open(chrdev_name, 0);
 	if (fd == -1) {
-		fprintf(stdout, "Failed to open %s\n", chrdev_name);
 		ret = -errno;
+		fprintf(stdout, "Failed to open %s (%s)\n", chrdev_name, strerror(errno));
 		goto error_free_chrdev_name;
 	}
 
@@ -234,11 +234,18 @@ int main(int argc, char **argv)
 	close(fd);
 
 	if (ret == -1 || event_fd == -1) {
-		fprintf(stdout, "Failed to retrieve event fd\n");
 		ret = -errno;
+		if (ret == -ENODEV)
+			fprintf(stderr,
+				"This device does not support events\n");
+		else
+			fprintf(stderr,
+				"Failed to retrieve event fd (%s)\n",
+				strerror(errno));
 		goto error_free_chrdev_name;
 	}
 
+	fprintf(stdout, "Got event_fd: %d. Waiting for %d bytes.\n", event_fd, sizeof(event));
 	while (true) {
 		ret = read(event_fd, &event, sizeof(event));
 		if (ret == -1) {
