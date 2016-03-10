@@ -185,6 +185,11 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         motosh_bin/CRC32.c
     LOCAL_REQUIRED_MODULES += sensorhub-blacklist.txt
 
+    ifneq ($(TARGET_BUILD_VARIANT),user)
+        # Build the kernel provided IIO Utilities
+        LOCAL_REQUIRED_MODULES += generic_buffer lsiio iio_event_monitor
+    endif
+
     LOCAL_C_INCLUDES := \
         $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
         hardware/moto/sensors/libsensorhub
