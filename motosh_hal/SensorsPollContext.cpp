@@ -23,47 +23,105 @@
 #include <poll.h>
 #include <pthread.h>
 #include <string.h>
+#include <assert.h>
+#include <signal.h>
 
 #include <cutils/atomic.h>
-#include <cutils/log.h>
 
 #include <linux/input.h>
 
 #include <sys/select.h>
+#include <sys/types.h>
 
 #include <hardware/sensors.h>
 
 #include "SensorsPollContext.h"
+#include "SensorsLog.h"
 
 #if defined(_ENABLE_REARPROX)
 #include "SensorBase.h"
 #include "RearProxSensor.h"
 #endif
+#include "IioSensor.h"
+
+using namespace std;
 
 /*****************************************************************************/
 
 SensorsPollContext SensorsPollContext::self;
 
-SensorsPollContext::SensorsPollContext()
+SensorsPollContext::SensorsPollContext() :
+    pipeFd{0, 0}
 {
-    mSensors[sensor_hub] = HubSensors::getInstance();
-    mPollFds[sensor_hub].fd = mSensors[sensor_hub]->getFd();
-    mPollFds[sensor_hub].events = POLLIN;
-    mPollFds[sensor_hub].revents = 0;
+    S_LOGD("+ pid=%d tid=%d", getpid(), gettid());
+
+    if (pipe(pipeFd)) {
+        S_LOGE("Unable to create pipe: %s", strerror(errno));
+        pipeFd[0] = pipeFd[1] = 0;
+    }
+
+    AutoLock _l(driversLock);
+
+    drivers.push_back(make_shared<HubSensors>());
 
 #ifdef _ENABLE_REARPROX
-    mSensors[rearprox] = RearProxSensor::getInstance();
-    mPollFds[rearprox].fd = mSensors[rearprox]->getFd();
-    mPollFds[rearprox].events = POLLIN;
-    mPollFds[rearprox].revents = 0;
+    drivers.push_back(make_shared<RearProxSensor>());
 #endif
+
+    // All the static sensors have been added above.
+    staticSensorCount = getSensorCount();
+    // Now we can add dynamic sensors
+
+    shared_ptr<struct iio_context> iio_ctx = IioSensor::createIioContext();
+
+    if (iio_ctx) {
+        // TODO: Do this dynamically
+        IioSensor::updateSensorList(iio_ctx);
+
+        for (auto sensor : IioSensor::getSensors()) {
+            S_LOGD("Adding driver 0x%08x", sensor.get());
+            drivers.push_back(sensor);
+        }
+    }
+
+    // TODO: Rebuild pollFDs and fd2driver on mod attach/detach
+    updateFdLists();
 }
+
+/** Since there are different strategies for acquiring the driversLock, caller
+ * must acquire the lock before calling this function. */
+void SensorsPollContext::updateFdLists() {
+    fd2driver.clear();
+    pollFds.clear();
+
+    if (pipeFd[0] > 0) {
+        pollFds.push_back({.fd = pipeFd[0], .events = POLLIN, .revents = 0});
+    }
+
+    for (auto driver : drivers) {
+        if (!driver) {
+            S_LOGE("Null driver");
+            continue;
+        }
+        int fd = driver->getFd();
+        //S_LOGD("Adding fd=%d for driver=0x%08x @ %d", fd, driver.get(), pollFds.size());
+        if (fd > 0) {
+            fd2driver[fd] = driver;
+            pollFds.push_back({
+                    .fd = fd,
+                    .events = POLLIN,
+                    .revents = 0
+            });
+        }
+    }
+}
+
 
 SensorsPollContext::~SensorsPollContext()
 {
-    for (int i=0 ; i<numSensorDrivers ; i++) {
-        mSensors[i] = NULL;
-    }
+    pollFds.clear();
+    fd2driver.clear();
+    drivers.clear();
 }
 
 SensorsPollContext *SensorsPollContext::getInstance()
@@ -71,36 +129,36 @@ SensorsPollContext *SensorsPollContext::getInstance()
     return &self;
 }
 
-int SensorsPollContext::handleToDriver(int handle)
+shared_ptr<SensorBase> SensorsPollContext::handleToDriver(int handle)
 {
-    switch (handle) {
-#ifdef _ENABLE_REARPROX
-        case ID_RP:
-            if (mSensors[rearprox]->hasSensor(handle))
-                return rearprox;
-            else
-                return -EINVAL;
-#endif
-        default:
-            break;
+    for (auto d : drivers) {
+        if (d->hasSensor(handle)) return d;
     }
 
-    if (mSensors[sensor_hub]->hasSensor(handle))
-        return sensor_hub;
-
-    return -EINVAL;
+    S_LOGE("No driver for handle %d", handle);
+    return nullptr;
 }
 
 int SensorsPollContext::activate(int handle, int enabled) {
-    int index = handleToDriver(handle);
-    if (index < 0) return index;
-    return mSensors[index]->setEnable(handle, enabled);
-}
+    int ret = -EBADFD;
 
-int SensorsPollContext::setDelay(int handle, int64_t ns) {
-    int index = handleToDriver(handle);
-    if (index < 0) return index;
-    return mSensors[index]->setDelay(handle, ns);
+    S_LOGD("handle=%d enabled=%d pid=%d tid=%d", handle, enabled, getpid(), gettid());
+
+    shared_ptr<SensorBase> s = handleToDriver(handle);
+    if (s == nullptr) {
+        S_LOGE("No driver found for handle %d (en=%d)", handle, enabled);
+        return -EINVAL;
+    }
+
+    // Try to stop the poll() so we can modify underlying structures
+    AutoLock _p(pollLock);
+    releasePoll();
+    AutoLock _d(driversLock);
+
+    ret = s->setEnable(handle, enabled);
+    updateFdLists();
+
+    return ret;
 }
 
 int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
@@ -109,32 +167,54 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
     int ret;
     int err;
 
-    while (true) {
-        ret = poll(mPollFds, numSensorDrivers, nbEvents ? 0 : -1);
-        err = errno;
-        // Success
-        if (ret >= 0)
-            break;
-        ALOGE("poll() failed (%s)", strerror(err));
-        // EINTR is OK
-        if (err == EINTR)
-            continue;
-        else
-            return -err;
-    }
+    //S_LOGD("count=%d pid=%d tid=%d", count, getpid(), gettid());
 
-    for (int i=0; count && i<numSensorDrivers; i++) {
-        if (mPollFds[i].revents & POLLIN) {
-            SensorBase* const sensor(mSensors[i]);
-            int nb = sensor->readEvents(data, count);
-            // Need to relay any errors upward.
-            if (nb < 0)
-                return nb;
+    auto eventReader = [&](shared_ptr<SensorBase> d) {
+        int nb = d->readEvents(data, count);
+        if (nb > 0) {
             count -= nb;
             nbEvents += nb;
             data += nb;
-            mPollFds[i].revents = 0;
         }
+        return nb;
+    };
+
+    // See if we have any pending events before blocking on poll()
+    driversLock.lock();
+    for (auto d : drivers) {
+        if (d->hasPendingEvents()) eventReader(d);
+    }
+    driversLock.unlock();
+
+    if (nbEvents) return nbEvents;
+
+    pollLock.lock();
+    AutoLock _d(driversLock);
+    pollLock.unlock();
+
+    ret = poll(&pollFds.front(), pollFds.size(), nbEvents ? 0 : -1);
+    err = errno;
+
+    // Success
+    if (ret >= 0) {
+        for (auto p : pollFds) {
+            if (p.revents & POLLIN) {
+                if (p.fd == pipeFd[0]) { // Someone needs the driversLock
+                    char discard;
+                    read(pipeFd[0], &discard, sizeof(discard));
+                } else {
+                    int nb = eventReader(fd2driver[p.fd]);
+                    // Need to relay any errors upward.
+                    if (nb < 0) {
+                        S_LOGE("fd=%d nb=%d", p.fd, nb);
+                        return nb;
+                    }
+                }
+            }
+        }
+    } else {
+        S_LOGE("poll() failed with %d (%s)", err, strerror(err));
+        nbEvents = (err == EINTR ? 0 : -err); // EINTR is OK
     }
 
     return nbEvents;
@@ -142,20 +222,24 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
 
 int SensorsPollContext::batch(int handle, int flags, int64_t ns, int64_t timeout)
 {
-    int index = handleToDriver(handle);
-    if (index < 0) return index;
-    return mSensors[index]->batch(handle, flags, ns, timeout);
+    shared_ptr<SensorBase> s = handleToDriver(handle);
+    if (s == nullptr) return -EINVAL;
+    return s->batch(handle, flags, ns, timeout);
 }
 
 int SensorsPollContext::flush(int handle)
 {
-    int drv = handleToDriver(handle);
+
+    shared_ptr<SensorBase> s = handleToDriver(handle);
 #ifdef _ENABLE_REARPROX
     // to use sensorhub driver to handle flush for rearprox,
     // this is a workaround for rearprox and flush should be
     // implemented by rearprox driver ideally
-    if(drv == rearprox)
-        drv = sensor_hub;
+    if (handle == SENSORS_HANDLE_BASE + ID_RP) {
+        s = handleToDriver(SENSORS_HANDLE_BASE + ID_A);
+    }
 #endif
-    return mSensors[drv]->flush(handle);
+
+    if (s == nullptr) return -EINVAL;
+    return s->flush(handle);
 }

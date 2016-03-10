@@ -23,17 +23,22 @@
 #include <poll.h>
 #include <pthread.h>
 #include <string.h>
+#include <vector>
 
 #include <cutils/atomic.h>
-#include <cutils/log.h>
+#include <base/macros.h>
+#include <utils/Mutex.h>
 
 #include <sys/select.h>
 
 #include <hardware/sensors.h>
 
 #include "Sensors.h"
-#include "SensorList.h"
 #include "SensorsPollContext.h"
+#include "SensorsLog.h"
+
+using namespace std;
+using namespace android;
 
 static int poll__close(struct hw_device_t *dev)
 {
@@ -43,14 +48,15 @@ static int poll__close(struct hw_device_t *dev)
 
 static int poll__activate(struct sensors_poll_device_t *dev,
         int handle, int enabled) {
-    SensorsPollContext *ctx = reinterpret_cast<SensorsPollContext *>(dev);
-    return ctx->activate(handle, enabled);
+    UNUSED(dev);
+    //S_LOGD("handle=%d enabled=%d", handle, enabled);
+    return SensorsPollContext::getInstance()->activate(handle, enabled);
 }
 
 static int poll__setDelay(struct sensors_poll_device_t *dev,
         int handle, int64_t ns) {
-    SensorsPollContext *ctx = reinterpret_cast<SensorsPollContext *>(dev);
-    return ctx->setDelay(handle, ns);
+    UNUSED(dev);
+    return SensorsPollContext::getInstance()->batch(handle, 0, ns, 0);
 }
 
 /*!
@@ -74,24 +80,24 @@ static int poll__setDelay(struct sensors_poll_device_t *dev,
  */
 static int poll__poll(struct sensors_poll_device_t *dev,
         sensors_event_t* data, int count) {
-    SensorsPollContext *ctx = reinterpret_cast<SensorsPollContext *>(dev);
     int ret = 0;
+    UNUSED(dev);
     do {
-        ret = ctx->pollEvents(data, count);
+        ret = SensorsPollContext::getInstance()->pollEvents(data, count);
     } while( ret == 0 );
     return ret;
 }
 
 static int poll__batch(sensors_poll_device_1_t *dev,
         int handle, int flags, int64_t ns, int64_t timeout) {
-    SensorsPollContext *ctx = reinterpret_cast<SensorsPollContext *>(dev);
-    return ctx->batch(handle, flags, ns, timeout);
+    UNUSED(dev);
+    return SensorsPollContext::getInstance()->batch(handle, flags, ns, timeout);
 }
 
 static int poll__flush(sensors_poll_device_1_t *dev,
         int handle) {
-    SensorsPollContext *ctx = reinterpret_cast<SensorsPollContext *>(dev);
-    return ctx->flush(handle);
+    UNUSED(dev);
+    return SensorsPollContext::getInstance()->flush(handle);
 }
 
 /** Open a new instance of a sensor device using name */
@@ -124,12 +130,29 @@ static int open_sensors(const struct hw_module_t* module, const char* id,
 
     return status;
 }
+
 static int sensors__get_sensors_list(struct sensors_module_t* module,
     struct sensor_t const** list)
 {
     (void)module;
-    *list = sSensorList;
-    return sSensorListSize;
+    // Use a local copy for the framework, so we can modify the real list while
+    // the framework is using the static list.
+    static vector<struct sensor_t> sensorList;
+    sensorList.clear();
+
+    SensorsPollContext *ctx = SensorsPollContext::getInstance();
+
+    SensorsPollContext::AutoLock _p(ctx->pollLock);
+    ctx->releasePoll();
+    SensorsPollContext::AutoLock _d(ctx->driversLock);
+
+    ctx->getSensorsList(sensorList);
+
+    *list = &sensorList[0];
+
+    // TODO: In Android-N, getSensorList() returns only the static sensors.
+    // We can return SensorsPollContext::getStaticSensorCount() in N.
+    return sensorList.size();
 }
 
 static struct hw_module_methods_t sensors_module_methods = {
@@ -148,5 +171,6 @@ struct sensors_module_t HAL_MODULE_INFO_SYM = {
         dso: NULL,
         reserved: {0},
     },
-    get_sensors_list: sensors__get_sensors_list
+    get_sensors_list: sensors__get_sensors_list,
+    set_operation_mode: NULL
 };

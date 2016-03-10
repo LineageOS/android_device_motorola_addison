@@ -24,6 +24,7 @@
 #include <errno.h>
 #include <sys/cdefs.h>
 #include <sys/types.h>
+#include <type_traits>
 
 #include <linux/input.h>
 #include <linux/motosh.h>
@@ -49,6 +50,8 @@ static inline int motosh_ioctl (int fd, int ioctl_number, ...) {
     } while ((status != 0) && (error == -EINTR));
     return status;
 }
+
+#define SENSORS_HANDLE_BASE_IIO (SENSORS_HANDLE_BASE + MAX_SENSOR_ID + 1)
 
 /*****************************************************************************/
 

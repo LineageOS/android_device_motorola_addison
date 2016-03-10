@@ -31,8 +31,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include <cutils/log.h>
-
 #include <sys/select.h>
 
 #include <linux/motosh.h>
@@ -41,10 +39,9 @@
 
 #include "SensorList.h"
 #include "HubSensors.h"
+#include "SensorsLog.h"
 
 /*****************************************************************************/
-
-HubSensors HubSensors::self;
 
 HubSensors::HubSensors()
 : SensorBase(SENSORHUB_DEVICE_NAME, NULL, SENSORHUB_AS_DATA_NAME),
@@ -80,7 +77,7 @@ HubSensors::HubSensors()
     memset(mGyroCal, 0, sizeof(mGyroCal));
     memset(mAccelCal, 0, sizeof(mAccelCal));
     memset(mErrorCnt, 0, sizeof(mErrorCnt));
-    ALOGI("Sensorhub hal created");
+    S_LOGI("Sensorhub hal created");
 
     open_device();
 
@@ -136,19 +133,14 @@ HubSensors::HubSensors()
         }
     }
     // Add all supported sensors to the mIdToSensor map
-    for( size = 0; size < sSensorListSize; ++size ) {
-        mIdToSensor.insert(std::make_pair(sSensorList[size].handle, sSensorList+size));
+    for (auto s : sSensorList) {
+        mIdToSensor.insert(std::make_pair(s.handle, &s));
     }
 }
 
 HubSensors::~HubSensors()
 {
   ALOGE("Sensorhub hal destroyed");
-}
-
-HubSensors *HubSensors::getInstance()
-{
-    return &self;
 }
 
 bool HubSensors::isHandleEnabled(uint64_t handle)
@@ -168,7 +160,7 @@ int HubSensors::setEnable(int32_t handle, int en)
         return -EINVAL;
     }
 
-    ALOGE("Sensorhub hal enable: %d - %d", handle, en);
+    ALOGI("Sensorhub hal enable: %d - %d", handle, en);
 
     new_enabled = mEnabled;
     switch (handle) {
@@ -463,14 +455,6 @@ int HubSensors::setEnable(int32_t handle, int en)
         mEnabledHandles &= ~((decltype(mEnabledHandles))1 << handle);
 
     return err;
-}
-
-int HubSensors::setDelay(int32_t handle, int64_t ns) {
-
-    return batch(handle,
-		 0 /* flags */,
-		 ns,
-		 0 /* timeout */);
 }
 
 int HubSensors::batch(int32_t handle, int32_t flags, int64_t ns, int64_t timeout)

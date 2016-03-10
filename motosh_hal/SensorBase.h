@@ -23,7 +23,10 @@
 #include <errno.h>
 #include <sys/cdefs.h>
 #include <sys/types.h>
+#include <sys/time.h>
 #include <linux/limits.h>
+#include <string.h>
+#include <vector>
 
 
 /*****************************************************************************/
@@ -39,25 +42,44 @@ public:
 
 	virtual ~SensorBase();
 
+	SensorBase(const SensorBase& that) = delete;
+	SensorBase& operator=(SensorBase const&) = delete;
+	SensorBase(SensorBase &&) = delete;
+
 	virtual int readEvents(sensors_event_t* data, int count) = 0;
 	virtual bool hasPendingEvents() const;
 	virtual int getFd() const;
 
 	/* When this function is called, increments the reference counter. */
 	virtual int setEnable(int32_t handle, int enabled) = 0;
-	virtual int setDelay(int32_t handle, int64_t ns);
-	virtual int batch(int32_t handle, int32_t flags, int64_t ns, int64_t timeout);
-
+	/*
+	 * Sets a sensor’s parameters, including sampling frequency and maximum
+	 * report latency. This function can be called while the sensor is
+	 * activated, in which case it must not cause any sensor measurements to
+	 * be lost: transitioning from one sampling rate to the other cannot cause
+	 * lost events, nor can transitioning from a high maximum report latency to
+	 * a low maximum report latency.
+	 * See the Batching sensor results page for details:
+	 * http://source.android.com/devices/sensors/batching.html
+	 */
+	virtual int batch(int32_t handle, int32_t flags, int64_t ns, int64_t timeout) = 0;
 	virtual int flush(int32_t handle) = 0;
-	virtual bool hasSensor(int handle);
+	virtual bool hasSensor(int handle) = 0;
+
+	/** Appends to the list the sensors handled by this object. */
+	virtual void getSensorsList(std::vector<struct sensor_t> &list) = 0;
 
 protected:
 	const char* dev_name;
+	// A /dev/input file that uses the input event kernel subsystem
 	const char* data_name;
+	// A /dev file that will be read directly (not using the input subsystem)
 	const char* mot_data_name;
 	int dev_fd;
 	int data_fd;
 
+	/* Used for sensors reported through the input (keyboard/mouse) kernel
+	 * subsystem. */
 	int openInput(const char* inputName);
 	static int64_t getTimestamp();
 

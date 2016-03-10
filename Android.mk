@@ -101,9 +101,10 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
 
         LOCAL_CFLAGS := -DLOG_TAG=\"MotoSensors\"
         LOCAL_CFLAGS += $(SH_CFLAGS)
+        LOCAL_CXX_FLAGS += -std=c++14
 
         LOCAL_SRC_FILES :=              \
-            SensorBase.cpp   \
+            $(SH_PATH)/SensorBase.cpp   \
             $(SH_PATH)/SensorHal.cpp    \
             $(SH_PATH)/HubSensors.cpp   \
             $(SH_PATH)/SensorList.cpp
@@ -117,6 +118,13 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
                 $(SH_PATH)/LinearAccelGravity.cpp
         endif
 
+        ifeq ($(MOT_SENSOR_HUB_HW_TYPE_L4), true)
+            LOCAL_SHARED_LIBRARIES += libiio
+            LOCAL_SRC_FILES += \
+                $(SH_PATH)/IioSensor.cpp
+            LOCAL_C_INCLUDES += motorola/external/libiio
+        endif
+
         ifeq ($(MOT_AP_SENSOR_HW_REARPROX), true)
             LOCAL_SRC_FILES += \
                 $(SH_PATH)/RearProxSensor.cpp \
@@ -127,17 +135,19 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         LOCAL_SRC_FILES += \
             $(SH_PATH)/SensorsPollContext.cpp
 
-        LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SH_PATH)
+        LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(SH_PATH)
         LOCAL_C_INCLUDES += external/zlib
 
-        LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
+        LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
+                system/core/base/include
+
         # Need the UAPI output directory to be populated with motosh.h/stml0xx.h
         LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
 
         LOCAL_PRELINK_MODULE := false
         LOCAL_MODULE_RELATIVE_PATH := hw
         LOCAL_MODULE_TAGS := optional
-        LOCAL_SHARED_LIBRARIES := liblog libcutils libz libdl libutils
+        LOCAL_SHARED_LIBRARIES += liblog libcutils libz libdl libutils
         LOCAL_MODULE := sensors.$(TARGET_BOARD_PLATFORM)
 
         include $(BUILD_SHARED_LIBRARY)
@@ -185,9 +195,16 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         motosh_bin/CRC32.c
     LOCAL_REQUIRED_MODULES += sensorhub-blacklist.txt
 
-    ifneq ($(TARGET_BUILD_VARIANT),user)
-        # Build the kernel provided IIO Utilities
-        #LOCAL_REQUIRED_MODULES += generic_buffer lsiio iio_event_monitor
+    ifeq ($(MOT_SENSOR_HUB_HW_TYPE_L4), true)
+        ifneq ($(TARGET_BUILD_VARIANT),user)
+            # Build libiio.so
+            LOCAL_REQUIRED_MODULES += libiio
+
+            # Build libiio tests/utilities
+            LOCAL_REQUIRED_MODULES += iio_genxml iio_info iio_readdev iio_reg
+            # Build the kernel provided IIO Utilities
+            #LOCAL_REQUIRED_MODULES += generic_buffer lsiio iio_event_monitor
+        endif
     endif
 
     LOCAL_C_INCLUDES := \

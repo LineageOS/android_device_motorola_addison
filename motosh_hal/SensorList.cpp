@@ -107,7 +107,7 @@
 #define MOT_LAGRAV_MA   1.0f
 #define GLANCE_ALGO_MA    (ACCGYR_ACCEL_MA + PROX_MA + ALS_MA)
 
-const struct sensor_t sSensorList[] = {
+const std::vector<struct sensor_t> sSensorList = {
     { .name = ACCEL_PART_NO " 3-axis Accelerometer",
                 .vendor = VENDOR_ACCEL,
                 .version = 1,
@@ -540,24 +540,6 @@ const struct sensor_t sSensorList[] = {
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
 #endif
-#ifdef _ENABLE_REARPROX
-    { .name = "Rear Proximity sensor",
-        .vendor = VENDOR_MOT,
-        .version = 1,
-        .handle = SENSORS_HANDLE_BASE + ID_RP,
-        .type = SENSOR_TYPE_PROXIMITY,
-        .maxRange = 100.0f,
-        .resolution = 100.0f,
-        .power = 0.35f,
-        .minDelay = 0,
-        .fifoReservedEventCount = 0,
-        .fifoMaxEventCount = 0,
-        .stringType = SENSOR_STRING_TYPE_PROXIMITY,
-        .requiredPermission = "",
-        .maxDelay = 10000000,
-        .flags = SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
-        .reserved = { 0, 0 } },
-#endif
     { .name = "Glance Gesture",
                 .vendor = VENDOR_MOT,
                 .version = 1,
@@ -608,7 +590,7 @@ const struct sensor_t sSensorList[] = {
                 .reserved = {0,0} },
 
 };
-const int sSensorListSize = sizeof(sSensorList)/sizeof(*sSensorList);
+
 
 /* Clean up definitions */
 #undef VENDOR_MAG

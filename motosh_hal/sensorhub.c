@@ -181,7 +181,7 @@ static int sensorhub_algo_req(struct sensorhub_device_t* device, uint16_t algo,
     unsigned char bytes[sizeof(algo) + sizeof(req_len) + req_len];
 
     pthread_mutex_lock(&g_lock);
-    ALOGD("sensorhub_algo_req(): algo: %d, active_parts: %d, num_parts: %d, req_len: %d, bytes: %d",
+    ALOGD("sensorhub_algo_req(): algo: %d, active_parts: %d, num_parts: %d, req_len: %d, bytes: %zu",
         algo, active_parts, num_parts[algo], req_len, sizeof(bytes));
 
     algos = context->active_algos;
@@ -373,7 +373,7 @@ static int sensorhub_open(const struct hw_module_t* module, char const* name, st
     int fd;
 
     if (!context) {
-        ALOGE("%s: Couldn't allocate context.", __func__);
+        ALOGE("%s: Couldn't allocate context. (%s)", __func__, name);
         return -ENOMEM;
     }
 

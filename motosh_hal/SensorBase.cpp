@@ -52,6 +52,7 @@ SensorBase::SensorBase(
 }
 
 SensorBase::~SensorBase() {
+    ALOGD("%s", __func__);
     if (data_fd >= 0) {
         close(data_fd);
     }
@@ -101,19 +102,6 @@ int SensorBase::getFd() const {
         return data_fd;
 
     return dev_fd;
-}
-
-int SensorBase::setDelay(int32_t handle, int64_t ns) {
-    (void)handle;
-    (void)ns;
-    return 0;
-}
-
-int SensorBase::batch(int32_t handle, int32_t flags, int64_t ns, int64_t timeout) {
-    (void)flags;
-    (void)timeout;
-
-    return setDelay(handle, ns);
 }
 
 bool SensorBase::hasPendingEvents() const {
@@ -167,9 +155,3 @@ int SensorBase::openInput(const char* inputName) {
     return fd;
 }
 
-bool SensorBase::hasSensor(int handle)
-{
-    (void)handle;
-
-    return 1;
-}

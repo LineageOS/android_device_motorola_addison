@@ -28,11 +28,15 @@
 #include <zlib.h>
 #include <time.h>
 #include <private/android_filesystem_config.h>
+#include <iterator>
 
 #include <linux/motosh.h>
+#include <base/macros.h>
 
 #include "Sensors.h"
 #include "SensorBase.h"
+#include "SensorList.h"
+#include "SensorsLog.h"
 
 /*****************************************************************************/
 
@@ -169,21 +173,22 @@ struct input_event;
 
 class HubSensors : public SensorBase {
 public:
+    DISALLOW_COPY_AND_ASSIGN(HubSensors);
     virtual bool isHandleEnabled(uint64_t handle);
     virtual int setEnable(int32_t handle, int enabled) override;
-    virtual int setDelay(int32_t handle, int64_t ns) override;
     virtual int batch(int32_t handle, int32_t flags, int64_t ns, int64_t timeout) override;
     virtual int readEvents(sensors_event_t* data, int count) override;
     virtual int flush(int32_t handle) override;
     bool hasSensor(int handle) override;
 
-    static HubSensors* getInstance();
-
-private:
             HubSensors();
     virtual ~HubSensors();
+    virtual void getSensorsList(std::vector<struct sensor_t> &list) override {
+        //S_LOGD("");
+        std::copy(sSensorList.begin(), sSensorList.end(), std::inserter(list, list.end()));
+    }
 
-    static HubSensors self;
+private:
     int update_delay();
     uint32_t mEnabled;
     uint32_t mWakeEnabled;

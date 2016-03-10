@@ -24,10 +24,10 @@
 #include <string.h>
 
 #include <cutils/log.h>
+#include <base/macros.h>
 
 #include "RearProxSensor.h"
 
-RearProxSensor RearProxSensor::self;
 /*****************************************************************************/
 
 RearProxSensor::RearProxSensor()
@@ -52,7 +52,6 @@ RearProxSensor::RearProxSensor()
 	mFlushEvents.meta_data.what = META_DATA_FLUSH_COMPLETE;
 	mFlushEvents.meta_data.sensor = ID_RP;
 
-	mDelays = 2000000000; // 2000 ms by default
 	ALOGD("rearprox opening enable_ps_sensor");
 	// read the actual value of all sensors if they're enabled already
 	int fd;
@@ -80,10 +79,7 @@ RearProxSensor::RearProxSensor()
 
 RearProxSensor::~RearProxSensor() {
 }
-RearProxSensor* RearProxSensor::getInstance()
-{
-	return &self;
-}
+
 int RearProxSensor::setEnable(int32_t handle, int en)
 {
 	char buff[2];
@@ -118,12 +114,15 @@ int RearProxSensor::setEnable(int32_t handle, int en)
 
 int RearProxSensor::getEnable(int32_t handle)
 {
+	UNUSED(handle);
 	return mEnabled;
 }
 
-int RearProxSensor::setDelay(int32_t handle, int64_t ns)
+int RearProxSensor::batch(int32_t handle, int flags,
+		int64_t sampling_period_ns, int64_t max_report_latency_ns)
 {
-	(void)handle;
+	(void)flags;
+	(void)max_report_latency_ns;
 	int delay;
 	char buff[32];
 	int num_chars;
@@ -132,12 +131,11 @@ int RearProxSensor::setDelay(int32_t handle, int64_t ns)
 	if (ID_RP != handle)
 		return -EINVAL;
 
-	if (ns < 0)
+	if (sampling_period_ns < 0)
 		return -EINVAL;
 
-	mDelays = ns;
-	ALOGD("rearprox setDelay");
-	delay = ns / 1000000;
+	ALOGD("rearprox batch");
+	delay = sampling_period_ns / 1000000;
 	num_chars = snprintf(buff, (size_t)32, "%d", delay);
 	if ((num_chars < 0) || (num_chars >= 32)) {
 		ALOGE("rearprox invalid delay value %d\n", delay);

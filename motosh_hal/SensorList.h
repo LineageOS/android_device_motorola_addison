@@ -23,10 +23,11 @@
 #include <hardware/mot_sensorhub_motosh.h>
 #include <float.h>
 #include <limits.h>
+#include <vector>
 
 #include "Sensors.h"
 
-extern const struct sensor_t sSensorList[];
-extern const int sSensorListSize;
+// SensorHub static sensors (always present)
+extern const std::vector<struct sensor_t> sSensorList;
 
 #endif // SENSORLIST_H

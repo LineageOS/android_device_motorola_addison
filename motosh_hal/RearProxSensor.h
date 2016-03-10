@@ -21,10 +21,12 @@
 #include <errno.h>
 #include <sys/cdefs.h>
 #include <sys/types.h>
+#include <hardware/sensors.h>
 
 #include "Sensors.h"
 #include "SensorBase.h"
 #include "InputEventReader.h"
+#include "SensorsLog.h"
 
 /*****************************************************************************/
 
@@ -36,22 +38,43 @@ public:
 	virtual ~RearProxSensor();
 
 	virtual int setEnable(int32_t handle, int enabled) override;
-	virtual int setDelay(int32_t handle, int64_t ns) override;
+	virtual int batch(int32_t handle, int flags,
+			int64_t sampling_period_ns, int64_t max_report_latency_ns) override;
 	virtual int readEvents(sensors_event_t* data, int count) override;
 	virtual int flush(int32_t handle) override;
+	virtual bool hasSensor(int handle) override {
+		return handle == SENSORS_HANDLE_BASE + ID_RP;
+	}
 
 	virtual int getEnable(int32_t handle);
 	void processEvent(int code, int value);
-	static RearProxSensor* getInstance();
+	virtual void getSensorsList(std::vector<struct sensor_t> &list) {
+		//S_LOGD("");
+		list.push_back(
+			{ .name = "Rear Proximity sensor",
+			  .vendor = "Motorola",
+			  .version = 1,
+			  .handle = SENSORS_HANDLE_BASE + ID_RP,
+			  .type = SENSOR_TYPE_PROXIMITY,
+			  .maxRange = 100.0f,
+			  .resolution = 100.0f,
+			  .power = 0.35f,
+			  .minDelay = 0,
+			  .fifoReservedEventCount = 0,
+			  .fifoMaxEventCount = 0,
+			  .stringType = SENSOR_STRING_TYPE_PROXIMITY,
+			  .requiredPermission = "",
+			  .maxDelay = 10000000,
+			  .flags = SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
+			  .reserved = { 0, 0 } });
+	}
 private:
 	uint32_t mEnabled;
 	uint32_t mPendingMask;
 	InputEventCircularReader mInputReader;
 	sensors_event_t mPendingEvents;
 	sensors_event_t mFlushEvents;
-	uint64_t mDelays;
 	uint32_t mFlushEnabled;
-	static RearProxSensor self;
 };
 
 /*****************************************************************************/
