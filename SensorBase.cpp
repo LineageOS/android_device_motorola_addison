@@ -109,6 +109,13 @@ int SensorBase::setDelay(int32_t handle, int64_t ns) {
     return 0;
 }
 
+int SensorBase::batch(int32_t handle, int32_t flags, int64_t ns, int64_t timeout) {
+    (void)flags;
+    (void)timeout;
+
+    return setDelay(handle, ns);
+}
+
 bool SensorBase::hasPendingEvents() const {
     return false;
 }

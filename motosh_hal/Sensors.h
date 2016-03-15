@@ -26,6 +26,7 @@
 #include <sys/types.h>
 
 #include <linux/input.h>
+#include <linux/motosh.h>
 
 #include <hardware/hardware.h>
 #include <hardware/sensors.h>
@@ -48,46 +49,6 @@ static inline int motosh_ioctl (int fd, int ioctl_number, ...) {
     } while ((status != 0) && (error == -EINTR));
     return status;
 }
-
-#define MIN_SENSOR_ID (0)
-#define ID_A  (0)  /* Accelerometer */
-#define ID_G  (1)  /* Gyroscope */
-#define ID_PR (2)  /* Pressure */
-#define ID_M  (3)  /* Magnetometer */
-#define ID_O  (4)  /* Orientation */
-#define ID_T  (5)  /* Temperature */
-#define ID_L  (6)  /* Light */
-
-#define ID_LA (7)  /* Linear Acceleration */
-#define ID_Q  (8)  /* Quaternion */
-#define ID_GRAVITY (9)  /* Gravity */
-#define ID_DR (10) /* Display Rotate */
-#define ID_DB (11) /* Display Brightness */
-
-#define ID_D  (12) /* Dock */
-#define ID_P  (13) /* Proximity */
-
-#define ID_FU (14) /* Flat Up */
-#define ID_FD (15) /* Flat Down */
-#define ID_S  (16) /* Stowed */
-#define ID_CA (17) /* Camera Activate */
-#define ID_NFC (18) /* NFC Detect */
-#define ID_IR_GESTURE (19) /* IR Gesture */
-#define ID_IR_RAW     (20) /* IR Raw Data */
-#define ID_SIM (21) /* Significant motion */
-#define ID_STEP_DETECTOR (22) /* Step detector */
-#define ID_STEP_COUNTER  (23) /* Step counter */
-#define ID_UNCALIB_GYRO  (24) /* Uncalibrated Gyroscope */
-#define ID_UNCALIB_MAG   (25) /* Uncalibrated Magenetometer */
-#define ID_IR_OBJECT (26) /* IR Object Detect */
-#define ID_CHOPCHOP_GESTURE (27) /* ChopChop Gesture */
-#define ID_QUAT_6AXIS (28)
-#define ID_QUAT_9AXIS (29)
-#define ID_LIFT_GESTURE (30)
-#define ID_GLANCE_GESTURE (31)
-#define ID_RP (32) /* Moto Rear Proximity */
-#define ID_MOTO_GLANCE_GESTURE (33)
-#define MAX_SENSOR_ID (33)
 
 
 /*****************************************************************************/

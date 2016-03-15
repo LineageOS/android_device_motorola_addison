@@ -453,23 +453,38 @@ int HubSensors::setEnable(int32_t handle, int en)
     return err;
 }
 
-int HubSensors::setDelay(int32_t handle, int64_t ns)
+int HubSensors::setDelay(int32_t handle, int64_t ns) {
+
+    return batch(handle,
+		 0 /* flags */,
+		 ns,
+		 0 /* timeout */);
+}
+
+int HubSensors::batch(int32_t handle, int32_t flags, int64_t ns, int64_t timeout)
 {
+    (void)flags;
     int rateFd = 0;
     int status = -EINVAL;
 
     if (ns < 0)
         return -EINVAL;
     if( !mIdToSensor.count(handle) ) {
-        ALOGE("Sensorhub hal setdelay: %d - %" PRId64 " (bad handle)", handle, ns);
+        ALOGE("Sensorhub hal batch: %d - %" PRId64 " (bad handle)", handle, ns);
         return -EINVAL;
     }
 
-    ALOGE("Sensorhub hal setdelay: %d - %" PRId64, handle, ns);
+    ALOGE("Sensorhub hal batch: %d - %" PRId64 " - %" PRId64, handle, ns, timeout);
 
-    unsigned short delay = int64_t(ns) / 1000000;
+    unsigned short delay = ns / 1000000;
+    uint32_t timeoutms = timeout / 1000000;
+    struct motosh_moto_sensor_batch_cfg batch_cfg =
+	    { .delay = delay, .timeout = timeoutms };
+
     switch (handle) {
-        case ID_A: status = motosh_ioctl(dev_fd,  MOTOSH_IOCTL_SET_ACC_DELAY, &delay);   break;
+        case ID_A:
+	    status = motosh_ioctl(dev_fd,  MOTOSH_IOCTL_SET_ACC_DELAY, &batch_cfg);
+	    break;
         case ID_G:
             mGyroReqDelay = delay;
             break;

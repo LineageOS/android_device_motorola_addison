@@ -142,9 +142,9 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
 
 int SensorsPollContext::batch(int handle, int flags, int64_t ns, int64_t timeout)
 {
-    (void)flags;
-    (void)timeout;
-    return setDelay(handle, ns);
+    int index = handleToDriver(handle);
+    if (index < 0) return index;
+    return mSensors[index]->batch(handle, flags, ns, timeout);
 }
 
 int SensorsPollContext::flush(int handle)

@@ -46,6 +46,8 @@ public:
 	/* When this function is called, increments the reference counter. */
 	virtual int setEnable(int32_t handle, int enabled) = 0;
 	virtual int setDelay(int32_t handle, int64_t ns);
+	virtual int batch(int32_t handle, int32_t flags, int64_t ns, int64_t timeout);
+
 	virtual int flush(int32_t handle) = 0;
 	virtual bool hasSensor(int handle);
 
