@@ -50,7 +50,6 @@ static inline int motosh_ioctl (int fd, int ioctl_number, ...) {
     return status;
 }
 
-
 /*****************************************************************************/
 
 /*

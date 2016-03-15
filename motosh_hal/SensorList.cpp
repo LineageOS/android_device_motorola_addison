@@ -76,16 +76,18 @@
 #define GRAV_QUANTIZATION_LEVELS  (INT16_MAX)
 
 /* Min delays */
-#define ACCEL_MIN_DELAY_US 5000
-#define GYRO_MIN_DELAY_US  5000
-#define MAG_MIN_DELAY_US   20000
-#define STEP_MIN_DELAY_US  1000000 /* 1 sec */
+#define ACCEL_MIN_DELAY_US     5000
+#define GYRO_MIN_DELAY_US      5000
+#define MAG_MIN_DELAY_US       20000
+#define STEP_MIN_DELAY_US      1000000 /* 1 sec */
+#define MOTO_MOD_MIN_DELAY_US  1000000 /* 1 sec */
 
 /* Max delays */
-#define ACCEL_MAX_DELAY_US 200000
-#define GYRO_MAX_DELAY_US  200000
-#define MAG_MAX_DELAY_US   200000
-#define STEP_MAX_DELAY_US  0
+#define ACCEL_MAX_DELAY_US     200000
+#define GYRO_MAX_DELAY_US      200000
+#define MAG_MAX_DELAY_US       200000
+#define STEP_MAX_DELAY_US      0
+#define MOTO_MOD_MAX_DELAY_US  0
 
 /* Part numbers to use in sensor names */
 #define MAG_PART_NO   "AKM09912"
@@ -571,6 +573,23 @@ const struct sensor_t sSensorList[] = {
                 .maxDelay = 0,
                 .flags = SENSOR_FLAG_ONE_SHOT_MODE | SENSOR_FLAG_WAKE_UP,
                 .reserved = {0,0}},
+    { .name = "Moto Mod Current Drain",
+                .vendor = VENDOR_MOT,
+                .version = 1,
+                .handle = SENSORS_HANDLE_BASE+ID_MOTO_MOD_CURRENT_DRAIN,
+                .type = SENSOR_TYPE_MOTO_MOD_CURRENT_DRAIN,
+                .maxRange = FLT_MAX,
+                .resolution = 1.0f,
+                .power = 0.0f,
+                .minDelay = MOTO_MOD_MIN_DELAY_US,
+                .fifoReservedEventCount = 0,
+                .fifoMaxEventCount = 0,
+                .stringType = SENSOR_STRING_TYPE_MOTO_MOD_CURRENT_DRAIN,
+                .requiredPermission = "",
+                .maxDelay = MOTO_MOD_MAX_DELAY_US,
+                .flags = SENSOR_FLAG_ON_CHANGE_MODE,
+                .reserved = {0,0} },
+
 };
 const int sSensorListSize = sizeof(sSensorList)/sizeof(*sSensorList);
 

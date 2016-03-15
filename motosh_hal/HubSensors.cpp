@@ -310,6 +310,12 @@ int HubSensors::setEnable(int32_t handle, int en)
                 new_enabled |= M_QUAT_9AXIS;
             found = 1;
             break;
+        case ID_MOTO_MOD_CURRENT_DRAIN:
+            new_enabled &= ~M_MOTO_MOD_CURRENT_DRAIN;
+            if (newState)
+                new_enabled |= M_MOTO_MOD_CURRENT_DRAIN;
+            found = 1;
+            break;
     } // end switch(handle)
 
     // Mag and orientation are tied to same physical sensor
@@ -563,6 +569,7 @@ int HubSensors::batch(int32_t handle, int32_t flags, int64_t ns, int64_t timeout
 #endif
         case ID_GLANCE_GESTURE: status = 0;                                       break;
         case ID_MOTO_GLANCE_GESTURE: status = 0;                                  break;
+        case ID_MOTO_MOD_CURRENT_DRAIN: status = 0;                               break;
         case ID_QUAT_6AXIS:
             rateFd = open(QUAT_6AXIS_RATE_ATTR_NAME, O_WRONLY);
             if (rateFd < 0) {
@@ -1065,6 +1072,15 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                             ALOGE("Error writing Accel Cal file");
                     }
                 }
+                break;
+            case DT_MOTO_MOD_CURRENT_DRAIN:
+                memset(data, 0, sizeof(*data));
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor = SENSORS_HANDLE_BASE + ID_MOTO_MOD_CURRENT_DRAIN;
+                data->type = SENSOR_TYPE_MOTO_MOD_CURRENT_DRAIN;
+                data->data[0] = STMU32TOH(buff.data);
+                data->timestamp = buff.timestamp;
+                data++;
                 break;
             default:
                 break;
