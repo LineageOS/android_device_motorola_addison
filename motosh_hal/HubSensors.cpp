@@ -825,8 +825,8 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 data->type = SENSOR_TYPE_ORIENTATION;
                 data->orientation.azimuth = STM16TOH(buff.data + ORIENTATION_AZIMUTH) * CONVERT_O_Y;
                 data->orientation.pitch = STM16TOH(buff.data + ORIENTATION_PITCH) * CONVERT_O_P;
-                // Roll value needs to be negated.
-                data->orientation.roll = -STM16TOH(buff.data + ORIENTATION_ROLL) * CONVERT_O_R;
+                // Roll value should not be negated.
+                data->orientation.roll = STM16TOH(buff.data + ORIENTATION_ROLL) * CONVERT_O_R;
                 data->orientation.status = buff.status;
                 data->timestamp = buff.timestamp;
                 data++;
