@@ -1074,14 +1074,32 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 }
                 break;
             case DT_MOTO_MOD_CURRENT_DRAIN:
+            {
+                static uint32_t last_mAH;
+                static uint32_t mAH_offset;
+                uint32_t mAH;
+
                 memset(data, 0, sizeof(*data));
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = SENSORS_HANDLE_BASE + ID_MOTO_MOD_CURRENT_DRAIN;
                 data->type = SENSOR_TYPE_MOTO_MOD_CURRENT_DRAIN;
-                data->data[0] = STMU32TOH(buff.data);
+
+                mAH = STMU32TOH(buff.data);
+
+                if(mAH + mAH_offset < last_mAH)
+                {
+                    /* hub reset, determine offset and apply, so users
+                       only see contiguous mAH */
+                    mAH_offset = last_mAH;
+                    ALOGD("Saving %d mAH offset", mAH_offset);
+                }
+                last_mAH = mAH + mAH_offset;
+
+                data->data[0] = last_mAH;
                 data->timestamp = buff.timestamp;
                 data++;
                 break;
+            }
             default:
                 break;
         }
