@@ -150,5 +150,12 @@ int SensorsPollContext::batch(int handle, int flags, int64_t ns, int64_t timeout
 int SensorsPollContext::flush(int handle)
 {
     int drv = handleToDriver(handle);
+#ifdef _ENABLE_REARPROX
+    // to use sensorhub driver to handle flush for rearprox,
+    // this is a workaround for rearprox and flush should be
+    // implemented by rearprox driver ideally
+    if(drv == rearprox)
+        drv = sensor_hub;
+#endif
     return mSensors[drv]->flush(handle);
 }

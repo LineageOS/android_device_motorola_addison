@@ -308,5 +308,8 @@ int SensorsPollContext::flush(int handle)
         return -EINVAL;
     }
 
+    // flush for rearprox is handled by sensorhub too here,
+    // this is a workaround for rearprox and flush should be
+    // implemented by rearprox driver ideally
     return mSensors[sensor_hub]->flush(handle);
 }
