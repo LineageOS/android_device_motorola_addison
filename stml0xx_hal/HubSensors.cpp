@@ -161,6 +161,8 @@ int HubSensors::setEnable(int32_t handle, int en)
     int found = 0;
     int err = 0;
 
+    ALOGI("Sensorhub hal enable: %d - %d", handle, en);
+
     // Check non-wake sensors
     new_enabled = mEnabled;
     switch (handle) {
@@ -386,6 +388,8 @@ int HubSensors::setDelay(int32_t handle, int64_t ns)
             break;
         }
     }
+
+    ALOGI("Sensorhub hal setdelay: %d - %d", handle, delay);
 
     switch (handle) {
         case ID_A:
