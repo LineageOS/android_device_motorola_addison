@@ -187,7 +187,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
 
     ifneq ($(TARGET_BUILD_VARIANT),user)
         # Build the kernel provided IIO Utilities
-        LOCAL_REQUIRED_MODULES += generic_buffer lsiio iio_event_monitor
+        #LOCAL_REQUIRED_MODULES += generic_buffer lsiio iio_event_monitor
     endif
 
     LOCAL_C_INCLUDES := \
