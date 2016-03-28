@@ -51,7 +51,9 @@ using namespace std;
 SensorsPollContext SensorsPollContext::self;
 
 SensorsPollContext::SensorsPollContext() :
-    pipeFd{0, 0}
+    pipeFd{0, 0},
+    ueventListener( [this](char*d){this->onSensorAddRemove(d);},
+                    [this](char*d){this->onSensorAddRemove(d);})
 {
     S_LOGD("+ pid=%d tid=%d", getpid(), gettid());
 
@@ -70,21 +72,11 @@ SensorsPollContext::SensorsPollContext() :
 
     // All the static sensors have been added above.
     staticSensorCount = getSensorCount();
+    staticDriverCount = drivers.size();
+    S_LOGD("Static drivers %d", drivers.size());
     // Now we can add dynamic sensors
 
-    shared_ptr<struct iio_context> iio_ctx = IioSensor::createIioContext();
-
-    if (iio_ctx) {
-        // TODO: Do this dynamically
-        IioSensor::updateSensorList(iio_ctx);
-
-        for (auto sensor : IioSensor::getSensors()) {
-            S_LOGD("Adding driver 0x%08x", sensor.get());
-            drivers.push_back(sensor);
-        }
-    }
-
-    // TODO: Rebuild pollFDs and fd2driver on mod attach/detach
+    addIioSensors();
     updateFdLists();
 }
 
@@ -96,6 +88,15 @@ void SensorsPollContext::updateFdLists() {
 
     if (pipeFd[0] > 0) {
         pollFds.push_back({.fd = pipeFd[0], .events = POLLIN, .revents = 0});
+    }
+
+    if (ueventListener.getFd() > 0) {
+        pollFds.push_back({
+                .fd = ueventListener.getFd(),
+                .events = POLLIN,
+                .revents = 0});
+    } else {
+        S_LOGD("Skipping ueventListener");
     }
 
     for (auto driver : drivers) {
@@ -129,6 +130,41 @@ SensorsPollContext *SensorsPollContext::getInstance()
     return &self;
 }
 
+void SensorsPollContext::onSensorAddRemove(char *device) {
+    S_LOGD("Adding/Removing %s", device);
+
+    AutoLock _p(pollLock);
+    releasePoll(ReleaseReason::SensorAdd);
+    AutoLock _d(driversLock);
+
+    S_LOGD("statics: %d/%d", staticDriverCount, drivers.size());
+    if (end(drivers) == (begin(drivers) + staticDriverCount)) {
+        S_LOGD("No dynamic sensors");
+    } else {
+        S_LOGD("Got dynamic sensors");
+    }
+
+    drivers.erase(begin(drivers) + staticDriverCount, end(drivers));
+
+    S_LOGD("Erased dynamic sensors: %d", drivers.size());
+    addIioSensors();
+    updateFdLists();
+}
+
+void SensorsPollContext::addIioSensors() {
+    S_LOGD("+");
+    shared_ptr<struct iio_context> iio_ctx = IioSensor::createIioContext();
+
+    if (iio_ctx) {
+        IioSensor::updateSensorList(iio_ctx);
+
+        for (auto sensor : IioSensor::getSensors()) {
+            S_LOGD("Adding driver 0x%08x", sensor.get());
+            drivers.push_back(sensor);
+        }
+    }
+}
+
 shared_ptr<SensorBase> SensorsPollContext::handleToDriver(int handle)
 {
     for (auto d : drivers) {
@@ -152,7 +188,7 @@ int SensorsPollContext::activate(int handle, int enabled) {
 
     // Try to stop the poll() so we can modify underlying structures
     AutoLock _p(pollLock);
-    releasePoll();
+    releasePoll(ReleaseReason::Activate);
     AutoLock _d(driversLock);
 
     ret = s->setEnable(handle, enabled);
@@ -200,8 +236,12 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
         for (auto p : pollFds) {
             if (p.revents & POLLIN) {
                 if (p.fd == pipeFd[0]) { // Someone needs the driversLock
-                    char discard;
-                    read(pipeFd[0], &discard, sizeof(discard));
+                    uint8_t reason = 255;
+                    read(pipeFd[0], &reason, sizeof(reason));
+                    //S_LOGD("Released poll because %d", reason);
+                } else if (ueventListener.getFd() > 0 && p.fd == ueventListener.getFd()) {
+                    //S_LOGD("Got udev uevent");
+                    ueventListener.readEvents();
                 } else {
                     int nb = eventReader(fd2driver[p.fd]);
                     // Need to relay any errors upward.

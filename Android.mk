@@ -121,7 +121,8 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         ifeq ($(MOT_SENSOR_HUB_HW_TYPE_L4), true)
             LOCAL_SHARED_LIBRARIES += libiio
             LOCAL_SRC_FILES += \
-                $(SH_PATH)/IioSensor.cpp
+                $(SH_PATH)/IioSensor.cpp \
+                $(SH_PATH)/UeventListener.cpp
             LOCAL_C_INCLUDES += motorola/external/libiio
         endif
 

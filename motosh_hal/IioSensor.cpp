@@ -72,6 +72,9 @@ IioSensor::~IioSensor() {
     // TODO: In Android-N, send SENSOR_TYPE_DYNAMIC_SENSOR_META to framework to
     // indicate this sensor has disconnected.
 
+    S_LOGD("%s by %s (%d)", sensor.name, sensor.vendor, sensor.handle);
+    setEnable(sensor.handle, 0);
+
     // How do we make sure Android is no longer using these "const *" before
     // deleting them? Need to make it do a getSensorList where we return an
     // empty list first, and then free the pointers.
@@ -82,33 +85,20 @@ IioSensor::~IioSensor() {
 }
 
 shared_ptr<struct iio_context> IioSensor::createIioContext() {
-    static bool created = false;
-    if (created) {
-        /** Can only be created once. Boohoo on whoever calls this more than
-         * once / process.
-         *
-         * We can't make iio_ctx a local static variable, since then the
-         * destructor will never get called. Making it a global static variable
-         * would guarantee the destructor is called, but the undefined static
-         * initialization order will cause problems.
-         */
-        return nullptr;
-    } else {
-        shared_ptr<struct iio_context> iio_ctx(iio_create_local_context(),
-                [](struct iio_context *ptr) {
-                    if (ptr) iio_context_destroy(ptr);
-                });
+    shared_ptr<struct iio_context> iio_ctx(iio_create_local_context(),
+            [](struct iio_context *ptr) {
+                S_LOGD("Destroying iio_context %08x", ptr);
+                if (ptr) iio_context_destroy(ptr);
+            });
 
-        // Since we're configuring our libiio buffers to be non-blocking (i.e. we're doing
-        // the poll() outside libiio, this may not be needed.
-        if (iio_ctx) {
-            iio_context_set_timeout(iio_ctx.get(), chrono::milliseconds(timeout).count());
-        }
-        created = true;
-
-        // Note: iio_ctx may be NULL if libiio can't read sysfs
-        return iio_ctx;
+    // Since we're configuring our libiio buffers to be non-blocking (i.e. we're doing
+    // the poll() outside libiio, this may not be needed.
+    if (iio_ctx) {
+        iio_context_set_timeout(iio_ctx.get(), chrono::milliseconds(timeout).count());
     }
+
+    // Note: iio_ctx may be NULL if libiio can't read sysfs
+    return iio_ctx;
 }
 
 void IioSensor::updateSensorList(shared_ptr<struct iio_context> iio_ctx) {

@@ -42,6 +42,7 @@
 
 #include "Sensors.h"
 #include "HubSensors.h"
+#include "UeventListener.h"
 
 /*****************************************************************************/
 
@@ -123,10 +124,14 @@ public:
     std::recursive_mutex pollLock;
     /** @} */
 
+    enum struct ReleaseReason : uint8_t {
+        Undefined, Activate, SensorAdd, SensorRemove
+    };
+
     /** Makes the poll() inside pollEvents() release so that the locks held by
      * that code are released. */
-    void releasePoll() {
-        write(pipeFd[1], "0", 1);
+    void releasePoll(ReleaseReason reason = ReleaseReason::Undefined) {
+        write(pipeFd[1], &reason, 1);
         fsync(pipeFd[1]);
     }
 
@@ -137,9 +142,15 @@ private:
 
     // Keeps track of how many non-dynamic sensors we're managing.
     int staticSensorCount;
+    // Keeps track of how many non-dynamic sensor drivers we're managing.
+    int staticDriverCount;
 
     // Pipe to communicate with the poll() thread.
     int pipeFd[2];
+
+    UeventListener ueventListener;
+
+    void addIioSensors();
 
     /** Updates all the containers that change when sensors are added/removed
      * or enabled/disabled. */
@@ -153,6 +164,9 @@ private:
 
     // Map sensor handle/id to the corresponding driver
     std::shared_ptr<SensorBase> handleToDriver(int handle);
+
+    // When a sensor is added or removed
+    void onSensorAddRemove(char *d);
 };
 
 #endif /* SENSORS_POLL_CONTEXT_H */
