@@ -310,6 +310,12 @@ int HubSensors::setEnable(int32_t handle, int en)
                 new_enabled |= M_QUAT_9AXIS;
             found = 1;
             break;
+        case ID_GAME_RV:
+            new_enabled &= ~M_GAME_RV;
+            if (newState)
+                new_enabled |= M_GAME_RV;
+            found = 1;
+            break;
         case ID_MOTO_MOD_CURRENT_DRAIN:
             new_enabled &= ~M_MOTO_MOD_CURRENT_DRAIN;
             if (newState)
@@ -592,6 +598,17 @@ int HubSensors::batch(int32_t handle, int32_t flags, int64_t ns, int64_t timeout
                 status = 0;
             close(rateFd);
             break;
+        case ID_GAME_RV:
+            rateFd = open(GAME_RV_RATE_ATTR_NAME, O_WRONLY);
+            if (rateFd < 0) {
+                status = rateFd;
+                break;
+            }
+            status = write(rateFd, &delay, sizeof(uint8_t));
+            if (status == sizeof(uint8_t))
+                status = 0;
+            close(rateFd);
+            break;
     }
 
     if( handle == ID_M || handle == ID_O || handle == ID_UNCALIB_MAG )
@@ -758,6 +775,18 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 data->data[1] = STM16TOH(buff.data + QUAT_9AXIS_B) * CONVERT_RV;
                 data->data[2] = STM16TOH(buff.data + QUAT_9AXIS_C) * CONVERT_RV;
                 data->data[3] = STM16TOH(buff.data + QUAT_9AXIS_W) * CONVERT_RV;
+                data->data[4] = 5.f * (3.14159f/180.f); // 5 degrees accuracy?
+                data->timestamp = buff.timestamp;
+                data++;
+                break;
+            case DT_GAME_RV:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor = SENSORS_HANDLE_BASE + ID_GAME_RV;
+                data->type = SENSOR_TYPE_GAME_ROTATION_VECTOR;
+                data->data[0] = STM16TOH(buff.data + GAME_RV_A) * CONVERT_RV;
+                data->data[1] = STM16TOH(buff.data + GAME_RV_B) * CONVERT_RV;
+                data->data[2] = STM16TOH(buff.data + GAME_RV_C) * CONVERT_RV;
+                data->data[3] = STM16TOH(buff.data + GAME_RV_W) * CONVERT_RV;
                 data->data[4] = 5.f * (3.14159f/180.f); // 5 degrees accuracy?
                 data->timestamp = buff.timestamp;
                 data++;

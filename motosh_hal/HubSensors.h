@@ -40,6 +40,7 @@
 #define SENSORHUB_AS_DATA_NAME      "/dev/motosh_as"
 #define QUAT_6AXIS_RATE_ATTR_NAME   "/sys/devices/virtual/motosh/motosh_as/rv_6axis_update_rate"
 #define QUAT_9AXIS_RATE_ATTR_NAME   "/sys/devices/virtual/motosh/motosh_as/rv_9axis_update_rate"
+#define GAME_RV_RATE_ATTR_NAME      "/sys/devices/virtual/motosh/motosh_as/game_rv_update_rate"
 #define GRAVITY_RATE_ATTR_NAME      "/sys/devices/virtual/motosh/motosh_as/gravity_update_rate"
 #define LINEAR_ACCEL_RATE_ATTR_NAME "/sys/devices/virtual/motosh/motosh_as/linear_accel_update_rate"
 
@@ -82,6 +83,10 @@
 #define QUAT_9AXIS_B (1 * sizeof(int16_t))
 #define QUAT_9AXIS_C (2 * sizeof(int16_t))
 #define QUAT_9AXIS_W (3 * sizeof(int16_t))
+#define GAME_RV_A (0 * sizeof(int16_t))
+#define GAME_RV_B (1 * sizeof(int16_t))
+#define GAME_RV_C (2 * sizeof(int16_t))
+#define GAME_RV_W (3 * sizeof(int16_t))
 
 #define PRESSURE_PRESSURE (0 * sizeof(int32_t))
 
