@@ -133,7 +133,7 @@ HubSensors::HubSensors()
         }
     }
     // Add all supported sensors to the mIdToSensor map
-    for (auto s : sSensorList) {
+    for (const auto& s : sSensorList) {
         mIdToSensor.insert(std::make_pair(s.handle, &s));
     }
 }
