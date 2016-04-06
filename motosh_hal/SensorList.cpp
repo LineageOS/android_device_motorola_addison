@@ -108,7 +108,8 @@
 #define GLANCE_ALGO_MA    (ACCGYR_ACCEL_MA + PROX_MA + ALS_MA)
 
 const std::vector<struct sensor_t> sSensorList = {
-    { .name = ACCEL_PART_NO " 3-axis Accelerometer",
+    {
+                .name = ACCEL_PART_NO "3-axis Accelerometer",
                 .vendor = VENDOR_ACCEL,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_A,
@@ -124,7 +125,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .maxDelay = ACCEL_MAX_DELAY_US,
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
-    { .name = GYRO_PART_NO " Gyroscope",
+    {
+                .name = GYRO_PART_NO "Gyroscope",
                 .vendor = VENDOR_GYRO,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_G,
@@ -140,7 +142,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .maxDelay = GYRO_MAX_DELAY_US,
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
-    { .name = MAG_PART_NO " 3-axis Magnetometer",
+    {
+                .name = MAG_PART_NO "3-axis Magnetometer",
                 .vendor = VENDOR_MAG,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_M,
@@ -156,7 +159,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .maxDelay = MAG_MAX_DELAY_US,
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
-    { .name = MAG_PART_NO " Orientation",
+    {
+                .name = MAG_PART_NO "Orientation",
                 .vendor = VENDOR_MAG,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_O,
@@ -172,7 +176,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .maxDelay = MAG_MAX_DELAY_US,
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
-    { .name = ALS_PART_NO " Ambient Light",
+    {
+                .name = ALS_PART_NO "Ambient Light",
                 .vendor = VENDOR_PROXALS,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_L,
@@ -188,7 +193,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .maxDelay = 0,
                 .flags = SENSOR_FLAG_ON_CHANGE_MODE,
                 .reserved = {0,0} },
-    { .name = "Display Rotation",
+    {
+                .name = "Display Rotation",
                 .vendor = VENDOR_MOT,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_DR,
@@ -204,7 +210,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .maxDelay = 0,
                 .flags = SENSOR_FLAG_ON_CHANGE_MODE,
                 .reserved = {0,0} },
-    { .name = PROX_PART_NO " Proximity",
+    {
+                .name = PROX_PART_NO "Proximity",
                 .vendor = VENDOR_PROXALS,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_P,
@@ -220,7 +227,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .maxDelay = 0,
                 .flags = SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
                 .reserved = {0,0}},
-    { .name = "Flat Up",
+    {
+                .name = "Flat Up",
                 .vendor = VENDOR_MOT,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_FU,
@@ -236,7 +244,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .maxDelay = 0,
                 .flags = SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
                 .reserved = {0,0}},
-    { .name = "Flat Down",
+    {
+                .name = "Flat Down",
                 .vendor = VENDOR_MOT,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_FD,
@@ -252,7 +261,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .maxDelay = 0,
                 .flags = SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
                 .reserved = {0,0}},
-    { .name = "Stowed",
+    {
+                .name = "Stowed",
                 .vendor = VENDOR_MOT,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_S,
@@ -268,7 +278,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .maxDelay = 0,
                 .flags = SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
                 .reserved = {0,0}},
-    { .name = "Camera Activation",
+    {
+                .name = "Camera Activation",
                 .vendor = VENDOR_MOT,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_CA,
@@ -285,7 +296,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .flags = SENSOR_FLAG_SPECIAL_REPORTING_MODE | SENSOR_FLAG_WAKE_UP,
                 .reserved = {0,0}},
 #ifdef _ENABLE_IR
-    { .name = "IR Gestures",
+    {
+                .name = "IR Gestures",
                 .vendor = VENDOR_MOT,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_IR_GESTURE,
@@ -302,7 +314,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .flags = SENSOR_FLAG_ON_CHANGE_MODE | SENSOR_FLAG_WAKE_UP,
                 .reserved = {0,0}},
 #ifdef _ENABLE_RAW_IR_DATA
-    { .name = "IR Raw Data",
+    {
+                .name = "IR Raw Data",
                 .vendor = VENDOR_MOT,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_IR_RAW,
@@ -319,7 +332,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
 #endif /* _ENABLE_RAW_IR_DATA */
-    { .name = "IR Object Detect",
+    {
+                .name = "IR Object Detect",
                 .vendor = VENDOR_MOT,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_IR_OBJECT,
@@ -336,7 +350,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .flags = SENSOR_FLAG_ONE_SHOT_MODE,
                 .reserved = {0,0} },
 #endif /* _ENABLE_IR */
-    { .name = "Significant Motion",
+    {
+                .name = "Significant Motion",
                 .vendor = VENDOR_MOT,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_SIM,
@@ -353,7 +368,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .flags = SENSOR_FLAG_ONE_SHOT_MODE | SENSOR_FLAG_WAKE_UP,
                 .reserved = {0,0}},
 #ifdef _ENABLE_PEDO
-    { .name = "Step Detector sensor",
+    {
+                .name = "Step Detector sensor",
                 .vendor = VENDOR_ACCEL,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_STEP_DETECTOR,
@@ -370,7 +386,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .flags = SENSOR_FLAG_SPECIAL_REPORTING_MODE,
                 .reserved = {0,0} },
 
-    { .name = "Step Counter sensor",
+    {
+                .name = "Step Counter sensor",
                 .vendor = VENDOR_ACCEL,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_STEP_COUNTER,
@@ -387,7 +404,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .flags = SENSOR_FLAG_ON_CHANGE_MODE,
                 .reserved = {0,0} },
 #endif
-    { .name = GYRO_PART_NO " Uncalibrated Gyroscope",
+    {
+                .name = GYRO_PART_NO "Uncalibrated Gyroscope",
                 .vendor = VENDOR_GYRO,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_UNCALIB_GYRO,
@@ -403,7 +421,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .maxDelay = GYRO_MAX_DELAY_US,
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
-    { .name = MAG_PART_NO " 3-axis Uncalibrated Magnetometer",
+    {
+                .name = MAG_PART_NO " 3-axis Uncalibrated Magnetometer",
                 .vendor = VENDOR_MAG,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_UNCALIB_MAG,
@@ -420,7 +439,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
 #ifdef _ENABLE_CHOPCHOP
-    { .name = "ChopChop Gesture",
+    {
+                .name = "ChopChop Gesture",
                 .vendor = VENDOR_MOT,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_CHOPCHOP_GESTURE,
@@ -438,7 +458,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .reserved = {0,0} },
 #endif
 #ifdef _ENABLE_LIFT
-    { .name = "Lift Gesture",
+    {
+                .name = "Lift Gesture",
                 .vendor = VENDOR_MOT,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_LIFT_GESTURE,
@@ -455,7 +476,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .flags = SENSOR_FLAG_SPECIAL_REPORTING_MODE | SENSOR_FLAG_WAKE_UP,
                 .reserved = {0,0} },
 #endif
-    { .name = "Rotation Vector",
+    {
+                .name = "Rotation Vector",
                 .vendor = VENDOR_MOT,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_QUAT_9AXIS,
@@ -471,7 +493,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .maxDelay = 0,
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
-    { .name = "Geomagnetic Rotation Vector",
+    {
+                .name = "Geomagnetic Rotation Vector",
                 .vendor = VENDOR_MOT,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_QUAT_6AXIS,
@@ -488,7 +511,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
 
-    { .name = "Game Rotation Vector",
+    {
+                .name = "Game Rotation Vector",
                 .vendor = VENDOR_MOT,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_GAME_RV,
@@ -505,7 +529,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
 #ifdef _ENABLE_GR
-    { .name = "Gravity",
+    {
+                .name = "Gravity",
                 .vendor = "Motorola",
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_GRAVITY,
@@ -523,7 +548,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .reserved = {0,0} },
 #endif
 #ifdef _ENABLE_LA
-    { .name = "Linear Acceleration",
+    {
+                .name = "Linear Acceleration",
                 .vendor = "Motorola",
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_LA,
@@ -540,7 +566,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
 #endif
-    { .name = "Glance Gesture",
+    {
+                .name = "Glance Gesture",
                 .vendor = VENDOR_MOT,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_GLANCE_GESTURE,
@@ -556,7 +583,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .maxDelay = 0,
                 .flags = SENSOR_FLAG_ONE_SHOT_MODE | SENSOR_FLAG_WAKE_UP,
                 .reserved = {0,0}},
-    { .name = "Moto Glance Gesture",
+    {
+                .name = "Moto Glance Gesture",
                 .vendor = VENDOR_MOT,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_MOTO_GLANCE_GESTURE,
@@ -572,7 +600,8 @@ const std::vector<struct sensor_t> sSensorList = {
                 .maxDelay = 0,
                 .flags = SENSOR_FLAG_ONE_SHOT_MODE | SENSOR_FLAG_WAKE_UP,
                 .reserved = {0,0}},
-    { .name = "Moto Mod Current Drain",
+    {
+                .name = "Moto Mod Current Drain",
                 .vendor = VENDOR_MOT,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_MOTO_MOD_CURRENT_DRAIN,

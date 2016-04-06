@@ -156,11 +156,12 @@ int HubSensors::setEnable(int32_t handle, int en)
     int err = 0;
 
     if( !mIdToSensor.count(handle) ) {
-        ALOGE("Sensorhub hal enable: %d - %d (bad handle)", handle, en);
+        ALOGE("Sensorhub hal setEnable: handle=%d enable=%d (bad handle)", handle, en);
         return -EINVAL;
     }
 
-    ALOGI("Sensorhub hal enable: %d - %d", handle, en);
+    ALOGI("Sensorhub hal setEnable: sensor=\"%s\" handle=%d enable=%d",
+            mIdToSensor[handle]->name, handle, en);
 
     new_enabled = mEnabled;
     switch (handle) {
@@ -236,7 +237,7 @@ int HubSensors::setEnable(int32_t handle, int en)
             found = 1;
             break;
 #ifdef _ENABLE_IR
-	case ID_IR_GESTURE:
+        case ID_IR_GESTURE:
             new_enabled &= ~M_IR_GESTURE;
             if (newState)
                 new_enabled |= M_IR_GESTURE;
@@ -264,7 +265,7 @@ int HubSensors::setEnable(int32_t handle, int en)
                 mUncalGyroReqDelay = USHRT_MAX;
             found = 1;
             break;
-	case ID_UNCALIB_MAG:
+        case ID_UNCALIB_MAG:
             mUncalMagEnabled = newState;
             new_enabled &= ~M_UNCALIB_MAG;
             if (newState)
@@ -277,13 +278,13 @@ int HubSensors::setEnable(int32_t handle, int en)
             found = 1;
             break;
 #ifdef _ENABLE_PEDO
-	case ID_STEP_COUNTER:
+        case ID_STEP_COUNTER:
             new_enabled &= ~M_STEP_COUNTER;
             if (newState)
                 new_enabled |= M_STEP_COUNTER;
             found = 1;
             break;
-	case ID_STEP_DETECTOR:
+        case ID_STEP_DETECTOR:
             new_enabled &= ~M_STEP_DETECTOR;
             if (newState)
                 new_enabled |= M_STEP_DETECTOR;
@@ -466,21 +467,24 @@ int HubSensors::batch(int32_t handle, int32_t flags, int64_t ns, int64_t timeout
     if (ns < 0)
         return -EINVAL;
     if( !mIdToSensor.count(handle) ) {
-        ALOGE("Sensorhub hal batch: %d - %" PRId64 " (bad handle)", handle, ns);
+        ALOGE("Sensorhub hal batch: handle=%d period=%" PRId64
+                "ns timeout=%" PRId64 "ns (bad handle)", handle, ns, timeout);
         return -EINVAL;
     }
 
-    ALOGE("Sensorhub hal batch: %d - %" PRId64 " - %" PRId64, handle, ns, timeout);
+    ALOGI("Sensorhub hal batch: sensor=\"%s\" handle=%d period=%" PRId64
+            "ns timeout=%" PRId64 "ns",
+            mIdToSensor[handle]->name, handle, ns, timeout);
 
     unsigned short delay = ns / 1000000;
     uint32_t timeoutms = timeout / 1000000;
     struct motosh_moto_sensor_batch_cfg batch_cfg =
-	    { .delay = delay, .timeout = timeoutms };
+        { .delay = delay, .timeout = timeoutms };
 
     switch (handle) {
         case ID_A:
-	    status = motosh_ioctl(dev_fd,  MOTOSH_IOCTL_SET_ACC_DELAY, &batch_cfg);
-	    break;
+            status = motosh_ioctl(dev_fd,  MOTOSH_IOCTL_SET_ACC_DELAY, &batch_cfg);
+            break;
         case ID_G:
             mGyroReqDelay = delay;
             break;
@@ -509,7 +513,7 @@ int HubSensors::batch(int32_t handle, int32_t flags, int64_t ns, int64_t timeout
             break;
 #endif
 #ifdef _ENABLE_GR
-	case ID_GRAVITY:
+        case ID_GRAVITY:
             rateFd = open(GRAVITY_RATE_ATTR_NAME, O_WRONLY);
             if (rateFd < 0) {
                 status = rateFd;
@@ -905,13 +909,13 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 data->type = SENSOR_TYPE_PROXIMITY;
                 if (buff.data[PROXIMITY_PROXIMITY] == 0) {
                     data->distance = PROX_UNCOVERED;
-                    ALOGE("Proximity uncovered");
-		} else if (buff.data[PROXIMITY_PROXIMITY] == 1) {
+                    ALOGI("Proximity uncovered");
+                } else if (buff.data[PROXIMITY_PROXIMITY] == 1) {
                     data->distance = PROX_COVERED;
-                    ALOGE("Proximity covered 1");
+                    ALOGI("Proximity covered");
                 } else {
                     data->distance = PROX_SATURATED;
-                    ALOGE("Proximity covered 2");
+                    ALOGI("Proximity covered saturated");
                 }
                 data->timestamp = buff.timestamp;
                 data++;
