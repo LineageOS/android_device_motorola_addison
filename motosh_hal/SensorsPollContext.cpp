@@ -99,7 +99,7 @@ void SensorsPollContext::updateFdLists() {
         S_LOGD("Skipping ueventListener");
     }
 
-    for (auto driver : drivers) {
+    for (const auto& driver : drivers) {
         if (!driver) {
             S_LOGE("Null driver");
             continue;
@@ -158,7 +158,7 @@ void SensorsPollContext::addIioSensors() {
     if (iio_ctx) {
         IioSensor::updateSensorList(iio_ctx);
 
-        for (auto sensor : IioSensor::getSensors()) {
+        for (const auto& sensor : IioSensor::getSensors()) {
             S_LOGD("Adding driver 0x%08x", sensor.get());
             drivers.push_back(sensor);
         }
@@ -167,7 +167,7 @@ void SensorsPollContext::addIioSensors() {
 
 shared_ptr<SensorBase> SensorsPollContext::handleToDriver(int handle)
 {
-    for (auto d : drivers) {
+    for (const auto& d : drivers) {
         if (d->hasSensor(handle)) return d;
     }
 
@@ -217,7 +217,7 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
 
     // See if we have any pending events before blocking on poll()
     driversLock.lock();
-    for (auto d : drivers) {
+    for (const auto& d : drivers) {
         if (d->hasPendingEvents()) eventReader(d);
     }
     driversLock.unlock();
@@ -233,7 +233,7 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
 
     // Success
     if (ret >= 0) {
-        for (auto p : pollFds) {
+        for (const auto& p : pollFds) {
             if (p.revents & POLLIN) {
                 if (p.fd == pipeFd[0]) { // Someone needs the driversLock
                     uint8_t reason = 255;

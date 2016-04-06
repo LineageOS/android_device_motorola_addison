@@ -62,7 +62,7 @@ public:
         AutoLock _p(pollLock);
         releasePoll();
         AutoLock _d(driversLock);
-        for (auto driver : drivers) {
+        for (const auto& driver : drivers) {
             driver->getSensorsList(list);
         }
     }
