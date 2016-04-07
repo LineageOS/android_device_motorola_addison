@@ -140,7 +140,12 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         LOCAL_C_INCLUDES += external/zlib
 
         LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
-                system/core/base/include
+                            system/core/base/include
+
+        # Needs to be added after KERNEL_OBJ/usr/include
+        ifeq ($(MOT_SENSOR_HUB_HW_TYPE_L4), true)
+            LOCAL_C_INCLUDES += $(ANDROID_BUILD_TOP)/kernel/include
+        endif
 
         # Need the UAPI output directory to be populated with motosh.h/stml0xx.h
         LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr

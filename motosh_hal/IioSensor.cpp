@@ -18,7 +18,10 @@
 #include <memory>
 #include <chrono>
 #include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
 #include "SensorsLog.h"
+#include <linux/iio/events.h>
 
 #include "IioSensor.h"
 #include "iio.h"
@@ -29,7 +32,7 @@ vector<shared_ptr<IioSensor>> IioSensor::sensors;
 chrono::milliseconds IioSensor::timeout(chrono::seconds(10));
 
 IioSensor::IioSensor(shared_ptr<struct iio_context> iio_ctx, const struct iio_device* dev, int handle) :
-    SensorBase("", "", ""), remaining_samples(0),
+    SensorBase("", "", ""), remaining_samples(0), eventFd(-1),
     iio_ctx(iio_ctx), iio_dev(dev), iio_buf(nullptr) {
 
     for (unsigned c = 0; c < iio_device_get_channels_count(iio_dev); ++c) {
@@ -202,7 +205,7 @@ int IioSensor::readEvents(sensors_event_t* data, int count) {
         ssize_t buffer_bytes = iio_buffer_refill(iio_buf);
         if (buffer_bytes < 0) {
             S_LOGE("Unable to fill buffer: %s", strerror(-buffer_bytes));
-            return buffer_bytes;
+            return 0;
         }
 
         start = reinterpret_cast<uintptr_t>(iio_buffer_start(iio_buf));
@@ -211,14 +214,13 @@ int IioSensor::readEvents(sensors_event_t* data, int count) {
         start = reinterpret_cast<uintptr_t>(iio_buffer_start(iio_buf)) + (remaining_samples * sample_size);
     }
 
-    ptrdiff_t len = (ptrdiff_t)iio_buffer_end(iio_buf) - start;
+    const ptrdiff_t len = (ptrdiff_t)iio_buffer_end(iio_buf) - start;
     S_LOGD("step=%d sample_size=%lld samples=%d bytes=%lld count=%d",
             iio_buffer_step(iio_buf), sample_size, remaining_samples, len, count);
     //assert(iio_buffer_step(buffer) == sample_size);
 
-    int copied;
-    for (copied = 0;
-            copied < remaining_samples && copied < count;
+    int copied = 0;
+    for ( ; copied < remaining_samples && copied < count;
             ++copied, start += sample_size) {
 
         sensors_event_t &d = data[copied];
@@ -246,6 +248,60 @@ int IioSensor::readEvents(sensors_event_t* data, int count) {
     }
 
     remaining_samples -= copied;
+
+    return copied;
+}
+
+int IioSensor::readIioEvents(sensors_event_t* data, int count) {
+    S_LOGD("+");
+    if (eventFd < 0) return 0;
+
+    int copied;
+    for (copied = 0; copied < count; ) {
+        struct iio_event_data event;
+        int ret = read(eventFd, &event, sizeof(event));
+        if (ret == -1) {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                return copied; // Nothing (more) to read. Go back to polling.
+            } else {
+                S_LOGE("Failed reading IIO event (%s)", strerror(errno));
+                return copied;
+            }
+        } else if (ret == 0) {
+            return copied; // No (more) events available.
+        } else {
+            enum iio_event_type ev_type = (enum iio_event_type) IIO_EVENT_CODE_EXTRACT_TYPE(event.id);
+            enum iio_event_direction ev_dir = (enum iio_event_direction) IIO_EVENT_CODE_EXTRACT_DIR(event.id);
+            enum iio_chan_type ch_type = (enum iio_chan_type) IIO_EVENT_CODE_EXTRACT_CHAN_TYPE(event.id);
+            int ch = (int) IIO_EVENT_CODE_EXTRACT_CHAN(event.id);
+
+            /** The IIO_EV_TYPE_BUFFER_EMPTY event is a Motorola extension
+             * used by the kernel to signal a Greybus/IIO flush complete.
+             * The event is only sent on channel 0, regardless of how many
+             * channels have been enabled (though we always enable all
+             * channels from the HAL). */
+            if ((ev_type == IIO_EV_TYPE_BUFFER_EMPTY) &&
+                (ev_dir == IIO_EV_DIR_FALLING) &&
+                (ch_type == IIO_PROPRIETARY) &&
+                (ch == 0)) {
+
+                sensors_event_t &d = data[copied];
+
+                d.version = META_DATA_VERSION;
+                d.sensor = 0;
+                d.type = SENSOR_TYPE_META_DATA;
+                d.reserved0 = 0;
+                d.timestamp = 0;
+                d.meta_data.what = META_DATA_FLUSH_COMPLETE;
+                d.meta_data.sensor = sensor.handle;
+
+                copied++;
+            }
+
+            S_LOGD("Event EvType=%d EvDir=%d, ChType=%d, Ch=%d copied=%d", ev_type, ev_dir, ch_type, ch, copied);
+        }
+    }
+
     return copied;
 }
 
@@ -287,6 +343,15 @@ int IioSensor::setEnable(int32_t handle, int enabled) {
             // Set the buffer to non-blocking, so libiio doesn't POLLIN.
             // We will do the poll(POLLIN) ourselves.
             iio_buffer_set_blocking_mode(iio_buf, false);
+
+            int ret = ioctl(getFd(), IIO_GET_EVENT_FD_IOCTL, &eventFd);
+            if (ret == -1 || eventFd == -1) {
+                S_LOGE("Failed to retrieve IIO event FD for %s (%s)", sensor.name, strerror(errno));
+                eventFd = -1;
+            } else {
+                S_LOGD("Got event FD for %s (%d)", sensor.name, eventFd);
+                fcntl(eventFd, F_SETFL, O_NONBLOCK);
+            }
         }
     } else {
         int channels = iio_device_get_channels_count(iio_dev);
@@ -298,6 +363,7 @@ int IioSensor::setEnable(int32_t handle, int enabled) {
             }
         }
         if (iio_buf) {
+            if (eventFd >= 0) close(eventFd);
             iio_buffer_destroy(iio_buf);
             iio_buf = nullptr;
         }
@@ -333,11 +399,13 @@ int IioSensor::batch(int32_t handle, int flags, int64_t sampling_period_ns,
 }
 
 int IioSensor::flush(int32_t handle) {
+    S_LOGD("+");
     if (hasSensor(handle)) {
         if ((sensor.flags & REPORTING_MODE_MASK) == SENSOR_FLAG_ONE_SHOT_MODE) {
             // Have to return -EINVAL for one-shot sensors per Android spec
             return -EINVAL;
         } else {
+            S_LOGD("flushing");
             return iio_device_attr_write_longlong(iio_dev, "flush", 1);
         }
     }

@@ -106,8 +106,21 @@ void SensorsPollContext::updateFdLists() {
         }
         int fd = driver->getFd();
         //S_LOGD("Adding fd=%d for driver=0x%08x @ %d", fd, driver.get(), pollFds.size());
-        if (fd > 0) {
+        if (fd >= 0) {
             fd2driver[fd] = driver;
+            pollFds.push_back({
+                    .fd = fd,
+                    .events = POLLIN,
+                    .revents = 0
+            });
+        }
+    }
+
+    for (const auto& sensor : IioSensor::getSensors()) {
+        int fd = sensor->getEventFd();
+        if (fd >= 0) {
+            S_LOGD("Add eventFd %d", fd);
+            fd2driver[fd] = sensor;
             pollFds.push_back({
                     .fd = fd,
                     .events = POLLIN,
@@ -205,8 +218,8 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
 
     //S_LOGD("count=%d pid=%d tid=%d", count, getpid(), gettid());
 
-    auto eventReader = [&](shared_ptr<SensorBase> d) {
-        int nb = d->readEvents(data, count);
+    auto eventReader = [&](shared_ptr<SensorBase> d, int fd) {
+        int nb = d->readEvents(data, count, fd);
         if (nb > 0) {
             count -= nb;
             nbEvents += nb;
@@ -218,7 +231,8 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
     // See if we have any pending events before blocking on poll()
     driversLock.lock();
     for (const auto& d : drivers) {
-        if (d->hasPendingEvents()) eventReader(d);
+        if (d->hasPendingEvents())
+            eventReader(d, -1);
     }
     driversLock.unlock();
 
@@ -243,7 +257,7 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
                     //S_LOGD("Got udev uevent");
                     ueventListener.readEvents();
                 } else {
-                    int nb = eventReader(fd2driver[p.fd]);
+                    int nb = eventReader(fd2driver[p.fd], p.fd);
                     // Need to relay any errors upward.
                     if (nb < 0) {
                         S_LOGE("fd=%d nb=%d", p.fd, nb);
@@ -269,7 +283,7 @@ int SensorsPollContext::batch(int handle, int flags, int64_t ns, int64_t timeout
 
 int SensorsPollContext::flush(int handle)
 {
-
+    S_LOGD("+");
     shared_ptr<SensorBase> s = handleToDriver(handle);
 
     if (s == nullptr) return -EINVAL;

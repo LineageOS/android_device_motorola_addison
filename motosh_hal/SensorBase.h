@@ -47,12 +47,27 @@ public:
 	SensorBase(SensorBase &&) = delete;
 
 	virtual int readEvents(sensors_event_t* data, int count) = 0;
+
+	/**
+	 * A given driver (derived class) may be registered to listen for data on
+	 * multiple file descriptors. The derived class may override this method if
+	 * it cares to know what file descriptor caused the poll() to exit.
+	 *
+	 * @param fd The file descriptor which caused poll() to exit. This may be
+	 * -1 in some cases (for example when this function is called to finish
+	 *  reading partially read events because hasPendingEvents() returned
+	 *  true).
+	 */
+	virtual int readEvents(sensors_event_t* data, int count, int fd) {
+		(void)fd;
+		return readEvents(data, count);
+	}
 	virtual bool hasPendingEvents() const;
 	virtual int getFd() const;
 
 	/* When this function is called, increments the reference counter. */
 	virtual int setEnable(int32_t handle, int enabled) = 0;
-	/*
+	/**
 	 * Sets a sensor’s parameters, including sampling frequency and maximum
 	 * report latency. This function can be called while the sensor is
 	 * activated, in which case it must not cause any sensor measurements to

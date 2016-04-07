@@ -34,6 +34,15 @@ public:
     virtual ~IioSensor();
 
     virtual int readEvents(sensors_event_t* data, int count) override;
+
+    virtual int readEvents(sensors_event_t* data, int count, int fd) override {
+        if (fd == eventFd) {
+            return readIioEvents(data, count);
+        } else {
+            return readEvents(data, count);
+        }
+    }
+
     virtual bool hasPendingEvents() const override {
         return remaining_samples > 0;
     }
@@ -78,6 +87,10 @@ public:
         list.push_back(sensor);
     }
 
+    virtual int getEventFd() const {
+        return eventFd;
+    }
+
 protected:
     static std::vector<std::shared_ptr<IioSensor>> sensors;
 
@@ -91,6 +104,9 @@ protected:
      * samples we've acquired, we keep track of how many more we have to read
      * from the current buffer before refilling it. */
     int remaining_samples;
+
+    // File descriptor on which we listen for events.
+    int eventFd;
 
     /** Must be set to slightly longer than the fastest sample rate.
      * The same value is used for all devices/sensors. */
@@ -153,4 +169,6 @@ protected:
     /** The offset of each channel's data relative to the start of a data
      * sample. */
     std::vector<ptrdiff_t> channel_offset;
+
+    virtual int readIioEvents(sensors_event_t* data, int count);
 };
