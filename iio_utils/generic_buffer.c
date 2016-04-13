@@ -158,11 +158,11 @@ void process_scan(char *data,
 
 int main(int argc, char **argv)
 {
-	unsigned long num_loops = 2;
+	unsigned long num_loops = 2, j;
 	unsigned long timedelay = 1000000;
 	unsigned long buf_len = 128;
 
-	int ret, c, i, j, toread;
+	int ret, c, i, toread;
 	int fp;
 
 	int num_channels;

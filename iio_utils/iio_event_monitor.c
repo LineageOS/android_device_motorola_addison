@@ -71,8 +71,6 @@ static const char * const iio_modifier_names[] = {
 	[IIO_MOD_X] = "x",
 	[IIO_MOD_Y] = "y",
 	[IIO_MOD_Z] = "z",
-	[IIO_MOD_LIGHT_BOTH] = "both",
-	[IIO_MOD_LIGHT_IR] = "ir",
 	[IIO_MOD_ROOT_SUM_SQUARED_X_Y] = "sqrt(x^2+y^2)",
 	[IIO_MOD_SUM_SQUARED_X_Y_Z] = "x^2+y^2+z^2",
 	[IIO_MOD_LIGHT_BOTH] = "both",
@@ -249,7 +247,7 @@ int main(int argc, char **argv)
 		goto error_free_chrdev_name;
 	}
 
-	fprintf(stdout, "Got event_fd: %d. Waiting for %d bytes.\n", event_fd, sizeof(event));
+	fprintf(stdout, "Got event_fd: %d. Waiting for %ld bytes.\n", event_fd, sizeof(event));
 	while (true) {
 		ret = read(event_fd, &event, sizeof(event));
 		if (ret == -1) {
