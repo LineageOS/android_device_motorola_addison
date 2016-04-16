@@ -271,14 +271,6 @@ int SensorsPollContext::flush(int handle)
 {
 
     shared_ptr<SensorBase> s = handleToDriver(handle);
-#ifdef _ENABLE_REARPROX
-    // to use sensorhub driver to handle flush for rearprox,
-    // this is a workaround for rearprox and flush should be
-    // implemented by rearprox driver ideally
-    if (handle == SENSORS_HANDLE_BASE + ID_RP) {
-        s = handleToDriver(SENSORS_HANDLE_BASE + ID_A);
-    }
-#endif
 
     if (s == nullptr) return -EINVAL;
     return s->flush(handle);

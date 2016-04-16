@@ -30,6 +30,8 @@
 
 /*****************************************************************************/
 
+#define REAR_PROX_DT_FLUSH 1
+
 struct input_event;
 
 class RearProxSensor : public SensorBase {

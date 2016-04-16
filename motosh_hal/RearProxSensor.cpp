@@ -40,7 +40,7 @@ RearProxSensor::RearProxSensor()
 
 	memset(&mFlushEvents, 0, sizeof(mFlushEvents));
 	mPendingEvents.version = sizeof(sensors_event_t);
-	mPendingEvents.sensor = ID_RP;
+	mPendingEvents.sensor = SENSORS_HANDLE_BASE + ID_RP;
 	mPendingEvents.type = SENSOR_TYPE_PROXIMITY;
 
 
@@ -50,7 +50,7 @@ RearProxSensor::RearProxSensor()
 	mFlushEvents.reserved0 = 0;
 	mFlushEvents.timestamp = 0;
 	mFlushEvents.meta_data.what = META_DATA_FLUSH_COMPLETE;
-	mFlushEvents.meta_data.sensor = ID_RP;
+	mFlushEvents.meta_data.sensor = SENSORS_HANDLE_BASE + ID_RP;
 
 	ALOGD("rearprox opening enable_ps_sensor");
 	// read the actual value of all sensors if they're enabled already
@@ -83,7 +83,7 @@ RearProxSensor::~RearProxSensor() {
 int RearProxSensor::setEnable(int32_t handle, int en)
 {
 	char buff[2];
-	if (ID_RP != handle)
+	if (SENSORS_HANDLE_BASE + ID_RP != handle)
 		return -EINVAL;
 
 	int newState = en ? 1 : 0;
@@ -128,7 +128,7 @@ int RearProxSensor::batch(int32_t handle, int flags,
 	int num_chars;
 	int fd;
 
-	if (ID_RP != handle)
+	if (SENSORS_HANDLE_BASE + ID_RP != handle)
 		return -EINVAL;
 
 	if (sampling_period_ns < 0)
@@ -170,7 +170,15 @@ int RearProxSensor::readEvents(sensors_event_t* data, int count)
 	while (count && mInputReader.readEvent(&event)) {
 		int type = event->type;
 		if (type == EV_ABS) {
-			processEvent(event->code, event->value);
+			if(event->code == ABS_MISC
+			&& event->value == REAR_PROX_DT_FLUSH
+			&& count > 0) {
+				memcpy(data, &mFlushEvents, sizeof(sensors_event_t));
+				data++;
+				count--;
+				numEventReceived++;
+			} else
+				processEvent(event->code, event->value);
 		}
 		else if (type == EV_SYN) {
 			int64_t time = timevalToNano(event->time);
@@ -196,7 +204,23 @@ void RearProxSensor::processEvent(int code, int value)
 
 int RearProxSensor::flush(int32_t handle)
 {
-	(void)handle;
+	char buff[2];
+
+	ALOGD("RearProxSensor: flush enter");
+	if (SENSORS_HANDLE_BASE + ID_RP != handle)
+		return -EINVAL;
+
+	buff[0] = '2';
+	buff[1] = '\0';
+	int fd = open("/sys/kernel/range/enable_sar", O_WRONLY);
+	if (fd >= 0) {
+		write(fd, buff, 2);
+		close(fd);
+	}
+	else {
+		ALOGE("RearProxSensor: error opening enable_sar");
+		return -EIO;
+	}
 
 	mFlushEnabled = 1;
 	return 0;
