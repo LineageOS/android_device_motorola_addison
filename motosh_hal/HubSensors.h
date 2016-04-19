@@ -258,7 +258,7 @@ private:
      */
     int updateGyroRate();
 
-    void logAlsEvent(int16_t lux, int64_t ts_ns);
+    void logAlsEvent(int32_t lux, int64_t ts_ns);
 };
 
 /*****************************************************************************/

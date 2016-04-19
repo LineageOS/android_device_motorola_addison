@@ -143,7 +143,7 @@ private:
     uint8_t mErrorCnt[RESET_REASON_MAX_CODE + 1];
     gzFile open_dropbox_file(const char* timestamp, const char* dst, const int flags);
     short capture_dump(char* timestamp, const int id, const char* dst, const int flags);
-    void logAlsEvent(int16_t lux, int64_t ts_ns);
+    void logAlsEvent(int32_t lux, int64_t ts_ns);
 
 #ifdef _ENABLE_GYROSCOPE
     /*!

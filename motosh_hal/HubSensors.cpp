@@ -613,10 +613,10 @@ int HubSensors::batch(int32_t handle, int32_t flags, int64_t ns, int64_t timeout
     return status;
 }
 
-void HubSensors::logAlsEvent(int16_t lux, int64_t ts_ns) {
-    static int16_t last_logged_val = -1;
+void HubSensors::logAlsEvent(int32_t lux, int64_t ts_ns) {
+    static int32_t last_logged_val = -1;
     static int64_t last_logged_ts_ns;
-    int16_t luxDelta = abs(lux - last_logged_val);
+    int32_t luxDelta = abs(lux - last_logged_val);
     if (last_logged_val == -1 ||
         (luxDelta > last_logged_val * 0.15 && luxDelta >= 5 &&
          ts_ns - last_logged_ts_ns >= 1000000000LL)) {
@@ -862,7 +862,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 data->type = SENSOR_TYPE_LIGHT;
                 data->light = (uint16_t)STM16TOH(buff.data + LIGHT_LIGHT);
                 data->timestamp = buff.timestamp;
-                logAlsEvent((int16_t)data->light, data->timestamp);
+                logAlsEvent(data->light, data->timestamp);
                 data++;
                 break;
 #ifdef _ENABLE_LA
