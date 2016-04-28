@@ -31,7 +31,7 @@
 #include <iterator>
 
 #include <linux/motosh.h>
-#include <base/macros.h>
+#include <android-base/macros.h>
 
 #include "Sensors.h"
 #include "SensorBase.h"

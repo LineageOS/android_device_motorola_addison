@@ -24,7 +24,7 @@
 #include <string.h>
 
 #include <cutils/log.h>
-#include <base/macros.h>
+#include <android-base/macros.h>
 
 #include "RearProxSensor.h"
 

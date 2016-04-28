@@ -19,7 +19,7 @@
 #include <chrono>
 
 #include <hardware/sensors.h>
-#include <base/macros.h>
+#include <android-base/macros.h>
 
 #include "Sensors.h" // To get the SENSORS_HANDLE_BASE_IIO
 #include "SensorBase.h"
