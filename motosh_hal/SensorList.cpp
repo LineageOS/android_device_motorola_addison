@@ -109,7 +109,7 @@
 
 const std::vector<struct sensor_t> sSensorList = {
     {
-                .name = ACCEL_PART_NO "3-axis Accelerometer",
+                .name = ACCEL_PART_NO " 3-axis Accelerometer",
                 .vendor = VENDOR_ACCEL,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_A,
@@ -126,7 +126,7 @@ const std::vector<struct sensor_t> sSensorList = {
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
     {
-                .name = GYRO_PART_NO "Gyroscope",
+                .name = GYRO_PART_NO " Gyroscope",
                 .vendor = VENDOR_GYRO,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_G,
@@ -143,7 +143,7 @@ const std::vector<struct sensor_t> sSensorList = {
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
     {
-                .name = MAG_PART_NO "3-axis Magnetometer",
+                .name = MAG_PART_NO " 3-axis Magnetometer",
                 .vendor = VENDOR_MAG,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_M,
@@ -160,7 +160,7 @@ const std::vector<struct sensor_t> sSensorList = {
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
     {
-                .name = MAG_PART_NO "Orientation",
+                .name = MAG_PART_NO " Orientation",
                 .vendor = VENDOR_MAG,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_O,
@@ -177,7 +177,7 @@ const std::vector<struct sensor_t> sSensorList = {
                 .flags = SENSOR_FLAG_CONTINUOUS_MODE,
                 .reserved = {0,0} },
     {
-                .name = ALS_PART_NO "Ambient Light",
+                .name = ALS_PART_NO " Ambient Light",
                 .vendor = VENDOR_PROXALS,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_L,
@@ -211,7 +211,7 @@ const std::vector<struct sensor_t> sSensorList = {
                 .flags = SENSOR_FLAG_ON_CHANGE_MODE,
                 .reserved = {0,0} },
     {
-                .name = PROX_PART_NO "Proximity",
+                .name = PROX_PART_NO " Proximity",
                 .vendor = VENDOR_PROXALS,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_P,
@@ -405,7 +405,7 @@ const std::vector<struct sensor_t> sSensorList = {
                 .reserved = {0,0} },
 #endif
     {
-                .name = GYRO_PART_NO "Uncalibrated Gyroscope",
+                .name = GYRO_PART_NO " Uncalibrated Gyroscope",
                 .vendor = VENDOR_GYRO,
                 .version = 1,
                 .handle = SENSORS_HANDLE_BASE+ID_UNCALIB_GYRO,
