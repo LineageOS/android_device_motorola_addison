@@ -358,6 +358,7 @@ PRODUCT_PACKAGES += \
     init.mmi.rc \
     init.mmi.usb.rc \
     init.qcom.rc \
+    init.recovery.qcom.rc \
     init.albus.rc 
 
 PRODUCT_PACKAGES += \
