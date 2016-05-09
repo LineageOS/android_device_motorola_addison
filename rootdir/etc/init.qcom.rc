@@ -509,6 +509,7 @@ service imsqmidaemon /system/bin/imsqmidaemon
 service rmt_storage /system/bin/rmt_storage
     class core
     user root
+    group root wakelock
 
 service tftp_server /system/bin/tftp_server
    class core
