@@ -654,13 +654,9 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
     // because we can send 2 events at once below.
     sensors_event_t const* const dataEnd = d + dLen - 1;
 
-    if (!data) {
-        ALOGE("HubSensors::readEvents - null data buffer");
-        return -EINVAL;
-    }
     if (dLen < 1) {
         ALOGE("HubSensors::readEvents - bad length %d", dLen);
-        return -EINVAL;
+        return 0;
     }
 
     while (data < dataEnd && ((ret = read(data_fd, &buff, sizeof(struct motosh_android_sensor_data))) != 0)) {

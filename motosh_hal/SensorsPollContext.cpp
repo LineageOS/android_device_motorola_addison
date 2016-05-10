@@ -218,6 +218,16 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
 
     //S_LOGD("count=%d pid=%d tid=%d", count, getpid(), gettid());
 
+    if (!data) {
+        S_LOGE("poll failed, data buffer is null");
+        return -EINVAL;
+    }
+
+    if (count < 1) {
+        S_LOGE("poll failed, invalid event count %d", count);
+        return -EINVAL;
+    }
+
     auto eventReader = [&](shared_ptr<SensorBase> d, int fd) {
         int nb = d->readEvents(data, count, fd);
         if (nb > 0) {
@@ -260,18 +270,17 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
                     int nb = eventReader(fd2driver[p.fd], p.fd);
                     // Need to relay any errors upward.
                     if (nb < 0) {
-                        S_LOGE("fd=%d nb=%d", p.fd, nb);
-                        return nb;
+                        S_LOGE("reading events failed fd=%d nb=%d", p.fd, nb);
+                        return 0;
                     }
                 }
             }
         }
     } else {
         S_LOGE("poll() failed with %d (%s)", err, strerror(err));
-        nbEvents = (err == EINTR ? 0 : -err); // EINTR is OK
     }
 
-    return nbEvents;
+    return nbEvents >= 0 ? nbEvents : 0;
 }
 
 int SensorsPollContext::batch(int handle, int flags, int64_t ns, int64_t timeout)
