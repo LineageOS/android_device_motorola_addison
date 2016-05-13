@@ -7,6 +7,9 @@
  * the Free Software Foundation.
  */
 
+#ifndef IIO_UTILS_H
+#define IIO_UTILS_H
+
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -90,7 +93,7 @@ struct iio_channel_info {
  * @name: the channel name
  * @generic_name: the channel type name
  **/
-inline int iioutils_get_type(unsigned *is_signed,
+static inline int iioutils_get_type(unsigned *is_signed,
 			     unsigned *bytes,
 			     unsigned *bits_used,
 			     unsigned *shift,
@@ -194,7 +197,7 @@ error_ret:
 	return ret;
 }
 
-inline int iioutils_get_param_float(float *output,
+static inline int iioutils_get_param_float(float *output,
 				    const char *param_name,
 				    const char *device_dir,
 				    const char *name,
@@ -279,7 +282,7 @@ inline void bsort_channel_array_by_index(struct iio_channel_info **ci_array,
  * @device_dir: the IIO device directory in sysfs
  * @
  **/
-inline int build_channel_array(const char *device_dir,
+static inline int build_channel_array(const char *device_dir,
 			      struct iio_channel_info **ci_array,
 			      int *counter)
 {
@@ -441,7 +444,7 @@ error_ret:
  *
  * Typical types this is used for are device and trigger.
  **/
-inline int find_type_by_name(const char *name, const char *type)
+static inline int find_type_by_name(const char *name, const char *type)
 {
 	const struct dirent *ent;
 	int number, numstrlen;
@@ -500,7 +503,7 @@ inline int find_type_by_name(const char *name, const char *type)
 	return -ENODEV;
 }
 
-inline int _write_sysfs_int(char *filename, char *basedir, int val, int verify)
+static inline int _write_sysfs_int(char *filename, char *basedir, int val, int verify)
 {
 	int ret = 0;
 	FILE *sysfsfp;
@@ -674,3 +677,5 @@ error_free:
 	free(temp);
 	return ret;
 }
+
+#endif // IIO_UTILS_H

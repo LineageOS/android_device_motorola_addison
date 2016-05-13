@@ -8,7 +8,6 @@ include $(CLEAR_VARS)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := lsiio
 LOCAL_CFLAGS += -Wall -Wextra
-LOCAL_CXXFLAGS += -Weffc++
 
 LOCAL_SRC_FILES := lsiio.c
 
@@ -24,7 +23,6 @@ include $(CLEAR_VARS)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := iio_event_monitor
 LOCAL_CFLAGS += -Wall -Wextra
-LOCAL_CXXFLAGS += -Weffc++
 
 LOCAL_SRC_FILES := iio_event_monitor.c
 
@@ -40,7 +38,6 @@ include $(CLEAR_VARS)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := generic_buffer
 LOCAL_CFLAGS += -Wall -Wextra
-LOCAL_CXXFLAGS += -Weffc++
 
 LOCAL_SRC_FILES := generic_buffer.c
 
