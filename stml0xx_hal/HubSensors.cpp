@@ -510,13 +510,9 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
     // DT_GLANCE - upto 2 events
     sensors_event_t const* const dataEnd = d + dLen - 3;
 
-    if (!data) {
-        ALOGE("HubSensors::readEvents - null data buffer");
-        return -EINVAL;
-    }
     if (dLen < 1) {
         ALOGE("HubSensors::readEvents - bad length %d", dLen);
-        return -EINVAL;
+        return 0;
     }
 
     while (data < dataEnd && ((ret = read(data_fd, &buff, sizeof(struct stml0xx_android_sensor_data))) != 0)) {

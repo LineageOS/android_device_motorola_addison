@@ -226,6 +226,16 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
     int ret;
     int err;
 
+    if (!data) {
+        ALOGE("poll failed, data buffer is null");
+        return -EINVAL;
+    }
+
+    if (count < 1) {
+        ALOGE("poll failed, invalid event count %d", count);
+        return -EINVAL;
+    }
+
     while (true) {
 #ifdef _ENABLE_MAGNETOMETER
         ret = poll(mPollFds, numFds, nbEvents ? 0 : -1);
@@ -242,7 +252,7 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
             continue;
         } else {
             ALOGE("poll() failed (%s)", strerror(err));
-            return -err;
+            return 0;
         }
     }
 
@@ -250,9 +260,10 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
         SensorBase* const sensor(mSensors[i]);
         if ((mPollFds[i].revents & POLLIN) || (sensor->hasPendingEvents())) {
             int nb = sensor->readEvents(data, count);
-            // Need to relay any errors upward.
-            if (nb < 0)
-                return nb;
+            if (nb < 0) {
+                ALOGE("readEvents failed %d possibly dropped events", nb);
+                return nbEvents;
+            }
             count -= nb;
             nbEvents += nb;
             data += nb;

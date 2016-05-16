@@ -161,14 +161,16 @@ int RearProxSensor::setDelay(int32_t handle, int64_t ns)
 int RearProxSensor::readEvents(sensors_event_t* data, int count)
 {
 	if (count < 1)
-		return -EINVAL;
+		return 0;
 	ALOGE("rearprox readEvents");
 	int numEventReceived = 0;
 	input_event const* event;
 
 	ssize_t n = mInputReader.fill(data_fd);
-	if (n < 0)
-		return n;
+	if (n < 0) {
+		ALOGE("RearProxSensor: read error %d, dropped events", n);
+		return 0;
+	}
 
 	while (count && mInputReader.readEvent(&event)) {
 		int type = event->type;
