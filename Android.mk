@@ -94,6 +94,9 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         ifeq ($(MOT_SENSOR_HUB_FEATURE_GR), true)
             SH_CFLAGS += -D_ENABLE_GR
         endif
+        ifeq ($(MOT_SENSOR_HUB_FEATURE_CAMFSYNC), true)
+            SH_CFLAGS += -D_CAMFSYNC
+        endif
 
         ######################
         # Sensors HAL module #

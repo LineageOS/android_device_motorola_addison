@@ -315,6 +315,14 @@ int HubSensors::setEnable(int32_t handle, int en)
                 new_enabled |= M_MOTO_MOD_CURRENT_DRAIN;
             found = 1;
             break;
+#ifdef _CAMFSYNC
+       case ID_SENSOR_SYNC:
+            new_enabled &= ~M_SENSOR_SYNC;
+            if (newState)
+                new_enabled |= M_SENSOR_SYNC;
+            found = 1;
+            break;
+#endif
     } // end switch(handle)
 
     // Mag and orientation are tied to same physical sensor
@@ -597,6 +605,9 @@ int HubSensors::batch(int32_t handle, int32_t flags, int64_t ns, int64_t timeout
                 status = 0;
             close(rateFd);
             break;
+#ifdef _CAMFSYNC
+	case ID_SENSOR_SYNC:	status = 0;		break;
+#endif
     }
 
     if( handle == ID_M || handle == ID_O || handle == ID_UNCALIB_MAG )

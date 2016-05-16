@@ -617,6 +617,25 @@ const std::vector<struct sensor_t> sSensorList = {
                 .maxDelay = MOTO_MOD_MAX_DELAY_US,
                 .flags = SENSOR_FLAG_ON_CHANGE_MODE,
                 .reserved = {0,0} },
+#ifdef _CAMFSYNC
+    {
+                .name = "Sensor Sync",
+                .vendor = VENDOR_MOT,
+                .version = 1,
+                .handle = SENSORS_HANDLE_BASE+ID_SENSOR_SYNC,
+                .type = SENSOR_TYPE_SENSOR_SYNC,
+                .maxRange = 1.0f,
+                .resolution = 1.0f,
+                .power = 0.0f,
+                .minDelay = 0,
+                .fifoReservedEventCount = 0,
+                .fifoMaxEventCount = 0,
+                .stringType = SENSOR_STRING_TYPE_SENSOR_SYNC,
+                .requiredPermission = "",
+                .maxDelay = 0,
+                .flags = SENSOR_FLAG_SPECIAL_REPORTING_MODE,
+                .reserved = {0,0}},
+#endif /* _CAMFSYNC */
 
 };
 
