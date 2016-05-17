@@ -150,6 +150,8 @@ int SensorsPollContext::handleToDriver(int handle)
 #endif
         case ID_GLANCE_GESTURE:
         case ID_MOTO_GLANCE_GESTURE:
+	case ID_MOTION_DETECT:
+	case ID_STATIONARY_DETECT:
             return sensor_hub;
 #ifdef _ENABLE_MAGNETOMETER
         case ID_M:
