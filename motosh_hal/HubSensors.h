@@ -23,6 +23,7 @@
 #include <errno.h>
 #include <endian.h>
 #include <map>
+#include <vector>
 #include <sys/cdefs.h>
 #include <sys/types.h>
 #include <zlib.h>
@@ -35,7 +36,6 @@
 
 #include "Sensors.h"
 #include "SensorBase.h"
-#include "SensorList.h"
 #include "SensorsLog.h"
 
 /*****************************************************************************/
@@ -174,6 +174,7 @@ struct input_event;
 class HubSensors : public SensorBase {
 public:
     DISALLOW_COPY_AND_ASSIGN(HubSensors);
+
     virtual bool isHandleEnabled(uint64_t handle);
     virtual int setEnable(int32_t handle, int enabled) override;
     virtual int batch(int32_t handle, int32_t flags, int64_t ns, int64_t timeout) override;
@@ -181,14 +182,16 @@ public:
     virtual int flush(int32_t handle) override;
     bool hasSensor(int handle) override;
 
-            HubSensors();
+             HubSensors();
     virtual ~HubSensors();
     virtual void getSensorsList(std::vector<struct sensor_t> &list) override {
-        //S_LOGD("");
-        std::copy(sSensorList.begin(), sSensorList.end(), std::inserter(list, list.end()));
+        std::copy(hubSensorList().begin(), hubSensorList().end(), std::inserter(list, list.end()));
     }
 
 private:
+    /** Returns the (static) list of sensors handled by the Sensor Hub. */
+    const std::vector<struct sensor_t> & hubSensorList();
+
     int update_delay();
     uint32_t mEnabled;
     uint32_t mWakeEnabled;

@@ -51,8 +51,6 @@ static inline int motosh_ioctl (int fd, int ioctl_number, ...) {
     return status;
 }
 
-#define SENSORS_HANDLE_BASE_IIO (SENSORS_HANDLE_BASE + MAX_SENSOR_ID + 1)
-
 /*****************************************************************************/
 
 /*

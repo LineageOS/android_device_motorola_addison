@@ -73,7 +73,6 @@ UeventListener::~UeventListener() {
 }
 
 void UeventListener::logEvent(char *event) {
-    char *start;
     S_LOGD("Uevent: %s", event);
     event += strlen(event) + 1;
     while (event[0]) {
@@ -82,19 +81,18 @@ void UeventListener::logEvent(char *event) {
     }
 }
 
-void UeventListener::readEvents() {
+shared_ptr<Uevent> UeventListener::readEvent() {
     char msg[MSG_LEN + 2];
 
     AutoLock _l(mutex);
 
     int res = recv(ueventFd, msg, MSG_LEN, 0);
-    if (res <= 0) return;
-    if (res >= MSG_LEN) return; // Overflow. Discard.
+    if (res <= 0) return nullptr;
+    if (res >= MSG_LEN) return nullptr; // Overflow. Discard.
     msg[res] = '\0';
     msg[res+1] = '\0';
     //logEvent(msg);
 
-    char *mp = msg;
     char *action = strtok(msg, "@");
     if (action) {
         char *dev = strtok(NULL, "/");
@@ -103,11 +101,15 @@ void UeventListener::readEvents() {
             if (dev && !strncmp(dev, "iio:device", 10)) {
                 //logEvent(msg); // msg was "corrupted" by strtok by now
                 if (!strcmp(action, "add")) {
-                    onAdd(dev);
+                    if (onAdd) onAdd(dev);
+                    return make_shared<Uevent>(Uevent{dev, Uevent::EventType::SensorAdd});
                 } else if (!strcmp(action, "remove")) {
-                    onRemove(dev);
+                    if (onRemove) onRemove(dev);
+                    return make_shared<Uevent>(Uevent{dev, Uevent::EventType::SensorRemove});
                 }
             }
         }
     }
+
+    return nullptr;
 }

@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
+#ifndef UEVENT_LISTENER
+#define UEVENT_LISTENER
+
 #include <mutex>
 #include <functional>
+#include <string>
+#include <memory>
+
+struct Uevent;
 
 /** This class listens for kernel UDEV events that indicate a dynamic sensor
  * was added to the system.
@@ -46,25 +53,46 @@ remove@/devices/iio:device2
 class UeventListener {
 public:
     typedef std::lock_guard<std::recursive_mutex> AutoLock;
+    /**
+     * The handler will receive as its argument the name of the IIO device.
+     * Using the example above, that would be "iio:device4" and "iio:device2".
+     */
     typedef std::function<void(char*)> handler_type;
 
     /**
-     * @param onAdd A function to call when a sensor addition is detected.
+     * @param onAdd A function to call when a sensor addition is detected. May
+     * be nullptr if no call-back is desired.
      * @param onRemove A function to call when a sensor removal is detected.
+     * May be nullptr if no call-back is desired.
      */
     UeventListener(handler_type onAdd, handler_type onRemove);
     virtual ~UeventListener();
-    void readEvents();
-    int getFd() { return ueventFd; }
+    std::shared_ptr<Uevent> readEvent();
+    int getFd() const { return ueventFd; }
 
 private:
     static const int MSG_LEN = 1024;
     int ueventFd;
     std::recursive_mutex mutex;
 
+    /** Logs a UEvent for debug purposes. */
     void logEvent(char *event);
     /** A function that will be callled when a sensor is added. */
     handler_type onAdd;
     /** A function that will be callled when a sensor is removed. */
     handler_type onRemove;
 };
+
+/** An IIO sensor event. */
+struct Uevent {
+    enum struct EventType : uint8_t {
+        Undefined, SensorAdd, SensorRemove
+    };
+
+    /// The device for which the event was generated. Ex: "iio:device4"
+    std::string deviceName;
+    /// The reason the event was generated.
+    EventType eventType;
+};
+
+#endif // UEVENT_LISTENER

@@ -24,7 +24,7 @@
 #include <hardware/mot_sensorhub_motosh.h>
 
 #include "Sensors.h"
-#include "SensorList.h"
+#include "HubSensors.h"
 
 /*****************************************************************************/
 
@@ -107,7 +107,9 @@
 #define MOT_LAGRAV_MA   1.0f
 #define GLANCE_ALGO_MA    (ACCGYR_ACCEL_MA + PROX_MA + ALS_MA)
 
-const std::vector<struct sensor_t> sSensorList = {
+const std::vector<struct sensor_t> & HubSensors::hubSensorList() {
+
+    static const std::vector<struct sensor_t> sSensorList = {
     {
                 .name = ACCEL_PART_NO " 3-axis Accelerometer",
                 .vendor = VENDOR_ACCEL,
@@ -657,7 +659,10 @@ const std::vector<struct sensor_t> sSensorList = {
                 .reserved = {0,0}},
 #endif /* _ENABLE_ULTRASOUND */
 
-};
+    };
+
+    return sSensorList;
+}
 
 
 /* Clean up definitions */

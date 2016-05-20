@@ -37,7 +37,6 @@
 
 #include <hardware/mot_sensorhub_motosh.h>
 
-#include "SensorList.h"
 #include "HubSensors.h"
 #include "SensorsLog.h"
 
@@ -133,7 +132,7 @@ HubSensors::HubSensors()
         }
     }
     // Add all supported sensors to the mIdToSensor map
-    for (const auto& s : sSensorList) {
+    for (const auto& s : hubSensorList()) {
         mIdToSensor.insert(std::make_pair(s.handle, &s));
     }
 }

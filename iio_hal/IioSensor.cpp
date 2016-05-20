@@ -17,18 +17,20 @@
 #include <limits>
 #include <memory>
 #include <chrono>
+#include <cstdint>
+#include <cinttypes>
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include "SensorsLog.h"
 #include <linux/iio/events.h>
+#include <linux/iio/types.h>
 
 #include "IioSensor.h"
 #include "iio.h"
 
 using namespace std;
 
-vector<shared_ptr<IioSensor>> IioSensor::sensors;
 chrono::milliseconds IioSensor::timeout(chrono::seconds(10));
 
 IioSensor::IioSensor(shared_ptr<struct iio_context> iio_ctx, const struct iio_device* dev, int handle) :
@@ -37,7 +39,7 @@ IioSensor::IioSensor(shared_ptr<struct iio_context> iio_ctx, const struct iio_de
 
     for (unsigned c = 0; c < iio_device_get_channels_count(iio_dev); ++c) {
         struct iio_channel *chan = iio_device_get_channel(iio_dev, c);
-        S_LOGD("Chan %d isScan=%d idx=%d id=%s name=%s", c,
+        S_LOGD("Chan %d isScan=%d idx=%ld id=%s name=%s", c,
                 iio_channel_is_scan_element(chan), iio_channel_get_index(chan),
                 iio_channel_get_id(chan), iio_channel_get_name(chan));
     }
@@ -64,6 +66,8 @@ IioSensor::IioSensor(shared_ptr<struct iio_context> iio_ctx, const struct iio_de
     sensor.fifoMaxEventCount        = readIioInt<uint32_t>("fifo_mec", 0);
     sensor.requiredPermission       = nullptr;
     sensor.flags                    = readIioInt<uint32_t>("flags", 0);
+    // Assume all IIO sensors are dynamic GreyBus sensors
+    sensor.flags                    |= SENSOR_FLAG_DYNAMIC_SENSOR;
     sensor.reserved[0]              = 0;
     sensor.reserved[1]              = 0;
 
@@ -72,15 +76,12 @@ IioSensor::IioSensor(shared_ptr<struct iio_context> iio_ctx, const struct iio_de
 }
 
 IioSensor::~IioSensor() {
-    // TODO: In Android-N, send SENSOR_TYPE_DYNAMIC_SENSOR_META to framework to
-    // indicate this sensor has disconnected.
-
     S_LOGD("%s by %s (%d)", sensor.name, sensor.vendor, sensor.handle);
     setEnable(sensor.handle, 0);
 
-    // How do we make sure Android is no longer using these "const *" before
-    // deleting them? Need to make it do a getSensorList where we return an
-    // empty list first, and then free the pointers.
+    // Make sure Android is no longer using these "const *" before free'ing
+    // them. We must notify the framework that this sensor is gone before this
+    // code executes.
     free((void*)sensor.name);
     free((void*)sensor.vendor);
     free((void*)sensor.stringType);
@@ -90,7 +91,7 @@ IioSensor::~IioSensor() {
 shared_ptr<struct iio_context> IioSensor::createIioContext() {
     shared_ptr<struct iio_context> iio_ctx(iio_create_local_context(),
             [](struct iio_context *ptr) {
-                S_LOGD("Destroying iio_context %08x", ptr);
+                S_LOGD("Destroying iio_context %p", ptr);
                 if (ptr) iio_context_destroy(ptr);
             });
 
@@ -102,32 +103,6 @@ shared_ptr<struct iio_context> IioSensor::createIioContext() {
 
     // Note: iio_ctx may be NULL if libiio can't read sysfs
     return iio_ctx;
-}
-
-void IioSensor::updateSensorList(shared_ptr<struct iio_context> iio_ctx) {
-    S_LOGD("+");
-    if (! iio_ctx.get()) return;
-    //S_LOGD("0x%08x", iio_ctx.get());
-
-    int devCount = iio_context_get_devices_count(iio_ctx.get());
-
-    sensors.clear();
-    for (int i = 0; i < devCount; ++i) {
-        const struct iio_device *d = iio_context_get_device(iio_ctx.get(), i);
-        S_LOGD("Found IIO device %s %s", iio_device_get_name(d), iio_device_get_id(d));
-
-        if (isUsable(d)) {
-            sensors.push_back(make_shared<IioSensor>(iio_ctx, d, FIRST_HANDLE + i));
-
-            shared_ptr<IioSensor> s = sensors.back();
-            struct sensor_t &sh = s->getHalSensor();
-            S_LOGD("Adding greybus IIO device: %d/%d fd=%d %s",
-                    sh.handle, FIRST_HANDLE, s->getFd(), sh.name);
-        } else {
-            S_LOGD("Skipping non-greybus device");
-        }
-    }
-    S_LOGD("sensors = %d", sensors.size());
 }
 
 bool IioSensor::isUsable(const struct iio_device *dev) {
@@ -215,7 +190,7 @@ int IioSensor::readEvents(sensors_event_t* data, int count) {
     }
 
     const ptrdiff_t len = (ptrdiff_t)iio_buffer_end(iio_buf) - start;
-    S_LOGD("step=%d sample_size=%lld samples=%d bytes=%lld count=%d",
+    S_LOGD("step=%" PRIdPTR " sample_size=%zd samples=%d bytes=%" PRIdPTR " count=%d",
             iio_buffer_step(iio_buf), sample_size, remaining_samples, len, count);
     //assert(iio_buffer_step(buffer) == sample_size);
 
@@ -230,7 +205,7 @@ int IioSensor::readEvents(sensors_event_t* data, int count) {
         bzero(d.data, sizeof(d.data)); // For debug purposes
 
         int32_t unscaled;
-        for (int c = 0; c < min<int>(channels, IioSensor::MAX_CHANNELS); ++c) {
+        for (int c = 0; c < min<int>(channels, +MAX_CHANNELS); ++c) {
             struct iio_channel *chan = iio_device_get_channel(iio_dev, c);
             long index = iio_channel_get_index(chan);
             const char *chan_id = iio_channel_get_id(chan);
@@ -315,8 +290,14 @@ int IioSensor::getFd() const {
 
 int IioSensor::setEnable(int32_t handle, int enabled) {
     int ret = 0;
-    S_LOGD("handle=%d enabled=%d iio_buf=%08x", handle, enabled, iio_buf);
-    if (! hasSensor(handle)) return -EINVAL;
+    S_LOGD("handle=%d enabled=%d iio_buf=%08llx", handle, enabled, reinterpret_cast<long long>(iio_buf));
+
+    if (handle == -1) {
+        // Allow caller to disable sensor even if it doesn't know the handle for it.
+        if (enabled) return -EINVAL;
+    } else if (! hasSensor(handle)) {
+        return -EINVAL;
+    }
 
     if (enabled) {
         // Enable all input channels
@@ -380,19 +361,19 @@ int IioSensor::batch(int32_t handle, int flags, int64_t sampling_period_ns,
     int res;
     chrono::duration<double, std::nano> period(sampling_period_ns);
 
-    S_LOGD("period=%lld latency=%lld", sampling_period_ns, max_report_latency_ns);
+    S_LOGD("period=%" PRId64 " latency=%" PRId64 , sampling_period_ns, max_report_latency_ns);
 
     if (! hasSensor(handle) || period < chrono::microseconds(1)) return -EINVAL;
 
     res = iio_device_attr_write_longlong(iio_dev, "max_latency_ns", max_report_latency_ns);
     if (res < 0) {
-        S_LOGD("Setting max_latency res=%d err=%s", res, res < 0 ? strerror(res) : "NoError");
+        S_LOGD("Setting max_latency res=%d err=%s", res, res < 0 ? strerror(-res) : "NoError");
     }
 
     double freq = chrono::duration<double>(1.0) / period;
     res = iio_device_attr_write_double(iio_dev, "in_sampling_frequency", freq);
     if (res < 0) {
-        S_LOGD("Setting in_sampling_frequency res=%d err=%s", res, res < 0 ? strerror(res) : "NoError");
+        S_LOGD("Setting in_sampling_frequency res=%d err=%s", res, res < 0 ? strerror(-res) : "NoError");
     }
 
     return res;
@@ -412,6 +393,3 @@ int IioSensor::flush(int32_t handle) {
     return -EINVAL;
 }
 
-bool IioSensor::hasSensor(int handle) {
-    return this->sensor.handle == handle;
-}

@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+#ifndef IIO_SENSOR
+#define IIO_SENSOR
+
 #include <vector>
 #include <memory>
 #include <chrono>
@@ -26,11 +29,18 @@
 #include "SensorsLog.h"
 #include "iio.h"
 
+/**
+ * An instance of this class encapsulates an GreyBus IIO sensor, exposed
+ * through the sysfs interface from the kernel. This class makes use of libiio
+ * to interface with sysfs.
+ *
+ * This class is able to read both sensor events (ex: accel data), and IIO
+ * events (ex: flush complete).
+ */
 class IioSensor : public SensorBase {
 public:
     IioSensor(std::shared_ptr<struct iio_context> iio_ctx,
             const struct iio_device* dev, int handle);
-    DISALLOW_IMPLICIT_CONSTRUCTORS(IioSensor);
     virtual ~IioSensor();
 
     virtual int readEvents(sensors_event_t* data, int count) override;
@@ -53,32 +63,23 @@ public:
     virtual int batch(int32_t handle, int flags,
             int64_t sampling_period_ns, int64_t max_report_latency_ns) override;
     virtual int flush(int32_t handle) override;
-    virtual bool hasSensor(int handle) override;
+    virtual bool hasSensor(int handle) override {
+        return this->sensor.handle == handle;
+    }
 
-    /** Creates and configures a local IIO context. This will only return a
-     * valid context the first time it is called. The first caller must pass
-     * the context around as needed.
+    /** Creates and configures a local IIO context. The IIO context should be
+     * shared as much as possible by multiple instances of this class if at all
+     * possible to save memory.
      *
      * @return the local context, or a NULL pointer if the local context is not
      * accessible (SELinux or file permissions preventing libiio from reading
      * relevant sysfs entries). */
     static std::shared_ptr<struct iio_context> createIioContext();
 
-    /** Updates the list of IIO sensors managed by this class.
-     *
-     * Caller must hold driversLock before calling this function.
-     *
-     * TODO: Call this when a mod is attached/detached
-     */
-    static void updateSensorList(std::shared_ptr<struct iio_context> iio_ctx);
-
     /** Checks to see if a given IIO device can be handled by this class */
     static bool isUsable(const struct iio_device *dev);
 
-    static std::vector<std::shared_ptr<IioSensor>> &getSensors() {
-        return sensors;
-    }
-
+    /** @return A sensor_t structure that describes this sensor. */
     struct sensor_t &getHalSensor() {
         return sensor;
     }
@@ -87,13 +88,23 @@ public:
         list.push_back(sensor);
     }
 
+    /** @return The file descriptor on which to listen for out-of-band events
+     * (ex: flush complete). This is different from getFd(), which is used to
+     * listen for sensor measurement reports. */
     virtual int getEventFd() const {
         return eventFd;
     }
 
-protected:
-    static std::vector<std::shared_ptr<IioSensor>> sensors;
+    /** The ID of the IIO device being wrapped. Ex: "iio:device2" */
+    virtual const char * getIioId() const {
+        if (iio_dev) {
+            return iio_device_get_id(iio_dev);
+        } else {
+            return nullptr;
+        }
+    }
 
+protected:
     /// Default IIO buffer length. The number of samples the IIO buffer can hold.
     static const int BUFFER_LEN = 5;
 
@@ -111,8 +122,6 @@ protected:
     /** Must be set to slightly longer than the fastest sample rate.
      * The same value is used for all devices/sensors. */
     static std::chrono::milliseconds timeout;
-
-    static const int FIRST_HANDLE = SENSORS_HANDLE_BASE_IIO;
 
     /** @{
      * iiolib handles
@@ -170,5 +179,11 @@ protected:
      * sample. */
     std::vector<ptrdiff_t> channel_offset;
 
+    /** IIO Events are used to signal things such as flush complete. */
     virtual int readIioEvents(sensors_event_t* data, int count);
+
+private:
+    DISALLOW_IMPLICIT_CONSTRUCTORS(IioSensor);
 };
+
+#endif // IIO_SENSOR

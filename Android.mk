@@ -136,11 +136,13 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         endif
 
         ifeq ($(MOT_SENSOR_HUB_HW_TYPE_L4), true)
-            LOCAL_SHARED_LIBRARIES += libiio
-            LOCAL_SRC_FILES += \
-                $(SH_PATH)/IioSensor.cpp \
-                $(SH_PATH)/UeventListener.cpp
-            LOCAL_C_INCLUDES += motorola/external/libiio
+            LOCAL_REQUIRED_MODULES += sensors.iio
+            # Require the multihal
+            ifeq ($(USE_SENSOR_MULTI_HAL), true)
+                LOCAL_REQUIRED_MODULES += sensors.$(TARGET_DEVICE)
+            else
+                $(error "MultiHal is required by sensors.$(TARGET_BOARD_PLATFORM)")
+            endif
         endif
 
         ifeq ($(MOT_AP_SENSOR_HW_REARPROX), true)

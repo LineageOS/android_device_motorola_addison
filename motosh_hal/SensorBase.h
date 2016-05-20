@@ -46,6 +46,17 @@ public:
 	SensorBase& operator=(SensorBase const&) = delete;
 	SensorBase(SensorBase &&) = delete;
 
+	/**
+	 * Appends up to count events to the data array. If count is not
+	 * sufficiently large to hold all the pending events, subsequent calls to
+	 * hasPendingEvents() should return true.
+	 *
+	 * @param data An array to which sensor events can be added.
+	 * @param count The size of the data array. May be 0 in some cases.
+	 *
+	 * @return The number of events that were added to the data array. Must
+	 * always be <= count.
+	 */
 	virtual int readEvents(sensors_event_t* data, int count) = 0;
 
 	/**
