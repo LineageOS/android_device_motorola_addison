@@ -637,6 +637,26 @@ const std::vector<struct sensor_t> sSensorList = {
                 .reserved = {0,0}},
 #endif /* _CAMFSYNC */
 
+#ifdef _ENABLE_ULTRASOUND
+    {
+                .name = "Ultrasound Gestures",
+                .vendor = VENDOR_MOT,
+                .version = 1,
+                .handle = SENSORS_HANDLE_BASE+ID_ULTRASOUND_GESTURE,
+                .type = SENSOR_TYPE_ULTRASOUND_GESTURE,
+                .maxRange = 1.0f,
+                .resolution = 1.0f,
+                .power = 0.0f,
+                .minDelay = 0,
+                .fifoReservedEventCount = 0,
+                .fifoMaxEventCount = 0,
+                .stringType = SENSOR_STRING_TYPE_ULTRASOUND_GESTURE,
+                .requiredPermission = "",
+                .maxDelay = 0,
+                .flags = SENSOR_FLAG_SPECIAL_REPORTING_MODE,
+                .reserved = {0,0}},
+#endif /* _ENABLE_ULTRASOUND */
+
 };
 
 

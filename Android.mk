@@ -97,6 +97,9 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         ifeq ($(MOT_SENSOR_HUB_FEATURE_CAMFSYNC), true)
             SH_CFLAGS += -D_CAMFSYNC
         endif
+        ifeq ($(MOT_SENSOR_HUB_FEATURE_ULTRASOUND), true)
+            SH_CFLAGS += -D_ENABLE_ULTRASOUND
+        endif
 
         ######################
         # Sensors HAL module #
