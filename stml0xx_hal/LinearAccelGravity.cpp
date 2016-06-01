@@ -22,6 +22,7 @@
 #include <math.h>
 #include <string.h>
 #include <cutils/log.h>
+#include <android-base/macros.h>
 #include "LinearAccelGravity.h"
 #include "Quaternion.h"
 #include "SensorList.h"
@@ -42,17 +43,10 @@ LinearAccelGravity *LinearAccelGravity::getInstance()
     return &self;
 }
 
-void LinearAccelGravity::setGameRVData(float x, float y, float z, float ext1, int64_t ts)
+bool LinearAccelGravity::processFusion(FusionData& fusionData, bool reset)
 {
-    gameRVData[0] = x;
-    gameRVData[1] = y;
-    gameRVData[2] = z;
-    gameRVData[3] = ext1;
-    gameRVts = ts;
-}
+    UNUSED(reset);
 
-void LinearAccelGravity::processFusion()
-{
     /*
      * In the android-defined coordinate system (x east, y north, z up),
      * gravity is along the z axis.
@@ -73,14 +67,14 @@ void LinearAccelGravity::processFusion()
      *     qGrav = gx*i + gy*j + gz*k + 0.
      */
 
-    float qz[4] = {0.f, 0.f, 1.f, 0.f};
-    float qGrav[4] = {0.f, 0.f, 0.f, 1.f};
+    QuatData qz = {0.f, 0.f, 1.f, 0.f, 0.f, 0};
+    QuatData qGrav = {0.f, 0.f, 0.f, 1.f, 0.f, 0};
     float mag = 0.f;
 
     /* qGrav = gameRV^{-1} * qz * gameRV */
-    Quaternion::quatInv(qGrav, gameRVData);
-    Quaternion::quatMul(qz, qz, gameRVData);
-    Quaternion::quatMul_noRenormalize(qGrav, qGrav, qz);
+    Quaternion::inv(qGrav, fusionData.gameRotation);
+    Quaternion::mul(qz, qz, fusionData.gameRotation);
+    Quaternion::mul_noRenormalize(qGrav, qGrav, qz);
 
     /* We explicitly requested the last quatMul not to renormalize. The reason
      * is that theoretically qGrav[3] == 0, but due to numerical issues, it will be
@@ -88,18 +82,21 @@ void LinearAccelGravity::processFusion()
      * vector to flip signs. Handle the normalization explicitly here without
      * sign changes.
      */
-    mag = sqrtf(qGrav[0]*qGrav[0] + qGrav[1]*qGrav[1] + qGrav[2]*qGrav[2] + qGrav[3]*qGrav[3]);
-    qGrav[0] = (qGrav[0] / mag) * GRAVITY_EARTH;
-    qGrav[1] = (qGrav[1] / mag) * GRAVITY_EARTH;
-    qGrav[2] = (qGrav[2] / mag) * GRAVITY_EARTH;
+    mag = sqrtf(qGrav.a * qGrav.a + qGrav.b * qGrav.b + qGrav.c * qGrav.c + qGrav.d * qGrav.d);
+    fusionData.gravity.x = (qGrav.a / mag) * GRAVITY_EARTH;
+    fusionData.gravity.y = (qGrav.b / mag) * GRAVITY_EARTH;
+    fusionData.gravity.z = (qGrav.c / mag) * GRAVITY_EARTH;
+    fusionData.gravity.timestamp = fusionData.gameRotation.timestamp;
 
     /* Fill Linear Acceleration */
-    fusionData[0] = accelData[0] - qGrav[0];
-    fusionData[1] = accelData[1] - qGrav[1];
-    fusionData[2] = accelData[2] - qGrav[2];
+    fusionData.gravity.x = fusionData.accel.x - qGrav.a;
+    fusionData.gravity.y = fusionData.accel.y - qGrav.b;
+    fusionData.gravity.z = fusionData.accel.z - qGrav.c;
+    fusionData.gravity.timestamp = fusionData.gameRotation.timestamp;
+    fusionData.linearAccel.x = fusionData.accel.x - fusionData.gravity.x;
+    fusionData.linearAccel.y = fusionData.accel.y - fusionData.gravity.y;
+    fusionData.linearAccel.z = fusionData.accel.z - fusionData.gravity.z;
+    fusionData.linearAccel.timestamp = fusionData.gameRotation.timestamp;
 
-    /* Fill Gravity */
-    memcpy(&fusionData[3], qGrav, 3*sizeof(float));
-
-    fusionTs = gameRVts;
+    return true;
 }

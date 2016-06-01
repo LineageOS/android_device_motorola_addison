@@ -55,11 +55,19 @@ class SensorHub {
 
     public:
 
+#if defined(MOTOSH) || defined(MODULE_motosh)
         #define VMM_ENTRY(reg, id, writable, addr, size) id,
         enum struct VmmID : uint16_t {
             #include "linux/motosh_vmm.h"
         };
         #undef VMM_ENTRY
+#elif defined(STML0XX) || defined(MODULE_stml0xx)
+        #define VMM_ENTRY(reg, id, writable, addr, size) id,
+        enum struct VmmID : uint16_t {
+            #include "linux/stml0xx_vmm.h"
+        };
+        #undef VMM_ENTRY
+#endif
 
         static const std::map<std::string, uint16_t> Vmm;
 
@@ -83,7 +91,9 @@ class SensorHub {
         /** Looks up the SensorHub register number given its name.
          *
          * @param regName The register name. See the
-         * kernel/include/uapi/linux/motosh_vmm.h file for a list of valid names.
+         * kernel/include/uapi/linux/motosh_vmm.h
+	 * or kernel/include/uapi/linux/stml0xx_vmm.h
+	 * file for a list of valid names.
          *
          * @return The register number, or a negative value on error.
          */
@@ -112,7 +122,9 @@ class SensorHub {
         /** Reads the contents of a SensorHub register.
          *
          * @param regName The register name. See the
-         * kernel/include/uapi/linux/motosh_vmm.h file for a list of valid names.
+         * kernel/include/uapi/linux/motosh_vmm.h
+	 * or kernel/include/uapi/linux/stml0xx_vmm.h
+	 * file for a list of valid names.
          * @param size The number of bytes to read.
          *
          * @return An array of bytes with the register contents, or a null pointer if
@@ -135,7 +147,9 @@ class SensorHub {
          * the appropriate buffer headers.
          *
          * @param regName The register name. See the
-         * kernel/include/uapi/linux/motosh_vmm.h file for a list of valid names.
+         * kernel/include/uapi/linux/motosh_vmm.h
+	 * or kernel/include/uapi/linux/stml0xx_vmm.h
+	 * file for a list of valid names.
          * @param size The number of bytes to write.
          * @param data The data to write. This should not include any
          * register/size headers.

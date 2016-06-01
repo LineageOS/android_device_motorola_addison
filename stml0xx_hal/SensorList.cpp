@@ -67,15 +67,15 @@
 /* Min delays */
 //ACCEL_MIN_DELAY_US is defined in SensorList.h
 //GYRO_MIN_DELAY_US is defined in SensorList.h
-#define MAG_MIN_DELAY_US   20000
+//MAG_MIN_DELAY_US is defined in SensorList.h
 #define STEP_MIN_DELAY_US  1000000 /* 1 sec */
 
 /* Max delays */
 //ACCEL_MAX_DELAY_US is defined in SensorList.h
 //GYRO_MAX_DELAY_US is defined in SensorList.h
-#define MAG_MAX_DELAY_US    1000000
+//MAG_MAX_DELAY_US is defined in SensorList.h
+//FUSION_MAX_DELAY_US is defined in SensorList.h
 #define STEP_MAX_DELAY_US   0
-#define FUSION_MAX_DELAY_US 20000
 
 /* Various current draw figures in mA */
 #define MAG_MA    0.10f
@@ -248,7 +248,7 @@ const struct sensor_t sSensorList[] = {
         .type = SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED,
         .maxRange = MAG_FULLSCALE_UT,
         .resolution = CONVERT_M,
-        .power = MAG_MA
+        .power = MAG_MA,
         .minDelay = MAG_MIN_DELAY_US,
         .fifoReservedEventCount = 0,
         .fifoMaxEventCount = 0,
@@ -273,6 +273,39 @@ const struct sensor_t sSensorList[] = {
         .maxDelay = MAG_MAX_DELAY_US,
         .flags = SENSOR_FLAG_CONTINUOUS_MODE,
         .reserved = {0,0} },
+    { .name = "Geomagnetic Rotation Vector",
+        .vendor = VENDOR_MOT,
+        .version = 1,
+        .handle = SENSORS_HANDLE_BASE + ID_GEOMAG_RV,
+        .type = SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR,
+        .maxRange = 1.0f,
+        .resolution = 1.0f / RV_QUANTIZATION_LEVELS,
+        .power = ACCEL_MA + MAG_MA,
+        .minDelay = ACCEL_MIN_DELAY_US,
+        .fifoReservedEventCount = 0,
+        .fifoMaxEventCount = 0,
+        .stringType = SENSOR_STRING_TYPE_GEOMAGNETIC_ROTATION_VECTOR,
+        .requiredPermission = "",
+        .maxDelay = 0,
+        .flags = SENSOR_FLAG_CONTINUOUS_MODE,
+        .reserved = {0,0} },
+    { .name = "Rotation Vector",
+        .vendor = VENDOR_MOT,
+        .version = 1,
+        .handle = SENSORS_HANDLE_BASE + ID_RV,
+        .type = SENSOR_TYPE_ROTATION_VECTOR,
+        .maxRange = 1.0f,
+        .resolution = 1.0f / RV_QUANTIZATION_LEVELS,
+        .power = ACCEL_MA + GYRO_MA + MAG_MA,
+        .minDelay = GYRO_MIN_DELAY_US,
+        .fifoReservedEventCount = 0,
+        .fifoMaxEventCount = 0,
+        .stringType = SENSOR_STRING_TYPE_ROTATION_VECTOR,
+        .requiredPermission = "",
+        .maxDelay = 0,
+        .flags = SENSOR_FLAG_CONTINUOUS_MODE,
+        .reserved = {0,0} },
+
 #endif /* _ENABLE_MAGNETOMETER */
     { .name = "Ambient Light sensor",
         .vendor = VENDOR_PROXALS,
@@ -524,7 +557,7 @@ const struct sensor_t sSensorList[] = {
       .reserved = {0,0}},
 };
 
-const int sSensorListSize = sizeof(sSensorList)/sizeof(*sSensorList);
+const int unsigned sSensorListSize = sizeof(sSensorList)/sizeof(*sSensorList);
 
 /* Clean up definitions */
 #undef VENDOR_ACCEL

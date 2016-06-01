@@ -4,12 +4,19 @@
 using namespace std;
 
 namespace mot {
-
-#define VMM_ENTRY(reg, name, writable, addr, size) {#name, reg},
-const map<string, uint16_t> SensorHub::Vmm = {
-    #include "linux/motosh_vmm.h"
-};
-#undef VMM_ENTRY
+#if defined(MOTOSH) || defined(MODULE_motosh)
+    #define VMM_ENTRY(reg, name, writable, addr, size) {#name, reg},
+    const map<string, uint16_t> SensorHub::Vmm = {
+        #include "linux/motosh_vmm.h"
+    };
+    #undef VMM_ENTRY
+#elif defined(STML0XX) || defined(MODULE_stml0xx)
+    #define VMM_ENTRY(reg, name, writable, addr, size) {#name, reg},
+    const map<string, uint16_t> SensorHub::Vmm = {
+        #include "linux/stml0xx_vmm.h"
+    };
+    #undef VMM_ENTRY
+#endif
 
 int SensorHub::retryIoctl (int fd, int ioctl_number, ...) {
     va_list ap;

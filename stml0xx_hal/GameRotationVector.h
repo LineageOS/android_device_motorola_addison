@@ -32,6 +32,22 @@ public:
     static GameRotationVector* getInstance();
 
     /*!
+     * \brief Process accel and gyro samples to compute game rotation vector
+     * \param[out] fusionData Stores computed data into fusionData.gameRotation as follows:
+     *  fusionData.gameRotation.a: Rotation vector component along the x axis (x * sin(θ/2))
+     *  fusionData.gameRotation.b: Rotation vector component along the y axis (y * sin(θ/2))
+     *  fusionData.gameRotation.c: Rotation vector component along the z axis (z * sin(θ/2))
+     *  fusionData.gameRotation.d: Scalar component of the rotation vector ((cos(θ/2))
+     *  fusionData.gameRotation.accuracy: 0, per https://source.android.com/devices/sensors/sensor-types.html#game_rotation_vector
+     * \param[in] reset if true, re-initialize fusion algorithm
+     * \returns true if fusion data is ready, false if not
+     */
+    bool processFusion(FusionData& fusionData, bool reset);
+
+private:
+    static GameRotationVector self;
+
+    /*!
      * \brief Sort by absolute value in descending order with permutation
      *
      * - Memory Complexity: O(1)
@@ -45,34 +61,6 @@ public:
      * \returns the sign of the permutation (either -1 or 1)
      */
     static int permSort(size_t* p, float* a, size_t const len);
-
-    /*!
-     * \brief Process accel and gyro samples to compute game rotation vector
-     * Stores computed data into FusionData[] as follows:
-     *  FusionData[0]: Rotation vector component along the x axis (x * sin(θ/2))
-     *  FusionData[1]: Rotation vector component along the y axis (y * sin(θ/2))
-     *  FusionData[2]: Rotation vector component along the z axis (z * sin(θ/2))
-     *  FusionData[3]: Scalar component of the rotation vector ((cos(θ/2))
-     *  FusionData[4]: 0, per https://source.android.com/devices/sensors/sensor-types.html#game_rotation_vector
-     */
-    void processFusion();
-
-private:
-    static GameRotationVector self;
-    /*
-     * \brief State to be passed into \c gyroIntegration()
-     *
-     * \see \c gyroIntegration()
-     */
-    struct GyroIntegrationState
-    {
-        int initialized;
-        float quatGyro[4];
-        int64_t ts_ns;
-    };
-
-    void gyroIntegration(struct GyroIntegrationState* gis,
-            float* rvOut, float const* rvIn, float* rvGyroDelta );
 };
 
 #endif // GAME_ROTATION_VECTOR_H

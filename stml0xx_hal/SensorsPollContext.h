@@ -15,7 +15,7 @@
  */
 
 /*
- * Copyright (C) 2015 Motorola Mobility LLC
+ * Copyright (C) 2015-2016 Motorola Mobility LLC
  */
 
 #ifndef SENSORS_POLL_CONTEXT_H
@@ -58,9 +58,6 @@ public:
 private:
     enum {
         sensor_hub = 0,
-#ifdef _ENABLE_MAGNETOMETER
-        akm,
-#endif
 #ifdef _ENABLE_REARPROX
         rearprox,
 #endif
@@ -69,14 +66,7 @@ private:
     };
 
     static SensorsPollContext self;
-#ifdef _ENABLE_MAGNETOMETER
-    static const size_t wake = numFds - 1;
-    static const char WAKE_MESSAGE = 'W';
-    int mWritePipeFd;
-    struct pollfd mPollFds[numFds];
-#else
     struct pollfd mPollFds[numSensorDrivers];
-#endif
     SensorBase* mSensors[numSensorDrivers];
 
         //! \brief Map from sensor id (handle) to sensor_t entry

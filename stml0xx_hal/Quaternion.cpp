@@ -24,9 +24,9 @@
 
 void Quaternion::cross3(float* out, float* u, float* v)
 {
-        out[0] = u[1]*v[2] - u[2]*v[1];
-        out[1] = u[2]*v[0] - u[0]*v[2];
-        out[2] = u[0]*v[1] - u[1]*v[0];
+    out[0] = u[1]*v[2] - u[2]*v[1];
+    out[1] = u[2]*v[0] - u[0]*v[2];
+    out[2] = u[0]*v[1] - u[1]*v[0];
 }
 
 /*!
@@ -40,12 +40,12 @@ void Quaternion::cross3(float* out, float* u, float* v)
  * \param[out] out inverse of \c q
  * \param[in] q quaternion to invert
  */
-void Quaternion::quatInv(float* out, float const* q)
+void Quaternion::inv(QuatData& out, const QuatData& q)
 {
-        out[0] = -q[0];
-        out[1] = -q[1];
-        out[2] = -q[2];
-        out[3] =  q[3];
+    out.a = -q.a;
+    out.b = -q.b;
+    out.c = -q.c;
+    out.d = q.d;
 }
 
 /*!
@@ -59,26 +59,26 @@ void Quaternion::quatInv(float* out, float const* q)
  *
  * \note{It is OK if \c q is aliased with \c q1 or \c q2.}
  *
- * \see quatRenormalize()
+ * \see renormalize()
  * \returns 0 on success, 1 on failure
  */
-int Quaternion::quatMul(float* q, float const* q1, float const* q2)
+int Quaternion::mul(QuatData& q, const QuatData& q1, const QuatData& q2)
 {
-        float out[4];
-        int ret;
+    QuatData out;
+    int ret;
 
-        out[0] = q1[3]*q2[0] + q1[0]*q2[3] + q1[1]*q2[2] - q1[2]*q2[1];
-        out[1] = q1[3]*q2[1] - q1[0]*q2[2] + q1[1]*q2[3] + q1[2]*q2[0];
-        out[2] = q1[3]*q2[2] + q1[0]*q2[1] - q1[1]*q2[0] + q1[2]*q2[3];
-        out[3] = q1[3]*q2[3] - q1[0]*q2[0] - q1[1]*q2[1] - q1[2]*q2[2];
-        ret = quatRenormalize(out);
+    out.a = q1.d * q2.a + q1.a * q2.d + q1.b * q2.c - q1.c * q2.b;
+    out.b = q1.d * q2.b - q1.a * q2.c + q1.b * q2.d + q1.c * q2.a;
+    out.c = q1.d * q2.c + q1.a * q2.b - q1.b * q2.a + q1.c * q2.d;
+    out.d = q1.d * q2.d - q1.a * q2.a - q1.b * q2.b - q1.c * q2.c;
+    ret = renormalize(out);
 
-        q[0] = out[0];
-        q[1] = out[1];
-        q[2] = out[2];
-        q[3] = out[3];
+    q.a = out.a;
+    q.b = out.b;
+    q.c = out.c;
+    q.d = out.d;
 
-        return ret;
+    return ret;
 }
 
 /*!
@@ -89,64 +89,66 @@ int Quaternion::quatMul(float* q, float const* q1, float const* q2)
  *
  * \returns 0 on success, 1 if \c q is non-renormalizable
  */
-int Quaternion::quatRenormalize(float* q)
+int Quaternion::renormalize(QuatData& q)
 {
-        // Square magnitude
-        float mag = q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3];
+    // Square magnitude
+    float mag = q.a * q.a + q.b * q.b + q.c * q.c + q.d * q.d;
 
 #define MAG_TOL (0.0001f)
-        if (mag < MAG_TOL) {
-                // This is bad. Quaternion is not renormalizable.
-                q[0] = 0.f;
-                q[1] = 0.f;
-                q[2] = 0.f;
-                q[3] = 1.f;
-                return 1;
-        } else if (mag > 1.f + MAG_TOL || mag < 1.f - MAG_TOL) {
-                // Not only do we want to normalize, but we want to keep
-                // q[3] >= 0 so that the encoded angle is in [-pi/2, pi/2)
-                mag = copysignf( sqrtf(mag), q[3] );
-                q[0] /= mag;
-                q[1] /= mag;
-                q[2] /= mag;
-                q[3] /= mag;
-        }
+    if (mag < MAG_TOL) {
+        // This is bad. Quaternion is not renormalizable.
+        q.a = 0.f;
+        q.b = 0.f;
+        q.c = 0.f;
+        q.d = 1.f;
+        return 1;
+    } else if (mag > 1.f + MAG_TOL || mag < 1.f - MAG_TOL) {
+        // Not only do we want to normalize, but we want to keep
+        // q[3] >= 0 so that the encoded angle is in [-pi/2, pi/2)
+        mag = copysignf( sqrtf(mag), q.d );
+        q.a /= mag;
+        q.b /= mag;
+        q.c /= mag;
+        q.d /= mag;
+    }
 #undef MAG_TOL
 
-        return 0;
+   return 0;
 }
 
 /*!
  * \brief q = q1*q2
  *
- * Same as \c quatMul() without normalization.
- *
- * \see quatMul()
+ * Same as \c mul() without normalization.
+ * 
+ * \see mul()
  */
-void Quaternion::quatMul_noRenormalize(float* q, float const* q1, float const* q2)
+void Quaternion::mul_noRenormalize(QuatData& q, const QuatData& q1, const QuatData& q2)
 {
-        float out[4];
+    QuatData out;
 
-        out[0] = q1[3]*q2[0] + q1[0]*q2[3] + q1[1]*q2[2] - q1[2]*q2[1];
-        out[1] = q1[3]*q2[1] - q1[0]*q2[2] + q1[1]*q2[3] + q1[2]*q2[0];
-        out[2] = q1[3]*q2[2] + q1[0]*q2[1] - q1[1]*q2[0] + q1[2]*q2[3];
-        out[3] = q1[3]*q2[3] - q1[0]*q2[0] - q1[1]*q2[1] - q1[2]*q2[2];
+    out.a = q1.d * q2.a + q1.a * q2.d + q1.b * q2.c - q1.c * q2.b;
+    out.b = q1.d * q2.b - q1.a * q2.c + q1.b * q2.d + q1.c * q2.a;
+    out.c = q1.d * q2.c + q1.a * q2.b - q1.b * q2.a + q1.c * q2.d;
+    out.d = q1.d * q2.d - q1.a * q2.a - q1.b * q2.b - q1.c * q2.c;
 
-        q[0] = out[0];
-        q[1] = out[1];
-        q[2] = out[2];
-        q[3] = out[3];
+    q.a = out.a;
+    q.b = out.b;
+    q.c = out.c;
+    q.d = out.d;
 }
 
 //! \brief Squared distance between two quaternions
-float Quaternion::quatDist(float const* q1, float const* q2)
+float Quaternion::dist(const QuatData& q1, const QuatData& q2)
 {
-        return (q1[0]-q2[0])*(q1[0]-q2[0]) + (q1[1]-q2[1])*(q1[1]-q2[1]) +
-                   (q1[2]-q2[2])*(q1[2]-q2[2]) + (q1[3]-q2[3])*(q1[3]-q2[3]);
+    return (q1.a - q2.a) * (q1.a - q2.a)
+         + (q1.b - q2.b) * (q1.b - q2.b)
+         + (q1.c - q2.c) * (q1.c - q2.c)
+         + (q1.d - q2.d) * (q1.d - q2.d);
 }
 
 /*!
- * \brief out = quatRenormalize(alpha*q1 + (1-alpha)*q2)
+ * \brief out = renormalize(alpha*q1 + (1-alpha)*q2)
  *
  * Forms a linear interpolant of q1 and q2 along the shortest path from q1 to
  * q2, and renormalizes.
@@ -164,27 +166,27 @@ float Quaternion::quatDist(float const* q1, float const* q2)
  *
  * \returns 0 on success, 1 on failure
  */
-int Quaternion::quatLinInterp(float* out, float const* q1, float const* q2, float const alpha)
+int Quaternion::linInterp(QuatData& out, const QuatData& q1, const QuatData& q2, const float alpha)
 {
-        float minusQ2[4];
-        float oneMinusAlpha = 1.f-alpha;
+    QuatData minusQ2;
+    float oneMinusAlpha = 1.f-alpha;
 
-        // There are always 2 ways to get from q1 to q2, just like there are always
-        // 2 paths between any two places on Earth (the short arc, and the long arc).
-        // We will test to see which way is shorter by constructing -q2.
-        minusQ2[0] = -q2[0];
-        minusQ2[1] = -q2[1];
-        minusQ2[2] = -q2[2];
-        minusQ2[3] = -q2[3];
+    // There are always 2 ways to get from q1 to q2, just like there are always
+    // 2 paths between any two places on Earth (the short arc, and the long arc).
+    // We will test to see which way is shorter by constructing -q2.
+    minusQ2.a = -q2.a;
+    minusQ2.b = -q2.b;
+    minusQ2.c = -q2.c;
+    minusQ2.d = -q2.d;
 
-        // Looks like the opposite way will be shorter...
-        if ( quatDist(q1, minusQ2) < quatDist(q1, q2) )
-                oneMinusAlpha = -oneMinusAlpha;
+    // Looks like the opposite way will be shorter...
+    if ( dist(q1, minusQ2) < dist(q1, q2) )
+            oneMinusAlpha = -oneMinusAlpha;
 
-        out[0] = alpha*q1[0] + oneMinusAlpha*q2[0];
-        out[1] = alpha*q1[1] + oneMinusAlpha*q2[1];
-        out[2] = alpha*q1[2] + oneMinusAlpha*q2[2];
-        out[3] = alpha*q1[3] + oneMinusAlpha*q2[3];
+    out.a = alpha * q1.a + oneMinusAlpha * q2.a;
+    out.b = alpha * q1.b + oneMinusAlpha * q2.b;
+    out.c = alpha * q1.c + oneMinusAlpha * q2.c;
+    out.d = alpha * q1.d + oneMinusAlpha * q2.d;
 
-        return quatRenormalize(out);
+    return renormalize(out);
 }

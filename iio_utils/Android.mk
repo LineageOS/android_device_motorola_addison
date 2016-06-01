@@ -1,5 +1,7 @@
 LOCAL_PATH := $(call my-dir)
 
+ifeq ($(MOT_SENSOR_HUB_HW_TYPE_L4), true)
+
 ################################################################################
 ## lsiio #######################################################################
 include $(CLEAR_VARS)
@@ -48,3 +50,4 @@ LOCAL_C_INCLUDES := \
 
 include $(BUILD_EXECUTABLE)
 
+endif # MOT_SENSOR_HUB_HW_TYPE_L4

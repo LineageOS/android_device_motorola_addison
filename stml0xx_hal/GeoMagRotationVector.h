@@ -1,6 +1,4 @@
 /*
- * Copyright (C) 2015 Motorola Mobility
- *
  * Copyright (C) 2008 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,30 +14,27 @@
  * limitations under the License.
  */
 
-#ifndef SENSORLIST_H
-#define SENSORLIST_H
+/*
+ * Copyright (C) 2016 Motorola Mobility LLC
+ */
 
-#include <float.h>
-#include <limits.h>
+#ifndef GEOMAG_ROTATION_VECTOR_H
+#define GEOMAG_ROTATION_VECTOR_H
 
-#include <hardware/sensors.h>
-#include <hardware/mot_sensorhub_stml0xx.h>
+#include <stdint.h>
+#include "FusionSensorBase.h"
 
-#include "Sensors.h"
+class GeoMagRotationVector : public FusionSensorBase {
+public:
+    GeoMagRotationVector();
+    virtual ~GeoMagRotationVector();
 
-#define ACCEL_MAX_DELAY_US  200000
-#define ACCEL_MIN_DELAY_US  10000
+    static GeoMagRotationVector* getInstance();
 
-#define GYRO_MAX_DELAY_US   200000
-#define GYRO_MIN_DELAY_US   5000
+    bool processFusion(FusionData& fusionData, bool reset);
 
-#define MAG_MAX_DELAY_US    200000
-#define MAG_MIN_DELAY_US    20000
+private:
+    static GeoMagRotationVector self;
+};
 
-#define FUSION_MAX_DELAY_US 10000
-
-extern const struct sensor_t sSensorList[];
-extern const unsigned int sSensorListSize;
-
-#endif // SENSORLIST_H
-
+#endif // GEOMAG_ROTATION_VECTOR_H

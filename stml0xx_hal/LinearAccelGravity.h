@@ -31,8 +31,7 @@ public:
 
     static LinearAccelGravity* getInstance();
 
-    void setGameRVData(float x, float y, float z, float ext1, int64_t ts);
-    void processFusion();
+    bool processFusion(FusionData& fusionData, bool reset);
 
 private:
     static LinearAccelGravity self;

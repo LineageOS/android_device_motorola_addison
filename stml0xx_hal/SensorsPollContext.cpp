@@ -15,7 +15,7 @@
  */
 
 /*
- * Copyright (C) 2015 Motorola Mobility LLC
+ * Copyright (C) 2015-2016 Motorola Mobility LLC
  */
 
 #include <dirent.h>
@@ -47,7 +47,6 @@
 #ifdef _ENABLE_REARPROX
 #include "RearProxSensor.h"
 #endif
-#include "AkmSensor.h"
 #include "HubSensors.h"
 
 /*****************************************************************************/
@@ -65,27 +64,6 @@ SensorsPollContext::SensorsPollContext()
         ALOGE("out of memory: new failed for HubSensors");
     }
 
-#ifdef _ENABLE_MAGNETOMETER
-    mSensors[akm] = AkmSensor::getInstance();
-    if (mSensors[akm]) {
-        mPollFds[akm].fd = mSensors[akm]->getFd();
-        mPollFds[akm].events = POLLIN;
-        mPollFds[akm].revents = 0;
-    } else {
-        ALOGE("out of memory: new failed for AkmSensor");
-    }
-
-    int wakeFds[2];
-    int result = pipe(wakeFds);
-    ALOGE_IF(result<0, "error creating wake pipe (%s)", strerror(errno));
-    fcntl(wakeFds[0], F_SETFL, O_NONBLOCK);
-    fcntl(wakeFds[1], F_SETFL, O_NONBLOCK);
-    mWritePipeFd = wakeFds[1];
-
-    mPollFds[wake].fd = wakeFds[0];
-    mPollFds[wake].events = POLLIN;
-    mPollFds[wake].revents = 0;
-#endif
 #ifdef _ENABLE_REARPROX
     mSensors[rearprox] = RearProxSensor::getInstance();
     ALOGE("rearprox sensor created");
@@ -99,17 +77,13 @@ SensorsPollContext::SensorsPollContext()
 #endif
 
     // Add all supported sensors to the mIdToSensor map
-    for( int i = 0; i < sSensorListSize; ++i ) {
+    for( unsigned int i = 0; i < sSensorListSize; ++i ) {
         mIdToSensor.insert(std::make_pair(sSensorList[i].handle, sSensorList+i));
     }
 }
 
 SensorsPollContext::~SensorsPollContext()
 {
-#ifdef _ENABLE_MAGNETOMETER
-    close(mPollFds[wake].fd);
-    close(mWritePipeFd);
-#endif
 }
 
 SensorsPollContext *SensorsPollContext::getInstance()
@@ -157,8 +131,10 @@ int SensorsPollContext::handleToDriver(int handle)
         case ID_M:
         case ID_UM:
         case ID_OR:
-            return akm;
+        case ID_GEOMAG_RV:
+        case ID_RV:
 #endif
+            return sensor_hub;
 #ifdef _ENABLE_REARPROX
         case ID_RP:
             return rearprox;
@@ -182,18 +158,6 @@ int SensorsPollContext::activate(int handle, int enabled)
 
     err = mSensors[drv]->setEnable(handle, enabled);
 
-#ifdef _ENABLE_MAGNETOMETER
-    if (!err && (handle == ID_OR)) {
-        err = mSensors[sensor_hub]->setEnable(handle, enabled);
-    }
-
-    if (((handle == ID_M) || (handle == ID_OR))  && enabled && !err) {
-        const char wakeMessage(WAKE_MESSAGE);
-        int result = write(mWritePipeFd, &wakeMessage, 1);
-        ALOGE_IF(result<0, "error sending wake message (%s)", strerror(errno));
-    }
-#endif
-
     return err;
 }
 
@@ -211,12 +175,6 @@ int SensorsPollContext::setDelay(int handle, int64_t ns)
     }
 
     err = mSensors[drv]->setDelay(handle, ns);
-
-#ifdef _ENABLE_MAGNETOMETER
-    if (!err && (handle == ID_OR)) {
-        err = mSensors[sensor_hub]->setDelay(handle, ns);
-    }
-#endif
 
     return err;
 }
@@ -239,11 +197,7 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
     }
 
     while (true) {
-#ifdef _ENABLE_MAGNETOMETER
-        ret = poll(mPollFds, numFds, nbEvents ? 0 : -1);
-#else
         ret = poll(mPollFds, numSensorDrivers, nbEvents ? 0 : -1);
-#endif
         err = errno;
         // Success
         if (ret >= 0)
@@ -270,34 +224,8 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
             nbEvents += nb;
             data += nb;
             mPollFds[i].revents = 0;
-
-#ifdef _ENABLE_MAGNETOMETER
-            if ((0 != nb) && (sensor_hub == i)) {
-                sensors_event_t* sensor_data = data - nb;
-                for (int j=0; j<nb; j++) {
-                    if (ID_A == sensor_data->sensor) {
-                        static_cast<AkmSensor*>(mSensors[akm])->setAccel(sensor_data);
-                    }
-                    sensor_data--;
-                }
-            }
-#endif
         }
     }
-
-#ifdef _ENABLE_MAGNETOMETER
-    if (mPollFds[wake].revents & POLLIN) {
-        char msg;
-        int result = read(mPollFds[wake].fd, &msg, 1);
-        ALOGE_IF(result<0,
-            "error reading from wake pipe (%s)",
-            strerror(errno));
-        ALOGE_IF(msg != WAKE_MESSAGE,
-            "unknown message on wake queue (0x%02x)",
-            int(msg));
-        mPollFds[wake].revents = 0;
-    }
-#endif
 
     return nbEvents;
 }

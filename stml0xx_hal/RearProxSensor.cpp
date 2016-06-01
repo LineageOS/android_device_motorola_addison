@@ -24,6 +24,7 @@
 #include <string.h>
 
 #include <cutils/log.h>
+#include <android-base/macros.h>
 
 #include "RearProxSensor.h"
 
@@ -118,12 +119,13 @@ int RearProxSensor::setEnable(int32_t handle, int en)
 
 int RearProxSensor::getEnable(int32_t handle)
 {
+    UNUSED(handle);
 	return mEnabled;
 }
 
 int RearProxSensor::setDelay(int32_t handle, int64_t ns)
 {
-	(void)handle;
+	UNUSED(handle);
 	int delay;
 	char buff[32];
 	int num_chars;
@@ -203,7 +205,7 @@ void RearProxSensor::processEvent(int code, int value)
 
 int RearProxSensor::flush(int32_t handle)
 {
-	(void)handle;
+	UNUSED(handle);
 
 	mFlushEnabled = 1;
 	return 0;

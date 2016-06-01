@@ -23,6 +23,8 @@
 
 #include <stdint.h>
 
+#include "FusionSensorBase.h"
+
 /*!
  * \page pageQuaternions Quaternions
  *
@@ -102,7 +104,7 @@ public:
      * \param[out] out inverse of \c q
      * \param[in] q quaternion to invert
     */
-    static void quatInv(float* out, float const* q);
+    static void inv(QuatData& out, const QuatData& q);
 
     /*!
      * \brief q = q1*q2
@@ -115,10 +117,10 @@ public:
      *
      * \note{It is OK if \c q is aliased with \c q1 or \c q2.}
      *
-     * \see quatRenormalize()
+     * \see renormalize()
      * \returns 0 on success, 1 on failure
     */
-    static int quatMul(float* q, float const* q1, float const* q2);
+    static int mul(QuatData& q, const QuatData& q1, const QuatData& q2);
 
     /*!
      * \brief Renormalize quaternion if needed
@@ -128,22 +130,22 @@ public:
      *
      * \returns 0 on success, 1 if \c q is non-renormalizable
     */
-    static int quatRenormalize(float* q);
+    static int renormalize(QuatData& q);
 
     /*!
      * \brief q = q1*q2
      *
-     * Same as \c quatMul() without normalization.
+     * Same as \c mul() without normalization.
      *
-     * \see quatMul()
+     * \see mul()
     */
-    static void quatMul_noRenormalize(float* q, float const* q1, float const* q2);
+    static void mul_noRenormalize(QuatData& q, const QuatData& q1, const QuatData& q2);
 
     //! \brief Squared distance between two quaternions
-    static float quatDist(float const* q1, float const* q2);
+    static float dist(const QuatData& q1, const QuatData& q2);
 
     /*!
-     * \brief out = quatRenormalize(alpha*q1 + (1-alpha)*q2)
+     * \brief out = renormalize(alpha*q1 + (1-alpha)*q2)
      *
      * Forms a linear interpolant of q1 and q2 along the shortest path from q1 to
      * q2, and renormalizes.
@@ -161,7 +163,7 @@ public:
      *
      * \returns 0 on success, 1 on failure
     */
-    static int quatLinInterp(float* out, float const* q1, float const* q2, float const alpha);
+    static int linInterp(QuatData& out, const QuatData& q1, const QuatData& q2, const float alpha);
 };
 
 #endif // QUATERNION_H

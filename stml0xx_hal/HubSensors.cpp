@@ -15,7 +15,7 @@
  */
 
 /*
- * Copyright (C) 2011-2015 Motorola Mobility LLC
+ * Copyright (C) 2011-2016 Motorola Mobility LLC
  */
 
 #include <assert.h>
@@ -96,8 +96,17 @@ HubSensors::HubSensors()
     mFusionSensors[GRAVITY].usesGyro = true;
 #endif
 #ifdef _ENABLE_MAGNETOMETER
-    mFusionSensor[ORIENTATION].usesAccel = true;
-    mFusionSensor[ORIENTATION].usesMag = true;
+    mFusionSensors[MAG].usesAccel = true;
+    mFusionSensors[MAG].usesMag = true;
+    mFusionSensors[UNCALIB_MAG].usesAccel = true;
+    mFusionSensors[UNCALIB_MAG].usesMag = true;
+    mFusionSensors[ORIENTATION].usesAccel = true;
+    mFusionSensors[ORIENTATION].usesMag = true;
+    mFusionSensors[GEOMAG_RV].usesAccel = true;
+    mFusionSensors[GEOMAG_RV].usesMag = true;
+    mFusionSensors[ROTATION_VECT].usesAccel = true;
+    mFusionSensors[ROTATION_VECT].usesMag = true;
+    mFusionSensors[ROTATION_VECT].usesGyro = true;
 #endif
 
 #ifdef _ENABLE_GYROSCOPE
@@ -116,6 +125,12 @@ HubSensors::HubSensors()
 
     mGameRV = GameRotationVector::getInstance();
     mLAGravity = LinearAccelGravity::getInstance();
+#endif
+
+#ifdef _ENABLE_MAGNETOMETER
+    mGeomagRV = GeoMagRotationVector::getInstance();
+    mGeomagRVReady = 0;
+    mRotationVect = RotationVector::getInstance();
 #endif
 
     if ((fp = fopen(ACCEL_CAL_FILE, "r")) != NULL) {
@@ -234,8 +249,24 @@ int HubSensors::setEnable(int32_t handle, int en)
             break;
 #endif
 #ifdef _ENABLE_MAGNETOMETER
+        case ID_M:
+            mFusionSensors[MAG].enabled = newState;
+            found = 1;
+            break;
+        case ID_UM:
+            mFusionSensors[UNCALIB_MAG].enabled = newState;
+            found = 1;
+            break;
         case ID_OR:
-            mFusionSensor[ORIENTATION].enabled = newState;
+            mFusionSensors[ORIENTATION].enabled = newState;
+            found = 1;
+            break;
+        case ID_GEOMAG_RV:
+            mFusionSensors[GEOMAG_RV].enabled = newState;
+            found = 1;
+            break;
+        case ID_RV:
+            mFusionSensors[ROTATION_VECT].enabled = newState;
             found = 1;
             break;
 #endif
@@ -262,6 +293,17 @@ int HubSensors::setEnable(int32_t handle, int en)
         }
 #endif
 
+#ifdef _ENABLE_MAGNETOMETER
+        // Check if magnetometer should be enabled or disabled
+        if (isMagNeeded()) {
+            new_enabled |= M_ECOMPASS;
+            err = updateMagRate();
+            ALOGE_IF(err, "Could not set mag rate(%s)", strerror(-err));
+        } else {
+            new_enabled &= ~M_ECOMPASS;
+        }
+#endif
+
         if (new_enabled != mEnabled) {
             err = ioctl(dev_fd, STML0XX_IOCTL_SET_SENSORS, &new_enabled);
             ALOGE_IF(err, "Could not change sensor state (%s)", strerror(-err));
@@ -271,6 +313,25 @@ int HubSensors::setEnable(int32_t handle, int en)
             err = 0;
             mEnabled = new_enabled;
         }
+
+#ifdef _ENABLE_MAGNETOMETER
+        // If Geomag RV is disabled, reset the algo. This in turn will cause
+        // the 9-axis RV to reset until mag samples have been received.
+        // If only the 9-axis RV has been disabled, reset it directly
+        if (!mFusionSensors[GEOMAG_RV].enabled) {
+            mGeomagRV->processFusion(mFusionData, true);
+        } else if (!mFusionSensors[ROTATION_VECT].enabled) {
+            mRotationVect->processFusion(mFusionData, true);
+        }
+#endif
+#ifdef _ENABLE_GYROSCOPE
+        // If none of Game RV/Linear Accel/Gravity is enabled, reset the Game RV algo
+        if (!mFusionSensors[GAME_RV].enabled &&
+            !mFusionSensors[LINEAR_ACCEL].enabled &&
+            !mFusionSensors[GRAVITY].enabled) {
+            mGameRV->processFusion(mFusionData, true);
+        }
+#endif
     }
 
     // Check wake sensors
@@ -395,6 +456,8 @@ int HubSensors::setDelay(int32_t handle, int64_t ns)
 
     unsigned short delay = int64_t(ns) / 1000000;
 
+    ALOGI("Sensorhub hal setDelay: %d - %d", handle, delay);
+
     // Clamp delay to min/max
     for (i = 0; i < sSensorListSize; i++) {
         if ((SENSORS_HANDLE_BASE + handle) == sSensorList[i].handle) {
@@ -450,8 +513,20 @@ int HubSensors::setDelay(int32_t handle, int64_t ns)
 #endif
             break;
 #ifdef _ENABLE_MAGNETOMETER
+        case ID_M:
+            mFusionSensors[MAG].delay = delay;
+            break;
+	case ID_UM:
+            mFusionSensors[UNCALIB_MAG].delay = delay;
+            break;
         case ID_OR:
             mFusionSensors[ORIENTATION].delay = delay;
+            break;
+        case ID_GEOMAG_RV:
+            mFusionSensors[GEOMAG_RV].delay = delay;
+            break;
+        case ID_RV:
+            mFusionSensors[ROTATION_VECT].delay = delay;
             break;
 #endif
 #ifdef _ENABLE_PEDO
@@ -487,6 +562,11 @@ int HubSensors::setDelay(int32_t handle, int64_t ns)
     ALOGE_IF(err, "Could not set gyro rate(%s)", strerror(-err));
 #endif
 
+#ifdef _ENABLE_MAGNETOMETER
+    err = updateMagRate();
+    ALOGE_IF(err, "Could not set mag rate(%s)", strerror(-err));
+#endif
+
     // Never return this error to the caller. This would result in a
     // failure to registerListener(), but regardless of failure, we
     // will consider these sensors 'registered' at the rate we tried
@@ -518,7 +598,6 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
     struct timeval timeutc;
     static long int sent_bug2go_sec = 0;
     sensors_event_t* data = d;
-    static bool reportLAGravity = false;
     FILE *fp;
     int size;
 
@@ -548,33 +627,38 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 data++;
                 break;
             case DT_ACCEL:
+                mFusionData.accel.x = STM16TOH(buff.data+ACCEL_X) * CONVERT_A_X;
+                mFusionData.accel.y = STM16TOH(buff.data+ACCEL_Y) * CONVERT_A_Y;
+                mFusionData.accel.z = STM16TOH(buff.data+ACCEL_Z) * CONVERT_A_Z;
+                mFusionData.accel.timestamp = buff.timestamp;
                 if (mFusionSensors[ACCEL].enabled) {
                     data->version = SENSORS_EVENT_T_SIZE;
                     data->sensor = SENSORS_HANDLE_BASE + ID_A;
                     data->type = SENSOR_TYPE_ACCELEROMETER;
-                    data->acceleration.x = STM16TOH(buff.data+ACCEL_X) * CONVERT_A_X;
-                    data->acceleration.y = STM16TOH(buff.data+ACCEL_Y) * CONVERT_A_Y;
-                    data->acceleration.z = STM16TOH(buff.data+ACCEL_Z) * CONVERT_A_Z;
+                    data->acceleration.x = mFusionData.accel.x;
+                    data->acceleration.y = mFusionData.accel.y;
+                    data->acceleration.z = mFusionData.accel.z;
                     data->acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
-                    data->timestamp = buff.timestamp;
+                    data->timestamp = mFusionData.accel.timestamp;
                     data++;
                 }
-                // Check if we need to feed accel data to fusion algorithms
-                if (mFusionSensors[GAME_RV].enabled || mFusionSensors[LINEAR_ACCEL].enabled ||
-                    mFusionSensors[GRAVITY].enabled) {
-                    mGameRV->setAccelData(STM16TOH(buff.data+ACCEL_X) * CONVERT_A_X,
-                                        STM16TOH(buff.data+ACCEL_Y) * CONVERT_A_Y,
-                                        STM16TOH(buff.data+ACCEL_Z) * CONVERT_A_Z,
-                                        buff.timestamp);
-
-                    if (mFusionSensors[LINEAR_ACCEL].enabled || mFusionSensors[GRAVITY].enabled) {
-                        mLAGravity->setAccelData(STM16TOH(buff.data+ACCEL_X) * CONVERT_A_X,
-                                                STM16TOH(buff.data+ACCEL_Y) * CONVERT_A_Y,
-                                                STM16TOH(buff.data+ACCEL_Z) * CONVERT_A_Z,
-                                                buff.timestamp);
-                        reportLAGravity = true;
+#ifdef _ENABLE_MAGNETOMETER
+                if (mFusionSensors[GEOMAG_RV].enabled || mFusionSensors[ROTATION_VECT].enabled) {
+                    mGeomagRVReady = mGeomagRV->processFusion(mFusionData, false);
+                    if (mFusionSensors[GEOMAG_RV].enabled) {
+                        data->version = SENSORS_EVENT_T_SIZE;
+                        data->sensor = SENSORS_HANDLE_BASE + ID_GEOMAG_RV;
+                        data->type = SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR;
+                        data->data[0] = mFusionData.geoMagRotation.a;
+                        data->data[1] = mFusionData.geoMagRotation.b;
+                        data->data[2] = mFusionData.geoMagRotation.c;
+                        data->data[3] = mFusionData.geoMagRotation.d;
+                        data->data[4] = mFusionData.geoMagRotation.accuracy;
+                        data->timestamp = mFusionData.geoMagRotation.timestamp;
+                        data++;
                     }
                 }
+#endif
                 break;
 #ifdef _ENABLE_ACCEL_SECONDARY
             case DT_ACCEL2:
@@ -591,73 +675,79 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
 #endif
 #ifdef _ENABLE_GYROSCOPE
             case DT_GYRO:
+                mFusionData.gyro.x = STM16TOH(buff.data + GYRO_X) * CONVERT_G_P;
+                mFusionData.gyro.y = STM16TOH(buff.data + GYRO_Y) * CONVERT_G_R;
+                mFusionData.gyro.z = STM16TOH(buff.data + GYRO_Z) * CONVERT_G_Y;
+                mFusionData.gyro.timestamp = buff.timestamp;
                 if (mFusionSensors[GYRO].enabled) {
                     data->version = SENSORS_EVENT_T_SIZE;
                     data->sensor = SENSORS_HANDLE_BASE + ID_G;
                     data->type = SENSOR_TYPE_GYROSCOPE;
-                    data->gyro.x = STM16TOH(buff.data + GYRO_X) * CONVERT_G_P;
-                    data->gyro.y = STM16TOH(buff.data + GYRO_Y) * CONVERT_G_R;
-                    data->gyro.z = STM16TOH(buff.data + GYRO_Z) * CONVERT_G_Y;
+                    data->gyro.x = mFusionData.gyro.x;
+                    data->gyro.y = mFusionData.gyro.y;
+                    data->gyro.z = mFusionData.gyro.z;
                     data->gyro.status = SENSOR_STATUS_ACCURACY_HIGH;
-                    data->timestamp = buff.timestamp;
+                    data->timestamp = mFusionData.gyro.timestamp;
                     data++;
                 }
-                // Check if we need to feed gyro data to fusion algorithms
                 if (mFusionSensors[GAME_RV].enabled || mFusionSensors[LINEAR_ACCEL].enabled
-                    || mFusionSensors[GRAVITY].enabled) {
-                    mGameRV->setGyroData(STM16TOH(buff.data + GYRO_X) * CONVERT_G_P,
-                                        STM16TOH(buff.data + GYRO_Y) * CONVERT_G_R,
-                                        STM16TOH(buff.data + GYRO_Z) * CONVERT_G_Y,
-                                        buff.timestamp);
-                    mGameRV->processFusion();
+                        || mFusionSensors[GRAVITY].enabled) {
+                    mGameRV->processFusion(mFusionData, false);
                     if (mFusionSensors[GAME_RV].enabled) {
                         data->version = SENSORS_EVENT_T_SIZE;
                         data->sensor = SENSORS_HANDLE_BASE + ID_GAME_RV;
                         data->type = SENSOR_TYPE_GAME_ROTATION_VECTOR;
-                        data->data[0] = mGameRV->getFusionX();
-                        data->data[1] = mGameRV->getFusionY();
-                        data->data[2] = mGameRV->getFusionZ();
-                        data->data[3] = mGameRV->getFusionExt1();
-                        data->data[4] = mGameRV->getFusionExt2();
-                        data->timestamp = mGameRV->getFusionTs();
+                        data->data[0] = mFusionData.gameRotation.a;
+                        data->data[1] = mFusionData.gameRotation.b;
+                        data->data[2] = mFusionData.gameRotation.c;
+                        data->data[3] = mFusionData.gameRotation.d;
+                        data->data[4] = mFusionData.gameRotation.accuracy;
+                        data->timestamp = mFusionData.gameRotation.timestamp;
                         data++;
                     }
-                    if (reportLAGravity) {
-                        reportLAGravity = false;
-                        mLAGravity->setGameRVData(mGameRV->getFusionX(), mGameRV->getFusionY(),
-                                mGameRV->getFusionZ(), mGameRV->getFusionExt1(), mGameRV->getFusionTs());
-                        mLAGravity->processFusion();
+                    if (mFusionSensors[LINEAR_ACCEL].enabled || mFusionSensors[GRAVITY].enabled) {
+                        mLAGravity->processFusion(mFusionData, false);
 
                         if (mFusionSensors[LINEAR_ACCEL].enabled) {
                             data->version = SENSORS_EVENT_T_SIZE;
                             data->sensor = SENSORS_HANDLE_BASE + ID_LA;
                             data->type = SENSOR_TYPE_LINEAR_ACCELERATION;
-                            data->acceleration.x = mLAGravity->getFusionX();
-                            data->acceleration.y = mLAGravity->getFusionY();
-                            data->acceleration.z = mLAGravity->getFusionZ();
+                            data->acceleration.x = mFusionData.linearAccel.x;
+                            data->acceleration.y = mFusionData.linearAccel.y;
+                            data->acceleration.z = mFusionData.linearAccel.z;
                             data->acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
-                            /*data->data[0] = mLAGravity->getFusionX();
-                            data->data[1] = mLAGravity->getFusionY();
-                            data->data[2] = mLAGravity->getFusionZ();*/
-                            data->timestamp = mLAGravity->getFusionTs();
+                            data->timestamp = mFusionData.linearAccel.timestamp;
                             data++;
                         }
                         if (mFusionSensors[GRAVITY].enabled) {
                             data->version = SENSORS_EVENT_T_SIZE;
                             data->sensor = SENSORS_HANDLE_BASE + ID_GRAVITY;
                             data->type = SENSOR_TYPE_GRAVITY;
-                            data->acceleration.x = mLAGravity->getFusionExt1();
-                            data->acceleration.y = mLAGravity->getFusionExt2();
-                            data->acceleration.z = mLAGravity->getFusionExt3();
+                            data->acceleration.x = mFusionData.gravity.x;
+                            data->acceleration.y = mFusionData.gravity.y;
+                            data->acceleration.z = mFusionData.gravity.z;
                             data->acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
-                            /*data->data[0] = mLAGravity->getFusionExt1();
-                            data->data[1] = mLAGravity->getFusionExt2();
-                            data->data[2] = mLAGravity->getFusionExt3();*/
-                            data->timestamp = mLAGravity->getFusionTs();
+                            data->timestamp = mFusionData.gravity.timestamp;
                             data++;
                         }
                     }
                 }
+#ifdef _ENABLE_MAGNETOMETER
+                if (mFusionSensors[ROTATION_VECT].enabled) {
+                    mRotationVect->processFusion(mFusionData, mGeomagRVReady);
+
+                    data->version = SENSORS_EVENT_T_SIZE;
+                    data->sensor = SENSORS_HANDLE_BASE + ID_RV;
+                    data->type = SENSOR_TYPE_ROTATION_VECTOR;
+                    data->data[0] = mFusionData.rotationVector.a;
+                    data->data[1] = mFusionData.rotationVector.b;
+                    data->data[2] = mFusionData.rotationVector.c;
+                    data->data[3] = mFusionData.rotationVector.d;
+                    data->data[4] = mFusionData.rotationVector.accuracy;
+                    data->timestamp = mFusionData.rotationVector.timestamp;
+                    data++;
+                }
+#endif
                 break;
             case DT_UNCALIB_GYRO:
                 data->version = SENSORS_EVENT_T_SIZE;
@@ -784,7 +874,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             case DT_RESET:
                 time(&timeutc.tv_sec);
-                if (buff.data[0] >= 0 && buff.data[0] <= RESET_REASON_MAX_CODE)
+                if (buff.data[0] <= RESET_REASON_MAX_CODE)
                     mErrorCnt[buff.data[0]]++;
                 if ((sent_bug2go_sec == 0) ||
                     (timeutc.tv_sec - sent_bug2go_sec > 24*60*60)) {
@@ -888,8 +978,49 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                     /* Disable, because this is a one shot sensor */
                     setEnable(ID_GLANCE_GESTURE, 0);
                 }
-
+#ifdef _ENABLE_MAGNETOMETER
+            case DT_MAG:
+                mFusionData.mag.x = STM16TOH(buff.data + MAGNETIC_X) * CONVERT_M_X;
+                mFusionData.mag.y = STM16TOH(buff.data + MAGNETIC_Y) * CONVERT_M_Y;
+                mFusionData.mag.z = STM16TOH(buff.data + MAGNETIC_Z) * CONVERT_M_Z;
+                mFusionData.mag.timestamp = buff.timestamp;
+                if (mFusionSensors[MAG].enabled) {
+                    data->version = SENSORS_EVENT_T_SIZE;
+                    data->sensor = SENSORS_HANDLE_BASE + ID_M;
+                    data->type = SENSOR_TYPE_MAGNETIC_FIELD;
+                    data->magnetic.x = mFusionData.mag.x;
+                    data->magnetic.y = mFusionData.mag.y;
+                    data->magnetic.z = mFusionData.mag.z;
+                    data->magnetic.status = buff.status;
+                    data->timestamp = mFusionData.mag.timestamp;
+                    data++;
+                }
                 break;
+            case DT_UNCALIB_MAG:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_UM;
+                data->type = SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED;
+                data->uncalibrated_magnetic.x_uncalib = STM16TOH(buff.data + UNCALIB_MAGNETIC_X) * CONVERT_M_X;
+                data->uncalibrated_magnetic.y_uncalib = STM16TOH(buff.data + UNCALIB_MAGNETIC_Y) * CONVERT_M_Y;
+                data->uncalibrated_magnetic.z_uncalib = STM16TOH(buff.data + UNCALIB_MAGNETIC_Z) * CONVERT_M_Z;
+                data->uncalibrated_magnetic.x_bias = STM16TOH(buff.data + UNCALIB_MAGNETIC_X_BIAS) * CONVERT_BIAS_M_X;
+                data->uncalibrated_magnetic.y_bias = STM16TOH(buff.data + UNCALIB_MAGNETIC_Y_BIAS) * CONVERT_BIAS_M_Y;
+                data->uncalibrated_magnetic.z_bias = STM16TOH(buff.data + UNCALIB_MAGNETIC_Z_BIAS) * CONVERT_BIAS_M_Z;
+                data->timestamp = buff.timestamp;
+                data++;
+                break;
+            case DT_ORIENT:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_OR;
+                data->type = SENSOR_TYPE_ORIENTATION;
+                data->orientation.azimuth = STM16TOH(buff.data + ORIENTATION_AZIMUTH) * CONVERT_O_Y;
+                data->orientation.pitch = STM16TOH(buff.data + ORIENTATION_PITCH) * CONVERT_O_P;
+                data->orientation.roll = STM16TOH(buff.data + ORIENTATION_ROLL) * CONVERT_O_R;
+                data->orientation.status = buff.status;
+                data->timestamp = buff.timestamp;
+                data++;
+                break;
+#endif
             case DT_MOTION_DETECT:
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor =  SENSORS_HANDLE_BASE + ID_MOTION_DETECT;
@@ -997,7 +1128,9 @@ int HubSensors::updateGyroRate()
         if (mFusionSensors[sensorIdx].usesGyro &&
             mFusionSensors[sensorIdx].enabled &&
             mFusionSensors[sensorIdx].delay < delay) {
-            delay = mFusionSensors[sensorIdx].delay;
+            delay = isRotationVectorRunning() ?
+                    MIN(mFusionSensors[sensorIdx].delay, FUSION_MAX_DELAY_US / 1000) :
+                    mFusionSensors[sensorIdx].delay;
         }
     }
     delay = MAX(delay, GYRO_MIN_DELAY_US / 1000);
@@ -1005,6 +1138,7 @@ int HubSensors::updateGyroRate()
     if (delay != prev_delay) {
         // Update gyro rate
         err = ioctl(dev_fd, STML0XX_IOCTL_SET_GYRO_DELAY, &delay);
+        ALOGI("HubSensors::updateGyroRate %d", delay);
         prev_delay = delay;
     }
     return err;
@@ -1015,6 +1149,46 @@ bool HubSensors::isGyroNeeded()
     int sensorIdx;
     for (sensorIdx = 0; sensorIdx < NUM_FUSION_DEVICES; sensorIdx++) {
         if (mFusionSensors[sensorIdx].usesGyro &&
+            mFusionSensors[sensorIdx].enabled)
+            return true;
+    }
+    return false;
+}
+#endif
+
+#ifdef _ENABLE_MAGNETOMETER
+int HubSensors::updateMagRate()
+{
+    static unsigned short prev_delay;
+    unsigned short delay = MAG_MAX_DELAY_US / 1000; // convert to ms
+    int sensorIdx, err = 0;
+
+    // Find the shortest delay from all enabled sensors that require mag
+    for (sensorIdx = 0; sensorIdx < NUM_FUSION_DEVICES; sensorIdx++) {
+        if (mFusionSensors[sensorIdx].usesMag &&
+            mFusionSensors[sensorIdx].enabled &&
+            mFusionSensors[sensorIdx].delay < delay) {
+            delay = isRotationVectorRunning() ?
+                    MIN(mFusionSensors[sensorIdx].delay, FUSION_MAX_DELAY_US / 1000) :
+                    mFusionSensors[sensorIdx].delay;
+        }
+    }
+    delay = MAX(delay, MAG_MIN_DELAY_US / 1000);
+
+    if (delay != prev_delay) {
+        // Update mag rate
+        err = ioctl(dev_fd, STML0XX_IOCTL_SET_MAG_DELAY, &delay);
+        ALOGI("HubSensors::updateMagRate %d", delay);
+        prev_delay = delay;
+    }
+    return err;
+}
+
+bool HubSensors::isMagNeeded()
+{
+    int sensorIdx;
+    for (sensorIdx = 0; sensorIdx < NUM_FUSION_DEVICES; sensorIdx++) {
+        if (mFusionSensors[sensorIdx].usesMag &&
             mFusionSensors[sensorIdx].enabled)
             return true;
     }
@@ -1033,7 +1207,9 @@ int HubSensors::updateAccelRate()
         if (mFusionSensors[sensorIdx].usesAccel &&
             mFusionSensors[sensorIdx].enabled &&
             mFusionSensors[sensorIdx].delay < delay) {
-            delay = mFusionSensors[sensorIdx].delay;
+            delay = isRotationVectorRunning() ?
+                    MIN(mFusionSensors[sensorIdx].delay, FUSION_MAX_DELAY_US / 1000) :
+                    mFusionSensors[sensorIdx].delay;
         }
     }
     delay = MAX(delay, ACCEL_MIN_DELAY_US / 1000);
@@ -1041,6 +1217,7 @@ int HubSensors::updateAccelRate()
     if (delay != prev_delay) {
         // Update accel rate
         err = ioctl(dev_fd, STML0XX_IOCTL_SET_ACC_DELAY, &delay);
+        ALOGI("HubSensors::updateAccelRate %d", delay);
         prev_delay = delay;
     }
     return err;
@@ -1054,4 +1231,21 @@ bool HubSensors::isAccelNeeded()
             return true;
     }
     return false;
+}
+
+bool HubSensors::isRotationVectorRunning()
+{
+    bool rvRunning = (
+        false
+#ifdef _ENABLE_MAGNETOMETER
+        || mFusionSensors[GEOMAG_RV].enabled
+        || mFusionSensors[ROTATION_VECT].enabled
+#endif
+#ifdef _ENABLE_GYROSCOPE
+        || mFusionSensors[GAME_RV].enabled
+        || mFusionSensors[LINEAR_ACCEL].enabled
+        || mFusionSensors[GRAVITY].enabled
+#endif
+    );
+    return rvRunning;
 }

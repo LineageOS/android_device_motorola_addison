@@ -32,11 +32,17 @@
 
 #include <linux/stml0xx.h>
 
-#include "Sensors.h"
-#include "SensorBase.h"
-#include "SensorList.h"
+#include "FusionSensorBase.h"
 #include "GameRotationVector.h"
 #include "LinearAccelGravity.h"
+#include "SensorBase.h"
+#include "SensorList.h"
+#include "Sensors.h"
+
+#ifdef _ENABLE_MAGNETOMETER
+#include "GeoMagRotationVector.h"
+#include "RotationVector.h"
+#endif
 
 /*****************************************************************************/
 
@@ -78,6 +84,18 @@
 #define LIFT_ROTATION (4 * sizeof(int8_t))
 #define LIFT_GRAV_DIFF (8 * sizeof(int8_t))
 #define CHOPCHOP_CHOPCHOP (0 * sizeof(int8_t))
+#define MAGNETIC_X (0 * sizeof(int16_t))
+#define MAGNETIC_Y (1 * sizeof(int16_t))
+#define MAGNETIC_Z (2 * sizeof(int16_t))
+#define UNCALIB_MAGNETIC_X (0 * sizeof(int16_t))
+#define UNCALIB_MAGNETIC_Y (1 * sizeof(int16_t))
+#define UNCALIB_MAGNETIC_Z (2 * sizeof(int16_t))
+#define UNCALIB_MAGNETIC_X_BIAS (3 * sizeof(int16_t))
+#define UNCALIB_MAGNETIC_Y_BIAS (4 * sizeof(int16_t))
+#define UNCALIB_MAGNETIC_Z_BIAS (5 * sizeof(int16_t))
+#define ORIENTATION_AZIMUTH (0 * sizeof(int16_t))
+#define ORIENTATION_PITCH   (1 * sizeof(int16_t))
+#define ORIENTATION_ROLL    (2 * sizeof(int16_t))
 
 #define STM16TOH(p) (int16_t) be16toh(*((uint16_t *) (p)))
 #define STM32TOH(p) (int32_t) be32toh(*((uint32_t *) (p)))
@@ -101,15 +119,19 @@ private:
     enum fusion_enum
     {
         ACCEL,
-#ifdef _ENABLE_MAGNETOMETER
-        ORIENTATION,
-#endif
 #ifdef _ENABLE_GYROSCOPE
         GYRO,
         UNCALIB_GYRO,
         GAME_RV,
         LINEAR_ACCEL,
         GRAVITY,
+#endif
+#ifdef _ENABLE_MAGNETOMETER
+        MAG,
+        UNCALIB_MAG,
+        ORIENTATION,
+        GEOMAG_RV,
+        ROTATION_VECT,
 #endif
         NUM_FUSION_DEVICES
     };
@@ -131,6 +153,7 @@ private:
     uint32_t mFlushEnabled;
     uint64_t mEnabledHandles;
     uint32_t mPendingBug2go;
+    FusionData mFusionData;
 
 #ifdef _ENABLE_GYROSCOPE
     //! \brief gyroscope calibration table
@@ -138,12 +161,20 @@ private:
     GameRotationVector *mGameRV;
     LinearAccelGravity *mLAGravity;
 #endif
+
+#ifdef _ENABLE_MAGNETOMETER
+    GeoMagRotationVector *mGeomagRV;
+    uint8_t mGeomagRVReady;
+    RotationVector *mRotationVect;
+#endif
+
     uint8_t mAccelCal[STML0XX_ACCEL_CAL_SIZE];
 
     uint8_t mErrorCnt[RESET_REASON_MAX_CODE + 1];
     gzFile open_dropbox_file(const char* timestamp, const char* dst, const int flags);
     short capture_dump(char* timestamp, const int id, const char* dst, const int flags);
     void logAlsEvent(int32_t lux, int64_t ts_ns);
+    bool isRotationVectorRunning(void);
 
 #ifdef _ENABLE_GYROSCOPE
     /*!
@@ -156,6 +187,18 @@ private:
      */
     int updateGyroRate();
     bool isGyroNeeded();
+#endif
+#ifdef _ENABLE_MAGNETOMETER
+    /*!
+     * \brief Helper to update mag rate
+     *
+     * Determines the mag rate based on the current registrations
+     * of one or more sensors that involve sensor fusion
+     *
+     * \returns ioctl() status resulting from mag rate set
+     */
+    int updateMagRate();
+    bool isMagNeeded();
 #endif
     /*!
      * \brief Helper to update accel rate

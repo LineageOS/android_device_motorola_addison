@@ -59,6 +59,8 @@ typedef enum sensor_handle {
 	ID_M,	           /* Magnetometer */
 	ID_UM,	           /* Uncalibrated Magnetometer */
 	ID_OR,	           /* Orientation */
+        ID_GEOMAG_RV,      /* GeoMagnetic Rotation Vector */
+        ID_RV,             /* Rotation Vector */
 #endif
 #ifdef _ENABLE_CHOPCHOP
 	ID_CC,             /* Chopchop gesture */
@@ -128,45 +130,23 @@ typedef enum sensor_handle {
 
 #ifdef _ENABLE_MAGNETOMETER
 
-/* AKM Definitions */
-
-/* For Accelerometer */
-#define EVENT_TYPE_ACCEL_X          ABS_X
-#define EVENT_TYPE_ACCEL_Y          ABS_Y
-#define EVENT_TYPE_ACCEL_Z          ABS_Z
-#define EVENT_TYPE_ACCEL_STATUS     ABS_RX
-
-/* For Magnetometer */
-#define EVENT_TYPE_MAGV_X           ABS_RY
-#define EVENT_TYPE_MAGV_Y           ABS_RZ
-#define EVENT_TYPE_MAGV_Z           ABS_THROTTLE
-#define EVENT_TYPE_MAGV_STATUS      ABS_RUDDER
-
-/* For Uncalibrated Magnetometer */
-#define EVENT_TYPE_UCMAGV_X         ABS_WHEEL
-#define EVENT_TYPE_UCMAGV_Y         ABS_GAS
-#define EVENT_TYPE_UCMAGV_Z         ABS_BRAKE
-
-/* Fusion Orientaion */
-#define EVENT_TYPE_YAW              ABS_HAT0Y
-#define EVENT_TYPE_PITCH            ABS_HAT1X
-#define EVENT_TYPE_ROLL             ABS_HAT1Y
-
-/* Fusion Rotaion Vector */
-#define EVENT_TYPE_ROTVEC_X         ABS_TILT_X
-#define EVENT_TYPE_ROTVEC_Y         ABS_TILT_Y
-#define EVENT_TYPE_ROTVEC_Z         ABS_TOOL_WIDTH
-#define EVENT_TYPE_ROTVEC_W			ABS_VOLUME
-
-#define CONVERT_Q14					(1.0f / 16384.0f)
-#define CONVERT_AKM_G				(GRAVITY_EARTH / 720.0f)
+// conversion of magnetic data to uT units
+#define CONVERT_M                   (1.0f/16.0f)
+#define CONVERT_M_X                 (CONVERT_M)
+#define CONVERT_M_Y                 (CONVERT_M)
+#define CONVERT_M_Z                 (CONVERT_M)
+#define CONVERT_BIAS_M_X            (CONVERT_M)
+#define CONVERT_BIAS_M_Y            (CONVERT_M)
+#define CONVERT_BIAS_M_Z            (CONVERT_M)
+#define CONVERT_O                   (1.0f/64.0f)
+#define CONVERT_O_Y                 (CONVERT_O)
+#define CONVERT_O_P                 (CONVERT_O)
+#define CONVERT_O_R                 (CONVERT_O)
 
 /* conversion of acceleration data to SI units (m/s^2) */
 /* 720 LSB = 1G */
 #define AKSC_LSG					(720.0f)
 #define CONVERT_A_AKM					CONVERT_AKM_G
-/* conversion of magnetic data to uT units */
-#define CONVERT_M					(0.06f)
 
 /* conversion of orientation data (Q6) to degree units */
 #define CONVERT_OR					(1.0f / 64.0f)

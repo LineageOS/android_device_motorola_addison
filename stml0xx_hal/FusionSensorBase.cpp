@@ -21,31 +21,5 @@
 #include "FusionSensorBase.h"
 
 FusionSensorBase::FusionSensorBase()
-: accelData(), gyroData(), magData(), fusionData(),
-  accelTs(0), gyroTs(0), magTs(0), fusionTs(0)
 {
-}
-
-void FusionSensorBase::setAccelData(float x, float y, float z, int64_t ts)
-{
-    accelData[0] = x;
-    accelData[1] = y;
-    accelData[2] = z;
-    accelTs = ts;
-}
-
-void FusionSensorBase::setGyroData(float x, float y, float z, int64_t ts)
-{
-    gyroData[0] = x;
-    gyroData[1] = y;
-    gyroData[2] = z;
-    gyroTs = ts;
-}
-
-void FusionSensorBase::setMagData(float x, float y, float z, int64_t ts)
-{
-    magData[0] = x;
-    magData[1] = y;
-    magData[2] = z;
-    magTs = ts;
 }

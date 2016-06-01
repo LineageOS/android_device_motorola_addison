@@ -72,6 +72,10 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
             SH_CFLAGS += -D_ENABLE_IR
         endif
 
+        ifeq ($(MOT_SENSOR_HUB_HW_AK09912), true)
+            SH_CFLAGS += -D_ENABLE_MAGNETOMETER
+        endif
+
         ##########################
         # Select sensorhub algos #
         ##########################
@@ -119,10 +123,16 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         ifeq ($(MOT_SENSOR_HUB_HW_TYPE_L0), true)
             # Sensor HAL file for M0 hub (low-tier) products (athene, etc...)
             LOCAL_SRC_FILES += \
-                $(SH_PATH)/FusionSensorBase.cpp \
                 $(SH_PATH)/Quaternion.cpp \
+                $(SH_PATH)/GyroIntegration.cpp \
                 $(SH_PATH)/GameRotationVector.cpp \
                 $(SH_PATH)/LinearAccelGravity.cpp
+            ifeq ($(MOT_SENSOR_HUB_HW_AK09912), true)
+                LOCAL_SRC_FILES += \
+                    $(SH_PATH)/GeoMagRotationVector.cpp \
+                    $(SH_PATH)/RotationVector.cpp
+            endif
+
         endif
 
         ifeq ($(MOT_SENSOR_HUB_HW_TYPE_L4), true)
@@ -187,6 +197,59 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
     LOCAL_MODULE_TAGS := optional
 
     include $(BUILD_SHARED_LIBRARY)
+
+    #########################
+    # AKM executable        #
+    #########################
+    ifeq ($(MOT_SENSOR_HUB_HW_AK09912), true)
+        include $(CLEAR_VARS)
+
+        AKM_PATH := ak09912_akmd_6D_32b
+        SMARTCOMPASS_LIB := libSmartCompass
+
+        LOCAL_MODULE_TAGS := optional
+
+        LOCAL_MODULE  := akmd09912
+
+        LOCAL_C_INCLUDES := \
+            $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
+            $(LOCAL_PATH)/$(AKM_PATH) \
+            $(LOCAL_PATH)/$(AKM_PATH)/$(SMARTCOMPASS_LIB) \
+            $(LOCAL_PATH)/$(SH_PATH)
+
+        LOCAL_SRC_FILES := \
+            $(AKM_PATH)/AKMD_Driver.c \
+            $(AKM_PATH)/DispMessage.c \
+            $(AKM_PATH)/FileIO.c \
+            $(AKM_PATH)/Measure.c \
+            $(AKM_PATH)/main.c \
+            $(AKM_PATH)/misc.c \
+            $(AKM_PATH)/FST_AK09912.c \
+            $(AKM_PATH)/Acc_aot.c
+
+        LOCAL_CFLAGS := -DAKMD_FOR_AK09912
+        LOCAL_CFLAGS += -DAKMD_AK099XX
+        LOCAL_CFLAGS += -DAKMD_ACC_EXTERNAL
+        LOCAL_CFLAGS += -Wall -Wextra
+        #LOCAL_CFLAGS += -DENABLE_AKMDEBUG=1
+        LOCAL_CFLAGS += $(SH_CFLAGS)
+
+        LOCAL_STATIC_LIBRARIES := AK09912
+
+        LOCAL_FORCE_STATIC_EXECUTABLE := false
+        LOCAL_SHARED_LIBRARIES := libc libm libutils libcutils
+
+        include $(BUILD_EXECUTABLE)
+
+        include $(CLEAR_VARS)
+        LOCAL_MODULE        := AK09912
+        LOCAL_MODULE_TAGS   := optional
+        LOCAL_MODULE_CLASS  := STATIC_LIBRARIES
+        LOCAL_MODULE_SUFFIX := .a
+        LOCAL_SRC_FILES_arm   := $(AKM_PATH)/$(SMARTCOMPASS_LIB)/arm/libAK09912.a
+        LOCAL_SRC_FILES_arm64 := $(AKM_PATH)/$(SMARTCOMPASS_LIB)/arm64/libAK09912.a
+        include $(BUILD_PREBUILT)
+    endif # MOT_SENSOR_HUB_HW_AK09912
 
     ###########################
     # Sensor Hub Flash loader #
