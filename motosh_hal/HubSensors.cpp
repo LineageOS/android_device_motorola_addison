@@ -446,6 +446,20 @@ int HubSensors::setEnable(int32_t handle, int en)
                     new_enabled |= M_GLANCE;
                 found = 1;
             }
+	case ID_MOTION_DETECT:
+            if (newState)
+                new_enabled |= M_MOTION_DETECT;
+            else
+                new_enabled &= ~M_MOTION_DETECT;
+            found = 1;
+            break;
+        case ID_STATIONARY_DETECT:
+            if (newState)
+                new_enabled |= M_STATIONARY_DETECT;
+            else
+                new_enabled &= ~M_STATIONARY_DETECT;
+            found = 1;
+            break;
     }
 
     if (found && (new_enabled != mWakeEnabled)) {
@@ -608,6 +622,10 @@ int HubSensors::batch(int32_t handle, int32_t flags, int64_t ns, int64_t timeout
 #ifdef _CAMFSYNC
 	case ID_SENSOR_SYNC:	status = 0;		break;
 #endif
+        case ID_MOTION_DETECT:
+        case ID_STATIONARY_DETECT:
+            status = 0;
+            break;
     }
 
     if( handle == ID_M || handle == ID_O || handle == ID_UNCALIB_MAG )
@@ -1159,6 +1177,26 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 data++;
                 break;
             }
+            case DT_MOTION_DETECT:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_MOTION_DETECT;
+                data->type = SENSOR_TYPE_MOTION_DETECT;
+                data->data[0] = 1.0;
+                data->timestamp = buff.timestamp;
+                data++;
+                /* Disable, because this is a one shot sensor */
+                setEnable(ID_MOTION_DETECT, 0);
+                break;
+            case DT_STATIONARY_DETECT:
+                data->version = SENSORS_EVENT_T_SIZE;
+                data->sensor =  SENSORS_HANDLE_BASE + ID_STATIONARY_DETECT;
+                data->type = SENSOR_TYPE_STATIONARY_DETECT;
+                data->data[0] = 1.0;
+		data->timestamp = buff.timestamp;
+                data++;
+                /* Disable, because this is a one shot sensor */
+                setEnable(ID_STATIONARY_DETECT, 0);
+                break;
             default:
                 S_LOGE("Unrecognized sensor: %d", buff.type);
                 break;

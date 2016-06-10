@@ -659,11 +659,44 @@ const std::vector<struct sensor_t> & HubSensors::hubSensorList() {
                 .reserved = {0,0}},
 #endif /* _ENABLE_ULTRASOUND */
 
+    {
+                .name = "Motion Detect",
+                .vendor = VENDOR_MOT,
+                .version = 1,
+                .handle = SENSORS_HANDLE_BASE + ID_MOTION_DETECT,
+                .type = SENSOR_TYPE_MOTION_DETECT,
+                .maxRange = 1.0f,
+                .resolution = 1.0f,
+                .power = ACCGYR_ACCEL_MA,
+                .minDelay = -1,
+                .fifoReservedEventCount = 0,
+                .fifoMaxEventCount = 0,
+                .stringType = SENSOR_STRING_TYPE_MOTION_DETECT,
+                .requiredPermission = "",
+                .maxDelay = 0,
+                .flags = SENSOR_FLAG_ONE_SHOT_MODE | SENSOR_FLAG_WAKE_UP,
+                .reserved = {0,0}},
+    {
+                .name = "Stationary Detect",
+                .vendor = VENDOR_MOT,
+                .version = 1,
+                .handle = SENSORS_HANDLE_BASE + ID_STATIONARY_DETECT,
+                .type = SENSOR_TYPE_STATIONARY_DETECT,
+                .maxRange = 1.0f,
+                .resolution = 1.0f,
+                .power = ACCGYR_ACCEL_MA,
+                .minDelay = -1,
+                .fifoReservedEventCount = 0,
+                .fifoMaxEventCount = 0,
+                .stringType = SENSOR_STRING_TYPE_STATIONARY_DETECT,
+                .requiredPermission = "",
+                .maxDelay = 0,
+                .flags = SENSOR_FLAG_ONE_SHOT_MODE | SENSOR_FLAG_WAKE_UP,
+                .reserved = {0,0}},
     };
 
     return sSensorList;
 }
-
 
 /* Clean up definitions */
 #undef VENDOR_MAG
