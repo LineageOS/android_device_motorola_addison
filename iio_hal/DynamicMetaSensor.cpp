@@ -33,12 +33,14 @@
 
 #include <cutils/atomic.h>
 #include <android-base/macros.h>
+#include <android-base/stringprintf.h>
 #include <utils/Mutex.h>
 
 #include <sys/select.h>
 
 #include <hardware/sensors.h>
 #include <utils/SystemClock.h>
+#include <openssl/sha.h>
 
 #include "IioSensor.h"
 #include "BaseHal.h"
@@ -146,7 +148,7 @@ int DynamicMetaSensor::reportPendingSensors(sensors_event_t* data, int count) {
         ds.connected    = 1;
         ds.handle       = s.handle;
         ds.sensor       = &s;
-        memset(&(ds.uuid), 0, sizeof(ds.uuid));
+        generateUuid(s, ds);
 
         pendingAdditions.pop_front();
         count--;
@@ -187,3 +189,47 @@ vector< shared_ptr<IioSensor> > DynamicMetaSensor::getIioSensorList() {
     return currentSensors;
 }
 
+void DynamicMetaSensor::generateUuid(const struct sensor_t &s,
+        dynamic_sensor_meta_event_t &ds) {
+
+    // Start off with a Name Space ID - See RFC 4122: Appendix C
+    // We'll call this the "Dynamic Sensor Name Space ID"
+    vector<uint8_t> input = {
+        0x6b, 0xa7, 0xb8, 0x93, /* Made up last byte here. */
+        0x9d, 0xad, 0x11, 0xd1,
+        0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8
+    };
+
+    // TODO: Add mod model or serial number
+    string sensorId = android::base::StringPrintf("motorola.com:%s:%s:%d:%d",
+            s.name, s.vendor, s.version, s.type);
+    input.insert(input.end(), sensorId.begin(), sensorId.end());
+
+    uint8_t sha1[SHA_DIGEST_LENGTH];
+    SHA1(&input[0], input.size(), sha1);
+
+    // UUID is 16 bytes. SHA1 is 20 bytes
+    static_assert(SHA_DIGEST_LENGTH >= arraysize(ds.uuid));
+    static_assert(arraysize(ds.uuid) > 8); // We index blindly to byte 9
+
+    memcpy(ds.uuid, sha1, min(sizeof(sha1), sizeof(ds.uuid)));
+
+    // Encode the version: Name-based version that uses SHA1 hashing (section 4.1.3)
+    ds.uuid[6] = (ds.uuid[6] & 0x0f) | 0x50;
+
+    // Encode the variant: 2 MSB bits (6 & 7) must be 0 and 1 respectively
+    ds.uuid[8] = (ds.uuid[8] & 0b0011'1111) | 0b1000'0000;
+
+    S_LOGD("sensorId=%s UUID=%s", sensorId.c_str(), toUuidStr(ds.uuid).c_str());
+}
+
+string DynamicMetaSensor::toUuidStr(uint8_t *uuid) {
+    uint8_t *u = uuid;
+    return android::base::StringPrintf(
+            "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+             u[0], u[1], u[2], u[3],
+             u[4], u[5],
+             u[6], u[7],
+             u[8], u[9],
+             u[10], u[11], u[12], u[13], u[14], u[15]);
+}

@@ -44,8 +44,8 @@ LOCAL_C_INCLUDES += \
 # Needs to be added after KERNEL_OBJ/usr/include
 LOCAL_C_INCLUDES += $(ANDROID_BUILD_TOP)/kernel/include
 
-LOCAL_SHARED_LIBRARIES += libiio
-LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libc
+LOCAL_SHARED_LIBRARIES += libiio libcrypto
+LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libc libbase
 LOCAL_CFLAGS += -Wall -Wextra
 LOCAL_CXXFLAGS += -Weffc++ -std=c++14
 

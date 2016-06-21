@@ -160,7 +160,7 @@ int IioHal::poll(sensors_event_t* data, int count) {
     AutoLock _d(driversLock);
     pollLock.unlock();
 
-    pollRes = ::poll(&pollFds.front(), pollFds.size(), -1);
+    pollRes = TEMP_FAILURE_RETRY(::poll(&pollFds.front(), pollFds.size(), -1));
 
     if (pollRes >= 0) {
         // Success

@@ -131,6 +131,16 @@ private:
 
     int reportPendingSensors(sensors_event_t* data, int count);
 
+    /** Generates a RFC4122 Name-based UUID and adds it to the dynamic sensor
+     * meta event. */
+    void generateUuid(const struct sensor_t &s, dynamic_sensor_meta_event_t &ds);
+
+    /** Converts a 16-byte UUID value to the canonical string form.
+     *
+     * @param uuid An array of 16 bytes containing the UUID in big endian byte order.
+     * @return UUID in xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx form
+     * */
+    std::string toUuidStr(uint8_t *uuid);
 };
 
 #endif // DYNAMIC_META_SENSOR
