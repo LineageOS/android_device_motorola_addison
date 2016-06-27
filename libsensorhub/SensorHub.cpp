@@ -134,10 +134,9 @@ uint32_t SensorHub::getFlashCrc(void) {
 }
 
 bool SensorHub::triggerProxRecal(void) {
-    return 0;
-    //static const uint8_t prox_recal_command[1] = {0xB1};
-    //return writeReg(VmmID::BYPASS_MODE, sizeof(prox_recal_command),
-    //        prox_recal_command);
+    static const uint8_t prox_recal_command[1] = {0xB1};
+    return writeReg(VmmID::BYPASS_MODE, sizeof(prox_recal_command),
+            prox_recal_command);
 }
 
 } // namespace mot
