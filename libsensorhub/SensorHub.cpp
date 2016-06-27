@@ -74,17 +74,13 @@ unique_ptr<uint8_t[]> SensorHub::readReg(const string regName, uint16_t size) {
     return readReg(static_cast<VmmID>(regEntry->second), size);
 }
 
-
-bool SensorHub::writeReg(string regName, uint16_t size,
+bool SensorHub::writeReg(VmmID vmmId, uint16_t size,
         const uint8_t * const data) {
 
     if (data == nullptr || size == 0 || size > getMaxTx()) return false;
 
-    int16_t regNr = getRegisterNumber(regName);
-    if (regNr < 0) return false;
-
-    regNr = EndianCvt<uint16_t>(regNr);
-    uint16_t bytesLength = EndianCvt(size);
+    uint16_t regNr = htons(static_cast<uint16_t>(vmmId));
+    uint16_t bytesLength = htons(size);
 
     char msg[SENSORHUB_CMD_LENGTH + size];
     memcpy(msg, &regNr, 2);
@@ -93,6 +89,14 @@ bool SensorHub::writeReg(string regName, uint16_t size,
 
     int res = retryIoctl(fd, SH_IOCTL_WRITE_REG, msg);
     return res >= 0;
+}
+
+bool SensorHub::writeReg(string regName, uint16_t size,
+        const uint8_t * const data) {
+    int16_t regNr = getRegisterNumber(regName);
+    if (regNr < 0) return false;
+
+    return writeReg(static_cast<VmmID>(regNr), size, data);
 }
 
 string SensorHub::getVariant(void) {
@@ -127,6 +131,13 @@ uint32_t SensorHub::getFlashCrc(void) {
     }
 
     return hwCrc;
+}
+
+bool SensorHub::triggerProxRecal(void) {
+    return 0;
+    //static const uint8_t prox_recal_command[1] = {0xB1};
+    //return writeReg(VmmID::BYPASS_MODE, sizeof(prox_recal_command),
+    //        prox_recal_command);
 }
 
 } // namespace mot

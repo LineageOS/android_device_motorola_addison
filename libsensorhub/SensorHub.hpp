@@ -146,6 +146,17 @@ class SensorHub {
         /** Write a block of data to a specific SensorHub register after adding
          * the appropriate buffer headers.
          *
+         * @param vmmId The register number to write to.
+         * @param size The number of bytes to write.
+         * @param data The data to write. This should not include any
+         * register/size headers.
+         */
+        bool writeReg(VmmID vmmId, uint16_t size,
+                const uint8_t * const data);
+
+        /** Write a block of data to a specific SensorHub register after adding
+         * the appropriate buffer headers.
+         *
          * @param regName The register name. See the
          * kernel/include/uapi/linux/motosh_vmm.h
 	 * or kernel/include/uapi/linux/stml0xx_vmm.h
@@ -176,6 +187,12 @@ class SensorHub {
          * exactly 0).
          */
         uint32_t getFlashCrc(void);
+
+        /** Send command to the sensorhub to recalibrate the proximity sensor.
+         *
+         * @return Success or failure to send the command.
+         */
+        bool triggerProxRecal(void);
 };
 
 } // namespace mot
