@@ -102,27 +102,32 @@ int SensorsPollContext::poll(sensors_event_t* data, int count)
 
     // See if we have any pending events before blocking on poll()
     for (const auto& d : drivers) {
-        if (d->hasPendingEvents())
-            eventReader(d, -1);
+        if (d->hasPendingEvents()) {
+            if (eventReader(d, -1) <= 0) {
+                S_LOGE("Failed to read pending events");
+            }
+        }
     }
 
     if (nbEvents) return nbEvents;
 
-    ret = ::poll(&pollFds.front(), pollFds.size(), -1);
+    ret = TEMP_FAILURE_RETRY(::poll(&pollFds.front(), pollFds.size(), -1));
     err = errno;
 
     // Success
-    if (ret >= 0) {
+    if (ret > 0) {
         for (const auto& p : pollFds) {
             if (p.revents & POLLIN) {
                 int nb = eventReader(fd2driver[p.fd], p.fd);
                 // Need to relay any errors upward.
-                if (nb < 0) {
+                if (nb <= 0) {
                     S_LOGE("reading events failed fd=%d nb=%d", p.fd, nb);
                     return 0;
                 }
             }
         }
+    } else if (ret == 0) {
+        S_LOGD("poll() timed out");
     } else {
         S_LOGE("poll() failed with %d (%s)", err, strerror(err));
     }

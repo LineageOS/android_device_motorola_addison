@@ -30,6 +30,7 @@
 #include <time.h>
 #include <private/android_filesystem_config.h>
 #include <iterator>
+#include <vector>
 
 #include <linux/motosh.h>
 #include <android-base/macros.h>
@@ -179,6 +180,9 @@ public:
     virtual int setEnable(int32_t handle, int enabled) override;
     virtual int batch(int32_t handle, int32_t flags, int64_t ns, int64_t timeout) override;
     virtual int readEvents(sensors_event_t* data, int count) override;
+    virtual bool hasPendingEvents() const override {
+        return !pendingEvents.empty();
+    }
     virtual int flush(int32_t handle) override;
     bool hasSensor(int handle) override;
 
@@ -262,6 +266,15 @@ private:
     int updateGyroRate();
 
     void logAlsEvent(int32_t lux, int64_t ts_ns);
+
+    /**
+     * Virtual sensors may generate more than one sensor event per event
+     * received. If there's not enough room in the poll buffer, we need to
+     * queue the extra events until the next call.
+     */
+    std::vector<sensors_event_t> pendingEvents;
+    /// The index of the next event in the pendingEvents list that needs to be reported.
+    size_t nextPendingEvent;
 };
 
 /*****************************************************************************/

@@ -59,7 +59,8 @@ HubSensors::HubSensors()
       mUncalMagReqDelay(USHRT_MAX),
       mOrientReqDelay(USHRT_MAX),
       mGyroDelay(USHRT_MAX),
-      mEcompassDelay(USHRT_MAX)
+      mEcompassDelay(USHRT_MAX),
+      nextPendingEvent(0)
 {
     // read the actual value of all sensors if they're enabled already
     struct input_absinfo absinfo;
@@ -649,16 +650,39 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
     FILE *fp;
     int size;
 
-    // Ensure there are at least 2 slots free in the buffer
-    // because we can send 2 events at once below.
-    sensors_event_t const* const dataEnd = d + dLen - 1;
+    sensors_event_t const* const dataEnd = d + dLen;
+
+    auto bufferFull = [&]() { return data >= dataEnd; };
 
     if (dLen < 1) {
         ALOGE("HubSensors::readEvents - bad length %d", dLen);
-        return 0;
+        return -EINVAL;
     }
 
-    while (data < dataEnd && ((ret = read(data_fd, &buff, sizeof(struct motosh_android_sensor_data))) != 0)) {
+    if (hasPendingEvents()) {
+        while (!bufferFull() && (pendingEvents.begin() + nextPendingEvent != pendingEvents.end())) {
+            memcpy(data++, &pendingEvents[nextPendingEvent++], sizeof(*data));
+
+            if (pendingEvents.begin() + nextPendingEvent == pendingEvents.end()) {
+                pendingEvents.clear();
+                nextPendingEvent = 0;
+            }
+        }
+    }
+
+    while (!bufferFull()) {
+        errno = 0;
+        ret = read(data_fd, &buff, sizeof(struct motosh_android_sensor_data));
+        if (ret < 0) {
+            S_LOGE("Error reading data_fd. ret=%d errno=%d %s", ret, errno, strerror(errno));
+            return -errno;
+        } else if (ret == 0) {
+            if (errno) {
+                S_LOGE("Error reading data_fd. errno=%d %s", errno, strerror(errno));
+            }
+            break;
+        }
+
         /* these sensors are not supported, upload a bug2go if its been at least 24hrs since previous bug2go*/
         if (buff.type == DT_PRESSURE || buff.type == DT_TEMP ||
             buff.type == DT_DOCK ||
@@ -1052,14 +1076,26 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 }
 
                 if (isHandleEnabled(ID_GLANCE_GESTURE)) {
-                    data->version = SENSORS_EVENT_T_SIZE;
-                    data->sensor = ID_GLANCE_GESTURE;
-                    data->type = SENSOR_TYPE_GLANCE_GESTURE;
-                    data->data[0] = 1.0;                   /* set to 1 for Android compatibility */
-                    data->data[1] = STM16TOH(buff.data);   /* Currently blocked by Android FW */
-                    data->data[2] = 0;
-                    data->timestamp = buff.timestamp;
-                    data++;
+                    sensors_event_t* dest;
+                    if (!bufferFull()) {
+                        dest = data;
+                    } else {
+                        pendingEvents.emplace_back(sensors_event_t());
+                        dest = &pendingEvents.back();
+                    }
+                    dest->version = SENSORS_EVENT_T_SIZE;
+                    dest->sensor = ID_GLANCE_GESTURE;
+                    dest->type = SENSOR_TYPE_GLANCE_GESTURE;
+                    dest->data[0] = 1.0;                   /* set to 1 for Android compatibility */
+                    dest->data[1] = STM16TOH(buff.data);   /* Currently blocked by Android FW */
+                    dest->data[2] = 0;
+                    dest->timestamp = buff.timestamp;
+
+                    if (dest == data) {
+                        data++;
+                    } else {
+                        // Data was placed in the pendingEvents queue. No need to do anything.
+                    }
 
                     /* Disable, because this is a one shot sensor */
                     setEnable(ID_GLANCE_GESTURE, 0);
@@ -1124,6 +1160,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 break;
             }
             default:
+                S_LOGE("Unrecognized sensor: %d", buff.type);
                 break;
         }
     }
