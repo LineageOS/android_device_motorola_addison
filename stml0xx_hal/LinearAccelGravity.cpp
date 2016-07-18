@@ -89,10 +89,6 @@ bool LinearAccelGravity::processFusion(FusionData& fusionData, bool reset)
     fusionData.gravity.timestamp = fusionData.gameRotation.timestamp;
 
     /* Fill Linear Acceleration */
-    fusionData.gravity.x = fusionData.accel.x - qGrav.a;
-    fusionData.gravity.y = fusionData.accel.y - qGrav.b;
-    fusionData.gravity.z = fusionData.accel.z - qGrav.c;
-    fusionData.gravity.timestamp = fusionData.gameRotation.timestamp;
     fusionData.linearAccel.x = fusionData.accel.x - fusionData.gravity.x;
     fusionData.linearAccel.y = fusionData.accel.y - fusionData.gravity.y;
     fusionData.linearAccel.z = fusionData.accel.z - fusionData.gravity.z;
