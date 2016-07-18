@@ -34,6 +34,7 @@
 #include <cinttypes>
 
 #include <mutex>
+#include <atomic>
 
 #include <cutils/atomic.h>
 #include <android-base/macros.h>
@@ -62,7 +63,7 @@ public:
     virtual int readEvents(sensors_event_t* data, int count);
 
     virtual bool hasPendingEvents() const override {
-        return hasEvents || !pendingAdditions.empty() || !pendingRemovals.empty();
+        return hasEvents || !pendingAdditions.empty() || !pendingRemovals.empty() || flushResponsesDue > 0;
     }
 
     virtual int getFd() const override {
@@ -79,10 +80,7 @@ public:
                        UNUSED(handle); UNUSED(flags); UNUSED(ns); UNUSED(timeout);
         return 0;
     }
-    virtual int flush(int32_t handle) {
-                       UNUSED(handle);
-        return 0;
-    }
+    virtual int flush(int32_t handle) override;
     virtual bool hasSensor(int handle) {
         return handle == myHandle;
     }
@@ -126,10 +124,18 @@ private:
      * */
     std::list< std::shared_ptr<SensorBase> > pendingRemovals;
 
+    /** The count of flush requests for which we owe a response. Using an
+     * atomic here since this variable is being modified by multiple threads
+     * (flush() thread increments it, poll() thread decrements it). */
+    std::atomic<unsigned int> flushResponsesDue;
+
     /** Gets the current set of IIO sensors as found in sysfs. */
     std::vector< std::shared_ptr<IioSensor> > getIioSensorList();
 
-    int reportPendingSensors(sensors_event_t* data, int count);
+    int reportPendingSensors(sensors_event_t* data, int & count);
+
+    /// Respond to silly flush() requests.
+    int reportPendingFlushes(sensors_event_t* data, int & count);
 
     /** Generates a RFC4122 Name-based UUID and adds it to the dynamic sensor
      * meta event. */

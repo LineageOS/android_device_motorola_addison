@@ -57,13 +57,23 @@ using namespace android;
 DynamicMetaSensor::DynamicMetaSensor(int handle, IioHal &iioHal) : SensorBase("", "", ""),
     myHandle(handle), nextHandle(handle + 1),
     ueventListener(nullptr, nullptr), hasEvents(false),
-    iioHal(iioHal), pendingAdditions(iioHal.updateSensorList(getIioSensorList()))
+    iioHal(iioHal), pendingAdditions(iioHal.updateSensorList(getIioSensorList())),
+    flushResponsesDue(0)
 {
+}
+
+int DynamicMetaSensor::flush(int32_t handle) {
+                              UNUSED(handle);
+    flushResponsesDue++;
+    iioHal.releasePoll(IioHal::ReleaseReason::FlushResponseDue);
+    // FYI, it's possible for us to report flush-complete here (from the poll()
+    // thread), before this function returns.
+    return 0;
 }
 
 int DynamicMetaSensor::readEvents(sensors_event_t* data, int count) {
     //S_LOGD("+");
-    int ret;
+    int ret = 0;
     if (count == 0) {
         hasEvents = true;
         return 0;
@@ -72,8 +82,8 @@ int DynamicMetaSensor::readEvents(sensors_event_t* data, int count) {
     // Safe to destroy sensors previously reported as removed
     pendingRemovals.clear();
 
-    ret = reportPendingSensors(data, count);
-    count -= ret;
+    ret += reportPendingFlushes(&data[ret], count);
+    ret += reportPendingSensors(&data[ret], count);
     if (!count) {
         if (!pendingAdditions.empty()) {
             hasEvents = true;
@@ -131,7 +141,28 @@ int DynamicMetaSensor::readEvents(sensors_event_t* data, int count) {
     return ret;
 }
 
-int DynamicMetaSensor::reportPendingSensors(sensors_event_t* data, int count) {
+int DynamicMetaSensor::reportPendingFlushes(sensors_event_t* data, int & count) {
+    int ret = 0;
+
+    while (flushResponsesDue > 0 && count > 0) {
+        sensors_event_t &d = data[ret];
+        d.version = META_DATA_VERSION;
+        d.sensor = 0;
+        d.type = SENSOR_TYPE_META_DATA;
+        d.reserved0 = 0;
+        d.timestamp = 0;
+        d.meta_data.what = META_DATA_FLUSH_COMPLETE;
+        d.meta_data.sensor = myHandle;
+
+        flushResponsesDue--;
+        count--;
+        ret++;
+    }
+
+    return ret;
+}
+
+int DynamicMetaSensor::reportPendingSensors(sensors_event_t* data, int & count) {
     int ret = 0;
 
     while (!pendingAdditions.empty() && count > 0) {

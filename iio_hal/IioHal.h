@@ -110,6 +110,18 @@ public:
      */
     std::list< std::shared_ptr<IioSensor> > updateSensorList(const IioSensorCont & currSensors);
 
+    enum struct ReleaseReason : uint8_t {
+        Undefined, Activate, SensorAdd, SensorRemove, FlushResponseDue
+    };
+
+    /** Makes the ::poll() inside IioHal::poll() release so that the locks held
+     * by that function are released. */
+    void releasePoll(ReleaseReason reason = ReleaseReason::Undefined) {
+        write(pipeFd[1], &reason, 1);
+        fsync(pipeFd[1]);
+    }
+
+
 private:
     DISALLOW_COPY_AND_ASSIGN(IioHal);
 
@@ -173,17 +185,6 @@ private:
     /** Updates all the containers that change when sensors are added/removed
      * or enabled/disabled. */
     void updateFdLists();
-
-    enum struct ReleaseReason : uint8_t {
-        Undefined, Activate, SensorAdd, SensorRemove
-    };
-
-    /** Makes the ::poll() inside IioHal::poll() release so that the locks held
-     * by that function are released. */
-    void releasePoll(ReleaseReason reason = ReleaseReason::Undefined) {
-        write(pipeFd[1], &reason, 1);
-        fsync(pipeFd[1]);
-    }
 
     // This is a brittle hack. Need some kind of pseudo RTTI.
     bool isIioSensor(std::shared_ptr<SensorBase> sensor) {
