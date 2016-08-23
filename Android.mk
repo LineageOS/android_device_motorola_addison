@@ -64,6 +64,10 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
             endif
         endif
 
+        ifeq ($(MOT_AP_SENSOR_HW_REARPROX_2), true)
+            SH_CFLAGS += -D_ENABLE_REARPROX_2
+        endif
+
         ifeq ($(MOT_AP_SENSOR_HW_REARPROX), true)
             SH_CFLAGS += -D_ENABLE_REARPROX
         endif

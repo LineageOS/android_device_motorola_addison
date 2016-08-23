@@ -41,10 +41,10 @@
 #include "SensorList.h"
 #include "Sensors.h"
 #include "SensorsPollContext.h"
-#if defined(_ENABLE_MAGNETOMETER) || defined(_ENABLE_REARPROX)
+#if defined(_ENABLE_MAGNETOMETER) || defined(_ENABLE_REARPROX) ||defined (_ENABLE_REARPROX_2)
 #include "SensorBase.h"
 #endif
-#ifdef _ENABLE_REARPROX
+#if  defined ( _ENABLE_REARPROX) || defined (_ENABLE_REARPROX_2)
 #include "RearProxSensor.h"
 #endif
 #include "HubSensors.h"
@@ -65,17 +65,27 @@ SensorsPollContext::SensorsPollContext()
     }
 
 #ifdef _ENABLE_REARPROX
-    mSensors[rearprox] = RearProxSensor::getInstance();
-    ALOGE("rearprox sensor created");
+    mSensors[rearprox] =new RearProxSensor(0);
+    ALOGE("rearprox sensor_1 created");
     if (mSensors[rearprox]) {
         mPollFds[rearprox].fd = mSensors[rearprox]->getFd();
         mPollFds[rearprox].events = POLLIN;
         mPollFds[rearprox].revents = 0;
     } else {
-        ALOGE("out of memory: new failed for rearprox sensor");
+        ALOGE("out of memory: new failed for rearprox sensor_1");
     }
 #endif
-
+#ifdef _ENABLE_REARPROX_2
+    mSensors[rearprox_2] =new RearProxSensor(1);
+    ALOGE("rearprox sensor_2 created");
+    if (mSensors[rearprox_2]) {
+        mPollFds[rearprox_2].fd = mSensors[rearprox_2]->getFd();
+        mPollFds[rearprox_2].events = POLLIN;
+        mPollFds[rearprox_2].revents = 0;
+    } else {
+        ALOGE("out of memory: new failed for rearprox sensor_2");
+    }
+#endif
     // Add all supported sensors to the mIdToSensor map
     for( unsigned int i = 0; i < sSensorListSize; ++i ) {
         mIdToSensor.insert(std::make_pair(sSensorList[i].handle, sSensorList+i));
@@ -138,6 +148,10 @@ int SensorsPollContext::handleToDriver(int handle)
 #ifdef _ENABLE_REARPROX
         case ID_RP:
             return rearprox;
+#endif
+#ifdef _ENABLE_REARPROX_2
+        case ID_RP_2:
+            return rearprox_2;
 #endif
     }
     return -EINVAL;

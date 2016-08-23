@@ -32,7 +32,7 @@ struct input_event;
 
 class RearProxSensor : public SensorBase {
 public:
-	RearProxSensor();
+	RearProxSensor(int n);
 	virtual ~RearProxSensor();
 
 	virtual int setEnable(int32_t handle, int enabled) override;
@@ -42,10 +42,12 @@ public:
 
 	virtual int getEnable(int32_t handle);
 	void processEvent(int code, int value);
-	static RearProxSensor* getInstance();
 private:
 	uint32_t mEnabled;
 	uint32_t mPendingMask;
+#ifdef _ENABLE_REARPROX_2
+	uint32_t numrp;
+#endif
 	InputEventCircularReader mInputReader;
 	sensors_event_t mPendingEvents;
 	sensors_event_t mFlushEvents;

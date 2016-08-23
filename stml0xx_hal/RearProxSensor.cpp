@@ -28,11 +28,15 @@
 
 #include "RearProxSensor.h"
 
-RearProxSensor RearProxSensor::self;
 /*****************************************************************************/
+static const char *Proximity_sensor_data_name[2] = { "Rear proximity sensor1","Rear proximity sensor2"};
 
-RearProxSensor::RearProxSensor()
+RearProxSensor::RearProxSensor(int n)
+#ifdef _ENABLE_REARPROX_2
+	: SensorBase("", Proximity_sensor_data_name[n], ""),
+#else
 	: SensorBase("", "Rear proximity sensor", ""),
+#endif
 	mEnabled(0),
 	mPendingMask(0),
 	mInputReader(8),
@@ -41,9 +45,17 @@ RearProxSensor::RearProxSensor()
 
 	memset(&mFlushEvents, 0, sizeof(mFlushEvents));
 	mPendingEvents.version = sizeof(sensors_event_t);
-	mPendingEvents.sensor = ID_RP;
+	if (n == 0)
+		mPendingEvents.sensor = ID_RP;
+#ifdef _ENABLE_REARPROX_2
+	if (n == 1)
+		mPendingEvents.sensor = ID_RP_2;
+#endif
 	mPendingEvents.type = SENSOR_TYPE_PROXIMITY;
 
+#ifdef _ENABLE_REARPROX_2
+	numrp = n;
+#endif
 
 	mFlushEvents.version = META_DATA_VERSION;
 	mFlushEvents.sensor = 0;
@@ -51,23 +63,40 @@ RearProxSensor::RearProxSensor()
 	mFlushEvents.reserved0 = 0;
 	mFlushEvents.timestamp = 0;
 	mFlushEvents.meta_data.what = META_DATA_FLUSH_COMPLETE;
-	mFlushEvents.meta_data.sensor = ID_RP;
-
+	if (n == 0)
+		mFlushEvents.meta_data.sensor = ID_RP;
+#ifdef _ENABLE_REARPROX_2
+	if (n == 1)
+		mFlushEvents.meta_data.sensor = ID_RP_2;
+#endif
 	mDelays = 2000000000; // 2000 ms by default
-	ALOGE("rearprox opening enable_ps_sensor");
+	ALOGE("rearprox opening enable_ps_sensor %d\n",n);
+
 	// read the actual value of all sensors if they're enabled already
 	int fd;
 	char buff[20];
-	struct input_absinfo absinfo;
-
-
-	fd = open("/sys/kernel/range/enable_sar", O_RDONLY);
+	if (n == 0)
+#ifdef _ENABLE_REARPROX_2
+		fd = open("/sys/class/i2c-dev/i2c-2/device/2-0049/enable_sar", O_RDONLY);
+#else
+		fd = open("/sys/kernel/range/enable_sar", O_RDONLY);
+#endif
+	if (n == 1)
+		fd = open("/sys/class/i2c-dev/i2c-6/device/6-0049/enable_sar", O_RDONLY);
 	if (fd >= 0) {
 		read(fd, buff, 19);
 		buff[19] = '\0';
 
 		if (buff[0] == '\1') {
-			int fd1 = open("/sys/kernel/range/near", O_RDONLY);
+			int fd1;
+			if (n == 0)
+#ifdef _ENABLE_REARPROX_2
+				fd1 = open("/sys/class/i2c-dev/i2c-2/device/2-0049/near", O_RDONLY);
+#else
+				fd1 = open("/sys/kernel/range/near", O_RDONLY);
+#endif
+			if (n == 1)
+				fd1 = open("/sys/class/i2c-dev/i2c-6/device/6-0049/near", O_RDONLY);
 			read(fd1, buff, 19);
 			buff[19] = '\0';
 			mPendingEvents.distance = buff[0];
@@ -81,14 +110,15 @@ RearProxSensor::RearProxSensor()
 
 RearProxSensor::~RearProxSensor() {
 }
-RearProxSensor* RearProxSensor::getInstance()
-{
-	return &self;
-}
+
 int RearProxSensor::setEnable(int32_t handle, int en)
 {
 	char buff[2];
+#ifdef _ENABLE_REARPROX_2
+	if (ID_RP != handle && ID_RP_2 != handle)
+#else
 	if (ID_RP != handle)
+#endif
 		return -EINVAL;
 
 	int newState = en ? 1 : 0;
@@ -103,7 +133,17 @@ int RearProxSensor::setEnable(int32_t handle, int en)
 	}
 	ALOGE("rearprox enable");
 	buff[1] = '\0';
-	int	fd = open("/sys/kernel/range/enable_sar", O_WRONLY);
+
+	int fd = 0;
+#ifdef _ENABLE_REARPROX_2
+	if (numrp == 0)
+		fd = open("/sys/class/i2c-dev/i2c-2/device/2-0049/enable_sar", O_WRONLY);
+	if (numrp == 1)
+		fd = open("/sys/class/i2c-dev/i2c-6/device/6-0049/enable_sar", O_WRONLY);
+#else
+	fd = open("/sys/kernel/range/enable_sar", O_WRONLY);
+#endif
+
 	if (fd >= 0) {
 		write(fd, buff, 2);
 		ALOGE("rearprox  opening prox_enable %s", buff);
@@ -129,10 +169,15 @@ int RearProxSensor::setDelay(int32_t handle, int64_t ns)
 	int delay;
 	char buff[32];
 	int num_chars;
-	int fd;
+	int fd = 0;
 
+#ifdef _ENABLE_REARPROX_2
+	if (ID_RP != handle && ID_RP_2 != handle)
+#else
 	if (ID_RP != handle)
+#endif
 		return -EINVAL;
+
 
 	if (ns < 0)
 		return -EINVAL;
@@ -146,7 +191,15 @@ int RearProxSensor::setDelay(int32_t handle, int64_t ns)
 		return -EINVAL;
 	}
 
+#ifdef _ENABLE_REARPROX_2
+	if (numrp == 0)
+		fd = open("/sys/class/i2c-dev/i2c-2/device/2-0049/set_delay_ms", O_WRONLY);
+	if (numrp == 1)
+		fd = open("/sys/class/i2c-dev/i2c-6/device/6-0049/set_delay_ms", O_WRONLY);
+#else
 	fd = open("/sys/kernel/range/set_delay_ms", O_WRONLY);
+#endif
+
 	if (fd >= 0) {
 		write(fd, buff, num_chars + 1);
 		close(fd);

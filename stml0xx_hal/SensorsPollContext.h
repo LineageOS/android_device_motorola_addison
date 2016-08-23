@@ -61,6 +61,9 @@ private:
 #ifdef _ENABLE_REARPROX
         rearprox,
 #endif
+#ifdef _ENABLE_REARPROX_2
+        rearprox_2,
+#endif
         numSensorDrivers,
         numFds,
     };
