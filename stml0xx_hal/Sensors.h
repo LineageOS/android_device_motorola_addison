@@ -74,6 +74,9 @@ typedef enum sensor_handle {
 #ifdef _ENABLE_REARPROX_2
 	ID_RP_2, 	   /* Moto Rear Proximity2*/
 #endif
+#ifdef _ENABLE_CAPSENSE
+	ID_CS, 	           /* Moto CapSense */
+#endif
 #ifdef _ENABLE_PEDO
 	ID_STEP_DETECTOR, /* Step detector */
 	ID_STEP_COUNTER, /* Step counter */

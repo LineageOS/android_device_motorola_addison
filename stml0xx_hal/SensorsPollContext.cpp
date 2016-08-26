@@ -47,6 +47,9 @@
 #if  defined ( _ENABLE_REARPROX) || defined (_ENABLE_REARPROX_2)
 #include "RearProxSensor.h"
 #endif
+#ifdef _ENABLE_CAPSENSE
+#include "CapSense.h"
+#endif
 #include "HubSensors.h"
 
 /*****************************************************************************/
@@ -86,6 +89,19 @@ SensorsPollContext::SensorsPollContext()
         ALOGE("out of memory: new failed for rearprox sensor_2");
     }
 #endif
+
+#ifdef _ENABLE_CAPSENSE
+    mSensors[capsense] = CapSense::getInstance();
+    ALOGE("capsense sensor created");
+    if (mSensors[capsense]) {
+        mPollFds[capsense].fd = mSensors[capsense]->getFd();
+        mPollFds[capsense].events = POLLIN;
+        mPollFds[capsense].revents = 0;
+    } else {
+        ALOGE("out of memory: new failed for capsense sensor");
+    }
+#endif
+
     // Add all supported sensors to the mIdToSensor map
     for( unsigned int i = 0; i < sSensorListSize; ++i ) {
         mIdToSensor.insert(std::make_pair(sSensorList[i].handle, sSensorList+i));
@@ -152,6 +168,10 @@ int SensorsPollContext::handleToDriver(int handle)
 #ifdef _ENABLE_REARPROX_2
         case ID_RP_2:
             return rearprox_2;
+#endif
+#ifdef _ENABLE_CAPSENSE
+        case ID_CS:
+            return capsense;
 #endif
     }
     return -EINVAL;

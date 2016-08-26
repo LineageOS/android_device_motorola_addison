@@ -64,6 +64,9 @@ private:
 #ifdef _ENABLE_REARPROX_2
         rearprox_2,
 #endif
+#ifdef _ENABLE_CAPSENSE
+        capsense,
+#endif
         numSensorDrivers,
         numFds,
     };

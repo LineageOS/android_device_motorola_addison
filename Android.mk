@@ -72,6 +72,10 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
             SH_CFLAGS += -D_ENABLE_REARPROX
         endif
 
+        ifeq ($(MOT_AP_SENSOR_HW_CAPSENSE), true)
+	    SH_CFLAGS += -D_ENABLE_CAPSENSE
+        endif
+
         ifeq ($(MOT_SENSOR_HUB_HW_IR), true)
             SH_CFLAGS += -D_ENABLE_IR
         endif
@@ -153,6 +157,14 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
             LOCAL_SRC_FILES += \
                 $(SH_PATH)/RearProxSensor.cpp \
                 InputEventReader.cpp
+        endif
+
+        ifeq ($(MOT_AP_SENSOR_HW_CAPSENSE), true)
+            LOCAL_SRC_FILES += \
+                $(SH_PATH)/CapSense.cpp
+            ifneq ($(MOT_AP_SENSOR_HW_REARPROX), true)
+                LOCAL_SRC_FILES += InputEventReader.cpp
+            endif
         endif
 
         # This file must be last, for some mysterious reason
