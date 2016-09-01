@@ -459,7 +459,7 @@ int HubSensors::setDelay(int32_t handle, int64_t ns)
     ALOGI("Sensorhub hal setDelay: %d - %d", handle, delay);
 
     // Clamp delay to min/max
-    for (i = 0; i < sSensorListSize; i++) {
+    for (i = 0; i < sSensorList.size(); i++) {
         if ((SENSORS_HANDLE_BASE + handle) == sSensorList[i].handle) {
             delay = MAX(MIN(delay, sSensorList[i].maxDelay / 1000), sSensorList[i].minDelay / 1000);
             break;

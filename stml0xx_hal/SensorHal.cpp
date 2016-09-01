@@ -125,8 +125,8 @@ static int sensors__get_sensors_list(struct sensors_module_t* module,
 				     struct sensor_t const** list) 
 {
 	(void)module;
-	*list = sSensorList;
-	return sSensorListSize;
+	*list = &sSensorList[0];
+	return sSensorList.size();
 }
 
 static int sensors__set_operation_mode(unsigned int mode)

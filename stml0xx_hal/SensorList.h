@@ -21,6 +21,7 @@
 
 #include <float.h>
 #include <limits.h>
+#include <vector>
 
 #include <hardware/sensors.h>
 #include <hardware/mot_sensorhub_stml0xx.h>
@@ -38,8 +39,16 @@
 
 #define FUSION_MAX_DELAY_US 10000
 
-extern const struct sensor_t sSensorList[];
-extern const unsigned int sSensorListSize;
-
+extern std::vector<struct sensor_t> sSensorList;
+#ifdef _ENABLE_MAGNETOMETER
+extern const struct sensor_t threeAxCalMagSensorType;
+extern const struct sensor_t threeAxunCalMagSensorType;
+extern const struct sensor_t orientationSensorType;
+extern const struct sensor_t geoRotationSensorType;
+extern const struct sensor_t rotationSensorType;
+#endif // _ENABLE_MAGNETOMETER
+#ifdef _ENABLE_CAPSENSE
+extern const struct sensor_t capSensorType;
+#endif // _ENABLE_CAPSENSE
 #endif // SENSORLIST_H
 

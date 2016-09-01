@@ -34,6 +34,7 @@
 
 #include <cutils/atomic.h>
 #include <cutils/log.h>
+#include <cutils/properties.h>
 
 #include <hardware/sensors.h>
 #include <hardware/mot_sensorhub_stml0xx.h>
@@ -58,6 +59,9 @@ SensorsPollContext SensorsPollContext::self;
 
 SensorsPollContext::SensorsPollContext()
 {
+    char prop[PROPERTY_VALUE_MAX];
+    char *cap_prop = {"ro.hw.capsense"};
+    char *ecomp_prop = {"ro.hw.ecompass"};
     mSensors[sensor_hub] = HubSensors::getInstance();
     if (mSensors[sensor_hub]) {
         mPollFds[sensor_hub].fd = mSensors[sensor_hub]->getFd();
@@ -90,21 +94,42 @@ SensorsPollContext::SensorsPollContext()
     }
 #endif
 
-#ifdef _ENABLE_CAPSENSE
-    mSensors[capsense] = CapSense::getInstance();
-    ALOGE("capsense sensor created");
-    if (mSensors[capsense]) {
-        mPollFds[capsense].fd = mSensors[capsense]->getFd();
-        mPollFds[capsense].events = POLLIN;
-        mPollFds[capsense].revents = 0;
+#ifdef _ENABLE_MAGNETOMETER
+    //if eCompass is enabled in all sku, this prop is not enforced
+    if (property_get(ecomp_prop, prop,NULL) > 0 && strcmp(prop, "false") == 0) {
+        ALOGD("%s = %s, don't add eCompass", ecomp_prop, prop);
     } else {
-        ALOGE("out of memory: new failed for capsense sensor");
+        ALOGD("add eCompass sensor");
+        sSensorList.push_back(threeAxCalMagSensorType);
+        sSensorList.push_back(threeAxunCalMagSensorType);
+        sSensorList.push_back(orientationSensorType);
+        sSensorList.push_back(geoRotationSensorType);
+        sSensorList.push_back(rotationSensorType);
+    }
+#endif
+
+#ifdef _ENABLE_CAPSENSE
+    //make dynamic sensor
+    //if capsense is enabled in all sku, this prop is not enforced
+    if (property_get(cap_prop, prop,NULL) > 0 && strcmp(prop, "false") == 0) {
+        ALOGD("%s = %s, don't add cap sensor",cap_prop, prop);
+    } else {
+        ALOGD("add cap sensor");
+        sSensorList.push_back(capSensorType);
+        mSensors[capsense] = CapSense::getInstance();
+        if (mSensors[capsense]) {
+            mPollFds[capsense].fd = mSensors[capsense]->getFd();
+            mPollFds[capsense].events = POLLIN;
+            mPollFds[capsense].revents = 0;
+        } else {
+            ALOGE("out of memory: new failed for capsense sensor");
+        }
     }
 #endif
 
     // Add all supported sensors to the mIdToSensor map
-    for( unsigned int i = 0; i < sSensorListSize; ++i ) {
-        mIdToSensor.insert(std::make_pair(sSensorList[i].handle, sSensorList+i));
+    for( unsigned int i = 0; i < sSensorList.size(); ++i ) {
+        mIdToSensor.insert(std::make_pair(sSensorList[i].handle, &(sSensorList.at(i))));
     }
 }
 
@@ -246,7 +271,13 @@ int SensorsPollContext::pollEvents(sensors_event_t* data, int count)
         }
     }
 
+
     for (int i=0 ; count && i<numSensorDrivers ; i++) {
+        //add a null detect here
+        //this make daynamic sSensorList compatible with immutable array mSensors and mPollFds
+        //if a sensor isn't added in mSensors, then shouldn't pollfd
+        if (!mSensors[i])
+            continue;
         SensorBase* const sensor(mSensors[i]);
         if ((mPollFds[i].revents & POLLIN) || (sensor->hasPendingEvents())) {
             int nb = sensor->readEvents(data, count);
