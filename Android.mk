@@ -269,6 +269,17 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         include $(BUILD_PREBUILT)
     endif # MOT_SENSOR_HUB_HW_AK09912
 
+    ifeq ($(BOARD_USES_CAP_SENSOR), true)
+        CAP_PATH := capsensor
+        include $(CLEAR_VARS)
+        LOCAL_MODULE := capsense_reset
+        LOCAL_SRC_FILES :=  \
+            $(CAP_PATH)/capsense.cpp
+        LOCAL_SHARED_LIBRARIES := libc liblog libcutils libhardware_legacy
+        LOCAL_MODULE_TAGS := optional
+        include $(BUILD_EXECUTABLE)
+    endif
+
     ###########################
     # Sensor Hub Flash loader #
     ###########################
