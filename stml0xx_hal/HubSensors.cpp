@@ -907,7 +907,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 data->version = SENSORS_EVENT_T_SIZE;
                 data->sensor = SENSORS_HANDLE_BASE + ID_CC;
                 data->type = SENSOR_TYPE_CHOPCHOP_GESTURE;
-                data->data[0] = STM32TOH(buff.data + CHOPCHOP_CHOPCHOP);
+                data->data[0] = STM16TOH(buff.data + CHOPCHOP_CHOPCHOP);
                 data->timestamp = buff.timestamp;
                 data++;
                 break;
