@@ -127,7 +127,7 @@ private:
 
     typedef std::lock_guard<std::recursive_mutex> AutoLock;
 
-    /** @defgroup Synchronization Locks
+    /**
      * @{
      *
      * There are 2 threads that need to be synchronized. 1. The thread that

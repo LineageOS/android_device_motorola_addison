@@ -31,24 +31,26 @@ struct Uevent;
  * and doesn't indent. Line breaks and indentation added just for readability.
  * Only one event is sent at a time.
 
-add@/devices/iio:device4
-  ACTION=add
-  DEVPATH=/devices/iio:device4
-  SUBSYSTEM=iio
-  MAJOR=247
-  MINOR=4
-  DEVNAME=iio:device4
-  DEVTYPE=iio_device
-  SEQNUM=5183
-remove@/devices/iio:device2
-  ACTION=remove
-  DEVPATH=/devices/iio:device2
-  SUBSYSTEM=iio
-  MAJOR=247
-  MINOR=2
-  DEVNAME=iio:device2
-  DEVTYPE=iio_device
-  SEQNUM=5184
+<pre>
+    add@/devices/iio:device4
+      ACTION=add
+      DEVPATH=/devices/iio:device4
+      SUBSYSTEM=iio
+      MAJOR=247
+      MINOR=4
+      DEVNAME=iio:device4
+      DEVTYPE=iio_device
+      SEQNUM=5183
+    remove@/devices/iio:device2
+      ACTION=remove
+      DEVPATH=/devices/iio:device2
+      SUBSYSTEM=iio
+      MAJOR=247
+      MINOR=2
+      DEVNAME=iio:device2
+      DEVTYPE=iio_device
+      SEQNUM=5184
+</pre>
 */
 class UeventListener {
 public:

@@ -64,6 +64,8 @@ public:
 	 * multiple file descriptors. The derived class may override this method if
 	 * it cares to know what file descriptor caused the poll() to exit.
 	 *
+	 * @param data A sensors_event_t array holding the events to be read.
+	 * @param count The size of the data array.
 	 * @param fd The file descriptor which caused poll() to exit. This may be
 	 * -1 in some cases (for example when this function is called to finish
 	 *  reading partially read events because hasPendingEvents() returned
