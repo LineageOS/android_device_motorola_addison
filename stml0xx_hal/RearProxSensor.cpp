@@ -229,10 +229,8 @@ int RearProxSensor::readEvents(sensors_event_t* data, int count)
 
 	while (count && mInputReader.readEvent(&event)) {
 		int type = event->type;
-		if (type == EV_ABS) {
+		if (type == EV_ABS && event->value != -1) {
 			processEvent(event->code, event->value);
-			ALOGE("RearProxSensor: unknown event (type=%d, code=%d,value=%d)",
-				type, event->code, event->value);
 		}
 		else if (type == EV_SYN) {
 			int64_t time = timevalToNano(event->time);
@@ -241,8 +239,8 @@ int RearProxSensor::readEvents(sensors_event_t* data, int count)
 			numEventReceived++;
 		}
 		else {
-			ALOGE("RearProxSensor: unknown event (type=%d, code=%d)",
-				type, event->code);
+			ALOGE("RearProxSensor: unknown event (type=%d, code=%d, value=%d)",
+				type, event->code, event->value);
 		}
 		mInputReader.next();
 	}
@@ -252,8 +250,10 @@ int RearProxSensor::readEvents(sensors_event_t* data, int count)
 
 void RearProxSensor::processEvent(int code, int value)
 {
-	if (code == ABS_DISTANCE)
+	if (code == ABS_DISTANCE){
 		mPendingEvents.distance = value;
+		ALOGE("RearProxSensor: processEvent distance:%f", mPendingEvents.distance);
+	}
 }
 
 int RearProxSensor::flush(int32_t handle)
