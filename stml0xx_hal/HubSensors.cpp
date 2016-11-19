@@ -960,9 +960,6 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                     data->data[2] = 0;
                     data->timestamp = buff.timestamp;
                     data++;
-
-                    /* Disable, because this is a one shot sensor */
-                    setEnable(ID_MOTO_GLANCE_GESTURE, 0);
                 }
 
                 if (isHandleEnabled(ID_GLANCE_GESTURE)) {
