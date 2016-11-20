@@ -328,6 +328,14 @@ int16 ReadFUSEROM(AKSCPRMS* prms)
 	prms->m_asa.u.y = (int16)conf[1];
 	prms->m_asa.u.z = (int16)conf[2];
 
+	// ensure asa is not zero
+	if (prms->m_asa.u.x == 0 ||
+		prms->m_asa.u.y == 0 ||
+		prms->m_asa.u.z == 0) {
+		AKMERROR;
+		return AKRET_PROC_FAIL;
+	}
+
 	AKMDEBUG(AKMDBG_DEBUG, "%s: asa(dec)=%d,%d,%d\n", __FUNCTION__,
 			prms->m_asa.u.x, prms->m_asa.u.y, prms->m_asa.u.z);
 
