@@ -58,6 +58,7 @@ TARGET_USES_64_BIT_BINDER := true
 
 # Asserts
 TARGET_OTA_ASSERT_DEVICE := albus,albus_retail
+TARGET_BOARD_INFO_FILE := $(DEVICE_PATH)/board-info.txt
 
 # GPS
 TARGET_NO_RPC := true
@@ -224,6 +225,10 @@ LZMA_RAMDISK_TARGETS := recovery
 # SELinux
 include device/qcom/sepolicy/sepolicy.mk
 BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy
+
+# Releasetools
+TARGET_RECOVERY_UPDATER_LIBS := librecovery_updater_albus
+TARGET_RELEASETOOLS_EXTENSIONS := $(DEVICE_PATH)
 
 # Shim
 TARGET_LD_SHIM_LIBS := /system/vendor/lib64/libmdmcutback.so|libqsap_shim.so

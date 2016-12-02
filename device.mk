@@ -298,6 +298,10 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/libnfc-brcm.conf:system/etc/libnfc-brcm.conf \
     $(LOCAL_PATH)/configs/libnfc-nxp.conf:system/etc/libnfc-nxp.conf
 
+# Recovery
+PRODUCT_PACKAGES += \
+	librecovery_updater_albus
+
 # Mods
 PRODUCT_PACKAGES += \
     ModPermsFix
