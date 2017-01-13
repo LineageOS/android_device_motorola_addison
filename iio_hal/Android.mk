@@ -19,6 +19,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := sensors.iio
 LOCAL_MODULE_TAGS := optional
+LOCAL_MULTILIB := both
 
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
     LOCAL_CFLAGS += -DDEBUG
