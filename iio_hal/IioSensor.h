@@ -114,6 +114,10 @@ protected:
      * samples we've acquired, we keep track of how many more we have to read
      * from the current buffer before refilling it. */
     int remaining_samples;
+    /** When readEvents() is called, if the destination can not hold all the
+     * samples we've acquired, we keep track of how many we've already read out
+     * of the current buffer, so we know where to continue from. */
+    int copied_samples;
 
     // File descriptor on which we listen for events.
     int eventFd;

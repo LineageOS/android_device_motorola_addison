@@ -34,7 +34,7 @@ using namespace std;
 chrono::milliseconds IioSensor::timeout(chrono::seconds(10));
 
 IioSensor::IioSensor(shared_ptr<struct iio_context> iio_ctx, const struct iio_device* dev, int handle) :
-    SensorBase("", "", ""), remaining_samples(0), eventFd(-1),
+    SensorBase("", "", ""), remaining_samples(0), copied_samples(0), eventFd(-1),
     iio_ctx(iio_ctx), iio_dev(dev), iio_buf(nullptr) {
 
     for (unsigned c = 0; c < iio_device_get_channels_count(iio_dev); ++c) {
@@ -186,7 +186,7 @@ int IioSensor::readEvents(sensors_event_t* data, int count) {
         start = reinterpret_cast<uintptr_t>(iio_buffer_start(iio_buf));
         remaining_samples = buffer_bytes / sample_size;
     } else {
-        start = reinterpret_cast<uintptr_t>(iio_buffer_start(iio_buf)) + (remaining_samples * sample_size);
+        start = reinterpret_cast<uintptr_t>(iio_buffer_start(iio_buf)) + (copied_samples * sample_size);
     }
 
     const ptrdiff_t len = (ptrdiff_t)iio_buffer_end(iio_buf) - start;
@@ -223,6 +223,11 @@ int IioSensor::readEvents(sensors_event_t* data, int count) {
     }
 
     remaining_samples -= copied;
+    if (remaining_samples == 0) {
+        copied_samples = 0;
+    } else {
+        copied_samples += copied;
+    }
 
     return copied;
 }
