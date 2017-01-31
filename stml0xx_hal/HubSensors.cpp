@@ -734,7 +734,7 @@ int HubSensors::readEvents(sensors_event_t* d, int dLen)
                 }
 #ifdef _ENABLE_MAGNETOMETER
                 if (mFusionSensors[ROTATION_VECT].enabled) {
-                    mRotationVect->processFusion(mFusionData, mGeomagRVReady);
+                    mRotationVect->processFusion(mFusionData, !mGeomagRVReady);
 
                     data->version = SENSORS_EVENT_T_SIZE;
                     data->sensor = SENSORS_HANDLE_BASE + ID_RV;
