@@ -185,6 +185,10 @@ protected:
     /** IIO Events are used to signal things such as flush complete. */
     virtual int readIioEvents(sensors_event_t* data, int count);
 
+    /** All GB sensors with a type of 0 (i.e. undefined or custom) will be
+     * assigned a new unique type since a type of 0 is not allowed. */
+    void setType(uint32_t type);
+
 private:
     DISALLOW_IMPLICIT_CONSTRUCTORS(IioSensor);
 };

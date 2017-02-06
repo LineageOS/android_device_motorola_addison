@@ -56,7 +56,6 @@ IioSensor::IioSensor(shared_ptr<struct iio_context> iio_ctx, const struct iio_de
     sensor.stringType   = readIioStr("string_type_len", "string_type", "Unknown Type");
 
     sensor.version                  = readIioInt("greybus_version", 0);
-    sensor.type                     = readIioInt("greybus_type", SENSOR_TYPE_DEVICE_PRIVATE_BASE);
     sensor.maxRange                 = convVal(readIioInt<uint32_t>("max_range", 0));
     sensor.resolution               = convVal(readIioInt<uint32_t>("resolution", 0));
     sensor.power                    = readIioInt<uint32_t>("power_uA", 0) * 1e-3; // uA to mA
@@ -70,6 +69,8 @@ IioSensor::IioSensor(shared_ptr<struct iio_context> iio_ctx, const struct iio_de
     sensor.flags                    |= SENSOR_FLAG_DYNAMIC_SENSOR;
     sensor.reserved[0]              = 0;
     sensor.reserved[1]              = 0;
+
+    setType(readIioInt<uint32_t>("greybus_type", 0));
 
     // Note: We have no way to communicate to the framework the number of
     // channels (reading_size) for non-standard sensors.
@@ -122,6 +123,19 @@ bool IioSensor::isUsable(const struct iio_device *dev) {
     // Expecting at least 3 channels: timestamp, data, sampling frequency.
     // Not sure why sampling is considered an input channel by the kernel.
     return (nb_channels - out_chan) >= 3;
+}
+
+void IioSensor::setType(uint32_t type) {
+    const uint32_t IIO_TYPE_BASE = SENSOR_TYPE_DEVICE_PRIVATE_BASE + 0x00010000;
+    static uint32_t CustomSensorType = IIO_TYPE_BASE;
+
+    if (type == 0) {
+        type = CustomSensorType++;
+        if (CustomSensorType < IIO_TYPE_BASE) {
+            CustomSensorType = IIO_TYPE_BASE;
+        }
+    }
+    sensor.type = type;
 }
 
 const char *IioSensor::readIioStr(const char *lenAttr, const char *strAttr, const char* defaultVal) {
