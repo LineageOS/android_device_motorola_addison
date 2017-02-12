@@ -24,10 +24,11 @@
 #include <hardware/sensors.h>
 #include <string>
 
-#include "Sensors.h"
 #include "SensorBase.h"
 #include "InputEventReader.h"
 #include "SensorsLog.h"
+
+#define ID_RP 0xFE
 
 /*****************************************************************************/
 
@@ -57,8 +58,8 @@ public:
               .version = 1,
               .handle = ID_RP,
               .type = SENSOR_TYPE_PROXIMITY,
-              .maxRange = 100.0f,
-              .resolution = 100.0f,
+              .maxRange = 10.0f,
+              .resolution = 10.0f,
               .power = 0.35f,
               .minDelay = 0,
               .fifoReservedEventCount = 0,

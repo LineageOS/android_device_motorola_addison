@@ -22,6 +22,7 @@
 #include <dirent.h>
 #include <sys/select.h>
 #include <string>
+#include <linux/input.h>
 
 #include <cutils/log.h>
 #include <android-base/macros.h>
@@ -276,7 +277,7 @@ int RearProxSensor::readEvents(sensors_event_t* data, int count)
 
     ssize_t n = mInputReader.fill(data_fd);
     if (n < 0) {
-        ALOGE("Read error %d, dropped events", n);
+        ALOGE("Read error %zd, dropped events", n);
         return 0;
     }
 

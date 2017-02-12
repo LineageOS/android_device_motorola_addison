@@ -48,12 +48,10 @@
 #include <time.h>
 #include <private/android_filesystem_config.h>
 #include <iterator>
-#include <linux/motosh.h>
 #include <android-base/macros.h>
 
 #include "SensorBase.h"
 #include "SensorsLog.h"
-#include "Sensors.h"
 #include "BaseHal.h"
 
 /**
