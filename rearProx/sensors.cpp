@@ -221,8 +221,14 @@ int sensors_poll_context_t::flush(int handle)
 {
 	NativeSensorManager& sm(NativeSensorManager::getInstance());
 	Mutex::Autolock _l(mLock);
+	int ret = sm.flush(handle);
 
-	return sm.flush(handle);
+       /*wake up poll since meta_data need to be reported*/
+	const char wakeMessage(WAKE_MESSAGE);
+	int result = write(mWritePipeFd, &wakeMessage, 1);
+	ALOGE_IF(result<0, "error sending wake message (%s)", strerror(errno));
+
+	return ret;
 }
 /*****************************************************************************/
 
@@ -246,6 +252,8 @@ static int poll__setDelay(struct sensors_poll_device_t *dev,
 	sensors_poll_context_t *ctx = (sensors_poll_context_t *)dev;
 	return ctx->setDelay(handle, ns);
 }
+
+
 
 static int poll__poll(struct sensors_poll_device_t *dev,
 		sensors_event_t* data, int count) {
