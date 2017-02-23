@@ -62,6 +62,8 @@ RearProxSensor::RearProxSensor()
     mDetectDistance(DETECT_DISTANCE_CLOSE),
     mDetectWeight(0),
     mDetectMode(DETECT_MODE_CROSS_HIGH),
+    mCurrentDistance(0),
+    mTimestampUpdated(false),
     mSendData(false),
     mInputReader(8)
 {
@@ -287,7 +289,7 @@ int RearProxSensor::readEvents(sensors_event_t* data, int count)
             if(mEnabled == 1)
                 processEvent(event->code, event->value);
         }
-        else if (type == EV_SYN && mSendData) {
+        else if (type == EV_SYN) {
             if(mFlushEnabled == 1) {
                 sensors_event_t flushEvents;
                 memset(&flushEvents, 0, sizeof(sensors_event_t));
@@ -302,11 +304,21 @@ int RearProxSensor::readEvents(sensors_event_t* data, int count)
                 data++;
                 mFlushEnabled = 0;
                 ALOGD("flush data is ready");
-            } else
-                *data++ = mPendingEvents;
-            count--;
-            numEventReceived++;
-            mSendData = false;
+                count--;
+                numEventReceived++;
+            } else {
+                if (mTimestampUpdated) {
+                    handleSARprocess(mCurrentDistance);
+                    mTimestampUpdated = false;
+                }
+
+                if (mSendData) {
+                    *data++ = mPendingEvents;
+                    count--;
+                    numEventReceived++;
+                    mSendData = false;
+                }
+            }
         }
         mInputReader.next();
     }
@@ -318,12 +330,19 @@ void RearProxSensor::processEvent(int code, int value)
 {
     switch(code) {
         case ABS_HAT1X:
-            handleSARprocess(value);
+            if (!mTimestampUpdated) {
+                // new distance data only
+                handleSARprocess(value);
+            }
+            mCurrentDistance = value;
+            break;
+        case ABS_HAT0Y:
+            // new timestamp
+            mTimestampUpdated = true;
             break;
         case ABS_GAS:
             ALOGD("flush returned data");
             mFlushEnabled = 1;
-            mSendData = true;
             break;
         default:
             break;

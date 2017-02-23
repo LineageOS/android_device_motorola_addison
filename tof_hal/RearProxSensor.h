@@ -77,6 +77,8 @@ private:
     uint32_t mDetectDistance;
     uint32_t mDetectWeight;
     uint32_t mDetectMode;
+    uint32_t mCurrentDistance;
+    bool mTimestampUpdated;
     bool mSendData;
     std::string mFilePath;
     InputEventCircularReader mInputReader;
