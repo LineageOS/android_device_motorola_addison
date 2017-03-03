@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "Sensors"
+//#define LOG_TAG "Sensors"
 
 #include <hardware/sensors.h>
 #include <fcntl.h>

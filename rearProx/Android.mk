@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ifeq ($(BOARD_USES_REAR_PROX), true)
+ifeq ($(filter true, $(BOARD_USES_REAR_PROX) $(BOARD_USES_NATIVE_SENSOR)), true)
 
 LOCAL_PATH := $(call my-dir)
 
@@ -34,6 +34,7 @@ LOCAL_SRC_FILES :=	\
 		sensors.cpp 			\
 		SensorBase.cpp			\
 		ProximitySensor.cpp		\
+		CapSensor.cpp				\
 		InputEventReader.cpp \
 		NativeSensorManager.cpp
 

@@ -26,10 +26,13 @@
 
 #include <hardware/hardware.h>
 #include <hardware/sensors.h>
+#include <hardware/mot_sensors.h>
 
 __BEGIN_DECLS
 
 /*****************************************************************************/
+
+#define LOG_TAG "NativeSensors"
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
@@ -59,11 +62,25 @@ __BEGIN_DECLS
 
 
 #define PROXIMITY_NAME		"proximity"
+#define CAPSENSOR_NAME		"capsensor"
 
 
 /* The hardware sensor type supported by HAL */
-#define SUPPORTED_SENSORS_TYPE	( \
-		(1ULL << SENSOR_TYPE_PROXIMITY))
+//#define SUPPORTED_SENSORS_TYPE	( \
+//		(1ULL << SENSOR_TYPE_PROXIMITY))
+static inline bool is_sensor_supported(int type)
+{
+	switch (type) {
+		case SENSOR_TYPE_PROXIMITY:
+			return true;
+		case SENSOR_TYPE_MOTO_CAPSENSE:
+			return true;
+		case SENSOR_TYPE_PROXIMITY+1:
+			return true;
+		default:
+			return false;
+		}
+}
 
 
 /*****************************************************************************/
@@ -73,8 +90,10 @@ static inline const char* type_to_name(int type)
 	switch (type) {
 		case SENSOR_TYPE_PROXIMITY:
 			return PROXIMITY_NAME;
+		case SENSOR_TYPE_MOTO_CAPSENSE:
+			return CAPSENSOR_NAME;
 		default:
-			return "";
+			return "unkown";
 	}
 }
 

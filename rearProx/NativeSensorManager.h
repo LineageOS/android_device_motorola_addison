@@ -44,6 +44,7 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 #include "ProximitySensor.h"
+#include "CapSensor.h"
 #include "sensors_extension.h"
 using namespace android;
 

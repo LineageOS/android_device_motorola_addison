@@ -236,6 +236,13 @@ int NativeSensorManager::getDataInfo() {
 				list->driver = new ProximitySensor(list);
 				sensor_proximity = *(list->sensor);
 				break;
+			case SENSOR_TYPE_MOTO_CAPSENSE:
+#if defined(SENSORS_DEVICE_API_VERSION_1_3)
+				/* reporting mode fix up */
+				list->sensor->flags |= SENSOR_FLAG_ON_CHANGE_MODE;
+#endif
+				list->driver = new CapSensor(list);
+				break;
 			default:
 				list->driver = NULL;
 				ALOGE("No handle %d for this type sensor!", i);
@@ -516,9 +523,11 @@ int NativeSensorManager::getSensorListInner()
 		if (i < ARRAY_SIZE(node_map))
 			continue;
 
-		if (!((1ULL << list->sensor->type) & SUPPORTED_SENSORS_TYPE))
+		//if (!((1ULL << list->sensor->type) & SUPPORTED_SENSORS_TYPE)){
+		if (!is_sensor_supported(list->sensor->type)){
+			ALOGE("not suport type:%d", list->sensor->type);
 			continue;
-
+		}
 		/* Setup other information */
 #if defined(SENSORS_DEVICE_API_VERSION_1_3)
 		if (list->sensor->maxDelay == 0)
