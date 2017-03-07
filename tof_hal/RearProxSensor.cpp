@@ -22,9 +22,11 @@
 #include <dirent.h>
 #include <sys/select.h>
 #include <string>
+#include <stdlib.h>
 #include <linux/input.h>
 
 #include <cutils/log.h>
+#include <cutils/properties.h>
 #include <android-base/macros.h>
 
 #include "RearProxSensor.h"
@@ -44,11 +46,12 @@
 #define DETECT_MODE_CROSS_HIGH 1
 #define DETECT_WEIGHT_CEILING 2
 #define DETECT_DEFAULT_INTERVAL_MS 500
-#define DETECT_DEFAULT_LOW_THRESHOLD_MM 60
-#define DETECT_DEFAULT_HIGH_THRESHOLD_MM 65
+#define DETECT_DEFAULT_LOW_THRESHOLD_MM 70
+#define DETECT_DEFAULT_HIGH_THRESHOLD_MM 75
 #define DETECT_DISTANCE_CLOSE 1
 #define DETECT_DISTANCE_FAR 10
 
+#define PROPERTY_TOF_POLL_INTERVAL_MS "ro.sensors.tof.interval_ms"
 #define VL53L1_INPUT_DEVICE_NAME "STM VL53L1 proximity sensor"
 
 /*****************************************************************************/
@@ -67,7 +70,6 @@ RearProxSensor::RearProxSensor()
     mSendData(false),
     mInputReader(8)
 {
-    UNUSED(mDetectInterval);
     mPendingEvents.version = sizeof(sensors_event_t);
     mPendingEvents.sensor = ID_RP;
     mPendingEvents.type = SENSOR_TYPE_PROXIMITY;
@@ -205,6 +207,10 @@ int RearProxSensor::setEnable(int32_t handle, int en)
     if(mFilePath.length() == 0)
         findPathByAttr();
 
+    char value[PROPERTY_VALUE_MAX] = {'\0'};
+    if (property_get(PROPERTY_TOF_POLL_INTERVAL_MS, value, NULL) > 0)
+        mDetectInterval = atoi(value);
+
     switch(handle) {
         case (ID_RP):
             mEnabled = en;
@@ -291,16 +297,13 @@ int RearProxSensor::readEvents(sensors_event_t* data, int count)
         }
         else if (type == EV_SYN) {
             if(mFlushEnabled == 1) {
-                sensors_event_t flushEvents;
-                memset(&flushEvents, 0, sizeof(sensors_event_t));
-                flushEvents.version = META_DATA_VERSION;
-                flushEvents.sensor = 0;
-                flushEvents.type = SENSOR_TYPE_META_DATA;
-                flushEvents.reserved0 = 0;
-                flushEvents.timestamp = 0;
-                flushEvents.meta_data.what = META_DATA_FLUSH_COMPLETE;
-                flushEvents.meta_data.sensor = ID_RP;
-                memcpy(data, &flushEvents, sizeof(sensors_event_t));
+                data->version = META_DATA_VERSION;
+                data->sensor = 0;
+                data->type = SENSOR_TYPE_META_DATA;
+                data->reserved0 = 0;
+                data->timestamp = 0;
+                data->meta_data.what = META_DATA_FLUSH_COMPLETE;
+                data->meta_data.sensor = ID_RP;
                 data++;
                 mFlushEnabled = 0;
                 ALOGD("flush data is ready");
