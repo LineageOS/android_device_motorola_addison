@@ -204,8 +204,8 @@ int IioSensor::readEvents(sensors_event_t* data, int count) {
     }
 
     const ptrdiff_t len = (ptrdiff_t)iio_buffer_end(iio_buf) - start;
-    S_LOGD("step=%" PRIdPTR " sample_size=%zd samples=%d bytes=%" PRIdPTR " count=%d",
-            iio_buffer_step(iio_buf), sample_size, remaining_samples, len, count);
+    //S_LOGD("step=%" PRIdPTR " sample_size=%zd samples=%d bytes=%" PRIdPTR " count=%d",
+    //        iio_buffer_step(iio_buf), sample_size, remaining_samples, len, count);
     //assert(iio_buffer_step(buffer) == sample_size);
 
     int copied = 0;
@@ -292,7 +292,7 @@ int IioSensor::readIioEvents(sensors_event_t* data, int count) {
                 copied++;
             }
 
-            S_LOGD("Event EvType=%d EvDir=%d, ChType=%d, Ch=%d copied=%d", ev_type, ev_dir, ch_type, ch, copied);
+            //S_LOGD("Event EvType=%d EvDir=%d, ChType=%d, Ch=%d copied=%d", ev_type, ev_dir, ch_type, ch, copied);
         }
     }
 
@@ -363,7 +363,10 @@ int IioSensor::setEnable(int32_t handle, int enabled) {
             }
         }
         if (iio_buf) {
-            if (eventFd >= 0) close(eventFd);
+            if (eventFd >= 0) {
+                close(eventFd);
+                eventFd = -1;
+            }
             iio_buffer_destroy(iio_buf);
             iio_buf = nullptr;
         }

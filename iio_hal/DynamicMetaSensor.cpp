@@ -240,8 +240,8 @@ void DynamicMetaSensor::generateUuid(const struct sensor_t &s,
     SHA1(&input[0], input.size(), sha1);
 
     // UUID is 16 bytes. SHA1 is 20 bytes
-    static_assert(SHA_DIGEST_LENGTH >= arraysize(ds.uuid), "SHA < UUID. Size mismatch.");
-    static_assert(arraysize(ds.uuid) > 8, "Unexpected UUID size."); // We index blindly to byte 9
+    static_assert(SHA_DIGEST_LENGTH >= arraysize(ds.uuid), "SHA1 digest length too short");
+    static_assert(arraysize(ds.uuid) > 8, "Sensor UUID too short"); // We index blindly to byte 9
 
     memcpy(ds.uuid, sha1, min(sizeof(sha1), sizeof(ds.uuid)));
 

@@ -218,7 +218,7 @@ void IioHal::updateFdLists() {
         if (isIioSensor(driver)) {
             IioSensor *sensor = static_cast<IioSensor *>(driver.get());
             int fd = sensor->getEventFd();
-            if (fd >= 0) {
+            if (fd >= 0 && sensor->getFd() >= 0) {
                 S_LOGD("Add eventFd %d", fd);
                 fd2driver[fd] = driver;
                 pollFds.push_back({
