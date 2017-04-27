@@ -42,7 +42,7 @@ CapSensor::CapSensor(struct SensorContext *context)
 {
     mPendingEvent.version = sizeof(sensors_event_t);
     mPendingEvent.sensor = context->sensor->handle;
-    mPendingEvent.type = SENSOR_TYPE_PROXIMITY;
+    mPendingEvent.type = SENSOR_TYPE_MOTO_CAPSENSE;
     memset(mPendingEvent.data, 0, sizeof(mPendingEvent.data));
 
     data_fd = context->data_fd;
