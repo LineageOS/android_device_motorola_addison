@@ -19,6 +19,4 @@ Camera  | 16 MP, 4608 x 3456 pixels, laser focus, dual flash LED
 
 Copyright 2016 - The CyanogenMod Project.
 
-Copyright 2017 - The LineageOS Project.
-
-![Moto Z Play](https://wiki.cyanogenmod.org/images/thumb/8/81/Osprey.png/314px-Osprey.png "Moto Z Play")
+![Moto Z Play](https://www.motorola.in/sites/default/files/styles/vendor_image_tablet_2x/public/library/in/products/moto-z-play-new-viz/moto-z-play-blk-row.jpg "Moto Z Play")
