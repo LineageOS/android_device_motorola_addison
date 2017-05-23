@@ -42,7 +42,7 @@ LOCAL_C_INCLUDES += \
 LOCAL_C_INCLUDES += external/zlib
 
 # Needs to be added after KERNEL_OBJ/usr/include
-LOCAL_C_INCLUDES += $(ANDROID_BUILD_TOP)/kernel/include
+LOCAL_C_INCLUDES += kernel/include
 
 LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libc libbase
 LOCAL_CFLAGS += -Wall -Wextra

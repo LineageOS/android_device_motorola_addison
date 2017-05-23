@@ -17,6 +17,7 @@
 #ifndef IIO_HAL
 #define IIO_HAL
 
+#include <assert.h>
 #include <functional>
 
 #include <dirent.h>

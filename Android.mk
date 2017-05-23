@@ -179,7 +179,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
 
         # Needs to be added after KERNEL_OBJ/usr/include
         ifeq ($(MOT_SENSOR_HUB_HW_TYPE_L4), true)
-            LOCAL_C_INCLUDES += $(ANDROID_BUILD_TOP)/kernel/include
+            LOCAL_C_INCLUDES += kernel/include
         endif
 
         # Need the UAPI output directory to be populated with motosh.h/stml0xx.h
@@ -189,7 +189,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         LOCAL_MODULE_RELATIVE_PATH := hw
         LOCAL_MODULE_TAGS := optional
         LOCAL_SHARED_LIBRARIES += liblog libcutils libz libdl libutils
-        LOCAL_CLANG := false
+        LOCAL_CLANG := true
         LOCAL_MODULE := sensors.$(TARGET_BOARD_PLATFORM)
 
         include $(BUILD_SHARED_LIBRARY)
@@ -210,7 +210,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
     # Need the UAPI output directory to be populated with motosh.h/stml0xx.h
     LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
 
-    LOCAL_SHARED_LIBRARIES := libcutils libc libutils
+    LOCAL_SHARED_LIBRARIES := libcutils libc libutils liblog
     LOCAL_MODULE := sensorhub.$(TARGET_BOARD_PLATFORM)
     LOCAL_MODULE_TAGS := optional
 
@@ -255,7 +255,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         LOCAL_STATIC_LIBRARIES := AK09912
 
         LOCAL_FORCE_STATIC_EXECUTABLE := false
-        LOCAL_SHARED_LIBRARIES := libc libm libutils libcutils
+        LOCAL_SHARED_LIBRARIES := libc libm libutils libcutils liblog
 
         include $(BUILD_EXECUTABLE)
 
@@ -295,7 +295,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
     LOCAL_CFLAGS += -Wall -Wextra
     # Added by top level make files: -std=gnu++11
     LOCAL_CXXFLAGS += -Weffc++
-    LOCAL_SHARED_LIBRARIES := libcutils libc libsensorhub
+    LOCAL_SHARED_LIBRARIES := libcutils libc libsensorhub liblog
 
     LOCAL_SRC_FILES := \
         motosh_bin/motosh.cpp \
