@@ -45,6 +45,8 @@ LOCAL_C_INCLUDES += \
 # Needs to be added after KERNEL_OBJ/usr/include
 LOCAL_C_INCLUDES += kernel/include
 
+LOCAL_ADDITIONAL_DEPENDENCIES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+
 LOCAL_SHARED_LIBRARIES += libiio libcrypto
 LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libc libbase
 LOCAL_CFLAGS += -Wall -Wextra

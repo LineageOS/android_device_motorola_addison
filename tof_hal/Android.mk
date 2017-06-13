@@ -41,6 +41,8 @@ LOCAL_C_INCLUDES += \
 
 LOCAL_C_INCLUDES += external/zlib
 
+LOCAL_ADDITIONAL_DEPENDENCIES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+
 # Needs to be added after KERNEL_OBJ/usr/include
 LOCAL_C_INCLUDES += kernel/include
 
