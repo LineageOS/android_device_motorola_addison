@@ -1,6 +1,4 @@
-#
-# Copyright (C) 2016 The CyanogenMod Project
-# Copyright (C) 2017 The LineageOS Project
+
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,15 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-$(call inherit-product, device/motorola/addison/full_addison.mk)
+$(call inherit-product, device/motorola/addison/common.mk)
 
 # Boot animation
 TARGET_SCREEN_WIDTH := 1080
 TARGET_SCREEN_HEIGHT := 1920
 
+# Inherit from our custom product configuration
+$(call inherit-product, vendor/bliss/config/common.mk)
+
+#inherit bliss telephony
+$(call inherit-product, vendor/bliss/config/telephony.mk)
+
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := addison
-PRODUCT_NAME := nx_addison
+PRODUCT_NAME := bliss_addison
 PRODUCT_BRAND := motorola
 PRODUCT_MANUFACTURER := motorola
 
