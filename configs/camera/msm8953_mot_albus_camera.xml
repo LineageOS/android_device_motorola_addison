@@ -95,7 +95,7 @@ LensInfo : Information of the lens present in the module.
     <Position>BACK</Position>
     <MountAngle>90</MountAngle>
     <CSIInfo>
-      <CSIDCore>0</CSIDCore>
+      <CSIDCore>1</CSIDCore>
       <LaneMask>0x1F</LaneMask>
       <LaneAssign>0x4320</LaneAssign>
       <ComboMode>0</ComboMode>
@@ -120,7 +120,7 @@ LensInfo : Information of the lens present in the module.
     <Position>BACK</Position>
     <MountAngle>90</MountAngle>
     <CSIInfo>
-      <CSIDCore>0</CSIDCore>
+      <CSIDCore>1</CSIDCore>
       <LaneMask>0x1F</LaneMask>
       <LaneAssign>0x4320</LaneAssign>
       <ComboMode>0</ComboMode>
@@ -145,7 +145,7 @@ LensInfo : Information of the lens present in the module.
     <Position>BACK</Position>
     <MountAngle>90</MountAngle>
     <CSIInfo>
-      <CSIDCore>0</CSIDCore>
+      <CSIDCore>1</CSIDCore>
       <LaneMask>0x1F</LaneMask>
       <LaneAssign>0x4320</LaneAssign>
       <ComboMode>0</ComboMode>
@@ -163,7 +163,9 @@ LensInfo : Information of the lens present in the module.
     <CameraId>3</CameraId>
     <SensorName>mot_ov5695</SensorName>
     <EepromName>ov5695</EepromName>
+    <FlashName>pmic</FlashName>
     <ChromatixName>mot_ov5695_chromatix</ChromatixName>
+    <AltChromatixName>mot_ov5695_ofilm_chromatix</AltChromatixName>
     <ModesSupported>1</ModesSupported>
     <Position>FRONT</Position>
     <MountAngle>270</MountAngle>
