@@ -25,7 +25,7 @@
 
     <!-- Default screen brightness setting.
          Must be in the range specified by minimum and maximum. -->
-    <integer name="config_screenBrightnessSettingDefault">88</integer>
+    <integer name="config_screenBrightnessSettingDefault">64</integer>
 
     <!-- Array of light sensor LUX values to define our levels for auto backlight brightness support.
          The N entries of this array define N  1 zones as follows:
@@ -38,24 +38,16 @@
 
          Must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLevels">
-        <item>2</item>
+        <item>5</item>
         <item>10</item>
-        <item>50</item>
-        <item>90</item>
+        <item>40</item>
         <item>100</item>
-        <item>150</item>
-        <item>200</item>
-        <item>300</item>
-        <item>400</item>
-        <item>500</item>
-        <item>800</item>
-        <item>1000</item>
-        <item>1300</item>
-        <item>2000</item>
-        <item>3000</item>
-        <item>4000</item>
-        <item>8000</item>
+        <item>325</item>
+        <item>1250</item>
+        <item>3500</item>
         <item>10000</item>
+        <item>20000</item>
+        <item>30000</item>
     </integer-array>
 
     <!-- Array of output values for LCD backlight corresponding to the LUX values
@@ -64,23 +56,15 @@
          This must be overridden in platform specific overlays -->
     
     <integer-array name="config_autoBrightnessLcdBacklightValues">
-        <item>3</item>
-        <item>11</item>
-        <item>40</item>
-        <item>62</item>
-        <item>74</item>
-        <item>85</item>
-        <item>102</item>
-        <item>102</item>
-        <item>102</item>
-        <item>102</item>
-        <item>128</item>
-        <item>153</item>
-        <item>170</item>
-        <item>179</item>
-        <item>238</item>
-        <item>255</item>
-        <item>255</item>
+        <item>4</item>
+        <item>8</item>
+        <item>23</item>
+        <item>47</item>
+        <item>56</item>
+        <item>73</item>
+        <item>95</item>
+        <item>125</item>
+        <item>180</item>
         <item>255</item>
         <item>256</item>
     </integer-array>
@@ -91,19 +75,19 @@
     <!-- Vibrator pattern for feedback about a long screen/key press -->
     <integer-array name="config_longPressVibePattern">
         <item>0</item>
-        <item>25</item>
+        <item>13</item>
     </integer-array>
 
     <!-- Vibrator pattern for feedback about touching a virtual key -->
     <integer-array name="config_virtualKeyVibePattern">
         <item>0</item>
-        <item>34</item>
+        <item>24</item>
     </integer-array>
 
     <!-- Vibrator pattern for a very short but reliable vibration for soft keyboard tap -->
     <integer-array name="config_keyboardTapVibePattern">
         <item>0</item>
-        <item>25</item>
+        <item>13</item>
     </integer-array>
 
     <!-- Vibrator pattern for feedback about hitting a scroll barrier -->
@@ -193,7 +177,7 @@
 
     <!-- When true use the linux /dev/input/event subsystem to detect the switch changes
         on the headphone/microphone jack. When false use the older uevent framework. -->
-    <bool name="config_useDevInputEventForAudioJack">true</bool>
+    <bool name="config_useDevInputEventForAudioJack">false</bool>
 
     <!-- Enable overlay for all location components. -->
     <bool name="config_enableNetworkLocationOverlay" translatable="false">false</bool>
