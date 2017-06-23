@@ -326,3 +326,7 @@
 
 #Egistec fingerprint
 /dev/esfp0		  0660   system     system
+
+# Trustonic TEE device
+/dev/mobicore             0600   system     system
+/dev/mobicore-user        0666   system     system
