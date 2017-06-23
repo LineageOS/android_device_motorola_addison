@@ -33,7 +33,8 @@ on post-fs
     mkdir /persist/public 0755 oem_5004 oem_5004
     mkdir /persist/public/atvc 0770 oem_5012 shell
     mkdir /persist/public/battd 0755 oem_5000 oem_5004
-    mkdir /persist/public/hiddenmenu 0755 radio radio
+    mkdir /persist/public/att_dm 0775 radio oem_5004
+    mkdir /persist/public/hiddenmenu 0755 radio oem_5004
     mkdir /persist/public/hiddenmenu/data 0775 system oem_5004
     mkdir /persist/public/locale 0700 system system
     mkdir /persist/public/omadm 0700 radio radio
@@ -54,9 +55,9 @@ on post-fs
     chmod 0664 /persist/bt/bt_bdaddr
 
     # Set life_calls and life_timer file permissions
-    chown radio mot_tcmd /persist/public/hiddenmenu/life_calls
+    chown radio oem_5004 /persist/public/hiddenmenu/life_calls
     chmod 0775 /persist/public/hiddenmenu/life_calls
-    chown radio mot_tcmd /persist/public/hiddenmenu/life_timer
+    chown radio oem_5004 /persist/public/hiddenmenu/life_timer
     chmod 0775 /persist/public/hiddenmenu/life_timer
 
     chmod 0711 /persist/rfs
@@ -67,8 +68,6 @@ on post-fs
     write /proc/sys/vm/page-cluster 0
 
 on post-fs-data
-    # AK09912 calibration file directory
-    mkdir /data/misc/akmd 0770 system compass
 
     #setup folder for WLAN WAPI
     chmod 0770 /data/wapi_certificate
@@ -118,6 +117,11 @@ on post-fs-data
 
     # Create bug2go folder
     mkdir /data/bug2go 0770 log log
+
+    # Permissions for phone power off log
+    mkdir /data/power_log 0750 root log
+    chmod 0660 /sys/module/power_supply_log/parameters/log_file
+    write /sys/module/power_supply_log/parameters/log_file /data/power_log/power_off.log
 
     # Subsystem RAM-dumps
     mkdir /data/ss-ram-dumps 0750 system log
@@ -238,6 +242,14 @@ on boot
    chown system system /sys/class/i2c-dev/i2c-6/device/6-0049/set_delay_ms
    chmod 0660 /sys/class/i2c-dev/i2c-6/device/6-0049/set_delay_ms
 
+#change ownership and permission for LTR559
+   chown system system /sys/class/sensors/Rear\ Proximity\ sensor/enable
+   chown system system /sys/class/sensors/Rear\ Proximity\ sensor/poll_delay
+   chown system system /sys/class/sensors/Rear\ Proximity\ sensor/enable_wakeup
+   chmod 0660 /sys/class/sensors/Rear\ Proximity\ sensor/enable
+   chmod 0660 /sys/class/sensors/Rear\ Proximity\ sensor/poll_delay
+   chmod 0660 /sys/class/sensors/Rear\ Proximity\ sensor/enable_wakeup
+
 # Change the ownership of display TE files for tcmds
    chown root oem_5004 /sys/class/graphics/fb0/te_enable
    chown root oem_5004 /sys/class/graphics/fb0/frame_counter
@@ -259,6 +271,9 @@ on boot
 
    # Quiet binder logs
    write /sys/module/binder/parameters/debug_mask 0x5
+
+   # Change ownership for vibrator
+   chown oem5001 oem_5001 /sys/bus/i2c/devices/2-005a/reduce
 
 # Pass carrier to wlan
 service init_wifi /system/vendor/bin/wlan_carrier_bin.sh
@@ -315,17 +330,22 @@ service mmi-laser-sh /system/vendor/bin/init.mmi.laser.sh
     user root
     oneshot
 
-# Start Sensor daemon
-service motosh /system/vendor/bin/motosh boot
-    class main
-    user compass
-    group compass misc input
-    oneshot
-
 service charge_only_mode /system/bin/charge_only_mode
     user root
     group graphics system input
     disabled
+
+service sensors /system/vendor/bin/sensors.qcom
+    class core
+    user root
+    group root
+    disabled
+
+service vl53l1_daemon /system/vendor/bin/vl53l1_daemon
+    class late_start
+    user root
+    group root
+    socket vl53l1_daemon stream 660 root system
 
 service thermal-com /system/vendor/bin/thermal-engine --minimode
     class main
