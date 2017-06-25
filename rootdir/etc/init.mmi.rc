@@ -159,6 +159,8 @@ on post-fs-data
     #setup folder for WLAN WAPI
     chmod 0770 /data/wapi_certificate
 
+    mkdir /data/misc/sensors 0755 system system
+
 on boot
    # restore default console_loglevel to KERN_DEBUG
    # restore default_message_loglevel to KERN_WARNING
@@ -243,6 +245,10 @@ on boot
 # Change the ownership of display TE files for tcmds
    chown root oem_5004 /sys/class/graphics/fb0/te_enable
    chown root oem_5004 /sys/class/graphics/fb0/frame_counter
+
+   chmod 0755 /persist/sensors
+   chmod 0644 /persist/sensors/sensors_settings
+   chown system root /persist/sensors/sensors_settings
 
 
 # FPC device parameter permissions
@@ -329,7 +335,6 @@ service sensors /system/vendor/bin/sensors.qcom
     class core
     user root
     group root
-    disabled
 
 service vl53l1_daemon /system/vendor/bin/vl53l1_daemon
     class late_start
