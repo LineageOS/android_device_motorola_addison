@@ -295,6 +295,7 @@ service fingerprintd /system/bin/fingerprintd
 service mmi-boot-sh /system/bin/init.mmi.boot.sh
     class core
     user root
+    group root radio
     oneshot
 
 service mmi-laser-sh /system/bin/init.mmi.laser.sh
