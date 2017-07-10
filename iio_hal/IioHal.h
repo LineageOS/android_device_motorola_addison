@@ -52,6 +52,7 @@
 #include "UeventListener.h"
 #include "DynamicMetaSensor.h"
 
+#include <assert.h>
 
 /**
  * This is a HAL dedicated to handling dynamic sensors exposed through GreyBus
