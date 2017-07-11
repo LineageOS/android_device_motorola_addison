@@ -12,21 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-$(call inherit-product, device/motorola/addison/common.mk)
+$(call inherit-product, device/motorola/addison/full_addison.mk)
 
 # Boot animation
 TARGET_SCREEN_WIDTH := 1080
 TARGET_SCREEN_HEIGHT := 1920
 
 # Inherit from our custom product configuration
-$(call inherit-product, vendor/bliss/config/common.mk)
-
-#inherit bliss telephony
-$(call inherit-product, vendor/bliss/config/telephony.mk)
+$(call inherit-product, vendor/cos/common.mk)
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := addison
-PRODUCT_NAME := bliss_addison
+PRODUCT_NAME := cos_addison
 PRODUCT_BRAND := motorola
 PRODUCT_MANUFACTURER := motorola
 
