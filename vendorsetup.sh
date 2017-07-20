@@ -14,4 +14,4 @@
 # limitations under the License.
 #
 
-add_lunch_combo cos_addison-userdebug
+add_lunch_combo bliss_addison-userdebug
