@@ -1,18 +1,22 @@
 [
   {
+    "remote": "github",
     "repository":  "android_kernel_motorola_msm8953",
     "target_path": "kernel/motorola/msm8953"
     "revision": "n7.1-caf"
   },
   {
+    "remote": "github",
     "repository": "android_external_bson",
     "target_path": "external/bson"
   },
   {
+    "remote": "github",
     "repository": "android_device_qcom_common",
     "target_path": "device/qcom/common"
   },
   {
+    "remote": "github",
     "repository": "android_packages_resources_devicesettings",
     "target_path": "packages/resources/devicesettings"
   }
