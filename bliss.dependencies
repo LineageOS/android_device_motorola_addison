@@ -2,6 +2,7 @@
   {
     "repository":  "android_kernel_motorola_msm8953",
     "target_path": "kernel/motorola/msm8953"
+    "revision": "n7.1-caf"
   },
   {
     "repository": "android_external_bson",
