@@ -94,7 +94,7 @@ public:
             .type               = SENSOR_TYPE_DYNAMIC_SENSOR_META,
             .stringType         = SENSOR_STRING_TYPE_DYNAMIC_SENSOR_META,
             .requiredPermission = "",
-            .flags              = SENSOR_FLAG_SPECIAL_REPORTING_MODE,
+            .flags              = SENSOR_FLAG_SPECIAL_REPORTING_MODE | SENSOR_FLAG_WAKE_UP,
             .reserved           = {0, 0},
         });
     }
