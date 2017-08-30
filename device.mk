@@ -359,6 +359,8 @@ PRODUCT_PACKAGES += \
     fstab.qcom \
     init.mmi.boot.sh \
     init.mmi.laser.sh \
+    init.qcom.ril.sh \
+    wlan_carrier_bin.sh \
     init.mmi.rc \
     init.gbmods.sh \
     init.mmi.usb.rc \

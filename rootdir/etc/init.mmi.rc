@@ -280,7 +280,7 @@ on boot
    chown oem5001 oem_5001 /sys/bus/i2c/devices/2-005a/reduce
 
 # Pass carrier to wlan
-service init_wifi /vendor/bin/sh /vendor/bin/wlan_carrier_bin.sh
+service vendor.init_wifi /vendor/bin/sh /vendor/bin/wlan_carrier_bin.sh
     class main
     user root
     group root
@@ -298,11 +298,11 @@ on charger
 on moto-charger
     setprop ro.board.platform msm8953
     trigger firmware_mounts_complete
-    start charge_only_mode
-    start thermal-com
+    start vendor.charge_only_mode
+    start vendor.thermal-com
 
 on property:ro.boot.hwrev=*
-   start mmi-boot-sh
+   start vendor.mmi-boot-sh
 
 service adspd /vendor/bin/adspd
    class main
@@ -310,7 +310,7 @@ service adspd /vendor/bin/adspd
    user audio
    group audio input diag
 
-service mmi-boot-sh /vendor/bin/sh /vendor/bin/init.mmi.boot.sh
+service vendor.mmi-boot-sh /vendor/bin/sh /vendor/bin/init.mmi.boot.sh
     class core
     user root
     oneshot
@@ -321,7 +321,14 @@ service mmi-laser-sh /vendor/bin/sh /vendor/bin/init.mmi.laser.sh
     user root
     oneshot
 
-service charge_only_mode /vendor/bin/charge_only_mode
+# Start Sensor daemon
+service motosh /vendor/bin/motosh boot
+    class main
+    user compass
+    group compass misc input
+    oneshot
+
+service vendor.charge_only_mode /system/bin/charge_only_mode
     user root
     group graphics system input
     disabled
@@ -338,7 +345,7 @@ service vendor.vl53l1_daemon /vendor/bin/vl53l1_daemon
     seclabel u:r:vl53l1:s0
     socket vl53l1_daemon stream 660 root system
 
-service thermal-com /vendor/bin/thermal-engine --minimode
+service vendor.thermal-com /vendor/bin/thermal-engine --minimode
     class main
     user root
     disabled
