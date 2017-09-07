@@ -99,6 +99,10 @@ public:
         });
     }
 
+    /* Check any pending devices for the correct selinux context label before
+     * adding them to the pendingAdditions list. */
+    int checkPermsAndAddToPending(sensors_event_t* data, int & count);
+
     int enabled;
 private:
     const int myHandle;
@@ -112,6 +116,10 @@ private:
     UeventListener ueventListener;
     bool hasEvents;
     IioHal &iioHal;
+
+    /* After receiving 'add' uevents, add devices to this list to check if selinux
+     * permissions are okay before accessing them through iio. */
+    std::list< std::string > pendingChecks;
 
     /** The list of new sensors that has not yet been reported to the framework */
     std::list< std::shared_ptr<IioSensor> > pendingAdditions;

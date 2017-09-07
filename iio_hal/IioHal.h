@@ -123,6 +123,8 @@ public:
         fsync(pipeFd[1]);
     }
 
+    // start a timer using the timerFd
+    void delay(void);
 
 private:
     DISALLOW_COPY_AND_ASSIGN(IioHal);
@@ -177,6 +179,10 @@ private:
 
     // Pipe to communicate with the poll() thread.
     int pipeFd[2];
+
+    // Timer FD used to delay after dynamic sensor addition to allow selinux
+    // labels to switch before sensor is accessed.
+    int timerFd;
 
     // File descriptors we're listening on
     std::vector<struct pollfd> pollFds;

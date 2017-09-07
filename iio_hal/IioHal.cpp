@@ -35,6 +35,7 @@
 #include <utils/Mutex.h>
 
 #include <sys/select.h>
+#include <sys/timerfd.h>
 
 #include <hardware/sensors.h>
 #include <utils/SystemClock.h>
@@ -49,13 +50,18 @@
 using namespace std;
 using namespace android;
 
-IioHal::IioHal() : pipeFd{0, 0} {
+IioHal::IioHal() : pipeFd{0, 0}, timerFd(-1) {
     //S_LOGD("this=%08" PRIxPTR, this);
     S_LOGD("+");
 
     if (pipe(pipeFd)) {
         S_LOGE("Unable to create pipe: %s", strerror(errno));
         pipeFd[0] = pipeFd[1] = 0;
+    }
+
+    timerFd = timerfd_create(CLOCK_MONOTONIC, 0);
+    if (timerFd == -1) {
+        S_LOGE("Unable to create timer fd: %s", strerror(errno));
     }
 }
 
@@ -68,10 +74,23 @@ void IioHal::init() {
     // already added some IIO sensor drivers to the list in its constructor.
     drivers.emplace(drivers.begin(), dynamic);
 
+    // Setup an initial timer to do a first check of attached sensors after a
+    // short delay.
+    delay();
+
     updateFdLists();
     S_LOGD("-");
 }
 
+void IioHal::delay() {
+    //S_LOGD("delay on Fd %d", timerFd);
+
+    struct itimerspec delay = { .it_interval = {0,0},
+                                .it_value = {0, 100000000 /* 100 ms */} };
+
+    if (timerfd_settime(timerFd, 0 /* relative */, &delay, NULL) == -1)
+        S_LOGE("error setting time on timer Fd: %d", errno);
+}
 
 int IioHal::activate(int handle, int enabled) {
     int ret = -EBADFD;
@@ -170,6 +189,17 @@ int IioHal::poll(sensors_event_t* data, int count) {
                     uint8_t reason = 255;
                     read(pipeFd[0], &reason, sizeof(reason));
                     //S_LOGD("Released poll because %d", reason);
+                } else if (p.fd == timerFd) { // Delay timer expired
+                    uint64_t expirations = 0;
+                    ssize_t size;
+                    size = read(timerFd, &expirations, sizeof(expirations));
+
+                    //S_LOGD("timer read size %d with %ld expirations", size, expirations);
+                    std::shared_ptr<DynamicMetaSensor> dyn =
+                        static_pointer_cast<DynamicMetaSensor>(drivers[0]);
+                    if (dyn && dyn->hasSensor(0) &&
+                        size == sizeof(uint64_t) && expirations > 0)
+                        updateCounts(dyn->checkPermsAndAddToPending(data, count));
                 } else {
                     int res = updateCounts(fd2driver[p.fd]->readEvents(data, count, p.fd));
                     // Need to relay any errors upward.
@@ -196,6 +226,9 @@ void IioHal::updateFdLists() {
     if (pipeFd[0] > 0) {
         pollFds.push_back({.fd = pipeFd[0], .events = POLLIN, .revents = 0});
     }
+
+    if (timerFd > 0)
+        pollFds.push_back({.fd = timerFd, .events = POLLIN, .revents = 0});
 
     for (const auto& driver : drivers) {
         if (!driver) {

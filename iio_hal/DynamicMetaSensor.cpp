@@ -28,6 +28,7 @@
 #include <type_traits>
 #include <cstdint>
 #include <cinttypes>
+#include <unistd.h>
 
 #include <mutex>
 
@@ -41,6 +42,7 @@
 #include <hardware/sensors.h>
 #include <utils/SystemClock.h>
 #include <openssl/sha.h>
+#include <selinux/android.h>
 
 #include "IioSensor.h"
 #include "BaseHal.h"
@@ -57,7 +59,7 @@ using namespace android;
 DynamicMetaSensor::DynamicMetaSensor(int handle, IioHal &iioHal) : SensorBase("", "", ""),
     myHandle(handle), nextHandle(handle + 1),
     ueventListener(nullptr, nullptr), hasEvents(false),
-    iioHal(iioHal), pendingAdditions(iioHal.updateSensorList(getIioSensorList())),
+    iioHal(iioHal),
     flushResponsesDue(0)
 {
 }
@@ -97,6 +99,9 @@ int DynamicMetaSensor::readEvents(sensors_event_t* data, int count) {
             S_LOGD("Removing %s", e->deviceName.c_str());
             std::shared_ptr<SensorBase> s = iioHal.removeSensor(e->deviceName.c_str());
             if (s) {
+                // remove from pendingChecks, if it is there.
+                pendingChecks.remove_if([e](std::string s){ return s.compare(e->deviceName) == 0; });
+
                 // Hang onto this reference until next time around.
                 pendingRemovals.push_back(s);
 
@@ -120,23 +125,86 @@ int DynamicMetaSensor::readEvents(sensors_event_t* data, int count) {
                 ret++;
             }
         } else if (e->eventType == Uevent::EventType::SensorAdd) {
-            S_LOGD("Adding %s", e->deviceName.c_str());
+            S_LOGD("Adding as pending %s", e->deviceName.c_str());
+            pendingChecks.push_back(e->deviceName);
 
-            /* Even though we were only notified of a single device, we will
-             * try to get all the physically attached devices and add them to
-             * the pendingAdditions list at once. Hopefully that will mean that
-             * when subsequent UEvents are received for the 2nd device on the
-             * same mod, that device will already be in the pendingAdditions list
-             * and would be using the same iio_context pointer, thus saving
-             * some memory.
-             */
-
-            pendingAdditions.splice(pendingAdditions.end(), iioHal.updateSensorList(getIioSensorList()));
-            ret += reportPendingSensors(data, count);
+            ret += checkPermsAndAddToPending(data, count);
         }
     }
 
     hasEvents = false;
+
+    return ret;
+}
+
+/* IioHAL runs in parallel with ueventd and both monitor the uevent
+ * socket for new device additions.  Ueventd (based on ueventd.rc
+ * rules) modifies the permissions, owner and group of the new sysfs
+ * directories and files in /sys/devices/iio:deviceX.  The files
+ * start with a default label of 'sysfs', but are changed to
+ * 'sysfs_sensors' by ueventd.  If the labeling is too slow, there
+ * can be a race condition where IioHAL accesses the device before
+ * its label is updated.  hal_sensors does not have permission to
+ * read/write directory entries that are generic label 'sysfs'.
+ * Therefore, the access will be denied.  Fix this by ensuring that
+ * the device in sysfs is relabeled here before continuing on to
+ * actually access it.
+ */
+int DynamicMetaSensor::checkPermsAndAddToPending(sensors_event_t* data, int & count) {
+    int ret = 0;
+    char device_sysfs_path[PATH_MAX];
+    char *fcon = nullptr;
+
+    // Assume that the newly added devices have the proper permissions for access
+    // to start, though they probably don't yet.
+    bool allPendingOkay = true;
+
+    //S_LOGD("Checking %zd pending checks...", pendingChecks.size());
+
+    while (!pendingChecks.empty()) {
+        strncpy(device_sysfs_path, "/sys/devices/", sizeof(device_sysfs_path) - 1);
+        strcat(device_sysfs_path, pendingChecks.front().c_str());
+        //S_LOGD("Checking device %s", device_sysfs_path);
+
+        if (access(device_sysfs_path, F_OK) == 0) {
+            fcon = nullptr;
+            int rc = getfilecon(device_sysfs_path, &fcon);
+            S_LOGD("Read context of %s as %s %d", device_sysfs_path, fcon, rc);
+            if (rc < 0 || strstr(fcon, "sysfs_sensors") == NULL) {
+                // context is not correct yet so try again later
+                S_LOGD("device not ready");
+                if (fcon)
+                    freecon(fcon);
+                allPendingOkay = false;
+                iioHal.delay();
+                break;
+            }
+            else {
+                freecon(fcon);
+                // Remove top of permission checking list!
+                S_LOGD("device is okay to access");
+                pendingChecks.pop_front();
+            }
+        }
+        else {
+            S_LOGE("Couldn't access device to check security context!");
+            pendingChecks.pop_front();
+        }
+    }
+
+    if (allPendingOkay) {
+        /* Even though we are only notified of a single device at a time, we
+         * will try to get all the physically attached devices and add them to
+         * the pendingAdditions list at once. Hopefully that will mean that
+         * when subsequent UEvents are received for the 2nd device on the
+         * same mod, that device will already be in the pendingAdditions list
+         * and would be using the same iio_context pointer, thus saving
+         * some memory.
+         */
+
+        pendingAdditions.splice(pendingAdditions.end(), iioHal.updateSensorList(getIioSensorList()));
+        ret += reportPendingSensors(data, count);
+    }
 
     return ret;
 }
