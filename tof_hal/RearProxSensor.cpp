@@ -35,7 +35,7 @@
 #define PATH_SET_DELAY_MS     "set_delay_ms"
 #define PATH_DO_FLUSH         "do_flush"
 #define PATH_AUTONOMOUS_CFG   "autonomous_config"
-#define PATH_BASE             "/sys/devices/virtual/input"
+#define PATH_BASE             "/sys/devices/virtual/laser"
 #define PATH_ATTR_NAME        "name"
 
 #define MODE_SAR_RESUME       '2'
