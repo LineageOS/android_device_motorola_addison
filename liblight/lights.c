@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Blinking patterns reference:
- * https://github.com/MotorolaMobilityLLC/kernel-msm/commit/3b521f965fae990b2a7f13a6fc98fcf0ea50f66b
- *
  */
 
 #include <cutils/log.h>
@@ -29,14 +26,17 @@
 
 /******************************************************************************/
 
-
-#define LED_LIGHT_ON  3
-#define LED_LIGHT_OFF 0
+#define LED_LIGHT_OFF          0
+#define LED_LIGHT_BLINK_FAST   1
+#define LED_LIGHT_BLINK_SLOW   2
+#define LED_LIGHT_SOLID_ON     3
 
 static pthread_once_t g_init = PTHREAD_ONCE_INIT;
 static pthread_mutex_t g_lock = PTHREAD_MUTEX_INITIALIZER;
+static struct light_state_t g_battery;
+static struct light_state_t g_notification;
 
-char const*const CHARGING_LED_FILE
+char const*const LED_FILE
         = "/sys/class/leds/white/brightness";
 
 char const*const LCD_FILE
@@ -100,29 +100,44 @@ set_light_backlight(__attribute__((unused)) struct light_device_t* dev,
     return err;
 }
 
-static int
-set_light_notifications(struct light_device_t* dev, struct light_state_t const* state)
+static int handle_light_locked()
 {
-    int brightness_level;
+
+    //We want to see the notifications if they are there!!
+    if (is_lit(&g_notification)) {
+        return write_int(LED_FILE, LED_LIGHT_BLINK_SLOW);
+    } else if (is_lit(&g_battery)) {
+        //No notification look at the battery state
+        return write_int(LED_FILE, LED_LIGHT_SOLID_ON);
+    } else {
+        //Nothing to notify, just turn if off
+        return write_int(LED_FILE, LED_LIGHT_OFF);
+    }
+}
+
+static int
+set_light_notifications(__attribute__((unused)) struct light_device_t* dev,
+        struct light_state_t const* state)
+{
     int err = 0;
-
-    if (!dev)
-        return -1;
-
     pthread_mutex_lock(&g_lock);
-
-    if (is_lit(state))
-        brightness_level = LED_LIGHT_ON;
-    else
-        brightness_level = LED_LIGHT_OFF;
-
-    err = write_int(CHARGING_LED_FILE, brightness_level);
-
+    g_notification = *state;
+    err = handle_light_locked();
     pthread_mutex_unlock(&g_lock);
     return err;
 }
 
-
+static int
+set_light_battery(__attribute__((unused)) struct light_device_t* dev,
+        struct light_state_t const* state)
+{
+    int err = 0;
+    pthread_mutex_lock(&g_lock);
+    g_battery = *state;
+    err = handle_light_locked();
+    pthread_mutex_unlock(&g_lock);
+    return err;
+}
 
 /** Close the lights device */
 static int
@@ -152,6 +167,8 @@ static int open_lights(const struct hw_module_t* module, char const* name,
         set_light = set_light_backlight;
     else if (0 == strcmp(LIGHT_ID_NOTIFICATIONS, name))
         set_light = set_light_notifications;
+    else if (0 == strcmp(LIGHT_ID_BATTERY, name))
+        set_light = set_light_battery;
     else
         return -EINVAL;
 
