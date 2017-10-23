@@ -46,6 +46,7 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "ProximitySensor.h"
 #include "CapSensor.h"
 #include "sensors_extension.h"
+#include "sensors.h"
 using namespace android;
 
 #define EVENT_PATH "/dev/input/"

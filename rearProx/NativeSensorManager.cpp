@@ -237,6 +237,7 @@ int NativeSensorManager::getDataInfo() {
 				sensor_proximity = *(list->sensor);
 				break;
 			case SENSOR_TYPE_MOTO_CAPSENSE:
+				list->sensor->stringType = SENSOR_STRING_TYPE_MOTO_CAPSENSE;
 #if defined(SENSORS_DEVICE_API_VERSION_1_3)
 				/* reporting mode fix up */
 				list->sensor->flags |= SENSOR_FLAG_ON_CHANGE_MODE;
