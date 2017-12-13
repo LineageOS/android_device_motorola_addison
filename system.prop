@@ -259,6 +259,9 @@ ro.qti.sensors.pedometer=false
 #Trim properties
 ro.vendor.qti.sys.fw.trim_enable_memory=2147483648
 
+# SensorService
+system_init.startsensorservice=0
+
 # USB
 ro.usb.mtp=2e82
 ro.usb.mtp_adb=2e76
