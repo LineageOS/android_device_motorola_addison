@@ -57,3 +57,13 @@ LOCAL_SHARED_LIBRARIES := libgui libsensor
 LOCAL_MODULE := libshim_ril
 LOCAL_MODULE_TAGS := optional
 include $(BUILD_SHARED_LIBRARY)
+
+# libskia
+include $(CLEAR_VARS)
+LOCAL_SRC_FILES := skia.cpp
+LOCAL_CFLAGS := -Wunused-parameter
+LOCAL_C_INCLUDES := external/skia/include/core
+LOCAL_SHARED_LIBRARIES := libskia
+LOCAL_MODULE := libshim_skia
+LOCAL_MODULE_TAGS := optional
+include $(BUILD_SHARED_LIBRARY)

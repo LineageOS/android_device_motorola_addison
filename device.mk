@@ -114,7 +114,7 @@ PRODUCT_PACKAGES += \
     camera.device@1.0-impl \
     camera.device@3.2-impl \
     android.hardware.camera.provider@2.4-impl \
-    libshim_camera_hal \
+    libshim_skia \
     libshims_camera
 
 PRODUCT_COPY_FILES += \
