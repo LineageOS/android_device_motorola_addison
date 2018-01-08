@@ -32,7 +32,7 @@ then
 	error_and_leave 2
 fi
 
-laser_offset_path=/sys/kernel/range/offset
+laser_offset_path=/sys/class/input/input3/offset
 laser_offset_string=$(ls $laser_offset_path)
 [ -z "$laser_offset_string" ] && error_and_leave 4
 
