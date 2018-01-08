@@ -18,7 +18,7 @@
 
 set -e
 
-DEVICE=potter
+DEVICE=albus
 VENDOR=motorola
 
 # Load extract_utils and do some sanity checks

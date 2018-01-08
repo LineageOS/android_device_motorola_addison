@@ -19,7 +19,7 @@
 set -e
 
 # Required!
-DEVICE=potter
+DEVICE=albus
 VENDOR=motorola
 
 INITIAL_COPYRIGHT_YEAR=2017
@@ -41,7 +41,7 @@ fi
 setup_vendor "$DEVICE" "$VENDOR" "$LINEAGE_ROOT" true
 
 # Copyright headers and guards
-write_headers "potter"
+write_headers "albus"
 
 # The standard blobs
 write_makefiles "$MY_DIR"/proprietary-files.txt
