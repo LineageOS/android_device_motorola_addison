@@ -15,7 +15,7 @@
 	<ctl name="Voip Rx Gain" id="0" value="0" />
 	<ctl name="Voip Rx Gain" id="1" value="20" />
 	<ctl name="IN1L Mux" value="A" />
-	<ctl name="IN1R Mux" value="B" />
+	<ctl name="IN1R Mux" value="A" />
 	<ctl name="IN1L Volume" value="18" />
 	<ctl name="IN1R Volume" value="18" />
 	<ctl name="IN2L Volume" value="18" />
@@ -64,8 +64,6 @@
 	<ctl name="OUT1 Digital Volume" id="1" value="0" />
 	<ctl name="OUT1 Digital Switch" id="0" value="0" />
 	<ctl name="OUT1 Digital Switch" id="1" value="0" />
-	<ctl name="SPKDAT High Performance Switch" value="1" />
-	<ctl name="PDM Mux" value="On" />
 	<ctl name="Voip Mode Config" value="12" />
 	<ctl name="Voip Rate Config" value="0" />
 	<ctl name="Voip Evrc Min Max Rate Config" id="0" value="1" />
@@ -217,6 +215,7 @@
 	<ctl name="ISRC2 FSL" value="SYNCCLK rate 1" />
 	<ctl name="ISRC2DEC1 Input" value="IN1L" />
 	<ctl name="ISRC2DEC2 Input" value="IN2L" />
+	<!-- rev 05 has mic 3 at 2R, so support that -->
 	<ctl name="ISRC2DEC4 Input" value="IN2R" />
 	<ctl name="ISRC2INT1 Input" value="None" />
 	<ctl name="ISRC2INT2 Input" value="None" />
@@ -385,10 +384,10 @@
 		<ctl name="SLIMBUS_0_RX Audio Mixer MultiMedia1" value="1" />
 		<ctl name="SLIM_0_RX Format" value="S24_LE" />
 		<ctl name="SLIM_0_RX Channels" value="Two" />
-		<ctl name="AIF2TX1 Input 1" value="SLIMRX1" />
-		<ctl name="AIF2TX1 Input 1 Volume" value="32" />
-		<ctl name="AIF2TX2 Input 1" value="SLIMRX2" />
-		<ctl name="AIF2TX2 Input 1 Volume" value="32" />
+		<ctl name="AIF1TX1 Input 1" value="SLIMRX1" />
+		<ctl name="AIF1TX1 Input 1 Volume" value="32" />
+		<ctl name="AIF1TX2 Input 1" value="SLIMRX2" />
+		<ctl name="AIF1TX2 Input 1 Volume" value="32" />
 	</path>
 
 	<path name="deep-buffer-playback bt-sco">
@@ -475,10 +474,10 @@
 		<ctl name="SLIMBUS_0_RX Audio Mixer MultiMedia5" value="1" />
 		<ctl name="SLIM_0_RX Format" value="S24_LE" />
 		<ctl name="SLIM_0_RX Channels" value="Two" />
-		<ctl name="AIF2TX1 Input 1" value="SLIMRX1" />
-		<ctl name="AIF2TX1 Input 1 Volume" value="32" />
-		<ctl name="AIF2TX2 Input 1" value="SLIMRX2" />
-		<ctl name="AIF2TX2 Input 1 Volume" value="32" />
+		<ctl name="AIF1TX1 Input 1" value="SLIMRX1" />
+		<ctl name="AIF1TX1 Input 1 Volume" value="32" />
+		<ctl name="AIF1TX2 Input 1" value="SLIMRX2" />
+		<ctl name="AIF1TX2 Input 1 Volume" value="32" />
 	</path>
 
 	<path name="low-latency-playback mod">
@@ -531,10 +530,10 @@
 		<ctl name="SLIMBUS_0_RX Audio Mixer MultiMedia4" value="1" />
 		<ctl name="SLIM_0_RX Format" value="S24_LE" />
 		<ctl name="SLIM_0_RX Channels" value="Two" />
-		<ctl name="AIF2TX1 Input 1" value="SLIMRX1" />
-		<ctl name="AIF2TX1 Input 1 Volume" value="32" />
-		<ctl name="AIF2TX2 Input 1" value="SLIMRX2" />
-		<ctl name="AIF2TX2 Input 1 Volume" value="32" />
+		<ctl name="AIF1TX1 Input 1" value="SLIMRX1" />
+		<ctl name="AIF1TX1 Input 1 Volume" value="32" />
+		<ctl name="AIF1TX2 Input 1" value="SLIMRX2" />
+		<ctl name="AIF1TX2 Input 1 Volume" value="32" />
 	</path>
 
 	<path name="compress-offload-playback mod">
@@ -646,10 +645,10 @@
 		<ctl name="VoiceMMode1_Tx Mixer SLIM_0_TX_MMode1" value="1" />
 		<ctl name="SLIM_0_RX Format" value="S24_LE" />
 		<ctl name="SLIM_0_RX Channels" value="Two" />
-		<ctl name="AIF2TX1 Input 1" value="SLIMRX1" />
-		<ctl name="AIF2TX1 Input 1 Volume" value="32" />
-		<ctl name="AIF2TX2 Input 1" value="SLIMRX2" />
-		<ctl name="AIF2TX2 Input 1 Volume" value="32" />
+		<ctl name="AIF1TX1 Input 1" value="SLIMRX1" />
+		<ctl name="AIF1TX1 Input 1 Volume" value="32" />
+		<ctl name="AIF1TX2 Input 1" value="SLIMRX2" />
+		<ctl name="AIF1TX2 Input 1 Volume" value="32" />
 	</path>
 
 	<path name="voicemmode1-call mod">
@@ -694,10 +693,10 @@
 		<ctl name="SLIM_0_RX Format" value="S24_LE" />
 		<ctl name="SLIM_0_RX Channels" value="Two" />
 		<ctl name="VoiceMMode2_Tx Mixer SLIM_0_TX_MMode2" value="1" />
-		<ctl name="AIF2TX1 Input 1" value="SLIMRX1" />
-		<ctl name="AIF2TX1 Input 1 Volume" value="32" />
-		<ctl name="AIF2TX2 Input 1" value="SLIMRX2" />
-		<ctl name="AIF2TX2 Input 1 Volume" value="32" />
+		<ctl name="AIF1TX1 Input 1" value="SLIMRX1" />
+		<ctl name="AIF1TX1 Input 1 Volume" value="32" />
+		<ctl name="AIF1TX2 Input 1" value="SLIMRX2" />
+		<ctl name="AIF1TX2 Input 1 Volume" value="32" />
 	</path>
 
 	<path name="voicemmode2-call mod">
@@ -821,13 +820,12 @@
 	</path>
 
 	<path name="speaker">
-		<ctl name="PDM Mux" value="Off" />
 		<ctl name="SLIM_0_RX Channels" value="One" />
-		<ctl name="AIF1TX1 Input 1" value="SLIMRX1" />
-		<ctl name="AIF1TX1 Input 1 Volume" value="32" />
+		<ctl name="AIF2TX1 Input 1" value="SLIMRX1" />
+		<ctl name="AIF2TX1 Input 1 Volume" value="32" />
 		<ctl name="SLIM_1_TX Channels" value="Two" />
-		<ctl name="SLIMTX5 Input 1" value="AIF1RX1" />
-		<ctl name="SLIMTX6 Input 1" value="AIF1RX2" />
+		<ctl name="SLIMTX5 Input 1" value="AIF2RX1" />
+		<ctl name="SLIMTX6 Input 1" value="AIF2RX2" />
 		<ctl name="AMP Audio Gain" value="17" />
 	</path>
 
@@ -844,10 +842,9 @@
 	</path>
 
 	<path name="handset">
-		<ctl name="PDM Mux" value="Off"/>
 		<ctl name="Mods Codec Volume" value="0"/>
-		<ctl name="AIF1TX1 Input 2" value="SLIMRX1" />
-		<ctl name="AIF1TX1 Input 2 Volume" value="32" />
+		<ctl name="AIF2TX1 Input 2" value="SLIMRX1" />
+		<ctl name="AIF2TX1 Input 2 Volume" value="32" />
 		<ctl name="AMP Audio Gain" value="4" />
 		<ctl name="OSPL Rx" value="Disable" />
 	</path>
@@ -876,6 +873,7 @@
 
 	<path name="headset-mic">
 		<path name="AOV" />
+		<ctl name="IN1R Mux" value="B" />
 		<ctl name="IN1R Digital Volume" value="142" />
 		<ctl name="IN1R Volume" value="16" />
 		<ctl name="ISRC2DEC4 Input" value="IN1R" />
@@ -1085,6 +1083,7 @@
 
 	<path name="voice-tty-full-headset-mic">
 		<path name="AOV" />
+		<ctl name="IN1R Mux" value="B" />
 		<ctl name="IN1R Digital Volume" value="128" />
 		<ctl name="IN1R Volume" value="0" />
 		<ctl name="ISRC2DEC4 Input" value="IN1R" />
