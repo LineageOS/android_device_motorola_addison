@@ -244,8 +244,7 @@ PRODUCT_PACKAGES += \
     android.hardware.drm@1.0-service.widevine
 
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/qdcm_calib_data_mipi_mot_vid_boe_1080p_520.xml:system/vendor/etc/qdcm_calib_data_mipi_mot_vid_boe_1080p_520.xml \
-    $(LOCAL_PATH)/configs/qdcm_calib_data_mipi_mot_vid_tianma_1080p_520.xml:system/vendor/etc/qdcm_calib_data_mipi_mot_vid_tianma_1080p_520.xml
+    $(LOCAL_PATH)/configs/qdcm_calib_data_mipi_mot_cmd_smd_1080p_549_alb.xml:system/vendor/etc/qdcm_calib_data_mipi_mot_cmd_smd_1080p_549_alb.xml
 
 # Media
 PRODUCT_PACKAGES += \
