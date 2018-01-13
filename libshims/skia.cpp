@@ -27,3 +27,6 @@ extern "C" bool _ZNK8SkBitmap10lockPixelsEv(LockRec* rec){
 
 extern "C" void _ZNK8SkBitmap12unlockPixelsEv(){
 }
+
+extern "C" void _ZN14SkImageEncoder10EncodeFileEPKcRK8SkBitmapNS_4TypeEi(){
+}
