@@ -801,3 +801,18 @@ vendor/lib/rfsa/adsp/libscveTextReco_skel.so
 vendor/lib/sensor_calibrate.so
 vendor/lib/sensors.ssc.so
 vendor/qcril.db
+
+# Moto Mods
+-app/MotCameraMod/MotCameraMod.apk:app/MotCameraMod/MotCameraMod.apk;PRESIGNED
+etc/firmware/upd-00000126-00001001-fed70128-fffe0001-02.tftf
+etc/permissions/com.motorola.aov.xml
+etc/permissions/com.motorola.mod.protocols.xml
+etc/permissions/com.motorola.mod.xml
+etc/permissions/com.motorola.moto.xml
+etc/permissions/com.motorola.motodisplay.xml
+lib64/libmodhw.so
+-priv-app/ModService/ModService.apk:priv-app/ModService/ModService.apk;PRESIGNED
+-priv-app/ProjectorApp/ProjectorApp.apk:priv-app/ProjectorApp/ProjectorApp.apk;PRESIGNED
+vendor/bin/mods_camd
+vendor/lib/libmodmanager.so
+vendor/lib64/libmodmanager.so
