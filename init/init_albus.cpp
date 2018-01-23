@@ -81,4 +81,19 @@ void vendor_load_properties()
 
     num_sims();
 
+    if (radio == "India" || radio == "EMEA_APAC") {
+        property_set("ro.radio.imei.sv", "6");
+    } else if (radio == "Brazil") {
+        property_set("ro.radio.imei.sv", "9");
+    } else if (sku == "XT1710-01" && radio == "NA") {
+        property_set("ro.radio.imei.sv", "9");
+    } else if (sku == "XT1710-02" && radio == "NA") {
+        property_set("ro.radio.imei.sv", "1");
+    }
+
+    if (sku == "XT1710-01" || sku == "XT1710-07" || sku == "XT1710-09" || sku == "XT1710-10") {
+        property_set("ro.telephony.default_network", "10,0");
+    } else if (sku == "XT1710-02") {
+        property_set("ro.telephony.default_network", "10");
+    }
 }
