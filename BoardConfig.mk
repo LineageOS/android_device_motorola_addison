@@ -215,9 +215,6 @@ LZMA_RAMDISK_TARGETS := recovery
 include device/qcom/sepolicy/sepolicy.mk
 BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy
 
-# Sensor
-USE_SENSOR_MULTI_HAL := true
-
 # Wifi
 BOARD_HAS_QCOM_WLAN              := true
 BOARD_HAS_QCOM_WLAN_SDK          := true
