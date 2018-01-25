@@ -339,6 +339,7 @@ service vl53l1_daemon /system/vendor/bin/vl53l1_daemon
     class late_start
     user root
     group root
+    seclabel u:r:vl53l1:s0
     socket vl53l1_daemon stream 660 root system
 
 service thermal-com /system/vendor/bin/thermal-engine --minimode
