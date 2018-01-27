@@ -81,9 +81,9 @@ public class SensorHelper {
         return mSensorManager.getDefaultSensor(SENSOR_TYPE_MMI_FLAT_DOWN, true);
     }
 
-    public Sensor getGlanceSensor() {
+/*    public Sensor getGlanceSensor() {
         return mSensorManager.getDefaultSensor(Sensor.TYPE_GLANCE_GESTURE, true);
-    }
+    } */
 
     public Sensor getProximitySensor() {
         return mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY, true);
