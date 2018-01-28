@@ -271,6 +271,10 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/libnfc-brcm.conf:system/etc/libnfc-brcm.conf \
     $(LOCAL_PATH)/configs/libnfc-nxp.conf:system/etc/libnfc-nxp.conf
 
+# Mods
+PRODUCT_PACKAGES += \
+    ModPermsFix
+
 # Netutils
 PRODUCT_PACKAGES += \
     android.system.net.netd@1.0 \
