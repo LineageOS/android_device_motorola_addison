@@ -147,6 +147,9 @@ ifeq ($(HOST_OS),linux)
     endif
 endif
 
+# DRM
+TARGET_ENABLE_MEDIADRM_64 := true
+
 # FM
 BOARD_HAVE_QCOM_FM := true
 TARGET_QCOM_NO_FM_FIRMWARE := true
