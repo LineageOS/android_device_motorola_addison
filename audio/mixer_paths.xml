@@ -844,6 +844,7 @@
 	</path>
 
 	<path name="handset">
+		<ctl name="PDM Mux" value="Off"/>
 		<ctl name="Mods Codec Volume" value="0"/>
 		<ctl name="AIF1TX1 Input 2" value="SLIMRX1" />
 		<ctl name="AIF1TX1 Input 2 Volume" value="32" />
