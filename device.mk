@@ -312,9 +312,10 @@ PRODUCT_PACKAGES += \
     init.mmi.boot.sh \
     init.mmi.laser.sh \
     init.mmi.rc \
-    init.mmi.modprobe.rc \
+    init.gbmods.sh \
     init.mmi.usb.rc \
     init.qcom.rc \
+    init.mods.rc
 
 PRODUCT_COPY_FILES += \
      $(LOCAL_PATH)/rootdir/etc/ueventd.qcom.rc:system/vendor/ueventd.rc
