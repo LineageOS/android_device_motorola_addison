@@ -130,7 +130,7 @@ ro.hwui.texture_cache_flushrate=0.4
 ro.hwui.texture_cache_size=72
 
 # Mods
-sys.mod.platformsdkversion=205
+sys.mod.platformsdkversion=250
 
 # IMS
 persist.vendor.radio.jbims=1
