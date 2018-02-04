@@ -383,6 +383,9 @@ on post-fs-data
     mkdir /data/dpm 0771 system system
     chown system system /data/dpm
 
+    # Create greybus firmware folder
+    mkdir /data/gbfirmware 0770 oem_5020 oem_5020
+
     mkdir /data/dpm/nsrm 0771 system system
     chown system system /data/dpm/nsrm
 
