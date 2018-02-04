@@ -1,9 +1,3 @@
-on nonencrypted
-    start gbmodinstall
-
-on property:vold.decrypt=trigger_post_fs_data
-    start gbmodinstall
-
 service mods_camd /vendor/bin/mods_camd
     class late_start
     user camera
@@ -11,9 +5,4 @@ service mods_camd /vendor/bin/mods_camd
     disabled
     rlimit 14 4 4
     ioprio rt 4
-
-service gbmodinstall /vendor/bin/init.gbmods.sh
-    user root
-    oneshot
-    disabled
 
