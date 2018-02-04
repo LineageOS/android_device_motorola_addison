@@ -12,5 +12,6 @@ allow priv_app sysfs_batt_mods:dir rw_dir_perms;
 allow priv_app sysfs_batt_mods:file rw_file_perms;
 allow priv_app sysfs_greybus:dir r_dir_perms;
 allow priv_app sysfs_greybus:file rw_file_perms;
+allow priv_app gbfirmware_file:dir { open read };
 
 get_prop(priv_app, adspd_prop);
