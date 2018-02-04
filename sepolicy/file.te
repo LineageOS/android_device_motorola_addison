@@ -59,3 +59,11 @@ type proc_kernel_sched, fs_type;
 type sysfs_power_management, sysfs_type, fs_type;
 type proc_touchpanel, fs_type;
 
+# Greybus
+type sysfs_greybus, fs_type, sysfs_type, mlstrustedobject;
+type sysfs_greybus_media, fs_type, sysfs_type, mlstrustedobject;
+type gbfirmware_file, file_type, data_file_type, mlstrustedobject;
+type sysfs_mods_camd, fs_type, sysfs_type, mlstrustedobject;
+type sysfs_v4l2_openmode, fs_type, sysfs_type, mlstrustedobject;
+type sysfs_batt_mods, fs_type, sysfs_type, mlstrustedobject;
+

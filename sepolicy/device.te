@@ -10,3 +10,5 @@ type synaptics_rmi_device, dev_type;
 type shwi_device, dev_type;
 type isdbt_device, dev_type;
 type utags_block_device, dev_type;
+type greybus_raw_device, dev_type, mlstrustedobject;
+type mods_camd_device, dev_type, mlstrustedobject;
