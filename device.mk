@@ -360,6 +360,10 @@ PRODUCT_PACKAGES += \
     android.hardware.sensors@1.0-impl \
     sensors.msm8953
 
+# Shims
+PRODUCT_PACKAGES += \
+    libqsap_shim
+
 # Thermal
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/thermal-engine-albus.conf:system/vendor/etc/thermal-engine.conf
