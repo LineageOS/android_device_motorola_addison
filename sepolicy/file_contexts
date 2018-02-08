@@ -16,6 +16,8 @@
 /system/vendor/bin/vl53l1_daemon                                u:object_r:vl53l1_exec:s0
 /system/vendor/bin/init\.qti\.fm\.sh		u:object_r:qti_init_shell_exec:s0
 /system/vendor/bin/mods_camd                    u:object_r:mods_camd_exec:s0
+/system/vendor/bin/hw/motorola\.hardware\.camera\.provider@2\.4-service        u:object_r:hal_camera_default_exec:s0
+/system/vendor/bin/hw/motorola\.hardware\.mods_camera\.provider@2\.4-service   u:object_r:hal_camera_default_exec:s0
 
 # Camera
 /sys/kernel/range(/.*)?                                 u:object_r:sysfs_mmi_laser:s0
