@@ -12,8 +12,12 @@ allow adspd audio_device:chr_file { ioctl open read write };
 allow adspd audio_device:dir search;
 allow adspd input_device:chr_file { ioctl open read };
 allow adspd input_device:dir search;
-allow adspd sysfs_adsp:file write;
+allow adspd sysfs_adsp:file { write read open };
+allow adspd sysfs_adsp:dir search;
+allow adspd adspd_data_file:dir search;
+allow adspd firmware_file:dir search;
+
 # The below one is WRONG
-allow adspd sysfs:file write;
+allow adspd sysfs:file { write read open };
 
 set_prop(adspd, adspd_prop)
