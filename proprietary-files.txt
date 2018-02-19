@@ -785,7 +785,7 @@ vendor/lib/libsdmextension.so
 vendor/lib/libsd_sdk_display.so
 vendor/lib/vendor.display.color@1.0_vendor.so
 vendor/lib/vendor.display.postproc@1.0_vendor.so
-vendor/bin/hw/vendor.display.color@1.0-service
+vendor/bin/hw/vendor.display.color@1.0-service|02c05fbda540904e708bb440469dd98b84e8c143
 vendor/etc/init/vendor.display.color@1.0-service.rc
 etc/firmware/a225_pfp.fw
 etc/firmware/a225_pm4.fw
@@ -898,7 +898,7 @@ vendor/lib64/libqti-iop.so|ffc06ccc9665e344c4490f69b0cb6bac71f9c363
 vendor/lib64/libqti-iopd-client.so|e43b68dc4e29819ec268370ea9af5cb04f8af089
 vendor/lib64/libqti-iopd.so|79f44557d2f6519987189b61ed095ec45816cdcf
 lib64/vendor.qti.hardware.iop@1.0.so|4e6315eab00315e0a0a5fc67912c94e5a5478e75
-vendor/bin/hw/vendor.qti.hardware.iop@1.0-service
+vendor/bin/hw/vendor.qti.hardware.iop@1.0-service|b9609cf76d5e8a52f27347a0182522663a124223
 vendor/etc/init/vendor.qti.hardware.iop@1.0-service.rc
 vendor/lib/hw/vendor.qti.hardware.iop@1.0-impl.so
 vendor/lib/vendor.qti.hardware.iop@1.0_vendor.so
@@ -993,7 +993,7 @@ lib64/libmodhw.so|b9a8f7b01ae24fa8e2bc91475b13d7a5f941730a
 vendor/lib64/libmodmanager.so|5005ad6f5e2b09ac460ff533c5c9a8e90da4d49e
 
 # Moto RIL
-vendor/bin/qmi_motext_hook
+vendor/bin/qmi_motext_hook|9aeb20dfc9ed65cc7a267d06f042e46020970db8
 lib/libmotext_inf.so
 lib/libmdmcutback.so
 lib/libqmimotext.so
@@ -1009,7 +1009,7 @@ vendor/firmware/libpn548ad_fw.so
 # Perf
 vendor/bin/energy-awareness
 vendor/bin/msm_irqbalance
-vendor/bin/hw/vendor.qti.hardware.perf@1.0-service
+vendor/bin/hw/vendor.qti.hardware.perf@1.0-service|372060407eacb7c4433171cc7b979c13ca1fb4f7
 vendor/etc/init/vendor.qti.hardware.perf@1.0-service.rc
 vendor/etc/msm_irqbalance.conf
 vendor/lib/libqti_performance.so
@@ -1027,7 +1027,7 @@ vendor/lib64/libqti-gt-prop.so|1140c8acdb18d1245b2220b3e50af6492828fd1d
 vendor/lib64/libqti-gt.so|e653019bca7df9371ee1ddc0d2424da7edfccb86
 
 # Peripheral manager
-vendor/bin/pm-proxy
+vendor/bin/pm-proxy|db19d7ce5ad23e22d0372cfbe2f272a14a6cfa1a
 vendor/bin/pm-service
 vendor/lib/libperipheral_client.so
 
@@ -1046,7 +1046,7 @@ etc/permissions/izat.xt.srv.xml
 etc/permissions/com.qti.snapdragon.sdk.display.xml
 framework/com.qti.snapdragon.sdk.display.jar
 vendor/app/colorservice/colorservice.apk
-vendor/bin/mm-pp-dpps
+vendor/bin/mm-pp-dpps|196a353a4d2a4a7ee3253ea3d65198da0c2932cd
 vendor/lib/libdisp-aba.so
 
 vendor/lib64/libdisp-aba.so|4346ee5a17186c0cd27adde56a30e235b7df6736
@@ -1134,10 +1134,10 @@ framework/embmslibrary.jar
 framework/qti-telephony-common.jar
 vendor/qcril.db
 vendor/bin/ATFWD-daemon
-vendor/bin/netmgrd
-vendor/bin/qti
-vendor/bin/rmt_storage
-vendor/bin/tftp_server
+vendor/bin/netmgrd|e74e85e4a3834ebb2112f911c3dda4908df4dcc0
+vendor/bin/qti|10e960a1412ad4668a24ac199f1eba968ac03f0b
+vendor/bin/rmt_storage|e3b7f6cc851a0bb2fa1f2a5ce3d08208af98eadc
+vendor/bin/tftp_server|fd2f8fab952e6f30975177bb6ecd9acc585c853f
 vendor/radio/qcril_database
 vendor/radio/qcril_database/qcril.db
 vendor/lib/vendor.qti.hardware.radio.atcmdfwd@1.0_vendor.so
@@ -1246,7 +1246,7 @@ vendor/lib64/lib-uceservice.so|3d782c0bbcc3727541ffa63a887060cdf559d916
 
 # Sensors
 vendor/lib/libiio.so
-vendor/bin/sensors.qcom
+vendor/bin/sensors.qcom|3437a0efd64022dc517cc41351df9a4d3756169d
 vendor/lib/hw/sensors.msm8953.so
 vendor/lib/libsensor1.so
 vendor/lib/libsensor_reg.so
