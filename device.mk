@@ -244,7 +244,7 @@ PRODUCT_PACKAGES += \
 
 # Display Calibration
 PRODUCT_PACKAGES += \
-    libjni_livedisplay
+    vendor.lineage.livedisplay@1.0-service-qdcm
 
 # DRM
 PRODUCT_PACKAGES += \
