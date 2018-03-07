@@ -26,7 +26,7 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#include <cutils/log.h>
+#include <log/log.h>
 #include <fcntl.h>
 #include <string.h>
 #include <cutils/properties.h>
