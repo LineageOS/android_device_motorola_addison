@@ -4,6 +4,8 @@ LOCAL_PATH := $(call my-dir)
 # hw/<POWERS_HARDWARE_MODULE_ID>.<ro.hardware>.so
 include $(CLEAR_VARS)
 
+LOCAL_CFLAGS += -Wall -Wextra -Wno-error -Wno-implicit-function-declaration
+
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_SHARED_LIBRARIES := liblog libcutils libdl libxml2
 LOCAL_HEADER_LIBRARIES += libutils_headers
