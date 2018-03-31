@@ -111,6 +111,7 @@ AUDIO_FEATURE_ENABLED_WMA_OFFLOAD := true
 AUDIO_USE_LL_AS_PRIMARY_OUTPUT := true
 AUDIO_FEATURE_ENABLED_SND_MONITOR := true
 BOARD_USES_ALSA_AUDIO := true
+USE_CUSTOM_AUDIO_POLICY := 1
 BOARD_USES_GENERIC_AUDIO := true
 TARGET_USES_QCOM_MM_AUDIO := true
 
@@ -223,7 +224,7 @@ include device/qcom/sepolicy/sepolicy.mk
 BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy
 
 # Shim
-TARGET_LD_SHIM_LIBS := /system/vendor/bin/adspd|libshim_adsp.so:/system/vendor/lib64/libmdmcutback.so|libqsap_shim.so:/system/lib/libYuvSkia.so|libshim_skia.so
+TARGET_LD_SHIM_LIBS := /system/vendor/bin/adspd|libshim_adsp.so:/system/vendor/lib64/libmdmcutback.so|libqsap_shim.so:/system/lib/libYuvSkia.so|libshim_skia.so:/system/vendor/lib/hw/audio.primary.msm8953.so|libtinycompress_vendor.so
 
 # Wifi
 BOARD_HAS_QCOM_WLAN              := true

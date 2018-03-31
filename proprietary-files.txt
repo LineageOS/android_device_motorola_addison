@@ -44,6 +44,7 @@ vendor/bin/audioflacapp
 vendor/lib/libaudioparsers.so
 vendor/lib/mmi_audio.so
 lib/libmotaudioutils.so
+lib/libeqservice.so
 
 vendor/lib64/libacdb-fts.so|b20a43b0642a15b8c2d4dea03c0af78b6f45476c
 vendor/lib64/libacdbloader.so|085fed9e827496d27c84ddd1571e4f8390fd15e3
@@ -975,6 +976,10 @@ vendor/lib/mmi_touch.so
 vendor/lib/mmi_vibrator.so
 
 # Mod
+# Audio HAL ( Needed For JBL Mods )
+vendor/lib/hw/audio.primary.msm8953.so
+vendor/lib/libtinyalsa.so:lib/libtinyalsa.so
+vendor/lib64/libtinyalsa.so:lib64/libtinyalsa.so
 priv-app/ProjectorApp/ProjectorApp.apk
 app/MotCameraMod/MotCameraMod.apk
 priv-app/ModFmwkProxyService/ModFmwkProxyService.apk
