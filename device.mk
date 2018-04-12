@@ -111,9 +111,8 @@ PRODUCT_PACKAGES += \
     android.hardware.camera.provider@2.4-impl \
     camera.device@3.2-impl \
     camera.device@1.0-impl \
-    libbson \
     libxml2 \
-    Camera2 \
+    Snap \
     libshim_skia
 
 PRODUCT_COPY_FILES += \
