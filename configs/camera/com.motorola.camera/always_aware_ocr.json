@@ -1,0 +1,10 @@
+{
+  "alwaysAware": {
+    "supportedDetectors": [
+      {
+        "detector": "businessCard",
+        "vendor": "abbyy"
+      }
+    ]
+  }
+}

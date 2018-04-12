@@ -109,8 +109,8 @@ PRODUCT_PACKAGES += \
 # Camera
 PRODUCT_PACKAGES += \
     android.hardware.camera.provider@2.4-impl \
-    android.hardware.camera.provider@2.4-service \
     camera.device@3.2-impl \
+    camera.device@1.0-impl \
     libbson \
     libxml2 \
     Camera2 \
@@ -123,7 +123,10 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/camera/mot_imx362_chromatix.xml:system/etc/camera/mot_imx362_chromatix.xml \
     $(LOCAL_PATH)/configs/camera/mot_s5k2l7_chromatix.xml:system/etc/camera/mot_s5k2l7_chromatix.xml \
     $(LOCAL_PATH)/configs/camera/mot_s5k2l7sa_chromatix.xml:system/etc/camera/mot_s5k2l7sa_chromatix.xml \
-    $(LOCAL_PATH)/configs/camera/mot_ov5695_ofilm_chromatix.xml:system/etc/camera/mot_ov5695_ofilm_chromatix.xml
+    $(LOCAL_PATH)/configs/camera/mot_ov5695_ofilm_chromatix.xml:system/etc/camera/mot_ov5695_ofilm_chromatix.xml \
+    $(LOCAL_PATH)/configs/camera/com.motorola.camera/always_aware_ocr.json:system/etc/motorola/com.motorola.camera/always_aware_ocr.json \
+    $(LOCAL_PATH)/configs/camera/permissions/com.motorola.camerabgproc_library.xml:system/etc/permissions/com.motorola.camerabgproc_library.xml \
+    $(LOCAL_PATH)/configs/camera/permissions/com.motorola.cameraone.xml:system/etc/permissions/com.motorola.cameraone.xml
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/gps/etc/flp.conf:system/vendor/etc/flp.conf \
