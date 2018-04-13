@@ -74,7 +74,7 @@ void vendor_load_properties()
     property_override("ro.build.description", "albus-user 7.1.1 NPSS26.118-19-22 28 release-keys");
     property_override("ro.build.fingerprint", "motorola/albus/albus:7.1.1/NPSS26.118-19-22/28:user/release-keys");
 
-    property_set("ro.product.model", sku.c_str());
+    property_set("ro.product.model", "Moto Z2 Play");
 
     // rmt_storage
     std::string device = android::base::GetProperty("ro.boot.device", "");
