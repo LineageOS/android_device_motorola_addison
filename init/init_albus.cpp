@@ -71,8 +71,8 @@ void vendor_load_properties()
     std::string sku = android::base::GetProperty("ro.boot.hardware.sku", "");
 
     // fingerprint
-    property_override("ro.build.description", "albus-7.1.1/NPS26.74-16-1/1:user/release-keys");
-    property_override("ro.build.fingerprint", "motorola/albus_retail/albus:7.1.1/NPS26.74-16-1/1:user/release-keys");
+    property_override("ro.build.description", "albus-user 7.1.1 NPSS26.118-19-22 28 release-keys");
+    property_override("ro.build.fingerprint", "motorola/albus/albus:7.1.1/NPSS26.118-19-22/28:user/release-keys");
 
     property_set("ro.product.model", sku.c_str());
 
