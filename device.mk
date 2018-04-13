@@ -112,7 +112,7 @@ PRODUCT_PACKAGES += \
     camera.device@3.2-impl \
     camera.device@1.0-impl \
     libxml2 \
-    Snap \
+    Camera2 \
     libshim_skia
 
 PRODUCT_COPY_FILES += \
