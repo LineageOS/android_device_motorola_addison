@@ -397,6 +397,9 @@ on post-fs-data
     # Create directory used by the DASH client
     mkdir /data/misc/dash 0770 media audio
 
+    # Create vpp directory
+    mkdir /data/vendor/vpp 0770 media media
+
     # Mounting of persist is moved to 'on emmc-fs' and 'on fs' sections
     # We chown/chmod /persist again so because mount is run as root + defaults
     chown root system /persist
@@ -563,6 +566,11 @@ service wcnss-service /system/bin/wcnss_service
     user system
     group system wifi radio
     oneshot
+
+service vppservice /vendor/bin/vppservice
+    class main
+    user media
+    group camera
 
 service adsprpcd /system/vendor/bin/adsprpcd
     class main
