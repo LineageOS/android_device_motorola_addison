@@ -1,0 +1,37 @@
+cmake_minimum_required(VERSION 2.8.7)
+
+project(iio_genxml  C)
+project(iio_info    C)
+project(iio_readdev C)
+project(iio_reg     C)
+
+if (MSVC)
+	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../deps/wingetopt/src)
+	set(GETOPT_C_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../deps/wingetopt/src/getopt.c)
+endif (MSVC)
+
+add_executable(iio_genxml  iio_genxml.c   ${GETOPT_C_FILE})
+add_executable(iio_info    iio_info.c     ${GETOPT_C_FILE})
+add_executable(iio_readdev iio_readdev.c  ${GETOPT_C_FILE})
+add_executable(iio_reg     iio_reg.c      ${GETOPT_C_FILE})
+
+target_link_libraries(iio_genxml  iio)
+target_link_libraries(iio_info    iio)
+target_link_libraries(iio_readdev iio)
+target_link_libraries(iio_reg     iio)
+
+if(PTHREAD_LIBRARIES)
+	project(iio_adi_xflow_check C)
+	add_executable(iio_adi_xflow_check iio_adi_xflow_check.c)
+	target_link_libraries(iio_adi_xflow_check iio pthread)
+endif()
+
+if(NOT SKIP_INSTALL_ALL)
+	install(TARGETS iio_genxml  RUNTIME DESTINATION bin)
+	install(TARGETS iio_info    RUNTIME DESTINATION bin)
+	install(TARGETS iio_readdev RUNTIME DESTINATION bin)
+	if(PTHREAD_LIBRARIES)
+		install(TARGETS iio_adi_xflow_check RUNTIME DESTINATION bin)
+	endif()
+	install(TARGETS iio_reg     RUNTIME DESTINATION bin)
+endif()
