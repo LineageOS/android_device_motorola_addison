@@ -1,5 +1,0 @@
-using System.Reflection;
-using System.Runtime.CompilerServices;
-
-[assembly:AssemblyVersion("@LIBIIO_CS_VERSION@")]
-[assembly:AssemblyDelaySign(false)]
