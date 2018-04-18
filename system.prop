@@ -80,6 +80,16 @@ vidc.dec.downscalar_height=1088
 vidc.dec.disable.split.cpu=1
 vidc.enc.disable.pq=true
 vidc.enc.dcvs.extra-buff-count=2
+vendor.vidc.enc.disable_bframes=1
+vendor.vidc.enc.disable_pframes=1
+vendor.vidc.disable.split.mode=1
+vendor.vidc.dec.downscalar_width=1920
+vendor.vidc.dec.downscalar_height=1088
+vendor.vidc.dec.disable.split.cpu=1
+vendor.vidc.enc.disable.pq=true
+vendor.vidc.enc.dcvs.extra-buff-count=2
+media.camera.ts.monotonic=1
+persist.camera.time.monotonic=1
 
 # CNE
 persist.cne.feature=1
