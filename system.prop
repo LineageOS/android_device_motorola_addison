@@ -90,6 +90,7 @@ vendor.vidc.enc.disable.pq=true
 vendor.vidc.enc.dcvs.extra-buff-count=2
 media.camera.ts.monotonic=1
 persist.camera.time.monotonic=1
+persist.camera.max.previewfps=60
 
 # CNE
 persist.cne.feature=1
