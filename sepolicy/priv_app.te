@@ -17,3 +17,4 @@ allow priv_app proc_stat:file read;
 allow priv_app qemu_hw_mainkeys_prop:file read;
 
 get_prop(priv_app, adspd_prop);
+get_prop(priv_app, qemu_hw_mainkeys_prop);
