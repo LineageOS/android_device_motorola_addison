@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "38a173a3_13d72ab6",
+        "filename": "board-info.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 19406
+      },
+      "writtenOn": "2018-05-29T19:58:14Z",
+      "side": 1,
+      "message": "require version-bootloader\u003d0xC105|0xC106|0xC107|0xC112|",
+      "revId": "abe1011daf413e1040f9b09a8f56492c4aa174aa",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
