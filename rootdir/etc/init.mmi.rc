@@ -329,7 +329,7 @@ service mmi-laser-sh /vendor/bin/sh /vendor/bin/init.mmi.laser.sh
     user root
     oneshot
 
-service charge_only_mode /system/bin/charge_only_mode
+service charge_only_mode /vendor/bin/charge_only_mode
     user root
     group graphics system input
     disabled
