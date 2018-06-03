@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016 The CyanogenMod Project
+ * Copyright (c) 2017 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +18,6 @@
 package org.lineageos.settings.device;
 
 import android.os.Bundle;
-
 import android.preference.PreferenceActivity;
 
 public class ActionsPreferenceActivity extends PreferenceActivity {
@@ -25,9 +25,7 @@ public class ActionsPreferenceActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null){
-            getFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, new ActionsPreferenceFragment()).commit();
-        }
+        getFragmentManager().beginTransaction()
+            .replace(android.R.id.content, new ActionsPreferenceFragment()).commit();
     }
 }

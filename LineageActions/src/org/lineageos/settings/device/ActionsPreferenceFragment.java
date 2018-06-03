@@ -17,18 +17,62 @@
 
 package org.lineageos.settings.device;
 
+import android.app.ActionBar;
 import android.os.Bundle;
+import android.support.v7.preference.Preference;
 import android.support.v14.preference.PreferenceFragment;
+import android.support.v14.preference.SwitchPreference;
+import android.text.TextUtils;
+import android.view.MenuItem;
+
+import java.io.File;
+
+import org.lineageos.internal.util.FileUtils;
+import org.lineageos.settings.device.actions.Constants;
 
 public class ActionsPreferenceFragment extends PreferenceFragment {
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
-    }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        addPreferencesFromResource(R.xml.main_panel);
+        addPreferencesFromResource(R.xml.actions_panel);
+        final ActionBar actionBar = getActivity().getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public void addPreferencesFromResource(int preferencesResId) {
+        super.addPreferencesFromResource(preferencesResId);
+        // Initialize node preferences
+        for (String pref : Constants.sBooleanNodePreferenceMap.keySet()) {
+            SwitchPreference b = (SwitchPreference) findPreference(pref);
+            if (b == null) continue;
+            b.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    String node = Constants.sBooleanNodePreferenceMap.get(preference.getKey());
+                    if (!TextUtils.isEmpty(node)) {
+                        Boolean value = (Boolean) newValue;
+                        FileUtils.writeLine(node, value ? "1" : "0");
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            String node = Constants.sBooleanNodePreferenceMap.get(pref);
+            if (new File(node).exists()) {
+                String curNodeValue = FileUtils.readOneLine(node);
+                b.setChecked(curNodeValue.equals("1"));
+            } else {
+                b.setEnabled(false);
+            }
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            getActivity().onBackPressed();
+            return true;
+        }
+        return false;
     }
 }

@@ -10,36 +10,17 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
 
     <protected-broadcast android:name="com.android.systemui.doze.pulse" />
 
-    <uses-sdk
-        android:minSdkVersion="27"
-        android:targetSdkVersion="27" />
-
     <application
         android:allowBackup="true"
-        android:label="@string/moto_actions_title"
-        android:icon="@mipmap/ic_launcher"
+        android:label="@string/device_settings_app_name"
         android:persistent="true">
-
-        <provider
-            android:name=".LineageActionsSearchIndexablesProvider"
-            android:authorities="org.lineageos.settings.device"
-            android:multiprocess="false"
-            android:grantUriPermissions="true"
-            android:permission="android.permission.READ_SEARCH_INDEXABLES"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.content.action.SEARCH_INDEXABLES_PROVIDER" />
-            </intent-filter>
-        </provider>
 
         <receiver android:name="org.lineageos.settings.device.BootCompletedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.PRE_BOOT_COMPLETED" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
@@ -51,50 +32,36 @@
         </service>
 
         <activity
-            android:name=".DozeSettingsActivity"
-            android:label="@string/ambient_display_title"
-            android:theme="@style/LineageActions">
-            <intent-filter>
-                <action android:name="org.lineageos.settings.device.DOZE_SETTINGS" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".ActionsPreferenceActivity"
-            android:label="@string/moto_actions_title"
-            android:summary="@string/device_gestures_summary"
+            android:name=".DozePreferenceActivity"
+            android:label="@string/ambient_display_gestures_title"
             android:theme="@style/LineageActions">
             <intent-filter>
                 <action android:name="com.android.settings.action.IA_SETTINGS" />
             </intent-filter>
             <meta-data
                 android:name="com.android.settings.category"
-                android:value="com.android.settings.category.ia.homepage" />
+                android:value="com.android.settings.category.ia.display" />
+            <meta-data
+                android:name="com.android.settings.summary"
+                android:resource="@string/ambient_display_gestures_summary" />
+        </activity>
+
+        <activity
+            android:name=".ActionsPreferenceActivity"
+            android:label="@string/moto_gestures_panel_title"
+            android:theme="@style/LineageActions">
+            <intent-filter>
+                <action android:name="com.android.settings.action.IA_SETTINGS" />
+            </intent-filter>
+            <meta-data
+                android:name="com.android.settings.category"
+                android:value="com.android.settings.category.ia.system" />
             <meta-data
                 android:name="com.android.settings.icon"
                 android:resource="@drawable/ic_settings_gestures" />
             <meta-data
                 android:name="com.android.settings.summary"
-                android:resource="@string/device_gestures_summary" />
-        </activity>
-
-        <activity
-            android:name=".GestureSettingsActivity"
-            android:label="@string/device_gestures_title"
-            android:theme="@style/LineageActions">
-        </activity>
-
-        <activity
-            android:name=".FPGestureSettingsActivity"
-            android:label="@string/fingerprint_gestures_title"
-            android:theme="@style/LineageActions">
-        </activity>
-
-        <activity
-            android:name=".ScreenOffGestureSettingsActivity"
-            android:label="@string/screen_off_gestures_title"
-            android:theme="@style/LineageActions">
+                android:resource="@string/screen_gestures_panel_summary" />
         </activity>
 
     </application>

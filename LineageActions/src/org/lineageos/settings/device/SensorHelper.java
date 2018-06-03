@@ -86,7 +86,7 @@ public class SensorHelper {
     public Sensor getGlanceSensor() {
         return mSensorManager.getDefaultSensor(SENSOR_TYPE_MMI_GLANCE, true);
     }
-
+    
     public Sensor getApproachGlanceSensor() {
         return mSensorManager.getDefaultSensor(SENSOR_TYPE_MMI_GLANCE_APPROACH, true);
     }
