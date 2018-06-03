@@ -109,6 +109,8 @@ PRODUCT_PACKAGES += \
 
 # Camera
 PRODUCT_PACKAGES += \
+    libbson \
+    Snap \
     android.hardware.camera.provider@2.4-impl \
     vendor.qti.hardware.camera.device@1.0 \
     vendor.qti.hardware.camera.device@1.0_vendor \
@@ -117,7 +119,6 @@ PRODUCT_PACKAGES += \
     camera.device@3.2-impl \
     camera.device@1.0-impl \
     libxml2 \
-    Camera2 \
     libshim_skia
 
 PRODUCT_COPY_FILES += \
