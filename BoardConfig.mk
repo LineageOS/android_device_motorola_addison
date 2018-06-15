@@ -226,6 +226,9 @@ BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy
 # Shim
 TARGET_LD_SHIM_LIBS := /system/vendor/bin/adspd|libshim_adsp.so:/system/vendor/lib64/libmdmcutback.so|libqsap_shim.so:/system/lib/libYuvSkia.so|libshim_skia.so:/system/vendor/lib/hw/audio.primary.msm8953.so|libtinycompress_vendor.so
 
+# Thermal
+USE_DEVICE_SPECIFIC_THERMAL := true
+
 # Wifi
 BOARD_HAS_QCOM_WLAN              := true
 BOARD_HAS_QCOM_WLAN_SDK          := true
