@@ -195,6 +195,10 @@ PRODUCT_PACKAGES += \
     libfmjni \
     init.qti.fm.sh
 
+# Fingerprint
+PRODUCT_PACKAGES += \
+    android.hardware.biometrics.fingerprint@2.1
+
 # Gatekeeper HAL
 PRODUCT_PACKAGES += \
     android.hardware.gatekeeper@1.0-impl \
