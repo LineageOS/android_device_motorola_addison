@@ -70,6 +70,13 @@ on post-fs
 
     write /proc/sys/vm/page-cluster 0
 
+   # Change permission for fingerprint sensor
+   chown system oem_5004 /sys/devices/soc/soc:fpc_fpc1020/nav
+   chown system oem_5004 /sys/devices/soc/soc:fpc_fpc1020/dev_enable
+   chown system oem_5004 /sys/devices/soc/soc:fpc_fpc1020/irq
+   chown system oem_5004 /sys/devices/soc/soc:fpc_fpc1020/irq_cnt
+   chmod 0440 /sys/devices/soc/soc:fpc_fpc1020/irq_cnt
+
 on post-fs-data
 
     #setup folder for WLAN WAPI
@@ -137,10 +144,6 @@ on post-fs-data
     # SD card encryption metadata
     mkdir /data/misc/sds 0750 root root
 
-    # Required by FingerPrint Cards (FPC) via init so we don't need to give qseecomd or fingerprintd permissions to create them
-    mkdir /data/fpc 0700 system system
-    mkdir /data/.fps 0770 system input
-
     #Folder for hardware properties
     mkdir /data/hardware_revisions 0755 system system
 
@@ -201,15 +204,7 @@ on boot
    chown root oem_5004 /sys/class/i2c-adapter/i2c-2/2-002d/hsic_vdd
    chmod 0660 /sys/class/i2c-adapter/i2c-2/2-002d/hsic_vdd
 
-   # Change permission for fingerprint sensor
-   chown system oem_5004 /sys/bus/spi/devices/spi8.0/nav
-   chown system oem_5004 /sys/bus/spi/devices/spi8.0/clk_enable
-   chown system oem_5004 /sys/bus/spi/devices/spi8.0/dev_enable
-   chown system oem_5004 /sys/bus/spi/devices/spi8.0/irq
-   chown system oem_5004 /sys/bus/spi/devices/spi8.0/irq_cnt
-   chmod 0440 /sys/bus/spi/devices/spi8.0/irq_cnt
-
- # Change ownership and permission for backlight
+   # Change ownership and permission for backlight
    chown system system /sys/class/backlight/lcd-backlight:0/brightness
    chmod 0664 /sys/class/backlight/lcd-backlight:0/brightness
    chown system system /sys/class/backlight/lcd-backlight:0/max_brightness
