@@ -41,10 +41,10 @@ type sysfs_mmi_touch, fs_type, sysfs_type;
 type sysfs_capsense, fs_type, sysfs_type;
 type sysfs_batt, fs_type, sysfs_type;
 type sysfs_cnss, fs_type, sysfs_type;
-type sysfs_fpc, fs_type, sysfs_type;
 
-type fpc_socket, file_type;
-type fpc_data_file, file_type;
+type sysfs_fingerprint, sysfs_type, fs_type;
+type fingerprint_data_file, data_file_type, file_type;
+type fingerprint_socket, data_file_type, file_type;
 
 type sysfs_wcnsscore, fs_type, sysfs_type;
 
