@@ -28,3 +28,5 @@ allow mm-qcamerad hal_sensors_default:unix_stream_socket { read write };
 allow mm-qcamerad sysfs_mods_camd:file { open read };
 allow mm-qcamerad hal_configstore_ISurfaceFlingerConfigs:hwservice_manager find;
 allow mm-qcamerad hal_configstore_default:binder call;
+allow mm-qcamerad wcnss_prop:file { getattr open };
+allow mm-qcamerad wififtmd_prop:file { getattr open };
