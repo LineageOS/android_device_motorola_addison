@@ -68,7 +68,6 @@ PRODUCT_PACKAGES += \
     audio.usb.default \
     audio.r_submix.default \
     libaudio-resampler \
-    libshim_adsp \
     libtinycompress \
     audiod
 
@@ -125,8 +124,7 @@ PRODUCT_PACKAGES += \
     vendor.qti.hardware.vpp@1.1_vendor \
     camera.device@3.2-impl \
     camera.device@1.0-impl \
-    libxml2 \
-    libshim_skia
+    libxml2
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/camera/msm8953_mot_albus_camera.xml:system/etc/camera/msm8953_mot_albus_camera.xml \
@@ -397,10 +395,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     android.hardware.sensors@1.0-impl \
     android.hardware.sensors@1.0-service
-
-# Shims
-PRODUCT_PACKAGES += \
-    libqsap_shim
 
 # Thermal
 PRODUCT_COPY_FILES += \
