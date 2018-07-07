@@ -733,8 +733,6 @@ vendor/lib/liblowi_client.so
 vendor/lib/liblowi_wifihal.so
 vendor/lib/libslimclient.so
 vendor/lib/libulp2.so
-vendor/lib/libxt_native.so
-vendor/lib/libxtadapter.so
 vendor/lib/libxtwifi_ulp_adaptor.so
 vendor/lib/vendor.qti.gnss@1.0_vendor.so
 vendor/lib/hw/vendor.qti.gnss@1.0-impl.so
@@ -865,7 +863,6 @@ vendor/lib64/libc2d30-a3xx.so|8fe03aa03aebfc8e5ad4b441af13abb348e63eea
 vendor/lib64/libc2d30-a4xx.so|09184d5f2e0dd05a157b002c937576d524aefe55
 vendor/lib64/libc2d30-a5xx.so|b87ea8adf53d4e4df6a9d722ab84131111b0312d
 vendor/lib64/libc2d30_bltlib.so|add7b448eec2e354afed7af268a30a484a46fee2
-vendor/lib64/libc2dcolorconvert.so|fe613b3d44199cc5df3fc9a70ff917df0d3ee23c
 vendor/lib64/libC2D2.so|51ccf7cd9be51758a8528e25626ec215eb28dd2f
 vendor/lib64/libCB.so|d15af199d03fadd98e06cebb6e3e2fd682ea621e
 vendor/lib64/libgsl.so|d4f9eb60f0a63ce45223cd8590d9f63d6510a787
@@ -940,7 +937,6 @@ vendor/lib64/libgpustats.so|34c19702c14ddfb22fe0caffb4a22f842efe206c
 vendor/lib64/libvpphvx.so|6d56eaa105cee91d38e01ff32f0de7833a5e8c4c
 vendor/lib64/libvpplibrary.so|76e4602922a6e6bdf7203de4c0ceae9b3aea823e
 vendor/lib64/libvpptestutils.so|f81f8abdd00becffbe64a0c7140df0ac94c93756
-vendor/lib64/mediadrm/libdrmclearkeyplugin.so|334659769db7abdbb542ceb4a91473d7ab1acd6a
 vendor/lib64/mediadrm/libwvdrmengine.so|047331928b53726492313b299582a753ac211c40
 vendor/lib64/libOmxAacDec.so|a85d12a48dfaa9892364dc819d709f11d9dde90b
 vendor/lib64/libOmxAlacDec.so|8554334c840ea0397c8e8bcf343f44138bfc1ecc
