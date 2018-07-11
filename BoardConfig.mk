@@ -97,6 +97,9 @@ BACKLIGHT_PATH := /sys/class/leds/lcd-backlight/brightness
 BOARD_CHARGER_ENABLE_SUSPEND := true
 BOARD_NO_CHARGER_LED := true
 
+# LineageHW
+BOARD_HARDWARE_CLASS += hardware/lineage/lineagehw
+
 # Crypto
 TARGET_HW_DISK_ENCRYPTION := true
 TARGET_KEYMASTER_WAIT_FOR_QSEE := true
