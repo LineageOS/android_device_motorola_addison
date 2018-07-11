@@ -1,7 +1,7 @@
 # Proprietary files for addison
 
 # ADSP
-# vendor/bin/adsprpcd
+vendor/bin/adsprpcd
 vendor/lib/libadsprpc.so
 vendor/lib/libadsp_default_listener.so
 vendor/lib/libmdsprpc.so
@@ -246,9 +246,9 @@ vendor/lib/vendor.display.postproc@1.0_vendor.so
 
 # DRM
 lib/vendor.qti.hardware.qteeconnector@1.0.so
-# vendor/bin/hw/vendor.qti.hardware.qteeconnector@1.0-service
-# vendor/bin/qseecomd
-# vendor/etc/init/vendor.qti.hardware.qteeconnector@1.0-service.rc
+vendor/bin/hw/vendor.qti.hardware.qteeconnector@1.0-service
+vendor/bin/qseecomd
+vendor/etc/init/vendor.qti.hardware.qteeconnector@1.0-service.rc
 vendor/lib/hw/gatekeeper.msm8953.so
 vendor/lib/hw/keystore.msm8953.so
 vendor/lib/hw/vendor.qti.hardware.qteeconnector@1.0-impl.so
@@ -280,13 +280,13 @@ lib/liblocationservice_jni.so
 lib/libxt_native.so
 lib/vendor.qti.gnss@1.0.so
 -priv-app/com.qualcomm.location/com.qualcomm.location.apk
-# vendor/bin/hw/vendor.qti.gnss@1.0-service
-# vendor/bin/loc_launcher
-# vendor/bin/slim_daemon
-# vendor/bin/xtwifi-client
-# vendor/bin/xtwifi-inet-agent
-# vendor/bin/xtra-daemon
-# vendor/etc/init/vendor.qti.gnss@1.0-service.rc
+vendor/bin/hw/vendor.qti.gnss@1.0-service
+vendor/bin/loc_launcher
+vendor/bin/slim_daemon
+vendor/bin/xtwifi-client
+vendor/bin/xtwifi-inet-agent
+vendor/bin/xtra-daemon
+vendor/etc/init/vendor.qti.gnss@1.0-service.rc
 vendor/etc/cacert_location.pem
 vendor/etc/flp.conf
 vendor/etc/gps.conf
@@ -356,15 +356,15 @@ vendor/firmware/a530v3_gpmu.fw2
 vendor/firmware/a530v3_seq.fw2
 
 # IMS
--app/ims/ims.apk|f6f0b1e5161ae608830f01b7e4c7def3ed599eeb
--app/imssettings/imssettings.apk|57e06727c13dbdfd37e78135e944bf78e97d6495
+# -app/imssettings/imssettings.apk ### This is nowhere to be found in the latest stock ROM
+-app/ims/ims.apk
 etc/permissions/qti_permissions.xml
 lib/libimscamera_jni.so
 lib/libimsmedia_jni.so
 lib/vendor.qti.imsrtpservice@1.0.so
-# vendor/bin/imsdatadaemon
-# vendor/bin/imsqmidaemon
-# vendor/bin/ims_rtp_daemon
+vendor/bin/imsdatadaemon
+vendor/bin/imsqmidaemon
+vendor/bin/ims_rtp_daemon
 vendor/lib/lib-imsSDP.so
 vendor/lib/lib-imsdpl.so
 vendor/lib/lib-imsqimf.so
@@ -394,7 +394,7 @@ vendor/firmware/libpn548ad_fw.so
 # Qualcomm framework
 lib/libdiag_system.so
 lib/libqmi_cci_system.so
-# vendor/bin/irsc_util
+vendor/bin/irsc_util
 vendor/lib/libdiag.so
 vendor/lib/libdsi_netctrl.so
 vendor/lib/libdsutils.so
@@ -421,13 +421,13 @@ etc/permissions/qcrilhook.xml
 -framework/qti-telephony-common.jar
 -framework/QtiTelephonyServicelibrary.jar
 -priv-app/qcrilmsgtunnel/qcrilmsgtunnel.apk
-# vendor/bin/netmgrd
-# vendor/bin/pm-proxy
-# vendor/bin/pm-service
-# vendor/bin/qmi_motext_hook
-# vendor/bin/qti
-# vendor/bin/rmt_storage
-# vendor/bin/tftp_server
+vendor/bin/netmgrd
+vendor/bin/pm-proxy
+vendor/bin/pm-service
+vendor/bin/qmi_motext_hook
+vendor/bin/qti
+vendor/bin/rmt_storage
+vendor/bin/tftp_server
 vendor/etc/data/dsi_config.xml
 vendor/etc/data/netmgr_config.xml
 vendor/lib/libadropbox.so
@@ -462,12 +462,12 @@ vendor/lib/vendor.qti.hardware.radio.uim_remote_server@1.0_vendor.so
 vendor/radio/qcril_database/qcril.db
 
 # CNE
-# bin/cnd
 etc/permissions/cneapiclient.xml
 etc/permissions/com.quicinc.cne.xml
 -framework/cneapiclient.jar
 -framework/com.quicinc.cne.api-V1.0-java.jar
 -framework/com.quicinc.cne.jar
+vendor/bin/cnd
 vendor/etc/cne/wqeclient/ATT/ATT_profile1.xml
 vendor/etc/cne/wqeclient/ATT/ATT_profile2.xml
 vendor/etc/cne/wqeclient/ATT/ATT_profile3.xml
@@ -512,15 +512,15 @@ vendor/lib/libscvePanorama_lite.so
 vendor/etc/firmware/sensorhubfw.bin
 
 # Thermal
-# vendor/bin/thermal-engine
+vendor/bin/thermal-engine
 vendor/lib/hw/thermal.msm8953.so
 vendor/lib/libthermalclient.so
 vendor/lib/libthermalioctl.so
 
 # Time services
--vendor/app/TimeService/TimeService.apk|22f13bcbac7b3cac6f6a2c6cc0e1069b3c728faa
-# vendor/bin/time_daemon
-vendor/lib/libtime_genoff.so|267516e23fe515013b6ef4e2f7edd0049fb75466
+-vendor/app/TimeService/TimeService.apk
+vendor/bin/time_daemon
+vendor/lib/libtime_genoff.so
 
 # Touchscreen
 etc/firmware/synaptics-s3508-16082601-255c40-addison.tdat
