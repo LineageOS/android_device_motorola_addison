@@ -105,6 +105,7 @@ PRODUCT_PACKAGES += \
 
 # Camera
 PRODUCT_PACKAGES += \
+    libbson \
     android.hardware.camera.provider@2.4-impl
 
 PRODUCT_COPY_FILES += \
