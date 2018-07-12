@@ -356,8 +356,8 @@ vendor/firmware/a530v3_gpmu.fw2
 vendor/firmware/a530v3_seq.fw2
 
 # IMS
-# -app/imssettings/imssettings.apk ### This is nowhere to be found in the latest stock ROM
--app/ims/ims.apk
+-app/ims/ims.apk|c4c1dba1eb1d528186c77b310367aa9d4bee7949
+-app/imssettings/imssettings.apk|28c85b8209d19b425661166e005f99b06f88fce7
 etc/permissions/qti_permissions.xml
 lib/libimscamera_jni.so
 lib/libimsmedia_jni.so
