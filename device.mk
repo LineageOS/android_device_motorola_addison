@@ -277,6 +277,14 @@ PRODUCT_PACKAGES += \
     sensorhub.msm8953 \
     sensors.msm8953
 
+# Telephony
+PRODUCT_PACKAGES += \
+    ims-ext-common \
+    telephony-ext
+
+PRODUCT_BOOT_JARS += \
+    telephony-ext
+
 # Thermal
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/thermal-engine-addison.conf:system/etc/thermal-engine-addison.conf
