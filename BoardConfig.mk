@@ -148,20 +148,6 @@ TARGET_LD_SHIM_LIBS := \
     /system/vendor/lib/libmdmcutback.so|libqsap_shim.so \
     /system/vendor/lib/libsensorndkbridge.so|libshim_ril.so
 
-# Sensors
-BOARD_USES_MOT_SENSOR_HUB := true
-MOT_AP_SENSOR_HW_REARPROX := true
-MOT_SENSOR_HUB_HW_BMI160 := true
-MOT_SENSOR_HUB_HW_TYPE_L4 := true
-
-MOT_SENSOR_HUB_FEATURE_CAMFSYNC := true
-MOT_SENSOR_HUB_FEATURE_CHOPCHOP := true
-MOT_SENSOR_HUB_FEATURE_GR := true
-MOT_SENSOR_HUB_FEATURE_LA := true
-MOT_SENSOR_HUB_FEATURE_LIFT := true
-MOT_SENSOR_HUB_FEATURE_PEDO := true
-MOT_SENSOR_HUB_FEATURE_ULTRASOUND := true
-
 # Telephony
 TARGET_PROVIDES_QTI_TELEPHONY_JAR := true
 

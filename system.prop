@@ -107,3 +107,6 @@ persist.data.netmgrd.qos.enable=true
 persist.data.mode=concurrent
 
 ro.vendor.extension_library=libqti-perfd-client.so
+
+# Sensors
+ro.hardware.sensors=addison
