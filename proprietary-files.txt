@@ -248,6 +248,7 @@ lib/vendor.qti.hardware.qteeconnector@1.0.so
 vendor/bin/hw/vendor.qti.hardware.qteeconnector@1.0-service
 vendor/bin/qseecomd
 vendor/etc/init/vendor.qti.hardware.qteeconnector@1.0-service.rc
+vendor/lib/com.qualcomm.qti.ant@1.0_vendor.so
 vendor/lib/hw/gatekeeper.msm8953.so
 vendor/lib/hw/keystore.msm8953.so
 vendor/lib/hw/vendor.qti.hardware.qteeconnector@1.0-impl.so
@@ -389,6 +390,24 @@ vendor/lib/libOmxWmaDec.so
 
 # NFC
 vendor/firmware/libpn548ad_fw.so
+
+# Various QTI libraries
+vendor/lib/libqtigef.so
+vendor/lib/libqti-gt-prop.so
+vendor/lib/libqti-iopd-client.so
+vendor/lib/libqti-iopd.so
+vendor/lib/libqti-perfd-client.so
+vendor/lib/libqti-perfd.so
+vendor/lib/libqti-tests-mod1.so
+vendor/lib/libqti-tests-mod2.so
+vendor/lib/libqti-tests-mod3.so
+vendor/lib/libqti-tests-mod4.so
+vendor/lib/libqti-tests-mod5.so
+vendor/lib/libqti-tests-mod6.so
+vendor/lib/libqti-util.so
+vendor/lib/libqti-utils.so
+vendor/lib/vendor.qti.hardware.perf@1.0_vendor.so
+vendor/lib/libperfgluelayer.so
 
 # Qualcomm framework
 lib/libdiag_system.so
