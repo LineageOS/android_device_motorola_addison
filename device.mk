@@ -66,7 +66,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     dalvik.vm.heapsize=384m
 
 $(call inherit-product, frameworks/native/build/phone-xxhdpi-3072-dalvik-heap.mk)
-$(call inherit-product, frameworks/native/build/phone-xxhdpi-3072-hwui-memory.mk)
 
 # Audio
 PRODUCT_PACKAGES += \
