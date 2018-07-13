@@ -9,7 +9,6 @@ allow rild system_data_file:sock_file create_file_perms;
 allow rild radio_data_file:dir rw_dir_perms;
 allow rild radio_data_file:file create_file_perms;
 
-allow rild vendor_file:file execute_no_trans;
-allowxperm rild vendor_file:file ioctl 0xf50c;
+allow rild vendor_file:file { execute_no_trans ioctl };
 
 r_dir_file(rild, fsg_file)
