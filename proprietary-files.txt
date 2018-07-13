@@ -229,7 +229,7 @@ etc/firmware/cpp_firmware_v1_8_0.fw
 etc/firmware/cpp_firmware_v1_10_0.fw
 
 # Display
--framework/com.qti.snapdragon.sdk.display.jar
+framework/com.qti.snapdragon.sdk.display.jar
 -vendor/app/colorservice/colorservice.apk
 etc/permissions/com.qti.snapdragon.sdk.display.xml
 lib/libsd_sdk_display.so
@@ -274,8 +274,8 @@ etc/permissions/com.qti.location.sdk.xml
 etc/permissions/com.qualcomm.location.xml
 etc/permissions/izat.xt.srv.xml
 etc/permissions/privapp-permissions-com.qualcomm.location.xml
--framework/com.qti.location.sdk.jar
--framework/izat.xt.srv.jar
+framework/com.qti.location.sdk.jar
+framework/izat.xt.srv.jar
 lib/liblocationservice_jni.so
 lib/libxt_native.so
 lib/vendor.qti.gnss@1.0.so
@@ -434,9 +434,9 @@ vendor/lib/libsmemlog.so
 -app/QtiTelephonyService/QtiTelephonyService.apk
 etc/permissions/privapp-permissions-com.qualcomm.qcrilmsgtunnel.xml
 etc/permissions/qcrilhook.xml
--framework/qcrilhook.jar
--framework/qti-telephony-common.jar
--framework/QtiTelephonyServicelibrary.jar
+framework/qcrilhook.jar
+framework/qti-telephony-common.jar
+framework/QtiTelephonyServicelibrary.jar
 -priv-app/qcrilmsgtunnel/qcrilmsgtunnel.apk
 vendor/bin/netmgrd
 vendor/bin/pm-proxy
@@ -481,9 +481,9 @@ vendor/radio/qcril_database/qcril.db
 # CNE
 etc/permissions/cneapiclient.xml
 etc/permissions/com.quicinc.cne.xml
--framework/cneapiclient.jar
--framework/com.quicinc.cne.api-V1.0-java.jar
--framework/com.quicinc.cne.jar
+framework/cneapiclient.jar
+framework/com.quicinc.cne.api-V1.0-java.jar
+framework/com.quicinc.cne.jar
 vendor/bin/cnd
 vendor/etc/cne/wqeclient/ATT/ATT_profile1.xml
 vendor/etc/cne/wqeclient/ATT/ATT_profile2.xml
