@@ -80,8 +80,8 @@ void vendor_load_properties()
     property_override_dual("ro.product.model", "ro.vendor.product.model", "Moto Z2 Play");
 
     // fingerprint
-    property_override("ro.build.description", "albus-user 7.1.1 NPSS26.118-19-22 28 release-keys");
-    property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint", "motorola/albus/albus:7.1.1/NPSS26.118-19-22/28:user/release-keys");
+    property_override("ro.build.description", "albus-user 8.0.0 OPS27.76-12-25 26 release-keys");
+    property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint", "motorola/albus/albus:8.0.0/OPS27.76-12-25/26:user/release-keys");
 
     // rmt_storage
     std::string device = android::base::GetProperty("ro.boot.device", "");
@@ -93,10 +93,8 @@ void vendor_load_properties()
 
     num_sims();
 
-    if (radio == "India" || radio == "EMEA_APAC") {
-        property_set("ro.radio.imei.sv", "6");
-    } else if (radio == "Brazil") {
-        property_set("ro.radio.imei.sv", "9");
+    if (radio == "India" || radio == "EMEA_APAC" || radio == "Brazil") {
+        property_set("ro.radio.imei.sv", "10");
     } else if (sku == "XT1710-01" && radio == "NA") {
         property_set("ro.radio.imei.sv", "9");
     } else if (sku == "XT1710-02" && radio == "NA") {
