@@ -327,7 +327,7 @@ on post-fs-data
 
     # Required by FingerPrint Cards (FPC) via init so we dont need to give qseecomd or fingerprintd permissions to create them
     mkdir /data/fpc 0700 system system
-    mkdir /data/.fps 0770 system fingerp
+    mkdir /data/.fps 0770 system input
 
     # Create directory used by display clients
     mkdir /data/vendor/display 0770 system graphics
