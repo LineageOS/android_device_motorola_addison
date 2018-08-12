@@ -79,10 +79,10 @@ BOARD_KERNEL_SEPARATED_DT := true
 TARGET_CUSTOM_DTBTOOL := dtbTool_custom
 BOARD_DTBTOOL_ARGS := --force-v3 --motorola 1
 BOARD_MKBOOTIMG_ARGS := --ramdisk_offset 0x01000000 --tags_offset 0x00000100
-TARGET_KERNEL_CLANG_COMPILE := true
+TARGET_KERNEL_HEADER := arm64
 TARGET_KERNEL_HEADER_ARCH := arm64
 TARGET_KERNEL_CONFIG := albus_defconfig
-TARGET_KERNEL_SOURCE := kernel/motorola/msm8953
+TARGET_KERNEL_SOURCE := kernel/motorola/msm8996
 
 TARGET_USE_SDCLANG := true
 
@@ -248,4 +248,3 @@ WIFI_DRIVER_FW_PATH_AP           := "ap"
 WIFI_DRIVER_FW_PATH_STA          := "sta"
 WIFI_DRIVER_FW_PATH_P2P          := "p2p"
 WPA_SUPPLICANT_VERSION           := VER_0_8_X
-

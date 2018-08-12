@@ -1,25 +1,22 @@
 [
   {
-    "repository":  "android_kernel_motorola_msm8953",
-    "target_path": "kernel/motorola/msm8953"
+    "repository":  "android_kernel_motorola_msm8996",
+    "target_path": "kernel/motorola/msm8996"
   },
   {
-    "remote":      "github",
-    "repository":  "boulzordev/android_hardware_qcom_media",
+    "repository":  "android_hardware_qcom_media",
     "target_path": "hardware/qcom/media-caf/msm8937",
-    "revision":    "bzr-8.1-8937"
+    "revision":    "lineage-15.1-caf-8996"
   },
   {
-    "remote":      "github",
-    "repository":  "boulzordev/android_hardware_qcom_display",
+    "repository":  "android_hardware_qcom_display",
     "target_path": "hardware/qcom/display-caf/msm8937",
-    "revision":    "bzr-8.1-8937"
+    "revision":    "lineage-15.1-caf-8996"
   },
   {
-    "remote":      "github",
-    "repository":  "boulzordev/android_hardware_qcom_audio",
+    "repository":  "android_hardware_qcom_audio",
     "target_path": "hardware/qcom/audio-caf/msm8937",
-    "revision":    "bzr-8.1-8937"
+    "revision":    "lineage-15.1-caf-8996"
   },
   {
     "repository": "android_packages_resources_devicesettings",
