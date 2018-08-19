@@ -250,9 +250,6 @@ BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy
 TARGET_RECOVERY_UPDATER_LIBS := librecovery_updater_albus
 TARGET_RELEASETOOLS_EXTENSIONS := $(DEVICE_PATH)
 
-# Shim
-TARGET_LD_SHIM_LIBS := /system/vendor/lib64/libmdmcutback.so|libqsap_shim.so
-
 # Thermal
 USE_DEVICE_SPECIFIC_THERMAL := true
 
