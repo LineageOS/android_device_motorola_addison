@@ -294,10 +294,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
 	librecovery_updater_albus
 
-# Mods
-PRODUCT_PACKAGES += \
-    ModPermsFix
-
 # ModService
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/whitelist_modservice.xml:$(TARGET_COPY_OUT_VENDOR)/etc/sysconfig/whitelist_modservice.xml
