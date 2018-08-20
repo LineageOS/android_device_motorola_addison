@@ -283,8 +283,15 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/keylayout/Vendor_22b8_Product_ffff.kl:system/usr/keylayout/Vendor_22b8_Product_ffff.kl
 
 # NFC
-PRODUCT_COPY_FILES += \
-    frameworks/base/nfc-extras/com.android.nfc_extras.xml:system/etc/permissions/com.android.nfc_extras.xml
+PRODUCT_PACKAGES += \
+    android.hardware.nfc@1.0-impl \
+    android.hardware.nfc@1.0-service \
+    com.android.nfc_extras \
+    nfc_nci.msm8953 \
+    NfcNci \
+    nqnfcee_access.xml \
+    nqnfcse_access.xml \
+    Tag
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/libnfc-brcm.conf:system/etc/libnfc-brcm.conf \
@@ -304,15 +311,6 @@ PRODUCT_PACKAGES += \
     netutils-wrapper-1.0 \
     libandroid_net \
     libandroid_net_32
-
-PRODUCT_PACKAGES += \
-    libnfc \
-    libnfc_jni \
-    nfc_nci.msm8953 \
-    NfcNci \
-    Tag \
-    com.android.nfc_extras \
-    android.hardware.nfc@1.0-impl
 
 # OMX
 PRODUCT_PACKAGES += \
