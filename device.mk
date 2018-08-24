@@ -108,6 +108,11 @@ PRODUCT_PACKAGES += \
     android.hardware.bluetooth@1.0-impl \
     android.hardware.bluetooth@1.0-service
 
+# Broadcast Radio
+PRODUCT_PACKAGES += \
+    android.hardware.broadcastradio@1.1 \
+    android.hardware.broadcastradio@1.0-impl
+
 # Browser
 PRODUCT_PACKAGES += \
     Gello
