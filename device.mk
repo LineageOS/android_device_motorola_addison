@@ -112,18 +112,19 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     Gello
 
-# Camera
 PRODUCT_PACKAGES += \
-    libbson \
-    Snap \
+    android.hardware.camera.device@1.0 \
+    android.hardware.camera.device@3.2 \
+    android.hardware.camera.provider@2.4 \
     android.hardware.camera.provider@2.4-impl \
+    android.hardware.camera.common@1.0 \
     vendor.qti.hardware.camera.device@1.0 \
     vendor.qti.hardware.camera.device@1.0_vendor \
-    vendor.qti.hardware.vpp@1.1 \
-    vendor.qti.hardware.vpp@1.1_vendor \
-    camera.device@3.2-impl \
     camera.device@1.0-impl \
-    libxml2
+    camera.device@3.2-impl \
+    libbson.vendor \
+    libxml2 \
+    Snap
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/camera/msm8953_mot_albus_camera.xml:system/etc/camera/msm8953_mot_albus_camera.xml \
