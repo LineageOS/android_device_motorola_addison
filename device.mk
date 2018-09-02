@@ -424,8 +424,7 @@ PRODUCT_PACKAGES += \
 # Update this list with what each blob is actually for
 # libstdc++: camera.msm8953
 PRODUCT_PACKAGES += \
-    libstdc++.vendor \
-    vndk_package
+    libstdc++.vendor 
    
 # Vibrator
 PRODUCT_PACKAGES += \
