@@ -40,6 +40,7 @@ on early-init
 on fs
     wait /dev/block/platform/soc/${ro.boot.bootdevice}
     symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
+    symlink /dev/block/bootdevice/by-name/oem /dev/block/bootdevice/by-name/vendor
 
     mount_all /system/vendor/etc/fstab.qcom
 
