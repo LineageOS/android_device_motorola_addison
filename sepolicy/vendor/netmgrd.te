@@ -6,3 +6,4 @@ allow netmgrd net_data_file:dir r_dir_perms;
 allow netmgrd netd_socket:sock_file write;
 # allow netmgrd toolbox_exec:file { execute getattr execute_no_trans read open };
 r_dir_file(netmgrd, net_data_file)
+allow netmgrd system_file:file lock;

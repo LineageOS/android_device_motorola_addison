@@ -10,11 +10,12 @@
 /vendor/bin/init\.mmi\.boot\.sh                          u:object_r:mmi_boot_exec:s0
 /vendor/bin/init\.mmi\.laser\.sh                         u:object_r:mmi_laser_exec:s0
 /vendor/bin/wlan_carrier_bin\.sh                         u:object_r:init_wifi_exec:s0
+/vendor/bin/qmi_motext_hook                              u:object_r:rild_exec:s0
 /vendor/bin/motosh                                       u:object_r:sensor_hub_exec:s0
 /vendor/bin/akmd09912                                    u:object_r:akmd_exec:s0
 /vendor/bin/vl53l1_daemon                                u:object_r:vl53l1_exec:s0
 /vendor/bin/init\.qti\.fm\.sh		u:object_r:qti_init_shell_exec:s0
-/vendor/bin/mods_camd                    u:object_r:mods_camd_exec:s0
+/(vendor|system/vendor)/bin/mods_camd                    u:object_r:mods_exec:s0
 /vendor/bin/hw/motorola\.hardware\.camera\.provider@2\.4-service        u:object_r:hal_camera_default_exec:s0
 /vendor/bin/hw/motorola\.hardware\.mods_camera\.provider@2\.4-service   u:object_r:hal_camera_default_exec:s0
 /vendor/bin/hw/android\.hardware\.biometrics\.fingerprint@2\.1-fpcservice   u:object_r:fpc_hal_exec:s0
@@ -32,6 +33,7 @@
 /sys/devices/soc/soc:fpc_fpc1020(/.*)?                        u:object_r:sysfs_fingerprint:s0
 /data/fpc(/.*)?                                               u:object_r:fingerprint_data_file:s0
 /data/fpc/socket                                              u:object_r:fingerprint_socket:s0
+/data/.fps                                                    u:object_r:fingerprint_data_file:s0
 
 # Modem
 /persist/mdm(/.*)?                                       u:object_r:persist_modem_file:s0
