@@ -630,7 +630,7 @@ vendor/firmware/synaptics-s3508sga-17022300-255c40-albus.tdat
 # DPM
 -framework/com.qti.dpmframework.jar
 -framework/dpmapi.jar
-vendor/etc/permissions/com.qti.dpmframework.xml
+etc/permissions/com.qti.dpmframework.xml
 
 # DRM
 vendor/bin/qseecomd|2237e318792e63d929ded13e7c456f2dc5d49482
@@ -797,7 +797,7 @@ vendor/bin/hw/vendor.qti.hardware.qdutils_disp@1.0-service-qti|90992c4c9a036a196
 vendor/etc/init/vendor.display.color@1.0-service.rc
 vendor/etc/init/vendor.qti.hardware.qdutils_disp@1.0-service-qti.rc
 vendor/etc/permissions/com.motorola.motodisplay.xml
-vendor/etc/permissions/com.qti.snapdragon.sdk.display.xml
+etc/permissions/com.qti.snapdragon.sdk.display.xml
 vendor/firmware/a225_pfp.fw
 vendor/firmware/a225_pm4.fw
 vendor/firmware/a225p5_pm4.fw
@@ -1122,12 +1122,12 @@ vendor/bin/rmt_storage|e3b7f6cc851a0bb2fa1f2a5ce3d08208af98eadc
 vendor/bin/tftp_server|fd2f8fab952e6f30975177bb6ecd9acc585c853f
 vendor/etc/data/dsi_config.xml
 vendor/etc/data/netmgr_config.xml
-vendor/etc/permissions/ConnectivityExt.xml
-vendor/etc/permissions/embms.xml
+etc/permissions/ConnectivityExt.xml
+etc/permissions/embms.xml
 vendor/etc/permissions/privapp-permissions-com.qualcomm.atfwd.xml
 vendor/etc/permissions/privapp-permissions-com.qualcomm.qcrilmsgtunnel.xml
-vendor/etc/permissions/qcrilhook.xml
-vendor/etc/permissions/telephonyservice.xml
+etc/permissions/qcrilhook.xml
+etc/permissions/telephonyservice.xml
 vendor/lib/lib-dplmedia.so
 vendor/lib/lib_remote_simlock.so
 vendor/lib/libconfigdb.so
@@ -1182,8 +1182,8 @@ vendor/bin/ims_rtp_daemon|46439ac81e5580bf46d0d161e6a63da6a204cdf4
 vendor/bin/imsdatadaemon|a3554d37244e79a91d4fde1a91a40c5dade9fbb1
 vendor/bin/imsqmidaemon|93ab259162d5c1c050d328e85af2e28c0165720b
 vendor/bin/imsrcsd|852bf86ee86975b2b820cf6ed0a22bc227a38103
-vendor/etc/permissions/ims.xml
-vendor/etc/permissions/imscm.xml
+etc/permissions/ims.xml
+etc/permissions/imscm.xml
 vendor/etc/permissions/qti-vzw-ims-internal.xml
 vendor/lib/lib-imsSDP.so
 vendor/lib/lib-imscamera.so
