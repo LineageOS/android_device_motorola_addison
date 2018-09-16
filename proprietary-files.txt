@@ -56,7 +56,6 @@ vendor/lib64/libldacBT_enc.so|a5fb63c23a748ed3e1ddf39c6da353f3d2da88f1
 
 # Camera
 vendor/etc/permissions/com.motorola.camera2.xml
-etc/permissions/com.motorola.moto-premium.xml
 vendor/bin/hw/motorola.hardware.camera.provider@2.4-service
 vendor/bin/hw/motorola.hardware.mods_camera.provider@2.4-service
 vendor/bin/mm-qcamera-app
@@ -781,7 +780,6 @@ vendor/lib64/vendor.qti.gnss@1.0_vendor.so|057a56a22493343425c8b9019207fb33311d9
 -framework/com.qti.snapdragon.sdk.display.jar
 -vendor/lib/libsdm-disp-vndapis.so
 -vendor/lib64/libsdm-disp-vndapis.so|6e3badb9c989fe0a1a646c4c6e360d94839b123e
-etc/permissions/com.motorola.motodisplay.xml
 lib/libsd_sdk_display.so
 lib/libsdm-disp-apis.so
 lib/vendor.display.color@1.0.so
@@ -796,7 +794,6 @@ vendor/bin/hw/vendor.display.color@1.0-service|d425553ff762338a67e3d8b6b98db4635
 vendor/bin/hw/vendor.qti.hardware.qdutils_disp@1.0-service-qti|90992c4c9a036a1964f6b90acd16fb3e5bb050ad
 vendor/etc/init/vendor.display.color@1.0-service.rc
 vendor/etc/init/vendor.qti.hardware.qdutils_disp@1.0-service-qti.rc
-vendor/etc/permissions/com.motorola.motodisplay.xml
 etc/permissions/com.qti.snapdragon.sdk.display.xml
 vendor/firmware/a225_pfp.fw
 vendor/firmware/a225_pm4.fw
@@ -1003,21 +1000,24 @@ vendor/lib/mmi_vibrator.so
 vendor/lib/mmi_wifi.so
 
 # Moto Mods
--priv-app/ModFmwkProxyService/ModFmwkProxyService.apk
--priv-app/ModService/ModService.apk;PRESIGNED
--priv-app/ProjectorApp/ProjectorApp.apk;PRESIGNED
+-priv-app/ModFmwkProxyService/ModFmwkProxyService.apk|36fdc66b39643433d2ffa46c986e300c6e6f7288
 etc/firmware/upd-00000126-00001001-fed70128-fffe0001-02.tftf
 etc/permissions/com.motorola.aov.xml
 etc/permissions/com.motorola.mod.protocols.xml
-etc/permissions/com.motorola.mod.xml
-lib/com.motorola.mod@1.0.so
-lib64/libmodhw.so|b9a8f7b01ae24fa8e2bc91475b13d7a5f941730a
-vendor/bin/mods_camd|bc12ab9b9cf4b231b0d7cafde1f280af9494357c
-vendor/etc/permissions/com.motorola.aov.xml
-vendor/etc/permissions/privapp-permissions-com.motorola.modservice.xml
-vendor/etc/permissions/privapp-permissions-com.motorola.projectormod.xml
+etc/permissions/com.motorola.mod.xml|b25e55275b7ecc5f4d46db52c6148fe7c75ff60b
+etc/permissions/com.motorola.moto-premium.xml
+etc/permissions/com.motorola.motodisplay.xml
+etc/permissions/privapp-permissions-com.motorola.modservice.xml
+etc/permissions/privapp-permissions-com.motorola.projectormod.xml
+lib64/libmodhw.so|18abdcb5beff7b348dde44a967526224040778bd
+-priv-app/ModService/ModService.apk;PRESIGNED|8acc52de7a5d4f02ae0da7a0580f54f6cd52cf22
+-priv-app/ProjectorApp/ProjectorApp.apk;PRESIGNED
+vendor/bin/mods_camd|ab121a6a42d911a8fff16d8364f0f64d643bab64
 vendor/lib/libmodmanager.so
-vendor/lib64/libmodmanager.so|5005ad6f5e2b09ac460ff533c5c9a8e90da4d49e
+vendor/lib64/libmodmanager.so|22dc3f4eb78bae425fbbf7d7777fe37d71a52b6e
+vendor/lib64/com.motorola.mod@1.0.so|7a8a0882a5dbde85b889f878508ae44d8589bdbf
+vendor/lib64/com.motorola.mod@1.0_vendor.so|40d32566198a77fdf66d8a884da56477944d7d4e
+vendor/lib/com.motorola.mod@1.0_vendor.so
 
 # NFC
 vendor/firmware/libpn548ad_fw.so
