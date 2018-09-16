@@ -356,6 +356,7 @@ PRODUCT_PACKAGES += \
     init.gbmods.sh \
     init.mmi.usb.rc \
     init.qcom.rc \
+    init.albus.rc \
     init.mods.rc
 
 PRODUCT_COPY_FILES += \
