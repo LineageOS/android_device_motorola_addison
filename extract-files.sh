@@ -59,4 +59,12 @@ extract "$MY_DIR"/proprietary-files.txt "$SRC" "$SECTION"
 
 BLOB_ROOT="$LINEAGE_ROOT"/vendor/"$VENDOR"/"$DEVICE"/proprietary
 
+# Load camera configs form /vendor
+CAM2_SENSOR_MODULES="$BLOB_ROOT"/vendor/lib/libmmcamera2_sensor_modules.so
+sed -i "s|/system/etc/|/vendor/etc/|g" "$CAM2_SENSOR_MODULES"
+
+# Load Zaf configs form /vendor
+ZAF_CORE="$BLOB_ROOT"/vendor/lib/libzaf_core.so
+sed -i "s|/system/etc/|/vendor/etc/|g" "$ZAF_CORE"
+
 "$MY_DIR"/setup-makefiles.sh

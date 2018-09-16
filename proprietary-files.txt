@@ -389,7 +389,7 @@ vendor/lib/libmmcamera2_mct_shimlayer.so
 vendor/lib/libmmcamera2_pp_buf_mgr.so
 vendor/lib/libmmcamera2_pproc_modules.so
 vendor/lib/libmmcamera2_q3a_core.so
-vendor/lib/libmmcamera2_sensor_modules.so
+vendor/lib/libmmcamera2_sensor_modules.so|104937f84af586ebf471af39ee8cb1fe50a3e932
 vendor/lib/libmmcamera2_stats_algorithm.so
 vendor/lib/libmmcamera2_stats_modules.so
 vendor/lib/libmmcamera_ar1335.so
@@ -506,7 +506,7 @@ vendor/lib/libts_detected_face_jni.so
 vendor/lib/libts_face_beautify_hal.so
 vendor/lib/libts_face_beautify_jni.so
 vendor/lib/libzaf_algs.so
-vendor/lib/libzaf_core.so
+vendor/lib/libzaf_core.so|ba290700d210aaaf0bfac3b805b068c47bb9cfb8
 vendor/lib/motcamera.device@1.0-impl.so
 vendor/lib/motorola.hardware.camera.device@1.0.so
 vendor/lib/motorola.hardware.camera.device@1.0_vendor.so
