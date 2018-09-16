@@ -29,15 +29,15 @@ TARGET_SCREEN_HEIGHT := 1920
 PRODUCT_DEVICE := albus
 PRODUCT_NAME := lineage_albus
 PRODUCT_BRAND := motorola
+PRODUCT_MODEL := Moto Z2 Play
 PRODUCT_MANUFACTURER := motorola
+PRODUCT_RELEASE_NAME := albus
 
 PRODUCT_ENFORCE_RRO_TARGETS := \
     framework-res
 
-PRODUCT_SYSTEM_PROPERTY_BLACKLIST := ro.product.model
-
 PRODUCT_BUILD_PROP_OVERRIDES += \
-    PRODUCT_NAME="Moto Z2 Play" \
+    PRODUCT_NAME=albus \
     PRIVATE_BUILD_DESC="albus-user 8.0.0 OPSS27.76-12-25-3 4 release-keys"
 
 BUILD_FINGERPRINT := motorola/albus/albus:8.0.0/OPSS27.76-12-25-3/4:user/release-keys
