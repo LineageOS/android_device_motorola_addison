@@ -39,3 +39,33 @@ on property:ro.hw.dualsim=true
 
 on property:ro.hw.dualsim=false
     setprop persist.radio.multisim.config ""
+
+on property:ro.boot.radio=India
+    setprop ro.radio.imei.sv 10
+
+on property:ro.boot.radio=EMEA_APAC
+    setprop ro.radio.imei.sv 10
+
+on property:ro.boot.radio=Brazil
+    setprop ro.radio.imei.sv 10
+
+on property:ro.boot.hardware.sku=XT1710-01 && ro.boot.radio=NA
+    setprop ro.radio.imei.sv 9
+
+on property:ro.boot.hardware.sku=XT1710-02 && ro.boot.radio=NA
+    setprop ro.radio.imei.sv 1
+
+on property:ro.boot.hardware.sku=XT1710-01
+    setprop ro.telephony.default_network 10,0
+
+on property:ro.boot.hardware.sku=XT1710-07
+    setprop ro.telephony.default_network 10,0
+
+on property:ro.boot.hardware.sku=XT1710-09
+    setprop ro.telephony.default_network 10,0
+
+on property:ro.boot.hardware.sku=XT1710-10
+    setprop ro.telephony.default_network 10,0
+
+on property:ro.boot.hardware.sku=XT1710-02
+    setprop ro.telephony.default_network 10
