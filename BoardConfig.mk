@@ -138,15 +138,6 @@ TARGET_USES_HWC2 := true
 TARGET_USES_GRALLOC1 := true
 TARGET_SCREEN_DENSITY := 420
 
-# Enable dexpreopt to speed boot time
-ifeq ($(HOST_OS),linux)
-    ifneq ($(TARGET_BUILD_VARIANT),eng)
-        ifeq ($(WITH_DEXPREOPT),)
-            WITH_DEXPREOPT := true
-        endif
-    endif
-endif
-
 # DRM
 TARGET_ENABLE_MEDIADRM_64 := true
 
