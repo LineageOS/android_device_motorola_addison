@@ -17,6 +17,42 @@ ifneq ($(filter albus,$(TARGET_DEVICE)),)
 
 LOCAL_PATH := $(call my-dir)
 
+#A/B builds require us to create the mount points at compile time.
+#Just creating it for all cases since it does not hurt.
+FIRMWARE_MOUNT_POINT := $(TARGET_OUT_VENDOR)/firmware_mnt
+DSP_MOUNT_POINT := $(TARGET_OUT_VENDOR)/dsp
+FSG_MOUNT_POINT := $(TARGET_OUT_VENDOR)/fsg
+
+ALL_DEFAULT_INSTALLED_MODULES += $(FIRMWARE_MOUNT_POINT) \
+	$(DSP_MOUNT_POINT) \
+	$(FSG_MOUNT_POINT)
+
+$(FIRMWARE_MOUNT_POINT):
+	@echo "Creating $(FIRMWARE_MOUNT_POINT)"
+	@mkdir -p $(TARGET_OUT_VENDOR)/firmware_mnt
+ifneq ($(TARGET_MOUNT_POINTS_SYMLINKS),false)
+	@ln -sf /vendor/firmware_mnt $(TARGET_ROOT_OUT)/firmware
+endif
+
+$(DSP_MOUNT_POINT):
+	@echo "Creating $(DSP_MOUNT_POINT)"
+	@mkdir -p $(TARGET_OUT_VENDOR)/dsp
+ifneq ($(TARGET_MOUNT_POINTS_SYMLINKS),false)
+	@ln -sf /vendor/dsp $(TARGET_ROOT_OUT)/dsp
+endif
+
+$(FSG_MOUNT_POINT):
+	@echo "Creating $(FSG_MOUNT_POINT)"
+	@mkdir -p $(TARGET_OUT_VENDOR)/fsg
+
+DSP_SYMLINK := $(TARGET_OUT_VENDOR)/lib/dsp
+$(DSP_SYMLINK): $(LOCAL_INSTALLED_MODULE)
+	@echo "Creating DSP folder symlink: $@"
+	@rm -rf $@
+	$(hide) ln -sf /vendor/dsp $@
+
+ALL_DEFAULT_INSTALLED_MODULES += $(DSP_SYMLINK)
+
 FIRMWARE_ADSP_IMAGES := \
     adsp.b00 adsp.b01 adsp.b02 adsp.b03 adsp.b04 adsp.b05 adsp.b06 \
     adsp.b07 adsp.b08 adsp.b09 adsp.b10 adsp.b11 adsp.b12 adsp.b13 \
@@ -30,6 +66,7 @@ $(FIRMWARE_ADSP_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	$(hide) ln -sf /firmware/image/$(notdir $@) $@
 
 ALL_DEFAULT_INSTALLED_MODULES += $(FIRMWARE_ADSP_SYMLINKS)
+include $(CLEAR_VARS)
 
 FIRMWARE_CMNLIB_IMAGES := \
     cmnlib.b00 cmnlib.b01 cmnlib.b02 cmnlib.b03 cmnlib.b04 cmnlib.b05 cmnlib.mdt
@@ -80,20 +117,6 @@ $(FIRMWARE_CPPF_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 
 ALL_DEFAULT_INSTALLED_MODULES += $(FIRMWARE_CPPF_SYMLINKS)
 
-FIRMWARE_FINGERPRINT_IMAGES := \
-    fpctzappfingerprint.b00 fpctzappfingerprint.b01 fpctzappfingerprint.b02 \
-    fpctzappfingerprint.b03 fpctzappfingerprint.b04 fpctzappfingerprint.b05 \
-    fpctzappfingerprint.b06 fpctzappfingerprint.mdt
-
-FIRMWARE_FINGERPRINT_SYMLINKS := $(addprefix $(TARGET_OUT_VENDOR)/firmware/,$(notdir $(FIRMWARE_FINGERPRINT_IMAGES)))
-$(FIRMWARE_FINGERPRINT_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
-	@echo "Fingerprint Firmware link: $@"
-	@mkdir -p $(dir $@)
-	@rm -rf $@
-	$(hide) ln -sf /firmware/image/$(notdir $@) $@
-
-ALL_DEFAULT_INSTALLED_MODULES += $(FIRMWARE_FINGERPRINT_SYMLINKS)
-
 FIRMWARE_JSLR_IMAGES := \
     jslr.b00 jslr.b01 jslr.b02 jslr.b03 jslr.b04 jslr.b05 jslr.b06 jslr.mdt
 
@@ -116,21 +139,6 @@ $(MBA_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	$(hide) ln -sf /firmware/image/$(notdir $@) $@
 
 ALL_DEFAULT_INSTALLED_MODULES += $(MBA_SYMLINKS)
-
-FIRMWARE_MODEM_IMAGES := \
-    modem.b00 modem.b01 modem.b02 modem.b04 modem.b05 modem.b06 \
-    modem.b07 modem.b08 modem.b09 modem.b10 modem.b11 modem.b12 \
-    modem.b13 modem.b16 modem.b17 modem.b18 modem.b19 modem.b20 \
-    modem.mdt
-
-FIRMWARE_MODEM_SYMLINKS := $(addprefix $(TARGET_OUT_VENDOR)/firmware/,$(notdir $(FIRMWARE_MODEM_IMAGES)))
-$(FIRMWARE_MODEM_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
-	@echo "Modem Firmware link: $@"
-	@mkdir -p $(dir $@)
-	@rm -rf $@
-	$(hide) ln -sf /firmware/image/$(notdir $@) $@
-
-ALL_DEFAULT_INSTALLED_MODULES += $(FIRMWARE_MODEM_SYMLINKS)
 
 QDSP6M_IMAGES := qdsp6m.qdb
 
@@ -187,10 +195,10 @@ $(RFS_MSM_ADSP_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@rm -rf $@/*
 	@mkdir -p $(dir $@)/readonly/vendor
 	$(hide) ln -sf /data/vendor/tombstones/rfs/lpass $@/ramdumps
-	$(hide) ln -sf /persist/rfs/msm/adsp $@/readwrite
-	$(hide) ln -sf /persist/rfs/shared $@/shared
-	$(hide) ln -sf /persist/hlos_rfs/shared $@/hlos
-	$(hide) ln -sf /firmware $@/readonly/firmware
+	$(hide) ln -sf /mnt/vendor/persist/rfs/msm/adsp $@/readwrite
+	$(hide) ln -sf /mnt/vendor/persist/rfs/shared $@/shared
+	$(hide) ln -sf /mnt/vendor/persist/hlos_rfs/shared $@/hlos
+	$(hide) ln -sf /vendor/firmware_mnt $@/readonly/firmware
 	$(hide) ln -sf /vendor/firmware $@/readonly/vendor/firmware
 
 RFS_MSM_SLPI_SYMLINKS := $(TARGET_OUT_VENDOR)/rfs/msm/slpi/
@@ -198,11 +206,11 @@ $(RFS_MSM_SLPI_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "Creating RFS MSM SLPI folder structure: $@"
 	@rm -rf $@/*
 	@mkdir -p $(dir $@)/readonly/vendor
-	$(hide) ln -sf /data/vendor/tombstones/rfs/lpass $@/ramdumps
-	$(hide) ln -sf /persist/rfs/msm/slpi $@/readwrite
-	$(hide) ln -sf /persist/rfs/shared $@/shared
-	$(hide) ln -sf /persist/hlos_rfs/shared $@/hlos
-	$(hide) ln -sf /firmware $@/readonly/firmware
+	$(hide) ln -sf /data/vendor/tombstones/rfs/slpi $@/ramdumps
+	$(hide) ln -sf /mnt/vendor/persist/rfs/msm/slpi $@/readwrite
+	$(hide) ln -sf /mnt/vendor/persist/rfs/shared $@/shared
+	$(hide) ln -sf /mnt/vendor/persist/hlos_rfs/shared $@/hlos
+	$(hide) ln -sf /vendor/firmware_mnt $@/readonly/firmware
 	$(hide) ln -sf /vendor/firmware $@/readonly/vendor/firmware
 
 RFS_MSM_MPSS_SYMLINKS := $(TARGET_OUT_VENDOR)/rfs/msm/mpss/
@@ -211,10 +219,10 @@ $(RFS_MSM_MPSS_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@rm -rf $@/*
 	@mkdir -p $(dir $@)/readonly/vendor
 	$(hide) ln -sf /data/vendor/tombstones/rfs/modem $@/ramdumps
-	$(hide) ln -sf /persist/rfs/msm/mpss $@/readwrite
-	$(hide) ln -sf /persist/rfs/shared $@/shared
-	$(hide) ln -sf /persist/hlos_rfs/shared $@/hlos
-	$(hide) ln -sf /firmware $@/readonly/firmware
+	$(hide) ln -sf /mnt/vendor/persist/rfs/msm/mpss $@/readwrite
+	$(hide) ln -sf /mnt/vendor/persist/rfs/shared $@/shared
+	$(hide) ln -sf /mnt/vendor/persist/hlos_rfs/shared $@/hlos
+	$(hide) ln -sf /vendor/firmware_mnt $@/readonly/firmware
 	$(hide) ln -sf /vendor/firmware $@/readonly/vendor/firmware
 
 ALL_DEFAULT_INSTALLED_MODULES += $(RFS_MSM_ADSP_SYMLINKS) $(RFS_MSM_MPSS_SYMLINKS) $(RFS_MSM_SLPI_SYMLINKS)
@@ -235,24 +243,6 @@ $(NUKE_NOTEPAD): $(LOCAL_INSTALLED_MODULE)
 	@rm -rf $@
 
 ALL_DEFAULT_INSTALLED_MODULES += $(NUKE_NOTEPAD)
-
-PARTITIONS_TO_LINK := dsp fsg
-
-VENDOR_SUBPARTS_SYMLINKS := $(addprefix $(TARGET_OUT_VENDOR)/, $(notdir $(PARTITIONS_TO_LINK)))
-$(VENDOR_SUBPARTS_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
-	@echo "Vendor linked partition: $@"
-	@mkdir -p $(dir $@)
-	@rm -rf $@
-	$(hide) ln -sf /$(notdir $@) $@
-
-FIRMWARE_SYMLINK := $(TARGET_OUT_VENDOR)/firmware_mnt
-$(FIRMWARE_SYMLINK): $(LOCAL_INSTALLED_MODULE)
-	@echo "Vendor linked partition: $@"
-	@mkdir -p $(dir $@)
-	@rm -rf $@
-	$(hide) ln -sf /firmware $@
-
-ALL_DEFAULT_INSTALLED_MODULES += $(VENDOR_SUBPARTS_SYMLINKS) $(FIRMWARE_SYMLINK)
 
 include $(call all-makefiles-under,$(LOCAL_PATH))
 

@@ -31,12 +31,7 @@ import /vendor/etc/init/hw/init.${ro.boot.device}.rc
 on early-init
     mount debugfs debugfs /sys/kernel/debug
     chmod 0755 /sys/kernel/debug
-    mkdir /firmware 0771 system system
-    mkdir /system 0777 root root
-    symlink /data/tombstones /tombstones
-    mkdir /dsp 0771 media media
-    chown root system /dev/kmsg
-    chmod 0620 /dev/kmsg
+
 
 on fs
     wait /dev/block/platform/soc/${ro.boot.bootdevice}
@@ -54,11 +49,11 @@ on fs
     mkdir /persist/battery 0700 system system
 
     wait /dev/block/bootdevice/by-name/persist
-    mkdir /persist/data 0700  system system
-    restorecon_recursive   /persist
+    mkdir /mnt/vendor/persist/data 0700  system system
+    restorecon_recursive   /mnt/vendor/persist
 
     wait /dev/block/bootdevice/by-name/dsp
-    restorecon_recursive   /dsp
+    restorecon_recursive   /vendor/dsp
 
 on init
 
@@ -73,6 +68,38 @@ on init
     write /sys/fs/cgroup/memory/bg/memory.move_charge_at_immigrate 1
     chown root system /sys/fs/cgroup/memory/bg/tasks
     chmod 0660 /sys/fs/cgroup/memory/bg/tasks
+
+    # Change ownership for for HBM feature
+    chown system system /sys/class/graphics/fb0/hbm
+    # Change ownership for for ACL feature
+    chown system system /sys/class/graphics/fb0/acl
+
+    # Add for fpc fingerprints permission
+    chmod 777 /dev/qseecom
+    chmod 0664 /sys/bus/spi/devices/spi12.0/irq
+    chown system system /sys/bus/spi/devices/spi12.0/irq
+    chmod 0660 /sys/bus/spi/devices/spi12.0/report_home
+    chown system system /sys/bus/spi/devices/spi12.0/report_home
+    chmod 0660 /sys/devices/soc/soc:fpc_fpc1020/update_info
+    chown system system /sys/devices/soc/soc:fpc_fpc1020/update_info
+    chmod 0660 /sys/bus/spi/devices/spi12.0/screen_state
+    chown system system /sys/bus/spi/devices/spi12.0/screen_state
+    chmod 0660 /sys/bus/spi/devices/spi12.0/clk_enable
+    chown system system /sys/bus/spi/devices/spi12.0/clk_enable
+
+    chown system log /sys/fs/pstore/console-ramoops-0
+    chmod 0440 /sys/fs/pstore/console-ramoops-0
+    chown system log /sys/fs/pstore/annotate-ramoops-0
+    chmod 0640 /sys/fs/pstore/annotate-ramoops-0
+    chown system log /sys/fs/pstore/dmesg-ramoops-0
+    chmod 0640 /sys/fs/pstore/dmesg-ramoops-0
+
+    # Setup kernel dropbox permissions so that dropboxd can utilize it
+    chown root diag /sys/kernel/dropbox/event
+    chown root diag /sys/kernel/dropbox/data
+
+    #ESDFS
+    chown oem_5016 root /proc/fs/esdfs/packages
 
 on early-boot
     # set RLIMIT_MEMLOCK to 64MB
@@ -214,9 +241,11 @@ on boot
     mkdir /mnt/vendor/persist/bluetooth 0770 bluetooth bluetooth
     mkdir /persist/misc 0770 system system
     mkdir /persist/alarm 0770 system system
-    mkdir /mnt/vendor/persist/time 0770 system system
+    mkdir /persist/time 0770 system system
+    mkdir /persist/secnvm 0770 system system
+    mkdir /persist/rfs 0770 system system
+    mkdir /persist/hlos_rfs 0770 system system
     mkdir /mnt/vendor/persist/secnvm 0770 system system
-    restorecon_recursive /mnt/vendor/persist
 
     #Create NETMGR daemon socket area
     mkdir /dev/socket/netmgr 0750 radio radio
@@ -340,9 +369,6 @@ on boot
     chown system graphics /sys/class/graphics/fb2/res_info
     chmod 0664 /sys/class/graphics/fb2/res_info 
 
-    # Create vpp directory
-    mkdir /persist/vpp 0770 media media
-
     # default country code
     setprop ro.boot.wificountrycode 00
 
@@ -383,6 +409,19 @@ on post-fs-data
     mkdir /data/fpc 0700 system system
     mkdir /data/.fps 0770 system input
 
+    #Create directories for Fingerprint
+    mkdir /data/vendor/misc/qti_fp 0770 system system
+    mkdir /data/vendor/misc/qti_fp/bg_estimation 0770 system system
+    mkdir /data/vendor/misc/qti_fp/calib_test 0770 system system
+    mkdir /data/vendor/misc/qti_fp/database 0770 system system
+
+    # Fingerint
+    mkdir /data/misc/fp 0700 system system
+    mkdir /data/fpc_images 0770 system system
+    mkdir /data/fpc_images/verify 0770 system system
+    mkdir /data/fpc_images/enroll 0770 system system
+    mkdir /data/fpc 0770 system system
+
     # Create directory used by display clients
     mkdir /data/vendor/display 0770 system graphics
 
@@ -399,8 +438,15 @@ on post-fs-data
     # Create directory for TZ Apps
     mkdir /data/misc/qsee 0770 system system
 
+    # Create /data/vendor/tzstorage directory for SFS listener
+    mkdir /data/vendor/tzstorage 0770 system system
+
     # Create directory for apps access via QTEEConnector
     mkdir /data/vendor/qtee 0770 system system
+
+    #Create folder for mm-qcamera-daemon
+    mkdir /data/misc/camera 0770 camera camera
+    mkdir /data/vendor/camera 0770 camera camera
 
     # Create directory for radio
     mkdir /data/vendor/radio 0770 system radio
@@ -413,10 +459,11 @@ on post-fs-data
 
     mkdir /data/media 0770 media_rw media_rw
     chown media_rw media_rw /data/media
-
     mkdir /data/vendor/ramdump 0771 root system
     mkdir /data/vendor/bluetooth 0770 bluetooth bluetooth
     mkdir /data/vendor/ramdump/bluetooth 0770 bluetooth bluetooth
+
+    mkdir /data/misc/ipa 0700 net_admin net_admin
 
     # Create the directories used by the Wireless subsystem
     mkdir /data/vendor/wifi 0770 wifi wifi
@@ -463,14 +510,28 @@ on post-fs-data
     chown radio radio /data/vendor/connectivity
 
     # Create directory used by audio subsystem
+    mkdir /data/vendor/misc/audio 0770 audio audio
     mkdir /data/vendor/audio 0770 audio audio
 
     # Create directory for audio delta files
-   mkdir /data/vendor/audio/acdbdata 0770 media audio
-    mkdir /data/vendor/audio/acdbdata/delta 0770 media audio
+    mkdir /data/vendor/misc/audio/acdbdata 0770 media audio
+    mkdir /data/vendor/misc/audio/acdbdata/delta 0770 media audio
+
+    # Create directory for radio
+    mkdir /data/vendor/radio 0770 system radio
+
+    # Create directory for modem_config
+    mkdir /data/vendor/modem_config 0570 radio root
+
+    # Create directory used by display clients
+    mkdir /persist/display 0770 system graphics
 
     # Create vpp directory
-    mkdir /data/vendor/vpp 0770 media media
+    mkdir /data/vendor/vpp 0770 media media 
+    mkdir /mnt/vendor/persist/vpp 0770 media media
+
+    # Create hvdcp_opti directory
+    mkdir /mnt/vendor/persist/hvdcp_opti 0770 root system
 
     # Mounting of persist is moved to 'on emmc-fs' and 'on fs' sections
     # We chown/chmod /persist again so because mount is run as root + defaults
@@ -512,15 +573,14 @@ on post-fs-data
     mkdir /data/fota 0771
     chown system system /data/fota
 
-
     # Start Loading mods kernel modules
     start vendor.gbmodinstall
 
     # Create /data/time folder for time-services
     mkdir /data/vendor/time/ 0700 system system
 
-    setprop vold.post_fs_data_done 1
-
+    setprop vold.post_fs_data_done 1 
+    
     #Create a folder for SRS to be able to create a usercfg file
     #mkdir /data/data/media 0770 media media
 
@@ -547,6 +607,31 @@ on post-fs-data
     #Create SWAP related dirs
     mkdir /data/vendor/swap 0770 root system
     chmod 2770 /data/vendor/swap
+    # Create vpp directory
+    mkdir /data/vendor/vpp 0770 media media
+
+    # Mark the copy complete flag to not completed
+    write /data/vendor/radio/copy_complete 0
+    chown radio radio /data/vendor/radio/copy_complete
+    chmod 0660 /data/vendor/radio/copy_complete
+
+    # copy prebuilt qcril.db files always
+    copy /vendor/radio/qcril_database/qcril.db /data/vendor/radio/qcril_prebuilt.db
+    chown radio radio /data/vendor/radio/qcril_prebuilt.db
+    chmod 0660 /data/vendor/radio/qcril_prebuilt.db
+
+    # File flags for prebuilt ril db file
+    write /data/vendor/radio/prebuilt_db_support 1
+    chown radio radio /data/vendor/radio/prebuilt_db_support
+    chmod 0400 /data/vendor/radio/prebuilt_db_support
+    write /data/vendor/radio/db_check_done 0
+    chown radio radio /data/vendor/radio/db_check_done
+    chmod 0660 /data/vendor/radio/db_check_done
+
+    # FPC home button permissions
+    chown system system /sys/homebutton/enable
+    chown system system /sys/homebutton/enable_wakeup
+    chown system system /sys/homebutton/key
 
 
     # Create directory used by power_supply_logger

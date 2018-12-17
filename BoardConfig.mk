@@ -68,7 +68,8 @@ USE_DEVICE_SPECIFIC_LOC_API := true
 
 # Kernel
 BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 androidboot.hardware=qcom user_debug=30 msm_rtb.filter=0x237
-BOARD_KERNEL_CMDLINE += ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci lpm_levels.sleep_disabled=1 vmalloc=350M androidboot.selinux=permissive
+BOARD_KERNEL_CMDLINE += ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci lpm_levels.sleep_disabled=1 vmalloc=350M firmware_class.path=/vendor/firmware_mnt/image
+BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 BOARD_KERNEL_BASE := 0x80000000
 BOARD_KERNEL_IMAGE_NAME := Image.gz
 BOARD_KERNEL_PAGESIZE := 2048
@@ -193,6 +194,8 @@ TARGET_EXFAT_DRIVER := exfat
 # FM
 BOARD_HAVE_QCOM_FM := true
 BOARD_HAS_QCA_FM_SOC := "smd"
+# Root
+BOARD_ROOT_EXTRA_FOLDERS := persist
 
 # Keymaster
 TARGET_PROVIDES_KEYMASTER := true
@@ -271,6 +274,8 @@ PRODUCT_TREBLE_LINKER_NAMESPACES=true
 #Hidl
 DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/configs/manifest.xml
 DEVICE_MATRIX_FILE := $(DEVICE_PATH)/compatibility_matrix.xml
+# Vendor security patch level
+VENDOR_SECURITY_PATCH := 2018-11-01
 
 # Wifi
 BOARD_HAS_QCOM_WLAN              := true
