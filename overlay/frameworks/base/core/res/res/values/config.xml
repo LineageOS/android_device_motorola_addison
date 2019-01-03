@@ -315,6 +315,9 @@
        <item>"/system/framework/arm64/boot-core-libart.oat"</item>
        <item>"/system/framework/arm64/boot-core-libart.vdex"</item>
    </string-array>
+   
+   <!-- Whether device has turbo power charging support -->
+   <bool name="config_hasTurboPowerCharger">true</bool>
 
    <!-- Should the pinner service pin the Camera application? -->
    <bool name="config_pinnerCameraApp">true</bool>
