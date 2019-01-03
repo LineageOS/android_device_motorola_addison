@@ -10,6 +10,6 @@
 
 # fpc1020 "finger present" 
 key 616   HOME         VIRTUAL
-key 617   VOICE_ASSIST VIRTUAL
+key 617   SLEEP        VIRTUAL
 key 620   APP_SWITCH   VIRTUAL
 key 621   BACK         VIRTUAL
