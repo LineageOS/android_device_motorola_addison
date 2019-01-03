@@ -44,6 +44,7 @@ on fs
     symlink /dev/block/bootdevice/by-name/oem /dev/block/bootdevice/by-name/vendor
 
     mount_all /vendor/etc/fstab.qcom
+	write /proc/sys/vm/swappiness 20
 
     # Keeping following partitions outside fstab file. As user may not have
     # these partition flashed on the device. Failure to mount any partition in fstab file
