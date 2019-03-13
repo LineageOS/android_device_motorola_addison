@@ -77,8 +77,11 @@ PRODUCT_PROPERTY_OVERRIDES += \
     camera.hal1.packagelist=com.skype.raider,com.google.android.talk,com.whatsapp \
     persist.camera.eis.enable=1
 
+## Codec2 switch
+PRODUCT_PROPERTY_OVERRIDES += \
+    debug.media.codec2=2
 
-# CNE
+## CNE
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.vendor.cnd.iwlan=1 \
     persist.vendor.cne.logging.qxdm=3974
