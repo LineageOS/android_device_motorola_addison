@@ -317,7 +317,7 @@
    </string-array>
    
    <!-- Whether device has turbo power charging support -->
-   <bool name="config_hasTurboPowerCharger">true</bool>
+   <bool name="config_hasTurboPowerCharger">false</bool>
 
    <!-- Should the pinner service pin the Camera application? -->
    <bool name="config_pinnerCameraApp">true</bool>
