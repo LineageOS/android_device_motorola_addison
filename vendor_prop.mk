@@ -312,3 +312,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.vendor.extension_library=libqti-perfd-client.so \
     ro.vendor.at_library=libqti-at.so \
     ro.vendor.gt_library=libqti-gt.so
+
+## Enable disable menubar (0 enable - 1 disable)
+PRODUCT_PROPERTY_OVERRIDES += \
+    qemu.hw.mainkeys=1
+
