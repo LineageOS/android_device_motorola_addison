@@ -86,6 +86,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.vendor.camera.display.umax=1920x1080 \
     persist.vendor.camera.display.lmax=1280x720 \
     camera.disable_zsl_mode=1 \
+    persist.camera.eis.enable=1 \
     vendor.vidc.enc.disable_bframes=1 \
     vendor.vidc.disable.split.mode=1 \
     vendor.vidc.dec.downscalar_width=1920 \
