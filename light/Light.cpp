@@ -36,7 +36,7 @@ namespace implementation {
 #define LEDS            "/sys/class/leds/"
 
 #define LCD_LED         LEDS "lcd-backlight/"
-#define CHARGING_LED    LEDS "charging/"
+#define WHITE_LED    LEDS "white/"
 
 #define BRIGHTNESS      "brightness"
 
@@ -76,7 +76,7 @@ static void handleBattery(const LightState& state) {
     else
         Brightness = LED_LIGHT_OFF;
 
-     set(CHARGING_LED BRIGHTNESS, Brightness);
+     set(WHITE_LED BRIGHTNESS, Brightness);
 }
 
 static void handleNotification(const LightState& state) {
@@ -87,7 +87,7 @@ static void handleNotification(const LightState& state) {
     else
         Brightness = LED_LIGHT_OFF;
 
-     set(CHARGING_LED BRIGHTNESS, Brightness);
+     set(WHITE_LED BRIGHTNESS, Brightness);
 }
 
 
