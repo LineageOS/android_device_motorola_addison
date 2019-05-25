@@ -36,7 +36,7 @@
 
 #include <linux/input.h>
 
-#include <cutils/log.h>
+#include <log/log.h>
 
 #include <sys/select.h>
 
@@ -46,7 +46,6 @@
 #include <sys/types.h>
 #include <zlib.h>
 #include <time.h>
-#include <private/android_filesystem_config.h>
 #include <iterator>
 #include <android-base/macros.h>
 

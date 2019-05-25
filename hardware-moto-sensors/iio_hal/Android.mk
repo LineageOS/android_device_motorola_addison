@@ -49,6 +49,7 @@ LOCAL_C_INCLUDES += kernel/include
 LOCAL_ADDITIONAL_DEPENDENCIES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
 
 LOCAL_SHARED_LIBRARIES += libiio libcrypto
+LOCAL_HEADER_LIBRARIES := libutils_headers libhardware_headers
 LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libc libbase libselinux
 LOCAL_CFLAGS += -Wall -Wextra
 LOCAL_CXXFLAGS += -Weffc++ -std=c++14
