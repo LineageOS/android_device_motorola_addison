@@ -21,7 +21,7 @@ LOCAL_MODULE := capsense_reset
 LOCAL_SRC_FILES := capsense.cpp
 LOCAL_SHARED_LIBRARIES := libc liblog libcutils libhardware_legacy
 LOCAL_MODULE_TAGS := optional
-LOCAL_PROPRIETARY_MODULE := true
+LOCAL_VENDOR_MODULE := true
 LOCAL_MODULE_OWNER := moto
 include $(BUILD_EXECUTABLE)
 endif

@@ -41,5 +41,7 @@ LOCAL_SHARED_LIBRARIES := liblog libcutils libutils libc
 LOCAL_CFLAGS += -Wall -Wextra
 LOCAL_CXXFLAGS += -Weffc++ -std=c++14
 
+LOCAL_VENDOR_MODULE := true
+
 include $(BUILD_SHARED_LIBRARY)
 
