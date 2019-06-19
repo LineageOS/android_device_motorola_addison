@@ -1,3 +1,4 @@
 user=_app seinfo=platform name=com.motorola.dtv domain=isdbt_app type=app_data_file levelFrom=user
 user=_app seinfo=platform name=com.motorola.dtvservice domain=isdbt_app type=app_data_file levelFrom=user
 
+user=system seinfo=platform name=org.lineageos.pocketmode domain=pocketmode_app type=system_app_data_file
