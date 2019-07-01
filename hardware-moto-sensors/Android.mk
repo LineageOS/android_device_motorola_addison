@@ -342,7 +342,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
     LOCAL_MODULE        := sensorhub-blacklist.txt
     LOCAL_MODULE_TAGS   := optional
     LOCAL_MODULE_CLASS  := ETC
-    LOCAL_MODULE_PATH   := $(TARGET_OUT)/etc/firmware
+    LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)/firmware
     LOCAL_SRC_FILES     := motosh_bin/sensorhub-blacklist.txt
     include $(BUILD_PREBUILT)
     # ********************************************************************************
