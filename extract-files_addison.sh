@@ -100,6 +100,10 @@ function blob_fixup() {
         "${PATCHELF}" --set-soname fingerprint.msm8953.so "${2}"
         ;;
 
+    vendor/lib64/lib_fpc_tac_shared.so)
+        sed -i "s|/firmware/image|/vendor/f/image|g" "${2}"
+        ;;
+
     # memset shim
     vendor/bin/charge_only_mode)
         for  LIBMEMSET_SHIM in $(grep -L "libmemset_shim.so" "${2}"); do

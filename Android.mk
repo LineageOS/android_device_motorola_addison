@@ -31,6 +31,7 @@ ALL_DEFAULT_INSTALLED_MODULES += $(FIRMWARE_MOUNT_POINT) \
 $(FIRMWARE_MOUNT_POINT):
 	@echo "Creating $(FIRMWARE_MOUNT_POINT)"
 	@mkdir -p $(TARGET_OUT_VENDOR)/firmware_mnt
+	@ln -sf /vendor/firmware_mnt $(TARGET_OUT_VENDOR)/f
 
 $(DSP_MOUNT_POINT):
 	@echo "Creating $(DSP_MOUNT_POINT)"
