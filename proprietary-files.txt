@@ -234,14 +234,9 @@ vendor/lib/libmmcamera_trueportrait_lib.so
 vendor/lib/libmmcamera_ubifocus_lib.so
 vendor/lib/libmmcamera_vstab_module.so
 
-#Camera - Motocam provider from Albus PPS29.133
-vendor/bin/hw/motorola.hardware.camera.provider@2.4-service
-vendor/etc/init/motorola.hardware.camera.provider@2.4-service_delayed.rc
-vendor/lib/hw/motorola.hardware.camera.provider@2.4-impl.so
-vendor/lib/motorola.hardware.camera.device@1.0_vendor.so
-vendor/lib/motorola.hardware.camera.provider@2.4.so
-vendor/lib/motorola.hardware.camera.provider@2.4_vendor.so
-vendor/lib/motcamera.device@1.0-impl.so
+#Camera - Hacked camera provider
+ vendor/lib/camera.device@1.0-impl.so|13a93ca1a2e58e813f32f0c6348f6c1ad7937454 
+
 
 # Camera - Firmware
 vendor/firmware/cpp_firmware_v1_1_1.fw
