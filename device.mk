@@ -215,9 +215,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.light@2.0-service.albus
 
-# LineageActions
+# Lineage hardware
 PRODUCT_PACKAGES += \
-    LineageActions
+    vendor.lineage.touch@1.0-service.albus
 
 # Media
 PRODUCT_COPY_FILES += \
