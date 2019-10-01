@@ -100,34 +100,16 @@ user: AID_CAMERA
 group: AID_SHELL
 caps: SYS_NICE
 
-[firmware/]
-mode: 0771
-user: AID_SYSTEM
-group: AID_SYSTEM
-caps: 0
-
-[firmware/image/*]
-mode: 0771
-user: AID_SYSTEM
-group: AID_SYSTEM
-caps: 0
-
 [vendor/firmware_mnt/image/*]
 mode: 0771
 user: AID_ROOT
 group: AID_SYSTEM
 caps: 0
 
-[persist/]
+[mnt/vendor/persist/]
 mode: 0771
 user: AID_SYSTEM
 group: AID_SYSTEM
-caps: 0
-
-[dsp/]
-mode: 0771
-user: AID_MEDIA
-group: AID_MEDIA
 caps: 0
 
 [AID_VENDOR_MOT_ACCY]

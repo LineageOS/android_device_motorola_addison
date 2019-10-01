@@ -1,14 +1,10 @@
 # Audio
 /vendor/etc/audio_policy_configuration.xml               u:object_r:vendor_configs_file:s0
 
-# ADSP
-/data/adspd(/.*)?                                        u:object_r:adspd_data_file:s0
-
 # AMPS
 /dev/hidraw[0-9]*                                        u:object_r:amps_raw_device:s0
 
 # Binaries
-/vendor/bin/adspd                                        u:object_r:adspd_exec:s0
 /vendor/bin/charge_only_mode                             u:object_r:charge_only_exec:s0
 /vendor/bin/init\.mmi\.boot\.sh                          u:object_r:mmi_boot_exec:s0
 /vendor/bin/init\.mmi\.laser\.sh                         u:object_r:mmi_laser_exec:s0
@@ -81,7 +77,6 @@
 /dev/sec                                                 u:object_r:shwi_device:s0
 /dev/kgsl                                                u:object_r:gpu_device:s0
 /dev/isdbt                                               u:object_r:isdbt_device:s0
-/dev/ttyHS3                                              u:object_r:adspd_device:s0
 /dev/akm8963                                             u:object_r:compass_device:s0
 /dev/drv2605                                             u:object_r:haptics_device:s0
 /dev/akm09912                                            u:object_r:compass_device:s0
@@ -139,12 +134,6 @@
 /vendor/bin/perfd           u:object_r:perfd_exec:s0
 /vendor/bin/hw/android\.hardware\.power@1\.1-service-qti          u:object_r:hal_power_default_exec:s0
 #/vendor/radio(/.*)? u:object_r:radio_data_file:s0
-
-# Firmware
-/dev/sdc4                                                u:object_r:firmware_file:s0
-/fsg/(/.*)                                               u:object_r:firmware_file:s0
-/firmware/image/(/.*)                                   u:object_r:firmware_file:s0
-/dev/sda16                                              u:object_r:firmware_file:s0
 
 /vendor/bin/qmi_motext_hook u:object_r:rild_exec:s0
 
