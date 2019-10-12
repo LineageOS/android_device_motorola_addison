@@ -89,9 +89,7 @@ vendor/etc/init/android.hardware.bluetooth@1.0-service-qti.rc
 
 # Bluetooth (shared dependencies) from deen PPS29.133-30
 vendor/lib64/com.qualcomm.qti.ant@1.0.so
-vendor/lib64/com.qualcomm.qti.bluetooth_audio@1.0.so
 vendor/lib/com.qualcomm.qti.ant@1.0.so
-vendor/lib/com.qualcomm.qti.bluetooth_audio@1.0.so
 
 #Camera from Albus PPS29.133
 vendor/bin/mm-qcamera-daemon
