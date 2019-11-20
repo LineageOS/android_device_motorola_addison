@@ -44,8 +44,6 @@ LOCAL_HEADER_LIBRARIES := \
 LOCAL_SHARED_LIBRARIES := \
     liblog \
     libhidlbase \
-    libhidltransport \
-    libhwbinder \
     libcutils \
     libutils \
     android.hardware.gnss@1.0 \
@@ -98,9 +96,7 @@ LOCAL_SHARED_LIBRARIES := \
     libqti_vndfwk_detect \
 
 LOCAL_SHARED_LIBRARIES += \
-    libhwbinder \
     libhidlbase \
-    libhidltransport \
     android.hardware.gnss@1.0 \
     android.hardware.gnss@1.1 \
     android.hardware.gnss@2.0 \
