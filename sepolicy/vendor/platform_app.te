@@ -9,3 +9,4 @@ allow platform_app hal_sensors_default:unix_stream_socket { read write };
 allow platform_app moto_boot_prop:file read;
 allow platform_app sysfs:dir { read open };
 allow platform_app sysfs:file getattr;
+ get_prop(platform_app, moto_boot_prop) 
