@@ -75,10 +75,12 @@ PRODUCT_PACKAGES += \
     android.hardware.broadcastradio@1.0-impl \
     audiod \
     audio.a2dp.default \
+    audio.primary.msm8953 \
     audio.r_submix.default \
     audio.usb.default \
     libaacwrapper \
     libaudio-resampler \
+    libqcompostprocbundle \
     libqcomvisualizer \
     libqcomvoiceprocessing \
     libvolumelistener \

@@ -24,15 +24,7 @@ vendor/etc/acdbdata/Hdmi_cal.acdb
 vendor/etc/acdbdata/Headset_cal.acdb
 vendor/etc/acdbdata/Speaker_cal.acdb
 
-# Audio (Prebuilt Audio HAL) from Albus PPS29.133
-vendor/lib/hw/audio.primary.msm8998.so
-vendor/lib/libmotaudioutils.so
-vendor/lib/libtinyalsa.so
-vendor/lib/libtinycompress.so
-vendor/lib/libtinycompress_vendor.so
-vendor/lib/libunshorten.so
-
-# Audio from tissot PKQ1.180917
+# Audio tissot PKQ1.180917
 vendor/lib/libacdb-fts.so
 vendor/lib/libacdbloader.so
 vendor/lib/libacdbrtac.so
@@ -48,13 +40,7 @@ vendor/lib64/libaudcal.so
 vendor/lib64/libaudioalsa.so
 vendor/lib64/libqtigef.so
 
-# Audio - Soundfx from Albus PPS29.133
-vendor/lib/soundfx/libspeakerbundle.so
-vendor/lib/soundfx/libmmieffectswrapper.so
-vendor/lib/libeqservicebridge.so
-vendor/lib/motorola.hardware.audio.eqservice@1.0_vendor.so
-
-# Bluetooth from deen PPS29.133-30
+# Bluetooth deen PPS29.133-30
 vendor/bin/hw/android.hardware.bluetooth@1.0-service-qti
 vendor/bin/btnvtool
 vendor/bin/hci_qcomm_init
