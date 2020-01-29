@@ -40,8 +40,8 @@
 /firmware                                                u:object_r:firmware_file:s0
 
 # Input devices 
-/(vendor|system/vendor)/usr/idc(/.*)?                         u:object_r:idc_file:s0 
-/(vendor|system/vendor)/usr/keylayout(/.*)?                   u:object_r:keylayout_file:s0
+/(vendor|system/vendor)/usr/idc(/.*)?                         u:object_r:vendor_idc_file:s0 
+/(vendor|system/vendor)/usr/keylayout(/.*)?                   u:object_r:vendor_keylayout_file:s0
 
 # Modem
 /persist/mdm(/.*)?                                       u:object_r:persist_modem_file:s0
