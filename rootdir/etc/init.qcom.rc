@@ -32,27 +32,24 @@ on early-init
     mount debugfs debugfs /sys/kernel/debug
     chmod 0755 /sys/kernel/debug
 
-
 on fs
     wait /dev/block/platform/soc/${ro.boot.bootdevice}
     symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
-    mount_all /vendor/etc/fstab.qcom --early
 
-    # Start HW service manager early
-    start hwservicemanager
+    mount_all /vendor/etc/fstab.qcom --early
 
     write /proc/sys/vm/swappiness 60
 
     # Set permissions for persist partition
     chown root system /mnt/vendor/persist
     chmod 0771 /mnt/vendor/persist
+    restorecon_recursive /mnt/vendor/persist
     mkdir /mnt/vendor/persist/bluetooth 0770 bluetooth bluetooth
     mkdir /mnt/vendor/persist/bms 0700 root system
     mkdir /mnt/vendor/persist/data 0700 system system
     mkdir /mnt/vendor/persist/drm 0700 system system
     mkdir /mnt/vendor/persist/display 0770 system graphics
     mkdir /mnt/vendor/persist/time 0770 system system
-    restorecon_recursive /mnt/vendor/persist
 
 on late-fs
     # Start services for bootanim
@@ -60,10 +57,13 @@ on late-fs
     start surfaceflinger
     start bootanim
 
-    # Make sure HW service manager started and start required HAL services
-    wait_for_prop hwservicemanager.ready true
     start vendor.configstore-hal
     start vendor.gralloc-2-0
+
+    # Wait for hwservicemanager ready since fsck might be triggered in mount_all --late
+    # In such case, init won't responce the property_set from hwservicemanager and then
+    # cause services for bootanim not running.
+    wait_for_prop hwservicemanager.ready true
 
     # Mount RW partitions which need run fsck
     mount_all /vendor/etc/fstab.qcom --late
