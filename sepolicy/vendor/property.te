@@ -1,7 +1,5 @@
-type adspd_prop, property_type;
-type motosh_prop, property_type;
-type hw_rev_prop, property_type;
-type touch_prop, property_type;
-type diag_prop, property_type;
-type thermal_prop, property_type;
-type qti_telephony_prop, property_type;
+type post_boot_prop, property_type;
+type power_prop, property_type;
+type gpu_prop, property_type;
+type persist_camera_prop, property_type;
+type moto_boot_prop, property_type;

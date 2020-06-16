@@ -1,3 +1,0 @@
-allow kernel hw_block_device:blk_file rw_file_perms;
-allow kernel vfat:file open;
-allow kernel self:socket create;
