@@ -17,7 +17,7 @@
 #ifndef _BDROID_BUILDCFG_H
 #define _BDROID_BUILDCFG_H
 
-#include <cutils/properties.h>
+//#include <cutils/properties.h>
 #include <string.h>
 
 #define BTM_DEF_LOCAL_NAME "Moto Z2 Play"
