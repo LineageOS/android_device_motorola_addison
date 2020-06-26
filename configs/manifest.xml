@@ -1,5 +1,5 @@
 <manifest version="1.0" type="device">
-    <hal format="hidl">
+        <hal format="hidl">
         <name>android.hardware.audio</name>
         <transport>hwbinder</transport>
         <version>2.0</version>
@@ -7,6 +7,7 @@
             <name>IDevicesFactory</name>
             <instance>default</instance>
         </interface>
+        <fqname>@2.0::IDevicesFactory/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.audio.effect</name>
@@ -16,6 +17,7 @@
             <name>IEffectsFactory</name>
             <instance>default</instance>
         </interface>
+        <fqname>@2.0::IEffectsFactory/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.bluetooth</name>
@@ -354,6 +356,15 @@
         <version>1.0</version>
         <interface>
             <name>IMemtrack</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="hidl">
+        <name>android.hardware.thermal</name>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>IThermal</name>
             <instance>default</instance>
         </interface>
     </hal>
