@@ -102,7 +102,7 @@
     <hal format="hidl">
         <name>android.hardware.biometrics.fingerprint</name>
         <transport>hwbinder</transport>
-        <version>2.0</version>
+        <version>2.1</version>
         <interface>
             <name>IBiometricsFingerprint</name>
             <instance>default</instance>
@@ -195,7 +195,7 @@
             <name>ILineagePower</name>
             <instance>default</instance>
         </interface>
-    </hal>
+    </hal>-->
     <hal format="hidl">
         <name>android.hardware.radio</name>
         <transport>hwbinder</transport>
@@ -229,7 +229,7 @@
             <instance>slot1</instance>
             <instance>slot2</instance>
         </interface>
-    </hal>-->
+    </hal>
     <hal format="hidl">
         <name>android.hardware.renderscript</name>
         <transport arch="32+64">passthrough</transport>
@@ -365,6 +365,16 @@
         <version>1.0</version>
         <interface>
             <name>IThermal</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    
+    <hal format="hidl">
+        <name>android.hardware.nfc</name>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>INfc</name>
             <instance>default</instance>
         </interface>
     </hal>

@@ -384,7 +384,11 @@ PRODUCT_PACKAGES += \
 
 #RIL
 PRODUCT_PACKAGES += \
-    android.hardware.radio@1.0
+    librmnetctl \
+    libprotobuf-cpp-full \
+    libxml2 \
+    android.hardware.radio@1.0 \
+    android.hardware.radio.config@1.0
 
 # Seccomp policy
 PRODUCT_COPY_FILES += \
@@ -461,6 +465,8 @@ PRODUCT_PACKAGES += \
     wifilogd \
     tcpdump \
     wcnss_service \
+    wpa_supplicant \
+    wpa_supplicant.conf \
     libwpa_client
 
 # Wifi Symlinks
@@ -476,7 +482,8 @@ PRODUCT_COPY_FILES += \
     kernel/motorola/msm8996/drivers/staging/prima/firmware_bin/WCNSS_cfg.dat:$(TARGET_COPY_OUT_VENDOR)/firmware/wlan/prima/WCNSS_cfg.dat \
     $(LOCAL_PATH)/wifi/p2p_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/p2p_supplicant_overlay.conf \
     $(LOCAL_PATH)/wifi/wpa_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant_overlay.conf \
-    $(LOCAL_PATH)/wifi/WCNSS_qcom_cfg.ini:$(TARGET_COPY_OUT_VENDOR)/firmware/wlan/prima/WCNSS_qcom_cfg.ini
+    $(LOCAL_PATH)/wifi/WCNSS_qcom_cfg.ini:$(TARGET_COPY_OUT_VENDOR)/firmware/wlan/prima/WCNSS_qcom_cfg.ini \
+    $(LOCAL_PATH)/wifi/WCNSS_qcom_cfg.ini:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/WCNSS_qcom_cfg.ini
 
 # ZAF
 PRODUCT_COPY_FILES += \
