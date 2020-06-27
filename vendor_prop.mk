@@ -72,6 +72,11 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.bluetooth.dun=true \
     ro.qualcomm.bluetooth.map=true \
     persist.bt.enableAptXHD=true
+    
+# OEM Unlock reporting
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    ro.oem_unlock_supported=0
+
 
 # Camera
 PRODUCT_PROPERTY_OVERRIDES += \
