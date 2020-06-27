@@ -129,7 +129,7 @@
     <hal format="hidl">
         <name>vendor.lineage.livedisplay</name>
         <transport>hwbinder</transport>
-        <version>2.0</version>
+        <version>1.0</version>
         <interface>
             <name>IAdaptiveBacklight</name>
             <instance>default</instance>
@@ -150,7 +150,7 @@
     <hal format="hidl">
         <name>android.hardware.health</name>
         <transport>hwbinder</transport>
-        <version>2.0</version>
+        <version>1.0</version>
         <interface>
             <name>IHealth</name>
             <instance>default</instance>
@@ -187,10 +187,10 @@
             <instance>default</instance>
         </interface>
     </hal>
-    <hal format="hidl">
+    <!--<hal format="hidl">
         <name>vendor.lineage.power</name>
         <transport>hwbinder</transport>
-        <version>1.1</version>
+        <version>1.0</version>
         <interface>
             <name>ILineagePower</name>
             <instance>default</instance>
@@ -229,7 +229,7 @@
             <instance>slot1</instance>
             <instance>slot2</instance>
         </interface>
-    </hal>
+    </hal>-->
     <hal format="hidl">
         <name>android.hardware.renderscript</name>
         <transport arch="32+64">passthrough</transport>
@@ -321,7 +321,7 @@
             <instance>default</instance>
         </interface>
     </hal>
-    <hal format="hidl">
+    <!--<hal format="hidl">
         <name>android.hardware.gnss</name>
         <transport>hwbinder</transport>
         <version>1.0</version>
@@ -340,7 +340,7 @@
             <instance>gnss_vendor</instance>
         </interface>
     </hal>
-        <hal format="hidl">
+    <!--<hal format="hidl">
         <name>android.hardware.camera.provider</name>
         <transport>hwbinder</transport>
         <version>2.4</version>
@@ -349,7 +349,7 @@
             <instance>legacy/0</instance>
         </interface>
         <fqname>@2.4::ICameraProvider/legacy/0</fqname>
-    </hal>
+    </hal>-->
     <hal format="hidl">
         <name>android.hardware.memtrack</name>
         <transport>hwbinder</transport>
