@@ -141,6 +141,9 @@ BOARD_HAVE_BLUETOOTH_QCOM := true
 
 # Camera
 # TARGET_CAMERASERVICE_CLOSES_NATIVE_HANDLES := true
+TARGET_PROCESS_SDK_VERSION_OVERRIDE := \
+    /vendor/bin/mm-qcamera-daemon=26
+
 USE_DEVICE_SPECIFIC_CAMERA := true
 BOARD_QTI_CAMERA_32BIT_ONLY := true
 
@@ -279,3 +282,9 @@ WIFI_DRIVER_FW_PATH_AP           := "ap"
 WIFI_DRIVER_FW_PATH_STA          := "sta"
 WIFI_DRIVER_FW_PATH_P2P          := "p2p"
 WPA_SUPPLICANT_VERSION           := VER_0_8_X
+
+# Shim
+TARGET_LD_SHIM_LIBS := \
+    /vendor/lib64/vendor.qti.gnss@1.0_vendor.so|libgnss_shim.so \
+    /vendor/lib/libmot_gpu_mapper.so|libgpu_mapper_shim.so \
+    /vendor/lib/libjustshoot|libjustshoot_shim

@@ -451,7 +451,10 @@ PRODUCT_PACKAGES += \
 
 # Shims
 PRODUCT_PACKAGES += \
-    libqsapshim
+    libqsapshim \
+    libgpu_mapper_shim \
+    libgnss_shim \
+    libjustshoot_shim
 
 #Thermal
 PRODUCT_PACKAGES += android.hardware.thermal@1.0-impl \
