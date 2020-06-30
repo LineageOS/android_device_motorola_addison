@@ -340,9 +340,6 @@ on post-fs-data
     # Create directory used by media clients
     mkdir /data/vendor/media 0770 mediacodec media
 
-    # Create directory used for camera
-    mkdir /data/vendor/camera 0770 camera camera
-
     # Create directory for TZ Apps
     mkdir /data/misc/qsee 0770 system system
 
@@ -357,10 +354,7 @@ on post-fs-data
 
     #Create directory for tftp
     mkdir /data/vendor/tombstones 0771 system system
-
-    #Create folder for mm-qcamera-daemon
-    mkdir /data/misc/camera 0770 camera camera
-
+    
     mkdir /data/media 0770 media_rw media_rw
     chown media_rw media_rw /data/media
 
@@ -543,11 +537,6 @@ service time_daemon /vendor/bin/time_daemon
    group root
    writepid /dev/cpuset/system-background/tasks
 
-service audiod /vendor/bin/audiod
-   class late_start
-   user system
-   group system
-
 on property:vold.decrypt=trigger_restart_framework
     start config_bt_addr
 
@@ -555,7 +544,7 @@ on property:persist.env.fastdorm.enabled=true
     setprop persist.radio.data_no_toggle 1
 
 #start camera server as daemon
-service qcamerasvr /vendor/bin/mm-qcamera-daemon
+service vendor.qcamerasvr /vendor/bin/mm-qcamera-daemon
     class late_start
     user camera
     group camera system inet input graphics
@@ -565,12 +554,6 @@ service cnd /vendor/bin/cnd
     class main
     user system
     group system wifi inet radio wakelock net_admin
-
-service qseeproxydaemon /vendor/bin/qseeproxydaemon
-    class late_start
-    user system
-    group system
-    writepid /dev/cpuset/system-background/tasks
 
 service esepmdaemon /vendor/bin/esepmdaemon
     class core
@@ -582,11 +565,6 @@ service wcnss-service /vendor/bin/wcnss_service
     user system
     group system wifi radio
     oneshot
-
-service vppservice /vendor/bin/vppservice
-    class main
-    user media
-    group camera
 
 service adsprpcd /vendor/bin/adsprpcd
     class main

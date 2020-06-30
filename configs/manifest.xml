@@ -321,7 +321,7 @@
             <instance>default</instance>
         </interface>
     </hal>
-    <!--<hal format="hidl">
+    <hal format="hidl">
         <name>android.hardware.gnss</name>
         <transport>hwbinder</transport>
         <version>1.0</version>
@@ -340,7 +340,7 @@
             <instance>gnss_vendor</instance>
         </interface>
     </hal>
-    <!--<hal format="hidl">
+    <hal format="hidl">
         <name>android.hardware.camera.provider</name>
         <transport>hwbinder</transport>
         <version>2.4</version>
@@ -349,7 +349,7 @@
             <instance>legacy/0</instance>
         </interface>
         <fqname>@2.4::ICameraProvider/legacy/0</fqname>
-    </hal>-->
+    </hal> 
     <hal format="hidl">
         <name>android.hardware.memtrack</name>
         <transport>hwbinder</transport>

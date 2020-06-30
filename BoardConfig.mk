@@ -287,4 +287,4 @@ WPA_SUPPLICANT_VERSION           := VER_0_8_X
 TARGET_LD_SHIM_LIBS := \
     /vendor/lib64/vendor.qti.gnss@1.0_vendor.so|libgnss_shim.so \
     /vendor/lib/libmot_gpu_mapper.so|libgpu_mapper_shim.so \
-    /vendor/lib/libjustshoot|libjustshoot_shim
+    /vendor/lib/libjustshoot.so|libjustshoot_shim.so
