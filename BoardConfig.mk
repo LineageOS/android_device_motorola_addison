@@ -141,6 +141,9 @@ BOARD_HAVE_BLUETOOTH_QCOM := true
 
 # Camera
 # TARGET_CAMERASERVICE_CLOSES_NATIVE_HANDLES := true
+TARGET_PROCESS_SDK_VERSION_OVERRIDE := \
+    /vendor/bin/mm-qcamera-daemon=26
+
 USE_DEVICE_SPECIFIC_CAMERA := true
 BOARD_QTI_CAMERA_32BIT_ONLY := true
 
@@ -233,11 +236,11 @@ TARGET_RIL_VARIANT := caf
 TARGET_PROVIDES_QTI_TELEPHONY_JAR := true
 
 # Recovery
-#BOARD_HAS_NO_SELECT_BUTTON := true
-#TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.recovery
-#TARGET_USERIMAGES_USE_EXT4 := true
-#TARGET_USERIMAGES_USE_F2FS := true
-#LZMA_RAMDISK_TARGETS := recovery
+BOARD_HAS_NO_SELECT_BUTTON := true
+TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.recovery
+TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USERIMAGES_USE_F2FS := true
+LZMA_RAMDISK_TARGETS := recovery
 
 # SELinux
 include device/qcom/sepolicy/sepolicy.mk
@@ -245,8 +248,10 @@ BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
 SELINUX_IGNORE_NEVERALLOWS := true
 
 # Releasetools
+TARGET_RELEASETOOLS_EXTENSIONS := $(DEVICE_PATH)/releasetools
+
 #TARGET_RECOVERY_UPDATER_LIBS := librecovery_updater_albus
-TARGET_RELEASETOOLS_EXTENSIONS := $(DEVICE_PATH)
+#TARGET_RELEASETOOLS_EXTENSIONS := $(DEVICE_PATH)
 
 # Thermal
 USE_DEVICE_SPECIFIC_THERMAL := true
@@ -277,3 +282,9 @@ WIFI_DRIVER_FW_PATH_AP           := "ap"
 WIFI_DRIVER_FW_PATH_STA          := "sta"
 WIFI_DRIVER_FW_PATH_P2P          := "p2p"
 WPA_SUPPLICANT_VERSION           := VER_0_8_X
+
+# Shim
+TARGET_LD_SHIM_LIBS := \
+    /vendor/lib64/vendor.qti.gnss@1.0_vendor.so|libgnss_shim.so \
+    /vendor/lib/libmot_gpu_mapper.so|libgpu_mapper_shim.so \
+    /vendor/lib/libjustshoot.so|libjustshoot_shim.so

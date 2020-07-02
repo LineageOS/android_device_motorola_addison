@@ -72,6 +72,11 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.bluetooth.dun=true \
     ro.qualcomm.bluetooth.map=true \
     persist.bt.enableAptXHD=true
+    
+# OEM Unlock reporting
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    ro.oem_unlock_supported=0
+
 
 # Camera
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -246,7 +251,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.radio.rat_on=combine \
     persist.radio.data_ltd_sys_ind=1 \
     persist.radio.data_con_rprt=1 \
-    persist.radio.calls.on.ims=1
+    persist.radio.calls.on.ims=1 \
+    persist.radio.multisim.config=dsds
     
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.use_data_netmgrd=true \

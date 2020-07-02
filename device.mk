@@ -168,7 +168,7 @@ PRODUCT_PACKAGES += \
     libqdMetaData.system \
     vendor.display.config@1.0 \
     vendor.display.config@1.0_vendor
-
+    
 PRODUCT_PACKAGES += android.hardware.media.omx
 
 # RenderScript HAL
@@ -293,17 +293,17 @@ PRODUCT_COPY_FILES += \
 
 # NFC
 PRODUCT_PACKAGES += \
-    android.hardware.nfc@1.0-impl \
-    android.hardware.nfc@1.0-service \
+    libnfc \
     com.android.nfc_extras \
-    nfc_nci.msm8953 \
     NfcNci \
     nqnfcee_access.xml \
     nqnfcse_access.xml \
-    Tag
+    SecureElement \
+    Tag \
+    android.hardware.nfc@1.1-service
 
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/libnfc-brcm.conf:$(TARGET_COPY_OUT_VENDOR)/etc/libnfc-brcm.conf \
+    $(LOCAL_PATH)/configs/libnfc-nci.conf:$(TARGET_COPY_OUT_VENDOR)/etc/libnfc-nci.conf \
     $(LOCAL_PATH)/configs/libnfc-nxp.conf:$(TARGET_COPY_OUT_VENDOR)/etc/libnfc-nxp.conf
 
 # Recovery
@@ -384,7 +384,11 @@ PRODUCT_PACKAGES += \
 
 #RIL
 PRODUCT_PACKAGES += \
-    android.hardware.radio@1.0
+    librmnetctl \
+    libprotobuf-cpp-full \
+    libxml2 \
+    android.hardware.radio@1.0 \
+    android.hardware.radio.config@1.0
 
 # Seccomp policy
 PRODUCT_COPY_FILES += \
@@ -447,7 +451,10 @@ PRODUCT_PACKAGES += \
 
 # Shims
 PRODUCT_PACKAGES += \
-    libqsapshim
+    libqsapshim \
+    libgpu_mapper_shim \
+    libgnss_shim \
+    libjustshoot_shim
 
 #Thermal
 PRODUCT_PACKAGES += android.hardware.thermal@1.0-impl \
@@ -461,6 +468,8 @@ PRODUCT_PACKAGES += \
     wifilogd \
     tcpdump \
     wcnss_service \
+    wpa_supplicant \
+    wpa_supplicant.conf \
     libwpa_client
 
 # Wifi Symlinks
@@ -476,7 +485,8 @@ PRODUCT_COPY_FILES += \
     kernel/motorola/msm8996/drivers/staging/prima/firmware_bin/WCNSS_cfg.dat:$(TARGET_COPY_OUT_VENDOR)/firmware/wlan/prima/WCNSS_cfg.dat \
     $(LOCAL_PATH)/wifi/p2p_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/p2p_supplicant_overlay.conf \
     $(LOCAL_PATH)/wifi/wpa_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant_overlay.conf \
-    $(LOCAL_PATH)/wifi/WCNSS_qcom_cfg.ini:$(TARGET_COPY_OUT_VENDOR)/firmware/wlan/prima/WCNSS_qcom_cfg.ini
+    $(LOCAL_PATH)/wifi/WCNSS_qcom_cfg.ini:$(TARGET_COPY_OUT_VENDOR)/firmware/wlan/prima/WCNSS_qcom_cfg.ini \
+    $(LOCAL_PATH)/wifi/WCNSS_qcom_cfg.ini:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/WCNSS_qcom_cfg.ini
 
 # ZAF
 PRODUCT_COPY_FILES += \
