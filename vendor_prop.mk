@@ -101,11 +101,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # CNE
 PRODUCT_PROPERTY_OVERRIDES += \
-    persist.cne.feature=1 \
-    persist.cne.logging.qxdm=3974 \
-    persist.cne.rat.wlan.chip.oem=WCN \
-    persist.dpm.feature=0 \
-    persist.sys.cnd.iwlan=1 \
+    persist.vendor.cne.logging.qxdm=3974 \
+    persist.vendor.cne.rat.wlan.chip.oem=WCN \
+    persist.vendor.dpm.feature=0 \
+    persist.vendor.sys.cnd.iwlan=1
 
 # core_ctrl
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -181,7 +180,25 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.dbg.ims_volte_enable=1 \
     persist.dbg.volte_avail_ovr=1 \
     persist.dbg.vt_avail_ovr=1 \
-    persist.dbg.wfc_avail_ovr=1
+    persist.dbg.wfc_avail_ovr=1 \
+    persist.dbg.ims_volte_enable=1 \
+    persist.dbg.volte_avail_ovr=1 \
+    persist.dbg.vt_avail_ovr=1 \
+    persist.dbg.wfc_avail_ovr=1 \
+    persist.vendor.radio.force_on_dc=true \
+    persist.vendor.radio.data_ltd_sys_ind=1 \
+    persist.vendor.radio.ignore_dom_time=10 \
+    persist.radio.ignore_dom_time=10 \
+    persist.radio.is_wps_enabled=true \
+    persist.radio.videopause.mode=1 \
+    persist.radio.sap_silent_pin=1 \
+    persist.radio.always_send_plmn=true \
+    persist.rcs.supported=1 \
+    persist.vendor.radio.qcril_uim_vcc_feature=1 \
+    persist.radio.schd.cache=3500 \
+    persist.vendor.radio.apm_sim_not_pwdn=1 \
+    persist.vendor.radio.lte_vrte_ltd=1 \
+    persist.vendor.radio.cs_srv_type=1 \
 
 # Media
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -221,12 +238,11 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.vendor.radio.no_wait_for_card=1 \
     persist.vendor.radio.oem_ind_to_both=0 \
     persist.vendor.radio.relay_oprt_change=1 \
-    rild.libargs=-d[SPACE]/dev/smd0 \
     rild.libpath=/vendor/lib64/libril-qc-qmi-1.so \
     ro.mot.ignore_csim_appid=true \
     persist.sys.ssr.restart_level=ALL_ENABLE \
     persist.sys.qc.sub.rdump.on=1 \
-    persist.vendor.radio.sw_mbn_update=1 \
+    persist.vendor.radio.sw_mbn_update=0 \
     persist.sys.qc.sub.rdump.max=3 \
     persist.vendor.radio.custom_ecc=1 \
     persist.vendor.radio.is_wps_enabled=true \
@@ -258,8 +274,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.use_data_netmgrd=true \
     persist.data.qmi.adb_logmask=0 \
     persist.data.netmgrd.qos.enable=true \
+    ro.vendor.use_data_netmgrd=true \
+    persist.data.iwlan.enable=true \
     persist.data.mode=concurrent \
-    persist.data.iwlan.enable=true
+    persist.vendor.data.mode=concurrent
 
 # RmNet Data
 PRODUCT_PROPERTY_OVERRIDES += \
