@@ -150,6 +150,9 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/camera/mot_ov5695_ofilm_chromatix.xml:$(TARGET_COPY_OUT_VENDOR)/etc/camera/mot_ov5695_ofilm_chromatix.xml \
     $(LOCAL_PATH)/configs/camera/com.motorola.camera/always_aware_ocr.json:$(TARGET_COPY_OUT_VENDOR)/etc/motorola/com.motorola.camera/always_aware_ocr.json
 
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/privapp-permissions-albus.xml:$/ssytem/etc/permissions/privapp-permissions-albus.xml \
+    
 # LineageActions
 PRODUCT_PACKAGES += \
     LineageActions
@@ -174,7 +177,7 @@ PRODUCT_PACKAGES += \
     libqdMetaData.system \
     vendor.display.config@1.0 \
     vendor.display.config@1.0_vendor
-
+    
 PRODUCT_PACKAGES += android.hardware.media.omx
 
 # RenderScript HAL
