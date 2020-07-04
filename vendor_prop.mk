@@ -109,11 +109,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.vendor.dpm.feature=0 \
     persist.vendor.sys.cnd.iwlan=1
 
-# core_ctrl
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.vendor.qti.core_ctl_min_cpu=2 \
-    ro.vendor.qti.core_ctl_max_cpu=4
-
 # Dalvik
 PRODUCT_PROPERTY_OVERRIDES += \
     dalvik.vm.heapstartsize=8m \
@@ -138,7 +133,11 @@ PRODUCT_PROPERTY_OVERRIDES += \
     sdm.debug.disable_skip_validate=1 \
     debug.gralloc.enable_fb_ubwc=1 \
     persist.camera.preview.ubwc=0 \
-    persist.camera.video.ubwc=0
+    persist.camera.video.ubwc=0 \
+    vendor.display.disable_skip_validate=1 \
+    vendor.display.enable_default_color_mode=1 \
+    vendor.display.perf_hint_window=50 \
+    vendor.gralloc.enable_fb_ubwc=1
     
 # FM
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -328,7 +327,13 @@ PRODUCT_PROPERTY_OVERRIDES += \
 #Trim properties
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.vendor.qti.sys.fw.trim_enable_memory=2147483648
-
+    
+# Perf
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.vendor.extension_library=libqti-perfd-client.so \
+    ro.vendor.qti.core_ctl_max_cpu=4 \
+    ro.vendor.qti.core_ctl_min_cpu=2
+    
 # USB
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.usb.mtp=2e82 \
