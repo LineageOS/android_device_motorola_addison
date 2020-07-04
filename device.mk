@@ -124,6 +124,7 @@ PRODUCT_PACKAGES += \
 # Browser
 PRODUCT_PACKAGES += \
     Gello
+    
 #Camera
 PRODUCT_PACKAGES += \
     android.hardware.camera.device@1.0 \
@@ -463,14 +464,14 @@ PRODUCT_PACKAGES += \
 # Shims
 PRODUCT_PACKAGES += \
     libqsapshim \
-    libgpu_mapper_shim \
     libgnss_shim \
     libjustshoot_shim
 
 #Thermal
-PRODUCT_PACKAGES += android.hardware.thermal@1.0-impl \
-                    android.hardware.thermal@1.0-service \
-                    thermal.msm8953
+PRODUCT_PACKAGES += \
+    android.hardware.thermal@1.0-impl \
+    android.hardware.thermal@1.0-service \
+    thermal.msm8953
 
 PRODUCT_PACKAGES += \
     libcurl \
