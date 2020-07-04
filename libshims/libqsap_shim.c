@@ -3,7 +3,7 @@
 #include <sys/socket.h>
 #include <linux/wireless.h>
 
-#include "cutils/log.h"
+#include "log/log.h"
 #include <string.h>
 
 // Keep in sync with system/qcom/softap/sdk/qsap_api.c
