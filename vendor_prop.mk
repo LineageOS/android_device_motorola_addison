@@ -348,5 +348,5 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 ## Enable disable menubar (0 enable - 1 disable)
 PRODUCT_PROPERTY_OVERRIDES += \
-    qemu.hw.mainkeys=0
+    qemu.hw.mainkeys=1
 
