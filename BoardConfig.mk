@@ -250,9 +250,6 @@ SELINUX_IGNORE_NEVERALLOWS := true
 # Releasetools
 TARGET_RELEASETOOLS_EXTENSIONS := $(DEVICE_PATH)/releasetools
 
-#TARGET_RECOVERY_UPDATER_LIBS := librecovery_updater_albus
-#TARGET_RELEASETOOLS_EXTENSIONS := $(DEVICE_PATH)
-
 # Thermal
 USE_DEVICE_SPECIFIC_THERMAL := true
 
@@ -290,5 +287,4 @@ WPA_SUPPLICANT_VERSION           := VER_0_8_X
 # Shim
 TARGET_LD_SHIM_LIBS := \
     /vendor/lib64/vendor.qti.gnss@1.0_vendor.so|libgnss_shim.so \
-    /vendor/lib/libmot_gpu_mapper.so|libgpu_mapper_shim.so \
     /vendor/lib/libjustshoot.so|libjustshoot_shim.so
