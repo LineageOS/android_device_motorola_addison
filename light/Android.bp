@@ -16,9 +16,9 @@
 cc_binary {
     relative_install_path: "hw",
     defaults: ["hidl_defaults"],
-    name: "android.hardware.light@2.0-service.potter",
+    name: "android.hardware.light@2.0-service.albus",
     proprietary: true,
-    init_rc: ["android.hardware.light@2.0-service.potter.rc"],
+    init_rc: ["android.hardware.light@2.0-service.albus.rc"],
     srcs: ["service.cpp", "Light.cpp"],
     shared_libs: [
         "libhardware",

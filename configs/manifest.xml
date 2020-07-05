@@ -602,29 +602,25 @@
             <instance>default</instance>
         </interface>
     </hal>
-    <hal format="hidl">
+     <hal format="hidl">
         <name>vendor.lineage.livedisplay</name>
         <transport>hwbinder</transport>
         <version>2.0</version>
         <interface>
             <name>IPictureAdjustment</name>
-            <name>IAdaptiveBacklight</name>
-            <name>IReadingEnhancement</name>
-            <name>ISunlightEnhancement</name>
-            <name>IPictureAdjustment</name>
             <instance>default</instance>
         </interface>
     </hal>
-    <hal format="hidl">
+    <!--<hal format="hidl">
         <name>android.hardware.gnss</name>
         <transport>hwbinder</transport>
         <version>1.1</version>
         <interface>
             <name>IGnss</name>
             <instance>default</instance>
-            <fqname>@1.0::IGnss/gnss_vendor</fqname>
+            <fqname>@1.1::IGnss/gnss_vendor</fqname>
         </interface>
-    </hal>
+    </hal>-->
     <hal format="hidl">
         <name>android.hardware.soundtrigger</name>
         <transport>hwbinder</transport>
