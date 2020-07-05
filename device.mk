@@ -211,8 +211,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.gatekeeper@1.0-impl \
     android.hardware.gatekeeper@1.0-service
-
-
+    
 # GPS
 PRODUCT_PACKAGES += \
     libgnss \
@@ -233,9 +232,7 @@ PRODUCT_COPY_FILES += \
 
 # health
 PRODUCT_PACKAGES += \
-    android.hardware.health@1.0-convert \
-    android.hardware.health@1.0-impl \
-    android.hardware.health@1.0-service
+    android.hardware.health@2.0-service
 
 # IRSC
 PRODUCT_COPY_FILES += \
@@ -316,10 +313,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/libnfc-nci.conf:$(TARGET_COPY_OUT_VENDOR)/etc/libnfc-nci.conf \
     $(LOCAL_PATH)/configs/libnfc-nxp.conf:$(TARGET_COPY_OUT_VENDOR)/etc/libnfc-nxp.conf
-
-# Recovery
-PRODUCT_PACKAGES += \
-	librecovery_updater_albus
 
 # ModService
 PRODUCT_COPY_FILES += \
@@ -443,9 +436,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.vibrator@1.0-impl \
     android.hardware.vibrator@1.0-service
-
-PRODUCT_PACKAGES += \
-    vndk-sp
 
 # Wifi
 PRODUCT_PACKAGES += \
