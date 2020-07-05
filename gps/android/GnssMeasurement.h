@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2017, The Linux Foundation. All rights reserved.
  * Not a Contribution
  */
 /*
@@ -21,18 +21,17 @@
 #ifndef ANDROID_HARDWARE_GNSS_V1_1_GNSSMEASUREMENT_H
 #define ANDROID_HARDWARE_GNSS_V1_1_GNSSMEASUREMENT_H
 
-#include <android/hardware/gnss/1.1/IGnssMeasurement.h>
-#include <hidl/MQDescriptor.h>
+#include <android/hardware/gnss/1.0/IGnssMeasurement.h>
 #include <hidl/Status.h>
 
 namespace android {
 namespace hardware {
 namespace gnss {
-namespace V1_1 {
+namespace V1_0 {
 namespace implementation {
 
-using ::android::hardware::gnss::V1_1::IGnssMeasurement;
-using ::android::hardware::gnss::V1_1::IGnssMeasurementCallback;
+using ::android::hardware::gnss::V1_0::IGnssMeasurement;
+using ::android::hardware::gnss::V1_0::IGnssMeasurementCallback;
 using ::android::hardware::Return;
 using ::android::hardware::Void;
 using ::android::hardware::hidl_vec;
@@ -48,14 +47,9 @@ struct GnssMeasurement : public IGnssMeasurement {
      * Methods from ::android::hardware::gnss::V1_0::IGnssMeasurement follow.
      * These declarations were generated from IGnssMeasurement.hal.
      */
-    Return<GnssMeasurement::GnssMeasurementStatus> setCallback(
-        const sp<V1_0::IGnssMeasurementCallback>& callback) override;
+    Return<GnssMeasurementStatus> setCallback(
+        const sp<IGnssMeasurementCallback>& callback) override;
     Return<void> close() override;
-
-    // Methods from ::android::hardware::gnss::V1_1::IGnssMeasurement follow.
-    Return<GnssMeasurement::GnssMeasurementStatus> setCallback_1_1(
-            const sp<IGnssMeasurementCallback>& callback,
-            bool enableFullTracking) override;
 
  private:
     struct GnssMeasurementDeathRecipient : hidl_death_recipient {
@@ -69,13 +63,12 @@ struct GnssMeasurement : public IGnssMeasurement {
 
  private:
     sp<GnssMeasurementDeathRecipient> mGnssMeasurementDeathRecipient = nullptr;
-    sp<V1_0::IGnssMeasurementCallback> mGnssMeasurementCbIface = nullptr;
-    sp<IGnssMeasurementCallback> mGnssMeasurementCbIface_1_1 = nullptr;
+    sp<IGnssMeasurementCallback> mGnssMeasurementCbIface = nullptr;
     MeasurementAPIClient* mApi;
 };
 
 }  // namespace implementation
-}  // namespace V1_1
+}  // namespace V1_0
 }  // namespace gnss
 }  // namespace hardware
 }  // namespace android

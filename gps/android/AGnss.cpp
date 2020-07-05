@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2017, The Linux Foundation. All rights reserved.
  * Not a Contribution
  */
 /*
@@ -27,26 +27,15 @@
 namespace android {
 namespace hardware {
 namespace gnss {
-namespace V1_1 {
+namespace V1_0 {
 namespace implementation {
 
-static AGnss* spAGnss = nullptr;
+sp<IAGnssCallback> AGnss::sAGnssCbIface = nullptr;
 
 AGnss::AGnss(Gnss* gnss) : mGnss(gnss) {
-    spAGnss = this;
-}
-
-AGnss::~AGnss() {
-    spAGnss = nullptr;
 }
 
 void AGnss::agnssStatusIpV4Cb(AGnssExtStatusIpV4 status){
-    if (nullptr != spAGnss) {
-        spAGnss->statusIpV4Cb(status);
-    }
-}
-
-void AGnss::statusIpV4Cb(AGnssExtStatusIpV4 status) {
     IAGnssCallback::AGnssStatusIpV4 st = {};
 
     switch (status.type) {
@@ -83,13 +72,9 @@ void AGnss::statusIpV4Cb(AGnssExtStatusIpV4 status) {
     }
     st.ipV4Addr = status.ipV4Addr;
 
-    if (mAGnssCbIface != nullptr) {
-        auto r = mAGnssCbIface->agnssStatusIpV4Cb(st);
-        if (!r.isOk()) {
-            LOC_LOGw("Error invoking AGNSS status cb %s", r.description().c_str());
-        }
-    } else {
-        LOC_LOGw("setCallback has not been called yet");
+    auto r = sAGnssCbIface->agnssStatusIpV4Cb(st);
+    if (!r.isOk()) {
+        LOC_LOGE("Error invoking AGNSS status cb %s", r.description().c_str());
     }
 }
 
@@ -101,7 +86,7 @@ Return<void> AGnss::setCallback(const sp<IAGnssCallback>& callback) {
     }
 
     // Save the interface
-    mAGnssCbIface = callback;
+    sAGnssCbIface = callback;
 
     AgpsCbInfo cbInfo = {};
     cbInfo.statusV4Cb = (void*)agnssStatusIpV4Cb;
@@ -197,7 +182,7 @@ Return<bool> AGnss::setServer(IAGnssCallback::AGnssType type,
 }
 
 }  // namespace implementation
-}  // namespace V1_1
+}  // namespace V1_0
 }  // namespace gnss
 }  // namespace hardware
 }  // namespace android
