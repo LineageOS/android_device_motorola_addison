@@ -137,9 +137,12 @@ PRODUCT_PACKAGES += \
     camera.device@1.0-impl \
     camera.device@3.2-impl \
     libbson.vendor \
+    libgpu_mapper_shim \
+    libgui_vendor \
     libxml2 \
     Camera2 \
-    Snap
+    Snap \
+    libwui 
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/camera/msm8953_mot_albus_camera.xml:$(TARGET_COPY_OUT_VENDOR)/etc/camera/msm8953_mot_albus_camera.xml \
@@ -419,7 +422,9 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_PACKAGES += \
     android.hardware.sensors@1.0-impl \
-    android.hardware.sensors@1.0-service
+    android.hardware.sensors@1.0-service.albus \
+    sensors.msm8953 \
+    sensorhub.msm8953
 
 # Thermal
 PRODUCT_COPY_FILES += \
