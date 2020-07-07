@@ -63,7 +63,7 @@ TARGET_BOARD_INFO_FILE := $(DEVICE_PATH)/board-info.txt
 # GPS
 TARGET_NO_RPC := true
 USE_DEVICE_SPECIFIC_GPS := true
-BOARD_VENDOR_QCOM_GPS_LOC_API_HARDWARE := true
+BOARD_VENDOR_QCOM_GPS_LOC_API_HARDWARE := $(TARGET_BOARD_PLATFORM)
 USE_DEVICE_SPECIFIC_LOC_API := true
 
 # Kernel
@@ -289,3 +289,4 @@ WPA_SUPPLICANT_VERSION           := VER_0_8_X
 TARGET_LD_SHIM_LIBS := \
     /vendor/lib64/vendor.qti.gnss@1.0_vendor.so|libgnss_shim.so \
     /vendor/lib/libjustshoot.so|libjustshoot_shim.so
+

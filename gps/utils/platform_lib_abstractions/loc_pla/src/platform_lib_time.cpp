@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2014, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2014, The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -24,55 +24,36 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  */
-#ifndef LOC_TARGET_H
-#define LOC_TARGET_H
-#define TARGET_SET(gnss,ssc) ( (gnss<<1)|ssc )
-#define TARGET_DEFAULT       TARGET_SET(GNSS_MSM, HAS_SSC)
-#define TARGET_MDM           TARGET_SET(GNSS_MDM, HAS_SSC)
-#define TARGET_APQ_SA        TARGET_SET(GNSS_GSS, NO_SSC)
-#define TARGET_NO_GNSS       TARGET_SET(GNSS_NONE, NO_SSC)
-#define TARGET_MSM_NO_SSC    TARGET_SET(GNSS_MSM, NO_SSC)
-#define TARGET_AUTO          TARGET_SET(GNSS_AUTO, NO_SSC)
-#define TARGET_UNKNOWN       TARGET_SET(GNSS_UNKNOWN, NO_SSC)
-#define getTargetGnssType(target)  (target>>1)
+#include "platform_lib_time.h"
 
-#ifdef __cplusplus
-extern "C"
+#ifdef USE_GLIB
+#include <loc_stub_time.h>
+#else
+#include <utils/SystemClock.h>
+#include <utils/Timers.h>
+
+#endif /* USE_GLIB */
+
+int64_t platform_lib_abstraction_elapsed_millis_since_boot()
 {
+#ifdef USE_GLIB
+
+    return elapsedMillisSinceBoot();
+
+#else
+
+    //return android::nanoseconds_to_microseconds(systemTime(SYSTEM_TIME_BOOTTIME))/1000;
+    return nanoseconds_to_microseconds(systemTime(SYSTEM_TIME_BOOTTIME))/1000;
 #endif
-
-unsigned int loc_get_target(void);
-
-/*The character array passed to this function should have length
-  of atleast PROPERTY_VALUE_MAX*/
-void loc_get_target_baseband(char *baseband, int array_length);
-/*The character array passed to this function should have length
-  of atleast PROPERTY_VALUE_MAX*/
-void loc_get_platform_name(char *platform_name, int array_length);
-/*The character array passed to this function should have length
-  of atleast PROPERTY_VALUE_MAX*/
-void loc_get_auto_platform_name(char *platform_name, int array_length);
-
-/* Please remember to update 'target_name' in loc_log.cpp,
-   if do any changes to this enum. */
-typedef enum {
-    GNSS_NONE = 0,
-    GNSS_MSM,
-    GNSS_GSS,
-    GNSS_MDM,
-    GNSS_AUTO,
-    GNSS_UNKNOWN
-}GNSS_TARGET;
-
-typedef enum {
-    NO_SSC = 0,
-    HAS_SSC
-}SSC_TYPE;
-
-#ifdef __cplusplus
 }
-#endif
+int64_t platform_lib_abstraction_elapsed_micros_since_boot()
+{
+#ifdef USE_GLIB
+    return elapsedMicrosSinceBoot();
 
-#endif /*LOC_TARGET_H*/
+#else
+    //return android::nanoseconds_to_microseconds(systemTime(SYSTEM_TIME_BOOTTIME));
+    return nanoseconds_to_microseconds(systemTime(SYSTEM_TIME_BOOTTIME));
+#endif
+}
