@@ -11,7 +11,9 @@ include $(CLEAR_VARS)
 LOCAL_SHARED_LIBRARIES := \
     libutils \
     libcutils \
-    liblog
+    liblog \
+    libloc_pla \
+    libloc_stub
 
 LOCAL_SRC_FILES += \
     loc_log.cpp \
@@ -20,6 +22,7 @@ LOCAL_SRC_FILES += \
     linked_list.c \
     loc_target.cpp \
     LocHeap.cpp \
+    platform_lib_abstractions/elapsed_millis_since_boot.cpp \
     LocTimer.cpp \
     LocThread.cpp \
     MsgTask.cpp \
@@ -42,7 +45,8 @@ LOCAL_LDFLAGS += -Wl,--export-dynamic
 LOCAL_HEADER_LIBRARIES := \
     libutils_headers \
     libloc_pla_headers \
-    liblocation_api_headers
+    liblocation_api_headers \
+    libloc_stub_headers
 
 LOCAL_MODULE := libgps.utils
 LOCAL_VENDOR_MODULE := true
@@ -58,6 +62,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := libgps.utils_headers
 LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)
 include $(BUILD_HEADER_LIBRARY)
+include $(addsuffix /Android.mk, $(addprefix $(LOCAL_PATH)/, platform_lib_abstractions))
 
 endif # not BUILD_TINY_ANDROID
 endif # BOARD_VENDOR_QCOM_GPS_LOC_API_HARDWARE
