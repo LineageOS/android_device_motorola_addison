@@ -43,6 +43,8 @@ extern "C"
 {
 #endif
 
+int loc_identify_lean_target();
+
 unsigned int loc_get_target(void);
 
 /*The character array passed to this function should have length

@@ -11,8 +11,6 @@ allow cameraserver sdcardfs:dir { read write open getattr add_name remove_name r
 allow cameraserver sdcardfs:file { create open read write unlink getattr };
 allow cameraserver storage_file:dir search;
 
-allow cameraserver persist_file:file { read write open create getattr create_file_perms rw_file_perms };
-allow cameraserver persist_file:dir { read write open create_file_perms rw_file_perms search add_name create };
 allow cameraserver fuse:file { read write open create getattr create_file_perms rw_file_perms };
 allow cameraserver fuse:dir { read write open create_file_perms rw_file_perms search add_name create };
 allow cameraserver tmpfs:file { read write open create getattr create_file_perms rw_file_perms };
@@ -28,18 +26,23 @@ allow cameraserver sysfs:file { open write };
 
 allow cameraserver cameraserver:process { execmem };
 
+allow cameraserver self:netlink_kobject_uevent_socket { read bind create setopt };
+allow cameraserver default_android_service:service_manager find;
+allow cameraserver rootfs:lnk_file getattr;
+allow cameraserver init:unix_dgram_socket { sendto};
+
+binder_call(cameraserver, hal_perf_default)
+binder_call(cameraserver, hal_configstore_default)
+
 ####
 allow cameraserver debug_prop:file { r_file_perms };
 allow cameraserver debug_prop:property_service set;
 
 #######
-#allow cameraserver persist_file:file rw_file_perms;
-#allow cameraserver persist_file:file setattr;
 allow cameraserver shell_exec:file { read open execute };
 allow cameraserver self:socket create;
 allow cameraserver camera_prop:property_service set;
 allow cameraserver init:unix_stream_socket connectto;
-allow cameraserver sensors_persist_file:file { open read };
 allow cameraserver property_socket:sock_file write;
 #allow cameraserver cameraserver:socket { { getattr read ioctl lock } { append write lock } };
 allow cameraserver shell_exec:file { execute getattr };
@@ -54,11 +57,5 @@ allow cameraserver hal_perf_default:binder call;
 
 allow cameraserver sysfs_battery_supply:dir search;
 allow cameraserver sysfs_battery_supply:file { getattr open read };
-
-allow cameraserver sysfs_greybus:dir search;
-allow cameraserver sysfs_greybus:file read;
-allow cameraserver sysfs_mods_camd:file rw_file_perms;
-allow cameraserver sysfs_mods_camd:dir rw_dir_perms;
-allow cameraserver mods_service:service_manager find;
 
 allow cameraserver camera_bgproc_service:service_manager { add find };

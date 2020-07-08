@@ -1,4 +1,4 @@
-type init_wifi, domain, binder_in_vendor_violators;
+type init_wifi, domain;
 type init_wifi_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(init_wifi)
 
@@ -12,4 +12,4 @@ allow init_wifi vendor_toolbox_exec:file rx_file_perms;
 allow init_wifi vendor_shell_exec:file entrypoint;
 
 allow init_wifi sysfs_wcnsscore:file rw_file_perms;
-allow init_wifi sysfs_wcnsscore:dir rw_dir_perms;
+allow init_wifi sysfs_wcnsscore:dir r_dir_perms;
