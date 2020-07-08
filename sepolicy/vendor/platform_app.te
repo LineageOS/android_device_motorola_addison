@@ -1,35 +1,7 @@
 get_prop(platform_app, camera_prop);
-<<<<<<< HEAD
-=======
-#get_prop(platform_app, qemu_hw_mainkeys_prop);
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
 binder_call(platform_app, hal_sensors_default);
 
 allow platform_app rootfs:dir getattr;
 
 allow platform_app init:unix_stream_socket { read write };
 allow platform_app hal_sensors_default:unix_stream_socket { read write };
-<<<<<<< HEAD
-=======
-
-#allow platform_app qemu_hw_mainkeys_prop:file {getattr open read};
-
-allow platform_app default_android_service:service_manager find;
-allow platform_app greybus_raw_device:chr_file rw_file_perms;
-allow platform_app greybus_raw_device:dir rw_dir_perms;
-allow platform_app input_device:chr_file getattr;
-allow platform_app input_device:dir search;
-allow platform_app mods_service:service_manager find;
-allow platform_app self:netlink_kobject_uevent_socket { bind create read setopt };
-allow platform_app sysfs_batt_mods:dir rw_dir_perms;
-allow platform_app sysfs_batt_mods:file rw_file_perms;
-allow platform_app sysfs_greybus:dir r_dir_perms;
-allow platform_app sysfs_greybus:file rw_file_perms;
-allow platform_app sysfs_greybus:lnk_file r_file_perms;
-allow platform_app sysfs_mods_camd:file rw_file_perms;
-allow platform_app sysfs_mods_camd:dir rw_dir_perms;
-allow platform_app gbfirmware_file:dir create_dir_perms;
-allow platform_app gbfirmware_file:file create_file_perms;
-allow platform_app sysfs_usb_supply:dir search;
-allow platform_app system_app_data_file:dir getattr;
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030

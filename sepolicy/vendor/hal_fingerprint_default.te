@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 allow hal_fingerprint_default sysfs_fpc:file rw_file_perms;
 allow hal_fingerprint_default sysfs_fpc:dir r_dir_perms;
 allow hal_fingerprint_default fpc_data_file:dir rw_dir_perms;
@@ -6,20 +5,10 @@ allow hal_fingerprint_default tee_device:chr_file rw_file_perms;
 allow hal_fingerprint_default firmware_file:dir search;
 allow hal_fingerprint_default firmware_file:file r_file_perms;
 allow hal_fingerprint_default fpc_data_file:sock_file { create unlink rw_file_perms };
-=======
-allow hal_fingerprint_default sysfs_fingerprint:file rw_file_perms;
-allow hal_fingerprint_default sysfs_fingerprint:dir r_dir_perms;
-allow hal_fingerprint_default fingerprint_data_file:dir rw_dir_perms;
-allow hal_fingerprint_default tee_device:chr_file rw_file_perms;
-allow hal_fingerprint_default firmware_file:dir search;
-allow hal_fingerprint_default firmware_file:file r_file_perms;
-allow hal_fingerprint_default fingerprint_data_file:sock_file { create unlink rw_file_perms };
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
 allow hal_fingerprint_default sysfs_graphics:dir r_dir_perms;
 allow hal_fingerprint_default sysfs_graphics:file r_file_perms;
 allow hal_fingerprint_default sysfs_leds:dir r_dir_perms;
 allow hal_fingerprint_default sysfs_leds:file r_file_perms;
-<<<<<<< HEAD
 allow hal_fingerprint_default fingerprintd_data_file:sock_file { create unlink };
 allow hal_fingerprint_default uhid_device:chr_file rw_file_perms;
 allow hal_fingerprint_default fpc_socket:sock_file unlink;
@@ -40,10 +29,3 @@ add_hwservice(hal_fingerprint_default, fpc_extension_service)
 allow hal_fingerprint_default fpc_extension_service:hwservice_manager { add find };
 
 
-=======
-# allow hal_fingerprint_default fingerprintd_data_file:sock_file { create unlink };
-allow hal_fingerprint_default uhid_device:chr_file rw_file_perms;
-allow hal_fingerprint_default fingerprint_socket:sock_file unlink;
-allow hal_fingerprint_default sysfs_greybus:dir search;
-allow hal_fingerprint_default sysfs_greybus:file { open read };
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030

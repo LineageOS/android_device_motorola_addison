@@ -1,7 +1,6 @@
 allow netmgrd netmgr_data_file:dir { add_name search write };
 allow netmgrd netmgr_data_file:file create;
 allow netmgrd netmgr_data_file:file rw_file_perms;
-<<<<<<< HEAD
 allow netmgrd net_data_file:dir r_dir_perms;
 allow netmgrd netd_socket:sock_file write;
 allow netmgrd toolbox_exec:file { execute getattr execute_no_trans read open };
@@ -15,11 +14,3 @@ allow netmgrd init:unix_stream_socket connectto;
 set_prop(netmgrd, vendor_xlat_prop)
 
 allow netmgrd kernel:system module_request;
-=======
-allow netmgrd self:capability dac_override;
-allow netmgrd net_data_file:dir r_dir_perms;
-allow netmgrd netd_socket:sock_file write;
-# allow netmgrd toolbox_exec:file { execute getattr execute_no_trans read open };
-r_dir_file(netmgrd, net_data_file)
-allow netmgrd system_file:file lock;
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030

@@ -1,6 +1,2 @@
-<<<<<<< HEAD
 binder_call(esepmdaemon, servicemanager);
-=======
-# binder_call(esepmdaemon, servicemanager);
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
 

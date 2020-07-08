@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 type mmi_laser, domain;
-=======
-type mmi_laser, domain, binder_in_vendor_violators;
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
 type mmi_laser_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(mmi_laser)
 
@@ -20,8 +16,4 @@ allow mmi_laser kmsg_device:chr_file w_file_perms;
 
 allow mmi_laser persist_file:dir search;
 allow mmi_laser persist_file:file r_file_perms;
-<<<<<<< HEAD
-=======
-allow mmi_laser self:capability dac_override;
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
 allow mmi_laser sysfs_mmi_laser:file rw_file_perms;

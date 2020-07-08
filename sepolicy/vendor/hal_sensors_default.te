@@ -1,9 +1,5 @@
 binder_call(hal_sensors_default, hwservicemanager)
-<<<<<<< HEAD
 binder_call(hal_sensors_default, servicemanager)
-=======
-# binder_call(hal_sensors_default, servicemanager)
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
 
 binder_call(hal_sensors_default, mm-qcamerad)
 binder_call(hal_sensors_default, system_server)
@@ -12,10 +8,6 @@ binder_call(hal_sensors_default, system_app)
 binder_call(hal_sensors_default, priv_app)
 binder_call(hal_sensors_default, platform_app)
 
-<<<<<<< HEAD
-=======
-allow hal_sensors_default self:capability { dac_override };
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
 allow hal_sensors_default sensors_device:chr_file { ioctl open read };
 allow hal_sensors_default sysfs:file { open read write };
 allow hal_sensors_default system_data_file:file { getattr open read };
@@ -23,14 +15,6 @@ allow hal_sensors_default system_data_file:file { getattr open read };
 allow hal_sensors_default proc_net:file { getattr open read };
 allow hal_sensors_default sysfs_capsense:dir search;
 allow hal_sensors_default sysfs_capsense:file { open write };
-<<<<<<< HEAD
 allow hal_sensors_default system_data_file:dir {add_name write };
 allow hal_sensors_default system_data_file:file r_file_perms;
 
-=======
-
-allow hal_sensors_default debugfs:dir { read open };
-allow hal_sensors_default persist_file:file { open read };
-allow hal_sensors_default self:netlink_kobject_uevent_socket { create read setopt bind };
-allow hal_sensors_default sysfs:dir { read open };
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030

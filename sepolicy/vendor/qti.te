@@ -1,7 +1,4 @@
 get_prop(qti, diag_prop)
 allow qti diag_device:chr_file { read write };
-<<<<<<< HEAD
 allow qti sysfs:file { open read };
 allow qti vendor_data_file:dir r_dir_perms;
-=======
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030

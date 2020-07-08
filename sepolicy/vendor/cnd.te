@@ -1,11 +1,6 @@
-<<<<<<< HEAD
 allow cnd system_wpa_socket:sock_file { unlink };
 allow cnd diag_device:chr_file { read write };
 
 add_hwservice(cnd, hal_cne_hwservice)
 allow cnd sysfs:file { read open };
 
-=======
-# allow cnd system_wpa_socket:sock_file { unlink };
-allow cnd diag_device:chr_file { read write open ioctl };
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030

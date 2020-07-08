@@ -5,9 +5,5 @@ allow qti_init_shell hci_attach_dev:chr_file { read write open ioctl };
 
 allow qti_init_shell kmsg_device:chr_file write;
 allow qti_init_shell sysfs_wcnsscore:file write;
-<<<<<<< HEAD
-=======
-allow qti_init_shell sysfs_wcnsscore:dir write;
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
 
 allow qti_init_shell kmsg_device:chr_file open;

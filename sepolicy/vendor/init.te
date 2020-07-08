@@ -6,11 +6,6 @@ allow init hwservicemanager:binder call;
 allow init mm-qcamerad:binder transfer;
 allow init platform_app:binder transfer;
 
-<<<<<<< HEAD
-=======
-allow init sysfs_devices_system_cpu:dir write;
-allow init sysfs_lowmemorykiller:dir write;
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
 allow init system_app:binder transfer;
 allow init system_data_file:file lock;
 
@@ -56,7 +51,6 @@ allow init self:capability2 { block_suspend };
 
 allow init hal_sensors_hwservice:hwservice_manager find;
 
-<<<<<<< HEAD
 allow init { domain -lmkd -crash_dump }:process noatsecure;
 
 allow init hal_perf_hwservice:hwservice_manager find;
@@ -70,8 +64,3 @@ allow init sysfs_fpc:file { rw_file_perms setattr };
 allow init proc:file { open write };
 allow init sysfs_capsense:file setattr;
 
-=======
-allow init hal_perf_hwservice:hwservice_manager find;
-allow init hidl_base_hwservice:hwservice_manager add;
-
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030

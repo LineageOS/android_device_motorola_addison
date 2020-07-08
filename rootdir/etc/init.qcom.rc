@@ -857,7 +857,7 @@ on charger
 on property:sys.boot_completed=1
     write /dev/kmsg "Boot completed "
     setprop sys.io.scheduler bfq
-
+    restart cameraserver
     # scheduler settings
     write /proc/sys/kernel/sched_window_stats_policy 3
     write /proc/sys/kernel/sched_ravg_hist_size 3

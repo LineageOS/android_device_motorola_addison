@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 type sensor_hub, domain;
-=======
-type sensor_hub, domain, binder_in_vendor_violators;
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
 type sensor_hub_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(sensor_hub)
 

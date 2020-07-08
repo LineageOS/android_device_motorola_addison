@@ -1,7 +1,4 @@
 allow installd firmware_file:filesystem quotaget;
 allow installd fsg_file:filesystem quotaget;
 allow installd persist_file:filesystem quotaget;
-<<<<<<< HEAD
 allow installd idmap:process noatsecure;
-=======
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030

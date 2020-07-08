@@ -1,6 +1,2 @@
-<<<<<<< HEAD
 allow hal_audio_default vendor_data_file:dir {add_name rw_file_perms };
 allow hal_audio_default vendor_data_file:file create_file_perms;
-=======
-allow hal_audio_default sysfs:dir { read write open getattr };
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030

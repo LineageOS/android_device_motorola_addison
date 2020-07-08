@@ -7,14 +7,8 @@ allow rmt_storage debugfs_rmt_storage:dir search;
 allow rmt_storage debugfs_rmt_storage:file w_file_perms;
 
 allow rmt_storage fsg_file:file { open read };
-<<<<<<< HEAD
 
 allow rmt_storage fsg_file:dir search;
 allow rmt_storage fsg_file:lnk_file read;
 
 allow rmt_storage persist_file:dir r_dir_perms;
-=======
-allow rmt_storage self:capability dac_override;
-
-allow rmt_storage fsg_file:dir search;
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030

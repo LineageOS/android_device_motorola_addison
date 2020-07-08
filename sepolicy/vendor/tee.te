@@ -1,8 +1,5 @@
 allow tee persist_file:file r_file_perms;
-<<<<<<< HEAD
 allow tee persist_file:dir r_dir_perms;
 allow tee fingerprintd_data_file:dir create_dir_perms;
 allow tee fingerprintd_data_file:file create_file_perms;
 allow tee system_data_file:dir r_dir_perms;
-=======
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030

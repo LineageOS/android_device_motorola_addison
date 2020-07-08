@@ -1,7 +1,4 @@
 allow hal_drm_default firmware_file:lnk_file read;
 allow hal_drm_default debug_prop:file read;
-<<<<<<< HEAD
 allow hal_drm_default media_data_file:dir create_dir_perms;
 allow hal_drm_default media_data_file:file create_file_perms;
-=======
->>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
