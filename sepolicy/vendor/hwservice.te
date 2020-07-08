@@ -1,4 +1,7 @@
 type nxpnfc_hwservice, hwservice_manager_type;
 type nxpese_hwservice, hwservice_manager_type;
 type fpc_extension_service, hwservice_manager_type;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030

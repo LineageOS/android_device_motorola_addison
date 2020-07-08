@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 allow hal_camera_default gpu_device:dir r_dir_perms;
 allow hal_camera_default gpu_device:file r_file_perms;
 allow hal_camera_default hal_configstore_ISurfaceFlingerConfigs:hwservice_manager find;
@@ -11,3 +12,11 @@ allow hal_camera_default sysfs:file { getattr open read };
 
 binder_call(hal_camera_default, hal_configstore_default)
 binder_call(hal_camera_default, hal_graphics_allocator_default)
+=======
+allow hal_camera_default sysfs_kgsl:dir r_dir_perms;
+allow hal_camera_default sysfs_kgsl:file r_file_perms;
+allow hal_camera_default hal_configstore_ISurfaceFlingerConfigs:hwservice_manager find;
+allow hal_camera_default hal_configstore_default:binder call;
+allow hal_camera_default gpu_device:dir r_dir_perms;
+allow hal_camera_default gpu_device:file r_file_perms;
+>>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030

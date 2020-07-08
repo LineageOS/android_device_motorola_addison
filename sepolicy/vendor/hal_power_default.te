@@ -1,4 +1,7 @@
 allow hal_power_default sysfs:file rw_file_perms;
+<<<<<<< HEAD
 allow hal_power_default debugfs_rpm:file r_file_perms;
 allow hal_power_default sysfs_msm_subsys:dir r_dir_perms;
+=======
+>>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
 

@@ -1,2 +1,7 @@
 allow radio system_app_data_file:dir getattr;
 allow radio qmuxd_socket:sock_file write;
+<<<<<<< HEAD
+=======
+allow radio qcom_ims_prop:file { read open getattr };
+allow radio vendor_file:file { execute getattr open read };
+>>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030

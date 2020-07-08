@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 type mmi_boot, domain;
+=======
+type mmi_boot, domain, binder_in_vendor_violators;
+>>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
 type mmi_boot_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(mmi_boot)
 
@@ -15,6 +19,10 @@ allow mmi_boot radio_data_file:dir { add_name search write };
 allow mmi_boot radio_data_file:file { create setattr };
 allow mmi_boot radio_data_file:file rw_file_perms;
 allow mmi_boot self:capability chown;
+<<<<<<< HEAD
+=======
+allow mmi_boot self:capability dac_override;
+>>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
 allow mmi_boot sysfs_socinfo:file write;
 
 set_prop(mmi_boot, hw_rev_prop);

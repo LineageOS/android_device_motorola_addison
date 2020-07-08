@@ -1,5 +1,10 @@
 allow ims debug_prop:property_service set;
 get_prop(ims, debug_prop);
 allow ims self:capability net_raw;
+<<<<<<< HEAD
 allow ims diag_device:chr_file { read write };
 allow ims sysfs:file {open read };
+=======
+allow ims diag_device:chr_file { read write open ioctl };
+
+>>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030

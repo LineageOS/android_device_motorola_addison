@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #type_transition mm-qcamerad camera_data_file:sock_file camera_socket "cam_socket1";
 #type_transition mm-qcamerad camera_data_file:sock_file camera_socket "cam_socket2";
 #allow mm-qcamerad camera_socket:sock_file { create unlink write };
@@ -7,17 +8,33 @@ binder_use(mm-qcamerad);
 binder_call(mm-qcamerad, binderservicedomain);
 binder_call(mm-qcamerad, appdomain);
 binder_call(mm-qcamerad, hal_sensors_default);
+=======
+typeattribute mm-qcamerad binder_in_vendor_violators;
+# binder_call(mm-qcamerad, servicemanager);
+binder_use(mm-qcamerad);
+# binder_call(mm-qcamerad, binderservicedomain);
+# binder_call(mm-qcamerad, appdomain);
+# binder_call(mm-qcamerad, hal_sensors_default);
+>>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
 set_prop(mm-qcamerad, camera_prop);
 
 allow servicemanager mm-qcamerad:dir { search };
 allow servicemanager mm-qcamerad:file { read open };
 allow servicemanager mm-qcamerad:process { getattr };
 
+<<<<<<< HEAD
 allow mm-qcamerad camera_data_file:sock_file { create unlink write };
 allow mm-qcamerad system_server:unix_stream_socket rw_socket_perms;
 allow mm-qcamerad sensorservice_service:service_manager find;
 allow mm-qcamerad vendor_camera_data_file:file rw_file_perms;
 allow mm-qcamerad permission_service:service_manager find;
+=======
+# allow mm-qcamerad camera_data_file:sock_file { create unlink write };
+# allow mm-qcamerad system_server:unix_stream_socket rw_socket_perms;
+#allow mm-qcamerad sensorservice_service:service_manager find;
+allow mm-qcamerad vendor_camera_data_file:file rw_file_perms;
+# allow mm-qcamerad permission_service:service_manager find;
+>>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
 allow mm-qcamerad debug_prop:property_service set;
 allow mm-qcamerad laser_device:chr_file { read write ioctl open };
 allow mm-qcamerad persist_file:dir search;
@@ -25,6 +42,7 @@ allow mm-qcamerad persist_file:file { read getattr open };
 allow mm-qcamerad system_data_file:dir read;
 
 allow mm-qcamerad init:unix_stream_socket { read write };
+<<<<<<< HEAD
 allow mm-qcamerad sysfs_graphics:file r_file_perms;
 
 allow mm-qcamerad hal_sensors_default:unix_stream_socket { read write };
@@ -38,3 +56,13 @@ binder_call(mm-qcamerad, system_server)
 
 allow mm-qcamerad camera_data_file:dir search;
 allow mm-qcamerad sysfs:file { open read };
+=======
+
+allow mm-qcamerad hal_sensors_default:unix_stream_socket { read write };
+
+allow mm-qcamerad sysfs_mods_camd:file { open read };
+allow mm-qcamerad hal_configstore_ISurfaceFlingerConfigs:hwservice_manager find;
+allow mm-qcamerad hal_configstore_default:binder call;
+#allow mm-qcamerad wcnss_prop:file { getattr open };
+#allow mm-qcamerad wififtmd_prop:file { getattr open };
+>>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030

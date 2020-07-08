@@ -1,5 +1,9 @@
 # ADSP
+<<<<<<< HEAD
 type adspd_data_file, file_type, data_file_type, core_data_file_type;
+=======
+type adspd_data_file, file_type, data_file_type;
+>>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
 
 # charge_only_mode
 type chargeonly_data_file, file_type, data_file_type, core_data_file_type;
@@ -60,5 +64,71 @@ type proc_kernel_sched, fs_type;
 type sysfs_power_management, sysfs_type, fs_type;
 type proc_touchpanel, fs_type;
 
+<<<<<<< HEAD
 type sysfs_msm_subsys, sysfs_type, fs_type;
+=======
+# FSG
+type fsg_file, fs_type, contextmount_type;
+
+# Modem
+type persist_modem_file, file_type, data_file_type;
+
+type persist_omadm_file, file_type, data_file_type;
+type sds_data_file, file_type, data_file_type;
+type pds_public_file, file_type, data_file_type;
+type persist_camera_file, file_type, data_file_type;
+type persist_antcap_file, file_type, data_file_type;
+type pds_telephony_file, file_type, data_file_type;
+type pds_omadm_file, file_type, data_file_type;
+type persist_audio_file, file_type, data_file_type;
+
+type moodle_data_file, file_type, data_file_type;
+type cutback_data_file, file_type, data_file_type;
+
+type dbvc_data_file, file_type, data_file_type;
+
+type akmd_data_file, file_type, data_file_type;
+
+type wapi_supplicant_data_file, file_type, data_file_type;
+
+# RIL
+type netmgr_data_file, file_type, data_file_type;
+
+# sysfs
+#type sysfs_adsp, fs_type, sysfs_type;
+type sysfs_homebutton, fs_type, sysfs_type, mlstrustedobject;
+type sysfs_mmi_fp, fs_type, sysfs_type;
+type sysfs_mmi_laser, fs_type, sysfs_type;
+type sysfs_mmi_touch, fs_type, sysfs_type;
+
+type sysfs_capsense, fs_type, sysfs_type;
+type sysfs_batt, fs_type, sysfs_type;
+type sysfs_cnss, fs_type, sysfs_type;
+
+type sysfs_fingerprint, sysfs_type, fs_type;
+type fingerprint_data_file, data_file_type, file_type;
+type fingerprint_socket, data_file_type, file_type;
+
+type sysfs_wcnsscore, fs_type, sysfs_type;
+
+# Screen off gestures
+type sysfs_screen_off_gestures, fs_type, sysfs_type, mlstrustedobject;
+
+type nv_data_file, file_type, data_file_type;
+type sysfs_rmt_storage, fs_type, sysfs_type;
+type debugfs_rmt_storage, debugfs_type, fs_type;
+type debugfs_wlan, debugfs_type, fs_type;
+type perfd_data_file, file_type, data_file_type;
+type proc_kernel_sched, fs_type;
+type sysfs_power_management, sysfs_type, fs_type;
+type proc_touchpanel, fs_type;
+
+# Greybus
+type sysfs_greybus, fs_type, sysfs_type, mlstrustedobject;
+type sysfs_greybus_media, fs_type, sysfs_type, mlstrustedobject;
+type gbfirmware_file, file_type, data_file_type, mlstrustedobject;
+type sysfs_mods_camd, fs_type, sysfs_type, mlstrustedobject;
+type sysfs_v4l2_openmode, fs_type, sysfs_type, mlstrustedobject;
+type sysfs_batt_mods, fs_type, sysfs_type, mlstrustedobject;
+>>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
 

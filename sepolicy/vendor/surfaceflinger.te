@@ -1,8 +1,13 @@
 get_prop(surfaceflinger, diag_prop);
 allow surfaceflinger perfd_data_file:sock_file write;
 allow surfaceflinger perfd_data_file:dir search;
+<<<<<<< HEAD
 allow surfaceflinger perfd:unix_stream_socket connectto;
 allow surfaceflinger diag_device:chr_file { read write };
+=======
+# allow surfaceflinger perfd:unix_stream_socket connectto;
+allow surfaceflinger diag_device:chr_file { read write open ioctl };
+>>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
 
 binder_call(surfaceflinger, hwservicemanager)
 

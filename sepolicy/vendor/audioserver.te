@@ -1,2 +1,10 @@
+<<<<<<< HEAD
 allow audioserver sysfs:dir { open read };
 allow audioserver vendor_data_file:file { append getattr open read write };
+=======
+allow audioserver sysfs_greybus:dir r_dir_perms;
+allow audioserver sysfs_greybus:file rw_file_perms;
+allow audioserver persist_file:dir search;
+allow audioserver persist_file:file { getattr read open };
+allow audioserver sysfs:file { getattr open read };
+>>>>>>> 6811685291d4baaed6f39573d9ca57514ee58030
