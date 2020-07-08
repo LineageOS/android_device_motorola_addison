@@ -1,4 +1,2 @@
-dontaudit hal_audio_default perfd:unix_stream_socket connectto;
-dontaudit hal_audio_default perfd_socket:sock_file write;
-
-hal_client_domain(hal_audio_default, hal_power)
+allow hal_audio_default vendor_data_file:dir {add_name rw_file_perms };
+allow hal_audio_default vendor_data_file:file create_file_perms;

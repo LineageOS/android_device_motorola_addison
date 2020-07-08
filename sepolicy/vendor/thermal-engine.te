@@ -1,6 +1,9 @@
-allow thermal-engine sysfs_healthd:dir search;
-allow thermal-engine sysfs_healthd:file rw_file_perms;
-
-dontaudit thermal-engine proc_loadavg:file { getattr open read };
-dontaudit thermal-engine proc_stat:file { getattr open read };
-get_prop(thermal-engine, moto_boot_prop)
+get_prop(thermal-engine, diag_prop)
+allow thermal-engine socket_device:sock_file { create setattr };
+allow thermal-engine sysfs_rmt_storage:dir search;
+allow thermal-engine sysfs_rmt_storage:file r_file_perms;
+allow thermal-engine sysfs_uio:file r_file_perms;
+allow thermal-engine sysfs_uio:dir { read open search };
+allow thermal-engine sysfs_uio:lnk_file { read };
+allow thermal-engine sysfs_vadc_dev:lnk_file { read open };
+allow thermal-engine sysfs_vadc_dev:dir r_dir_perms;

@@ -1,1 +1,1 @@
-unix_socket_connect(mediacodec, perfd, perfd)
+allow mediacodec firmware_file:file { open read };
