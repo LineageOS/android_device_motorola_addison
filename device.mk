@@ -421,10 +421,7 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_PACKAGES += \
     android.hardware.sensors@1.0-impl \
-    android.hardware.sensors@1.0-service.albus \
-    sensors.msm8953 \
-    sensorhub.msm8953 \
-    libsensorndkbridge
+    android.hardware.sensors@1.0-service 
 
 # Thermal
 PRODUCT_COPY_FILES += \
