@@ -1,0 +1,3 @@
+allow sensors hw_rev_prop:file { getattr read open };
+allow sensors persist_file:file { getattr read write open };
+allow sensors diag_device:chr_file { read write };

@@ -1,0 +1,1 @@
+allow clatd system_file:file lock;

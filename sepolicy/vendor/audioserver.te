@@ -1,0 +1,5 @@
+allow audioserver sysfs_greybus:dir r_dir_perms;
+allow audioserver sysfs_greybus:file rw_file_perms;
+allow audioserver persist_file:dir search;
+allow audioserver persist_file:file { getattr read open };
+allow audioserver sysfs:file { getattr open read };
