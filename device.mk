@@ -321,6 +321,9 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/whitelist_modservice.xml:$(TARGET_COPY_OUT_VENDOR)/etc/sysconfig/whitelist_modservice.xml
 
+PRODUCT_PACKAGES += \
+    CarrierConfig
+
 # Netutils
 PRODUCT_PACKAGES += \
     android.system.net.netd@1.0 \
@@ -387,18 +390,14 @@ PRODUCT_COPY_FILES += \
 # RIL
 PRODUCT_PACKAGES += \
     librmnetctl \
+    libsensorndkbridge \
+    libshim_ril \
     libprotobuf-cpp-full \
     libxml2
 
 #RIL
 PRODUCT_PACKAGES += \
-    librmnetctl \
-    libprotobuf-cpp-full \
-    libxml2 \
-    android.hardware.radio@1.2 \
-    android.hardware.radio.config@1.0 \
-    android.hardware.secure_element@1.0 \
-
+    android.hardware.radio@1.0
 
 # Seccomp policy
 PRODUCT_COPY_FILES += \
@@ -450,6 +449,9 @@ PRODUCT_PACKAGES += \
     wificond \
     wifilogd \
     wpa_supplicant \
+    ipacm \
+    ipacm-diag \
+    IPACM_cfg.xml \
     wpa_supplicant.conf
 
 # Launcher3
@@ -458,7 +460,7 @@ PRODUCT_PACKAGES += \
 
 # Shims
 PRODUCT_PACKAGES += \
-    libqsapshim \
+    libqsap_shim \
     libgnss_shim \
     libjustshoot_shim
 
