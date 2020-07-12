@@ -64,3 +64,4 @@ allow init sysfs_fpc:file { rw_file_perms setattr };
 allow init proc:file { open write };
 allow init sysfs_capsense:file setattr;
 
+
