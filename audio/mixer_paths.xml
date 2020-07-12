@@ -44,14 +44,26 @@
 	<ctl name="AIF1TX2 Input 1 Volume" value="0" />
 	<ctl name="AIF1TX2 Input 2 Volume" value="0" />
 	<ctl name="AIF1TX2 Input 3 Volume" value="0" />
+	<ctl name="AIF2TX1 Input 1" value="None" />
+	<ctl name="AIF2TX1 Input 2" value="None" />
+	<ctl name="AIF2TX1 Input 3" value="None" />
+	<ctl name="AIF2TX1 Input 1 Volume" value="0" />
+	<ctl name="AIF2TX1 Input 2 Volume" value="0" />
+	<ctl name="AIF2TX1 Input 3 Volume" value="0" />
+	<ctl name="AIF2TX2 Input 1" value="None" />
+	<ctl name="AIF2TX2 Input 2" value="None" />
+	<ctl name="AIF2TX2 Input 3" value="None" />
+	<ctl name="AIF2TX2 Input 1 Volume" value="0" />
+	<ctl name="AIF2TX2 Input 2 Volume" value="0" />
+	<ctl name="AIF2TX2 Input 3 Volume" value="0" />
 	<ctl name="SLIMTX5 Input 1" value="None" />
 	<ctl name="SLIMTX6 Input 1" value="None" />
-	<ctl name="HPOUT1L Input 1" value="None" />
-	<ctl name="HPOUT1R Input 1" value="None" />
-	<ctl name="HPOUT1 Digital Volume" id="0" value="0" />
-	<ctl name="HPOUT1 Digital Volume" id="1" value="0" />
-	<ctl name="HPOUT1 Digital Switch" id="0" value="0" />
-	<ctl name="HPOUT1 Digital Switch" id="1" value="0" />
+	<ctl name="OUT1L Input 1" value="None" />
+	<ctl name="OUT1R Input 1" value="None" />
+	<ctl name="OUT1 Digital Volume" id="0" value="0" />
+	<ctl name="OUT1 Digital Volume" id="1" value="0" />
+	<ctl name="OUT1 Digital Switch" id="0" value="0" />
+	<ctl name="OUT1 Digital Switch" id="1" value="0" />
 	<ctl name="SPKDAT High Performance Switch" value="1" />
 	<ctl name="PDM Mux" value="On" />
 	<ctl name="Voip Mode Config" value="12" />
@@ -61,19 +73,16 @@
 	<ctl name="Voip Dtx Mode" value="0" />
 	<ctl name="TTY Mode" value="OFF" />
 	<ctl name="SLIMBUS_3_RX Port Mixer MI2S_TX" value="0" />
-	<ctl name="HDMI_RX Port Mixer MI2S_TX" value="0" />
 	<ctl name="SLIMBUS_0_RX Port Mixer SLIM_0_TX" value="0" />
-	<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia1" value="0" />
-	<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia4" value="0" />
-	<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia5" value="0" />
-	<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia7" value="0" />
-	<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia10" value="0" />
-	<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia11" value="0" />
-	<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia12" value="0" />
-	<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia13" value="0" />
-	<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia14" value="0" />
-	<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia15" value="0" />
-	<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia16" value="0" />
+	<ctl name="SLIMBUS_0_RX Port Mixer SEC_AUX_PCM_UL_TX" value="0" />
+	<ctl name="SEC_AUX_PCM_RX Audio Mixer MultiMedia7" value="0" />
+	<ctl name="SEC_AUX_PCM_RX Audio Mixer MultiMedia10" value="0" />
+	<ctl name="SEC_AUX_PCM_RX Audio Mixer MultiMedia11" value="0" />
+	<ctl name="SEC_AUX_PCM_RX Audio Mixer MultiMedia12" value="0" />
+	<ctl name="SEC_AUX_PCM_RX Audio Mixer MultiMedia13" value="0" />
+	<ctl name="SEC_AUX_PCM_RX Audio Mixer MultiMedia14" value="0" />
+	<ctl name="SEC_AUX_PCM_RX Audio Mixer MultiMedia15" value="0" />
+	<ctl name="SEC_AUX_PCM_RX Audio Mixer MultiMedia16" value="0" />
 	<ctl name="SLIMBUS_4_RX Audio Mixer MultiMedia1" value="0" />
 	<ctl name="SLIMBUS_4_RX Audio Mixer MultiMedia2" value="0" />
 	<ctl name="MultiMedia5 Mixer SLIM_0_TX" value="0" />
@@ -81,10 +90,11 @@
 	<ctl name="MultiMedia1 Mixer MI2S_TX" value="0" />
 	<ctl name="MultiMedia1 Mixer SLIM_0_TX" value="0" />
 	<ctl name="MultiMedia1 Mixer SLIM_4_TX" value="0" />
-	<ctl name="MultiMedia1 Mixer SLIM_7_TX" value="0" />
-	<ctl name="MultiMedia1 Mixer TERT_MI2S_TX" value="0" />
-	<ctl name="MultiMedia5 Mixer TERT_MI2S_TX" value="0" />
-	<ctl name="MultiMedia5 Mixer SLIM_7_TX" value="0" />
+	<ctl name="MultiMedia1 Mixer INTERNAL_BT_SCO_TX" value="0" />
+	<ctl name="MultiMedia1 Mixer QUIN_MI2S_TX" value="0" />
+	<ctl name="MultiMedia5 Mixer QUIN_MI2S_TX" value="0" />
+	<ctl name="MultiMedia5 Mixer INTERNAL_BT_SCO_TX" value="0" />
+	<ctl name="MultiMedia5 Mixer SEC_AUX_PCM_TX" value="0" />
 	<ctl name="HDMI Mixer MultiMedia1" value="0" />
 	<ctl name="HDMI Mixer MultiMedia2" value="0" />
 	<ctl name="HDMI Mixer MultiMedia3" value="0" />
@@ -122,19 +132,10 @@
 	<ctl name="SLIM_1_TX Channels" value="Two" />
 	<ctl name="SLIM_0_TX Format" value="S16_LE" />
 	<ctl name="PRI_MI2S_RX Audio Mixer MultiMedia4" value="0" />
-	<ctl name="TERT_MI2S_RX Audio Mixer MultiMedia1" value="0" />
-	<ctl name="TERT_MI2S_RX Audio Mixer MultiMedia4" value="0" />
-	<ctl name="TERT_MI2S_RX Audio Mixer MultiMedia5" value="0" />
-	<ctl name="TERT_MI2S_RX_Voice Mixer CSVoice" value="0" />
-	<ctl name="TERT_MI2S_RX_Voice Mixer VoiceMMode1" value="0" />
-	<ctl name="TERT_MI2S_RX_Voice Mixer VoiceMMode2" value="0" />
-	<ctl name="TERT_MI2S_RX_Voice Mixer Voice2" value="0" />
-	<ctl name="TERT_MI2S_RX_Voice Mixer VoLTE" value="0" />
-	<ctl name="TERT_MI2S_RX_Voice Mixer VoWLAN" value="0" />
-	<ctl name="Voice_Tx Mixer TERT_MI2S_TX_Voice" value="0" />
-	<ctl name="Voice2_Tx Mixer TERT_MI2S_TX_Voice2" value="0" />
-	<ctl name="VoLTE_Tx Mixer TERT_MI2S_TX_VoLTE" value="0" />
-	<ctl name="VoWLAN_Tx Mixer TERT_MI2S_TX_VoWLAN" value="0" />
+	<ctl name="Voice_Tx Mixer QUIN_MI2S_TX_Voice" value="0" />
+	<ctl name="Voice2_Tx Mixer QUIN_MI2S_TX_Voice2" value="0" />
+	<ctl name="VoLTE_Tx Mixer QUIN_MI2S_TX_VoLTE" value="0" />
+	<ctl name="VoWLAN_Tx Mixer QUIN_MI2S_TX_VoWLAN" value="0" />
 	<ctl name="QUIN_MI2S_RX Audio Mixer MultiMedia1" value="0" />
 	<ctl name="QUIN_MI2S_RX Audio Mixer MultiMedia4" value="0" />
 	<ctl name="QUIN_MI2S_RX Audio Mixer MultiMedia5" value="0" />
@@ -147,7 +148,7 @@
 	<ctl name="MI2S_RX Format" value="S16_LE" />
 	<ctl name="Mods Enable Output Devices" value="0" />
 	<ctl name="Mods Enable Input Devices" value="0" />
-	<ctl name="Mods Codec Volume" value="255" />
+	<ctl name="Mods Codec Volume" value="255"/>
 	<ctl name="Mods Set Capture Use Case" value="Default" />
 	<ctl name="AMP Audio Gain" value="4" />
 	<ctl name="OSPL Ext RxConfig" value="NONE" />
@@ -164,25 +165,21 @@
 	<ctl name="SLIM_0_RX_Voice Mixer VoiceMMode2" value="0" />
 	<ctl name="VoiceMMode1_Tx Mixer AFE_PCM_TX_MMode1" value="0" />
 	<ctl name="VoiceMMode1_Tx Mixer AUX_PCM_TX_MMode1" value="0" />
-	<ctl name="VoiceMMode1_Tx Mixer SLIM_7_TX_MMode1" value="0" />
+	<ctl name="VoiceMMode1_Tx Mixer INT_BT_SCO_TX_MMode1" value="0" />
 	<ctl name="VoiceMMode1_Tx Mixer SLIM_0_TX_MMode1" value="0" />
-	<ctl name="VoiceMMode1_Tx Mixer TERT_MI2S_TX_MMode1" value="0" />
-	<ctl name="VoiceMMode1_Tx Mixer USB_AUDIO_TX_MMode1" value="0" />
+	<ctl name="VoiceMMode1_Tx Mixer QUIN_MI2S_TX_MMode1" value="0" />
 	<ctl name="VoiceMMode2_Tx Mixer AFE_PCM_TX_MMode2" value="0" />
 	<ctl name="VoiceMMode2_Tx Mixer AUX_PCM_TX_MMode2" value="0" />
-	<ctl name="VoiceMMode2_Tx Mixer SLIM_7_TX_MMode2" value="0" />
+	<ctl name="VoiceMMode2_Tx Mixer INT_BT_SCO_TX_MMode2" value="0" />
 	<ctl name="VoiceMMode2_Tx Mixer SLIM_0_TX_MMode2" value="0" />
-	<ctl name="VoiceMMode2_Tx Mixer TERT_MI2S_TX_MMode2" value="0" />
-	<ctl name="VoiceMMode2_Tx Mixer USB_AUDIO_TX_MMode2" value="0" />
+	<ctl name="VoiceMMode2_Tx Mixer QUIN_MI2S_TX_MMode2" value="0" />
 	<!-- QDSP loopback, sidetone default to off -->
 	<ctl name="SLIMBUS_0_RX Port Mixer SLIM_0_TX" value="0" />
-	<ctl name="SLIMBUS_0 LOOPBACK Volume" value="0" />
+	<ctl name="SLIM0 LOOPBACK Volume" value="0" />
 	<ctl name="AFE Sidetone AFE_RX" value="SLIM_RX" />
 	<ctl name="AFE Sidetone Enable" value="Off" />
 
 	<!-- AOV default settings -->
-	<ctl name="DSP2 Firmware" value="Voice Ctrl" />
-	<ctl name="DSP3 Firmware" value="Voice Ctrl" />
 	<!-- AOV default sample rate settings -->
 	<ctl name="Sample Rate 2" value="16kHz" />
 	<ctl name="Sample Rate 3" value="96kHz" />
@@ -215,20 +212,15 @@
 	<!-- AOV default settings end -->
 
 	<!-- UltraSonics default settings -->
-	<ctl name="DSP1 Firmware" value="Dbg Trace" />
 	<ctl name="Output Rate 1" value="SYNCCLK rate 3" />
 	<ctl name="ISRC2 FSH" value="SYNCCLK rate 3" />
 	<ctl name="ISRC2 FSL" value="SYNCCLK rate 1" />
-	<ctl name="ISRC2DEC1 Input 1" value="IN1L" />
-	<ctl name="ISRC2DEC2 Input 1" value="IN2L" />
-	<ctl name="ISRC2DEC4 Input 1" value="IN2R" />
-	<ctl name="ISRC2INT1 Input 1" value="None" />
-	<ctl name="ISRC2INT2 Input 1" value="None" />
+	<ctl name="ISRC2DEC1 Input" value="IN1L" />
+	<ctl name="ISRC2DEC2 Input" value="IN2L" />
+	<ctl name="ISRC2DEC4 Input" value="IN2R" />
+	<ctl name="ISRC2INT1 Input" value="None" />
+	<ctl name="ISRC2INT2 Input" value="None" />
 
-	<!-- HFP start -->
-	<ctl name="HFP_PRI_AUX_UL_HL Switch" value="0" />
-	<ctl name="SLIMBUS_0_RX Port Mixer SLIM_7_TX" value="0" />
-	<!-- HFP end -->
 	<!-- echo reference -->
 	<ctl name="AUDIO_REF_EC_UL1 MUX" value="None" />
 	<ctl name="VOC_EXT_EC MUX" value="NONE" />
@@ -245,11 +237,6 @@
 	<ctl name="AFE_PCM_RX Audio Mixer MultiMedia16" value="0" />
 	<ctl name="MultiMedia1 Mixer AFE_PCM_TX" value="0" />
 	<ctl name="AFE_PCM_RX Audio Mixer MultiMedia5" value="0" />
-	<ctl name="MultiMedia1 Mixer USB_AUDIO_TX" value="0" />
-	<ctl name="MultiMedia5 Mixer USB_AUDIO_TX" value="0" />
-	<ctl name="USB_AUDIO_RX Audio Mixer MultiMedia1" value="0" />
-	<ctl name="USB_AUDIO_RX Audio Mixer MultiMedia4" value="0" />
-	<ctl name="USB_AUDIO_RX Audio Mixer MultiMedia5" value="0" />
 	<!-- usb headset end -->
 	<!-- fm -->
 	<ctl name="PRI MI2S LOOPBACK Volume" value="0" />
@@ -257,7 +244,7 @@
 	<ctl name="SLIMBUS_DL_HL Switch" value="0" />
 	<ctl name="MultiMedia1 Mixer PRI_MI2S_TX" value="0" />
 	<ctl name="MultiMedia2 Mixer PRI_MI2S_TX" value="0" />
-	<ctl name="MultiMedia2 Mixer TERT_MI2S_TX" value="0" />
+	<ctl name="MultiMedia2 Mixer QUIN_MI2S_TX" value="0" />
 	<!-- fm end -->
 
 	<!-- Voice -->
@@ -265,11 +252,16 @@
 	<ctl name="Voice_Tx Mixer SLIM_0_TX_Voice" value="0" />
 	<!-- Voice HDMI -->
 	<ctl name="HDMI_RX_Voice Mixer CSVoice" value="0" />
-	<ctl name="HDMI_RX_Voice Mixer VoiceMMode1" value="0" />
 	<!-- Voice BTSCO -->
-	<ctl name="SLIM_7_RX_Voice Mixer CSVoice" value="0" />
-	<ctl name="SLIM_7_RX_Voice Mixer VoiceMMode1" value="0" />
-	<ctl name="Voice_Tx Mixer SLIM_7_TX_Voice" value="0" />
+	<ctl name="Internal BTSCO SampleRate" value="BTSCO_RATE_8KHZ" />
+	<ctl name="INTERNAL_BT_SCO_RX_Voice Mixer CSVoice" value="0" />
+	<ctl name="INTERNAL_BT_SCO_RX_Voice Mixer VoiceMMode1" value="0" />
+	<ctl name="INTERNAL_BT_SCO_RX_Voice Mixer VoiceMMode2" value="0" />
+	<ctl name="Voice_Tx Mixer INTERNAL_BT_SCO_TX_Voice" value="0" />
+	<ctl name="INTERNAL_BT_SCO_RX Audio Mixer MultiMedia1" value="0" />
+	<ctl name="INTERNAL_BT_SCO_RX Audio Mixer MultiMedia4" value="0" />
+	<ctl name="INTERNAL_BT_SCO_RX Audio Mixer MultiMedia5" value="0" />
+	<ctl name="INTERNAL_BT_SCO_RX Audio Mixer MultiMedia6" value="0" />
 	<!-- Voice USB headset -->
 	<ctl name="AFE_PCM_RX_Voice Mixer CSVoice" value="0" />
 	<ctl name="Voice_Tx Mixer AFE_PCM_TX_Voice" value="0" />
@@ -280,11 +272,9 @@
 	<ctl name="Voice2_Tx Mixer SLIM_0_TX_Voice2" value="0" />
 	<!-- Voice2 HDMI -->
 	<ctl name="HDMI_RX_Voice Mixer Voice2" value="0" />
-	<ctl name="HDMI_RX_Voice Mixer VoiceMMode2" value="0" />
 	<!-- Voice2 BTSCO -->
-	<ctl name="SLIM_7_RX_Voice Mixer Voice2" value="0" />
-	<ctl name="SLIM_7_RX_Voice Mixer VoiceMMode2" value="0" />
-	<ctl name="Voice2_Tx Mixer SLIM_7_TX_Voice2" value="0" />
+	<ctl name="SEC_AUX_PCM_RX_Voice Mixer Voice2" value="0" />
+	<ctl name="Voice2_Tx Mixer SEC_AUX_PCM_TX_Voice2" value="0" />
 	<!-- Voice2 USB headset -->
 	<ctl name="AFE_PCM_RX_Voice Mixer Voice2" value="0" />
 	<ctl name="Voice2_Tx Mixer AFE_PCM_TX_Voice2" value="0" />
@@ -296,8 +286,8 @@
 	<!-- VoLTE HDMI -->
 	<ctl name="HDMI_RX_Voice Mixer VoLTE" value="0" />
 	<!-- VoLTE BTSCO -->
-	<ctl name="SLIM_7_TX_Voice Mixer VoLTE" value="0" />
-	<ctl name="VoLTE_Tx Mixer SLIM_7_TX_VoLTE" value="0" />
+	<ctl name="SEC_AUX_PCM_RX_Voice Mixer VoLTE" value="0" />
+	<ctl name="VoLTE_Tx Mixer SEC_AUX_PCM_TX_VoLTE" value="0" />
 	<!-- VoLTE USB headset -->
 	<ctl name="AFE_PCM_RX_Voice Mixer VoLTE" value="0" />
 	<ctl name="VoLTE_Tx Mixer AFE_PCM_TX_VoLTE" value="0" />
@@ -318,8 +308,8 @@
 	<!-- compress-voip-call start -->
 	<ctl name="SLIM_0_RX_Voice Mixer Voip" value="0" />
 	<ctl name="Voip_Tx Mixer SLIM_0_TX_Voip" value="0" />
-	<ctl name="SLIM_7_RX_Voice Mixer Voip" value="0" />
-	<ctl name="Voip_Tx Mixer SLIM_7_TX_Voip" value="0" />
+	<ctl name="SEC_AUX_PCM_RX_Voice Mixer Voip" value="0" />
+	<ctl name="Voip_Tx Mixer SEC_AUX_PCM_TX_Voip" value="0" />
 	<ctl name="AFE_PCM_RX_Voice Mixer Voip" value="0" />
 	<ctl name="Voip_Tx Mixer AFE_PCM_TX_Voip" value="0" />
 	<!-- compress-voip-call end-->
@@ -327,32 +317,36 @@
 	<!-- QCHAT start -->
 	<ctl name="SLIM_0_RX_Voice Mixer QCHAT" value="0" />
 	<ctl name="QCHAT_Tx Mixer SLIM_0_TX_QCHAT" value="0" />
-	<ctl name="SLIM_7_RX_Voice Mixer QCHAT" value="0" />
-	<ctl name="QCHAT_Tx Mixer SLIM_7_TX_QCHAT" value="0" />
+	<ctl name="SEC_AUX_PCM_RX_Voice Mixer QCHAT" value="0" />
+	<ctl name="QCHAT_Tx Mixer SEC_AUX_PCM_TX_QCHAT" value="0" />
 	<!-- QCHAT end-->
 
 	<!-- VoWLAN start -->
 	<ctl name="SLIM_0_RX_Voice Mixer VoWLAN" value="0" />
 	<ctl name="VoWLAN_Tx Mixer SLIM_0_TX_VoWLAN" value="0" />
 	<ctl name="HDMI_RX_Voice Mixer VoWLAN" value="0" />
-	<ctl name="SLIM_7_RX_Voice Mixer VoWLAN" value="0" />
-	<ctl name="VoWLAN_Tx Mixer SLIM_7_TX_VoWLAN" value="0" />
+	<ctl name="SEC_AUX_PCM_RX_Voice Mixer VoWLAN" value="0" />
+	<ctl name="VoWLAN_Tx Mixer SEC_AUX_PCM_TX_VoWLAN" value="0" />
 	<ctl name="AFE_PCM_RX_Voice Mixer VoWLAN" value="0" />
 	<ctl name="VoWLAN_Tx Mixer AFE_PCM_TX_VoWLAN" value="0" />
 	<!-- VoWLAN end-->
 
 	<!-- Audio BTSCO -->
-	<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia1" value="0" />
-	<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia4" value="0" />
-	<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia5" value="0" />
-	<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia6" value="0" />
-	<ctl name="MultiMedia1 Mixer SLIM_7_TX" value="0" />
+	<ctl name="SEC_AUX_PCM_RX Audio Mixer MultiMedia1" value="0" />
+	<ctl name="SEC_AUX_PCM_RX Audio Mixer MultiMedia4" value="0" />
+	<ctl name="SEC_AUX_PCM_RX Audio Mixer MultiMedia5" value="0" />
+	<ctl name="SEC_AUX_PCM_RX Audio Mixer MultiMedia6" value="0" />
+	<ctl name="AUX_PCM_RX Audio Mixer MultiMedia1" value="0" />
+	<ctl name="AUX_PCM_RX Audio Mixer MultiMedia4" value="0" />
+	<ctl name="AUX_PCM_RX Audio Mixer MultiMedia5" value="0" />
+	<ctl name="MultiMedia5 Mixer AUX_PCM_UL_TX" value="0" />
+	<ctl name="MultiMedia1 Mixer AUX_PCM_UL_TX" value="0" />
 	<!-- aanc handset mic -->
 	<ctl name="AANC_SLIM_0_RX MUX" value="ZERO" />
 	<!-- aanc handset mic end -->
 	<!-- audio record compress-->
 	<ctl name="MultiMedia8 Mixer SLIM_0_TX" value="0" />
-	<ctl name="MultiMedia8 Mixer SLIM_7_TX" value="0" />
+	<ctl name="MultiMedia1 Mixer SEC_AUX_PCM_UL_TX" value="0" />
 	<ctl name="MultiMedia8 Mixer AFE_PCM_TX" value="0" />
 	<!-- audio record compress end-->
 	<!-- listen -->
@@ -387,39 +381,27 @@
 		<ctl name="SLIMBUS_5_RX Audio Mixer MultiMedia1" value="1" />
 	</path>
 
-	<path name="deep-buffer-playback usb-headphones">
-		<ctl name="USB_AUDIO_RX Audio Mixer MultiMedia1" value="1" />
-	</path>
-
 	<path name="deep-buffer-playback hdmi">
-		<ctl name="HDMI Mixer MultiMedia1" value="1" />
-	</path>
-
-	<path name="deep-buffer-playback speaker-and-hdmi">
-		<path name="deep-buffer-playback hdmi" />
-		<path name="deep-buffer-playback" />
+		<ctl name="SLIMBUS_0_RX Audio Mixer MultiMedia1" value="1" />
+		<ctl name="SLIM_0_RX Format" value="S24_LE" />
+		<ctl name="SLIM_0_RX Channels" value="Two" />
+		<ctl name="AIF2TX1 Input 1" value="SLIMRX1" />
+		<ctl name="AIF2TX1 Input 1 Volume" value="32" />
+		<ctl name="AIF2TX2 Input 1" value="SLIMRX2" />
+		<ctl name="AIF2TX2 Input 1 Volume" value="32" />
 	</path>
 
 	<path name="deep-buffer-playback bt-sco">
-		<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia1" value="1" />
+		<ctl name="INTERNAL_BT_SCO_RX Audio Mixer MultiMedia1" value="1" />
 	</path>
 
 	<path name="deep-buffer-playback bt-sco-wb">
-		<ctl name="BT SampleRate" value="KHZ_16" />
+		<ctl name="Internal BTSCO SampleRate" value="BTSCO_RATE_16KHZ" />
 		<path name="deep-buffer-playback bt-sco" />
 	</path>
 
-    <path name="deep-buffer-playback afe-proxy">
-        <ctl name="AFE_PCM_RX Audio Mixer MultiMedia1" value="1" />
-    </path>
-
-	<path name="deep-buffer-playback speaker-and-usb-headphones">
-		<path name="deep-buffer-playback usb-headphones" />
-		<path name="deep-buffer-playback" />
-	</path>
-
 	<path name="deep-buffer-playback mod">
-		<ctl name="TERT_MI2S_RX Audio Mixer MultiMedia1" value="1" />
+		<ctl name="QUIN_MI2S_RX Audio Mixer MultiMedia1" value="1" />
 	</path>
 
 	<path name="deep-buffer-playback mod-and-headphones">
@@ -448,14 +430,14 @@
 	</path>
 
 	<path name="deep-buffer-playback speaker-and-bt-sco">
-		<path name="deep-buffer-playback" />
-		<path name="deep-buffer-playback bt-sco" />
-	</path>
+                <path name="deep-buffer-playback speaker" />
+                <path name="deep-buffer-playback bt-sco" />
+        </path>
 
 	<path name="deep-buffer-playback speaker-and-bt-sco-wb">
-		<path name="deep-buffer-playback" />
-		<path name="deep-buffer-playback bt-sco-wb" />
-	</path>
+                <path name="deep-buffer-playback speaker" />
+                <path name="deep-buffer-playback bt-sco-wb" />
+        </path>
 
 	<path name="echo-reference">
 		<ctl name="AUDIO_REF_EC_UL1 MUX" value="SLIM_RX" />
@@ -463,7 +445,7 @@
 
 	<path name="echo-reference mod-ref">
 		<!-- echo reference from mod, EC on core DSP with int mic -->
-		<ctl name="AUDIO_REF_EC_UL1 MUX" value="TERT_MI2S_TX" />
+		<ctl name="AUDIO_REF_EC_UL1 MUX" value="QUIN_MI2S_TX" />
 		<ctl name="Mods Enable Input Devices" value="8" />
 	</path>
 
@@ -473,7 +455,7 @@
 
 	<path name="echo-reference mod-int">
 		<!-- internal echo reference, EC on core DSP with int mic -->
-		<ctl name="AUDIO_REF_EC_UL1 MUX" value="TERT_MI2S_RX" />
+		<ctl name="AUDIO_REF_EC_UL1 MUX" value="QUIN_MI2S_RX" />
 	</path>
 
 	<path name="echo-reference bt-sco">
@@ -490,39 +472,27 @@
 		<ctl name="SLIMBUS_5_RX Audio Mixer MultiMedia5" value="1" />
 	</path>
 
-	<path name="low-latency-playback usb-headphones">
-		<ctl name="USB_AUDIO_RX Audio Mixer MultiMedia5" value="1" />
-	</path>
-
 	<path name="low-latency-playback bt-sco">
-		<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia5" value="1" />
+		<ctl name="INTERNAL_BT_SCO_RX Audio Mixer MultiMedia5" value="1" />
 	</path>
 
 	<path name="low-latency-playback bt-sco-wb">
-		<ctl name="BT SampleRate" value="KHZ_16" />
+		<ctl name="Internal BTSCO SampleRate" value="BTSCO_RATE_16KHZ" />
 		<path name="low-latency-playback bt-sco" />
 	</path>
 
-    <path name="low-latency-playback afe-proxy">
-        <ctl name="AFE_PCM_RX Audio Mixer MultiMedia5" value="1" />
-    </path>
-
 	<path name="low-latency-playback hdmi">
-		<ctl name="HDMI Mixer MultiMedia5" value="1" />
-	</path>
-
-	<path name="low-latency-playback speaker-and-hdmi">
-		<path name="low-latency-playback hdmi" />
-		<path name="low-latency-playback" />
-	</path>
-
-	<path name="low-latency-playback speaker-and-usb-headphones">
-		<path name="low-latency-playback usb-headphones" />
-		<path name="low-latency-playback" />
+		<ctl name="SLIMBUS_0_RX Audio Mixer MultiMedia5" value="1" />
+		<ctl name="SLIM_0_RX Format" value="S24_LE" />
+		<ctl name="SLIM_0_RX Channels" value="Two" />
+		<ctl name="AIF2TX1 Input 1" value="SLIMRX1" />
+		<ctl name="AIF2TX1 Input 1 Volume" value="32" />
+		<ctl name="AIF2TX2 Input 1" value="SLIMRX2" />
+		<ctl name="AIF2TX2 Input 1 Volume" value="32" />
 	</path>
 
 	<path name="low-latency-playback mod">
-		<ctl name="TERT_MI2S_RX Audio Mixer MultiMedia5" value="1" />
+		<ctl name="QUIN_MI2S_RX Audio Mixer MultiMedia5" value="1" />
 	</path>
 
 	<path name="low-latency-playback mod-and-headphones">
@@ -550,15 +520,15 @@
 		<path name="low-latency-playback hdmi" />
 	</path>
 
-	<path name="low-latency-playback speaker-and-bt-sco">
-		<path name="low-latency-playback" />
-		<path name="low-latency-playback bt-sco" />
-	</path>
+        <path name="low-latency-playback speaker-and-bt-sco">
+                <path name="low-latency-playback speaker" />
+                <path name="low-latency-playback bt-sco" />
+        </path>
 
 	<path name="low-latency-playback speaker-and-bt-sco-wb">
-		<path name="low-latency-playback" />
-		<path name="low-latency-playback bt-sco-wb" />
-	</path>
+                <path name="low-latency-playback speaker" />
+                <path name="low-latency-playback bt-sco-wb" />
+        </path>
 
 	<path name="compress-offload-playback">
 		<ctl name="SLIMBUS_0_RX Audio Mixer MultiMedia4" value="1" />
@@ -568,39 +538,27 @@
 		<ctl name="SLIMBUS_5_RX Audio Mixer MultiMedia4" value="1" />
 	</path>
 
-	<path name="compress-offload-playback usb-headphones">
-		<ctl name="USB_AUDIO_RX Audio Mixer MultiMedia4" value="1" />
-	</path>
-
 	<path name="compress-offload-playback bt-sco">
-		<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia4" value="1" />
+		<ctl name="INTERNAL_BT_SCO_RX Audio Mixer MultiMedia4" value="1" />
 	</path>
 
 	<path name="compress-offload-playback bt-sco-wb">
-		<ctl name="BT SampleRate" value="KHZ_16" />
+		<ctl name="Internal BTSCO SampleRate" value="BTSCO_RATE_16KHZ" />
 		<path name="compress-offload-playback bt-sco" />
 	</path>
 
-    <path name="compress-offload-playback afe-proxy">
-        <ctl name="AFE_PCM_RX Audio Mixer MultiMedia4" value="1" />
-    </path>
-
 	<path name="compress-offload-playback hdmi">
-		<ctl name="HDMI Mixer MultiMedia4" value="1" />
-	</path>
-
-	<path name="compress-offload-playback speaker-and-hdmi">
-		<path name="compress-offload-playback hdmi" />
-		<path name="compress-offload-playback" />
-	</path>
-
-	<path name="compress-offload-playback speaker-and-usb-headphones">
-		<path name="compress-offload-playback usb-headphones" />
-		<path name="compress-offload-playback" />
+		<ctl name="SLIMBUS_0_RX Audio Mixer MultiMedia4" value="1" />
+		<ctl name="SLIM_0_RX Format" value="S24_LE" />
+		<ctl name="SLIM_0_RX Channels" value="Two" />
+		<ctl name="AIF2TX1 Input 1" value="SLIMRX1" />
+		<ctl name="AIF2TX1 Input 1 Volume" value="32" />
+		<ctl name="AIF2TX2 Input 1" value="SLIMRX2" />
+		<ctl name="AIF2TX2 Input 1 Volume" value="32" />
 	</path>
 
 	<path name="compress-offload-playback mod">
-		<ctl name="TERT_MI2S_RX Audio Mixer MultiMedia4" value="1" />
+		<ctl name="QUIN_MI2S_RX Audio Mixer MultiMedia4" value="1" />
 	</path>
 
 	<path name="compress-offload-playback mod-and-headphones">
@@ -629,33 +587,29 @@
 	</path>
 
 	<path name="compress-offload-playback speaker-and-bt-sco">
-		<path name="compress-offload-playback" />
-		<path name="compress-offload-playback bt-sco" />
-	</path>
+                <path name="compress-offload-playback speaker" />
+                <path name="compress-offload-playback bt-sco" />
+        </path>
 
 	<path name="compress-offload-playback speaker-and-bt-sco-wb">
-		<path name="compress-offload-playback" />
-		<path name="compress-offload-playback bt-sco-wb" />
-	</path>
+                <path name="compress-offload-playback speaker" />
+                <path name="compress-offload-playback bt-sco-wb" />
+        </path>
 
 	<path name="audio-record">
 		<ctl name="MultiMedia1 Mixer SLIM_0_TX" value="1" />
 	</path>
 
-	<path name="audio-record usb-headset-mic">
-		<ctl name="MultiMedia1 Mixer USB_AUDIO_TX" value="1" />
-	</path>
-
 	<path name="audio-record mod">
-		<ctl name="MultiMedia1 Mixer TERT_MI2S_TX" value="1" />
+		<ctl name="MultiMedia1 Mixer QUIN_MI2S_TX" value="1" />
 	</path>
 
 	<path name="audio-record bt-sco">
-		<ctl name="MultiMedia1 Mixer SLIM_7_TX" value="1" />
+		<ctl name="MultiMedia1 Mixer INTERNAL_BT_SCO_TX" value="1" />
 	</path>
 
 	<path name="audio-record bt-sco-wb">
-		<ctl name="BT SampleRate" value="KHZ_16" />
+		<ctl name="Internal BTSCO SampleRate" value="BTSCO_RATE_16KHZ" />
 		<path name="audio-record bt-sco" />
 	</path>
 
@@ -664,51 +618,28 @@
 	</path>
 
 	<path name="low-latency-record mod">
-		<ctl name="MultiMedia5 Mixer TERT_MI2S_TX" value="1" />
+		<ctl name="MultiMedia5 Mixer QUIN_MI2S_TX" value="1" />
 	</path>
 
 	<path name="low-latency-record bt-sco">
-		<ctl name="MultiMedia8 Mixer SLIM_7_TX" value="1" />
+		<ctl name="MultiMedia5 Mixer INTERNAL_BT_SCO_TX" value="1" />
 	</path>
 
 	<path name="low-latency-record bt-sco-wb">
-		<ctl name="BT SampleRate" value="KHZ_16" />
+		<ctl name="Internal BTSCO SampleRate" value="BTSCO_RATE_16KHZ" />
 		<path name="low-latency-record bt-sco" />
 	</path>
 
+	<path name="audio-record capture-fm">
+		<ctl name="MultiMedia1 Mixer INTERNAL_FM_TX" value="1" />
+	</path>
+
 	<path name="fm-virtual-record capture-fm">
-		<ctl name="MultiMedia2 Mixer PRI_MI2S_TX" value="1" />
+		<ctl name="MultiMedia2 Mixer INTERNAL_FM_TX" value="1" />
 	</path>
 
 	<path name="fm-virtual-record mod">
-		<ctl name="MultiMedia2 Mixer TERT_MI2S_TX" value="1" />
-	</path>
-
-	<path name="compress-voip-call">
-		<ctl name="SLIM_0_RX_Voice Mixer Voip" value="1" />
-		<ctl name="Voip_Tx Mixer SLIM_0_TX_Voip" value="1" />
-	</path>
-
-	<path name="compress-voip-call bt-sco">
-		<ctl name="SLIM_7_RX_Voice Mixer Voip" value="1" />
-		<ctl name="Voip_Tx Mixer SLIM_7_TX_Voip" value="1" />
-	</path>
-
-	<path name="compress-voip-call bt-sco-wb">
-		<ctl name="BT SampleRate" value="KHZ_16" />
-		<path name="compress-voip-call bt-sco" />
-	</path>
-
-	<path name="compress-voip-call afe-proxy">
-		<ctl name="AFE_PCM_RX_Voice Mixer Voip" value="1" />
-		<ctl name="Voip_Tx Mixer AFE_PCM_TX_Voip" value="1" />
-	</path>
-
-    <path name="multi-channel-playback afe-proxy">
-        <ctl name="AFE_PCM_RX Audio Mixer MultiMedia2" value="1" />
-    </path>
-
-	<path name="afe-proxy-playback">
+		<ctl name="MultiMedia2 Mixer QUIN_MI2S_TX" value="1" />
 	</path>
 
 	<path name="afe-proxy-playback afe-proxy">
@@ -720,21 +651,18 @@
 	<path name="afe-proxy-record afe-proxy">
 	</path>
 
-	<path name="afe-proxy-record usb-headset-mic">
-	</path>
-
 	<path name="voicemmode1-call">
 		<ctl name="SLIM_0_RX_Voice Mixer VoiceMMode1" value="1" />
 		<ctl name="VoiceMMode1_Tx Mixer SLIM_0_TX_MMode1" value="1" />
 	</path>
 
 	<path name="voicemmode1-call bt-sco">
-		<ctl name="SLIM_7_RX_Voice Mixer VoiceMMode1" value="1" />
-		<ctl name="VoiceMMode1_Tx Mixer SLIM_7_TX_MMode1" value="1" />
+		<ctl name="INTERNAL_BT_SCO_RX_Voice Mixer VoiceMMode1" value="1" />
+		<ctl name="VoiceMMode1_Tx Mixer INT_BT_SCO_TX_MMode1" value="1" />
 	</path>
 
 	<path name="voicemmode1-call bt-sco-wb">
-		<ctl name="BT SampleRate" value="KHZ_16" />
+		<ctl name="Internal BTSCO SampleRate" value="BTSCO_RATE_16KHZ" />
 		<path name="voicemmode1-call bt-sco" />
 	</path>
 
@@ -744,43 +672,44 @@
 	</path>
 
 	<path name="voicemmode1-call hdmi">
-		<ctl name="HDMI_RX_Voice Mixer VoiceMMode1" value="1" />
+		<ctl name="SLIM_0_RX_Voice Mixer VoiceMMode1" value="1" />
 		<ctl name="VoiceMMode1_Tx Mixer SLIM_0_TX_MMode1" value="1" />
-	</path>
-
-	<path name="voicemmode1-call usb-headphones">
-		<ctl name="USB_AUDIO_RX_Voice Mixer VoiceMMode1" value="1" />
-		<ctl name="VoiceMMode1_Tx Mixer USB_AUDIO_TX_MMode1" value="1" />
+		<ctl name="SLIM_0_RX Format" value="S24_LE" />
+		<ctl name="SLIM_0_RX Channels" value="Two" />
+		<ctl name="AIF2TX1 Input 1" value="SLIMRX1" />
+		<ctl name="AIF2TX1 Input 1 Volume" value="32" />
+		<ctl name="AIF2TX2 Input 1" value="SLIMRX2" />
+		<ctl name="AIF2TX2 Input 1 Volume" value="32" />
 	</path>
 
 	<path name="voicemmode1-call mod">
-		<ctl name="TERT_MI2S_RX_Voice Mixer VoiceMMode1" value="1" />
-		<ctl name="VoiceMMode1_Tx Mixer TERT_MI2S_TX_MMode1" value="1" />
+		<ctl name="QUIN_MI2S_RX_Voice Mixer VoiceMMode1" value="1" />
+		<ctl name="VoiceMMode1_Tx Mixer QUIN_MI2S_TX_MMode1" value="1" />
 	</path>
 
 	<path name="voicemmode1-call mod-int">
-		<ctl name="TERT_MI2S_RX_Voice Mixer VoiceMMode1" value="1" />
+		<ctl name="QUIN_MI2S_RX_Voice Mixer VoiceMMode1" value="1" />
 		<ctl name="VoiceMMode1_Tx Mixer SLIM_0_TX_MMode1" value="1" />
 	</path>
 
 	<path name="voicemmode1-call mod-ref">
-		<ctl name="VOC_EXT_EC MUX" value="TERT_MI2S_TX" />
+		<ctl name="VOC_EXT_EC MUX" value="QUIN_MI2S_TX" />
 		<!-- GB_AUDIO_DEVICE_IN_EC_REF -->
 		<ctl name="Mods Enable Input Devices" value="8" />
 		<path name="voicemmode1-call mod-int" />
 	</path>
 
 	<path name="voicemmode1-call speaker-and-headphones">
-		<path name="voicemmode1-call" />
-	</path>
+                <path name="voicemmode1-call headphones" />
+        </path>
 
 	<path name="voicemmode1-call speaker-and-bt-sco">
-		<path name="voicemmode1-call bt-sco" />
-	</path>
+                <path name="voicemmode1-call bt-sco" />
+        </path>
 
 	<path name="voicemmode1-call speaker-and-bt-sco-wb">
-		<path name="voicemmode1-call bt-sco-wb" />
-	</path>
+                <path name="voicemmode1-call bt-sco-wb" />
+        </path>
 
 	<path name="voicemmode2-call">
 		<ctl name="SLIM_0_RX_Voice Mixer VoiceMMode2" value="1" />
@@ -788,12 +717,12 @@
 	</path>
 
 	<path name="voicemmode2-call bt-sco">
-		<ctl name="SLIM_7_RX_Voice Mixer VoiceMMode2" value="1" />
-		<ctl name="VoiceMMode2_Tx Mixer SLIM_7_TX_MMode2" value="1" />
+		<ctl name="INTERNAL_BT_SCO_RX_Voice Mixer VoiceMMode2" value="1" />
+		<ctl name="VoiceMMode2_Tx Mixer INT_BT_SCO_TX_MMode2" value="1" />
 	</path>
 
 	<path name="voicemmode2-call bt-sco-wb">
-		<ctl name="BT SampleRate" value="KHZ_16" />
+		<ctl name="Internal BTSCO SampleRate" value="BTSCO_RATE_16KHZ" />
 		<path name="voicemmode2-call bt-sco" />
 	</path>
 
@@ -803,43 +732,44 @@
 	</path>
 
 	<path name="voicemmode2-call hdmi">
-		<ctl name="HDMI_RX_Voice Mixer VoiceMMode2" value="1" />
+		<ctl name="SLIM_0_RX_Voice Mixer VoiceMMode2" value="1" />
+		<ctl name="SLIM_0_RX Format" value="S24_LE" />
+		<ctl name="SLIM_0_RX Channels" value="Two" />
 		<ctl name="VoiceMMode2_Tx Mixer SLIM_0_TX_MMode2" value="1" />
-	</path>
-
-	<path name="voicemmode2-call usb-headphones">
-		<ctl name="USB_AUDIO_RX_Voice Mixer VoiceMMode2" value="1" />
-		<ctl name="VoiceMMode2_Tx Mixer USB_AUDIO_TX_MMode2" value="1" />
+		<ctl name="AIF2TX1 Input 1" value="SLIMRX1" />
+		<ctl name="AIF2TX1 Input 1 Volume" value="32" />
+		<ctl name="AIF2TX2 Input 1" value="SLIMRX2" />
+		<ctl name="AIF2TX2 Input 1 Volume" value="32" />
 	</path>
 
 	<path name="voicemmode2-call mod">
-		<ctl name="TERT_MI2S_RX_Voice Mixer VoiceMMode2" value="1" />
-		<ctl name="VoiceMMode2_Tx Mixer TERT_MI2S_TX_MMode2" value="1" />
+		<ctl name="QUIN_MI2S_RX_Voice Mixer VoiceMMode2" value="1" />
+		<ctl name="VoiceMMode2_Tx Mixer QUIN_MI2S_TX_MMode2" value="1" />
 	</path>
 
 	<path name="voicemmode2-call mod-int">
-		<ctl name="TERT_MI2S_RX_Voice Mixer VoiceMMode2" value="1" />
+		<ctl name="QUIN_MI2S_RX_Voice Mixer VoiceMMode2" value="1" />
 		<ctl name="VoiceMMode2_Tx Mixer SLIM_0_TX_MMode2" value="1" />
 	</path>
 
 	<path name="voicemmode2-call mod-ref">
-		<ctl name="VOC_EXT_EC MUX" value="TERT_MI2S_TX" />
+		<ctl name="VOC_EXT_EC MUX" value="QUIN_MI2S_TX" />
 		<!-- GB_AUDIO_DEVICE_IN_EC_REF -->
 		<ctl name="Mods Enable Input Devices" value="8" />
 		<path name="voicemmode2-call mod-int" />
 	</path>
 
 	<path name="voicemmode2-call speaker-and-headphones">
-		<path name="voicemmode2-call" />
-	</path>
+                <path name="voicemmode2-call headphones" />
+        </path>
 
 	<path name="voicemmode2-call speaker-and-bt-sco">
-		<path name="voicemmode2-call bt-sco" />
-	</path>
+                <path name="voicemmode2-call bt-sco" />
+        </path>
 
 	<path name="voicemmode2-call speaker-and-bt-sco-wb">
-		<path name="voicemmode2-call bt-sco-wb" />
-	</path>
+                <path name="voicemmode2-call bt-sco-wb" />
+        </path>
 
 	<path name="incall-rec-uplink">
 		<ctl name="MultiMedia1 Mixer VOC_REC_UL" value="1" />
@@ -853,10 +783,6 @@
 		<path name="incall-rec-uplink" />
 	</path>
 
-    <path name="incall-rec-uplink afe-proxy">
-        <path name="incall-rec-uplink" />
-    </path>
-
 	<path name="incall-rec-downlink">
 		<ctl name="MultiMedia1 Mixer VOC_REC_DL" value="1" />
 	</path>
@@ -869,17 +795,9 @@
 		<path name="incall-rec-downlink" />
 	</path>
 
-    <path name="incall-rec-downlink afe-proxy">
-        <path name="incall-rec-downlink" />
-    </path>
-
 	<path name="incall-rec-uplink-and-downlink">
 		<path name="incall-rec-uplink" />
 		<path name="incall-rec-downlink" />
-	</path>
-
-	<path name="incall-rec-uplink-and-downlink usb-headset-mic">
-		<path name="incall-rec-uplink-and-downlink" />
 	</path>
 
 	<path name="incall-rec-uplink-and-downlink bt-sco">
@@ -890,13 +808,13 @@
 		<path name="incall-rec-uplink-and-downlink" />
 	</path>
 
-    <path name="incall-rec-uplink-and-downlink afe-proxy">
-        <path name="incall-rec-uplink-and-downlink" />
-    </path>
-
 	<path name="incall-music-uplink">
 		<ctl name="Incall_Music Audio Mixer MultiMedia9" value="1" />
 		<ctl name="Incall_Music_2 Audio Mixer MultiMedia9" value="1" />
+	</path>
+
+	<path name="incall-music-uplink speaker">
+		<path name="incall-music-uplink" />
 	</path>
 
 	<path name="incall-music-uplink bt-sco">
@@ -928,15 +846,14 @@
 	</path>
 
 	<path name="hfp-sco">
-		<ctl name="HFP_PRI_AUX_UL_HL Switch" value="1" />
-		<ctl name="SLIMBUS_0_RX Port Mixer SLIM_7_TX" value="1" />
-		<ctl name="SLIMBUS_7_RX Audio Mixer MultiMedia6" value="1" />
+		<ctl name="SLIMBUS_0_RX Port Mixer SEC_AUX_PCM_UL_TX" value="1" />
+		<ctl name="SEC_AUX_PCM_RX Audio Mixer MultiMedia6" value="1" />
 		<ctl name="MultiMedia6 Mixer SLIM_0_TX" value="1" />
 		<ctl name="SLIMBUS_DL_HL Switch" value="1" />
 	</path>
 
 	<path name="hfp-sco-wb">
-		<ctl name="BT SampleRate" value="KHZ_16" />
+		<ctl name="Internal BTSCO SampleRate" value="BTSCO_RATE_16KHZ" />
 		<path name="hfp-sco" />
 	</path>
 
@@ -994,8 +911,8 @@
 	</path>
 
 	<path name="handset">
-		<ctl name="PDM Mux" value="Off" />
-		<ctl name="Mods Codec Volume" value="0" />
+		<ctl name="PDM Mux" value="Off"/>
+		<ctl name="Mods Codec Volume" value="0"/>
 		<ctl name="AIF1TX1 Input 2" value="SLIMRX1" />
 		<ctl name="AIF1TX1 Input 2 Volume" value="32" />
 		<ctl name="AMP Audio Gain" value="4" />
@@ -1003,46 +920,44 @@
 	</path>
 
 	<path name="handset-mic">
-		<path name="mic1" />
+		<path name="AOV" />
+		<ctl name="SLIMTX1 Input 1" value="ISRC2DEC1" />
 		<ctl name="IN1L Volume" value="12" />
 	</path>
 
 	<path name="headphones">
 		<ctl name="SLIM_5_RX Channels" value="Two" />
-		<ctl name="ISRC2INT1 Input 1" value="SLIMRX5" />
-		<ctl name="HPOUT1L Input 1" value="ISRC2INT1" />
-		<ctl name="ISRC2INT2 Input 1" value="SLIMRX6" />
-		<ctl name="HPOUT1R Input 1" value="ISRC2INT2" />
-		<ctl name="HPOUT1 Digital Volume" id="0" value="118" />
-		<ctl name="HPOUT1 Digital Volume" id="1" value="118" />
-		<ctl name="HPOUT1 Digital Switch" id="0" value="1" />
-		<ctl name="HPOUT1 Digital Switch" id="1" value="1" />
+		<ctl name="ISRC2INT1 Input" value="SLIMRX5" />
+		<ctl name="OUT1L Input 1" value="ISRC2INT1" />
+		<ctl name="ISRC2INT2 Input" value="SLIMRX6" />
+		<ctl name="OUT1R Input 1" value="ISRC2INT2" />
+		<ctl name="OUT1 Digital Volume" id="0" value="113" />
+		<ctl name="OUT1 Digital Volume" id="1" value="113" />
+		<ctl name="OUT1 Digital Switch" id="0" value="1" />
+		<ctl name="OUT1 Digital Switch" id="1" value="1" />
 	</path>
 
 	<path name="line">
 		<path name="headphones" />
-		<ctl name="HPOUT1 Digital Volume" id="0" value="128" />
-		<ctl name="HPOUT1 Digital Volume" id="1" value="128" />
-		</path>
+		<ctl name="OUT1 Digital Volume" id="0" value="128" />
+		<ctl name="OUT1 Digital Volume" id="1" value="128" />
+	</path>
 
 	<path name="headset-mic">
 		<path name="AOV" />
 		<ctl name="IN1R Digital Volume" value="142" />
 		<ctl name="IN1R Volume" value="16" />
-		<ctl name="ISRC2DEC4 Input 1" value="IN1R" />
+		<ctl name="ISRC2DEC4 Input" value="IN1R" />
 		<ctl name="SLIMTX1 Input 1" value="ISRC2DEC4" />
 	</path>
 
 	<path name="sidetone-handset">
 		<ctl name="SLIMBUS_0_RX Port Mixer SLIM_0_TX" value="1" />
-		<ctl name="SLIMBUS_0 LOOPBACK Volume" value="14" />
+		<ctl name="SLIM0 LOOPBACK Volume" value="48" />
 	</path>
 
 	<path name="sidetone-hac-handset">
 		<path name="sidetone-handset" />
-	</path>
-
-	<path name="sidetone-headphones">
 	</path>
 
 	<path name="voice-handset">
@@ -1071,13 +986,13 @@
 
 	<path name="voice-headphones">
 		<ctl name="SLIM_0_RX Channels" value="One" />
-		<ctl name="ISRC2INT1 Input 1" value="SLIMRX1" />
-		<ctl name="HPOUT1L Input 1" value="ISRC2INT1" />
-		<ctl name="HPOUT1R Input 1" value="ISRC2INT1" />
-		<ctl name="HPOUT1 Digital Volume" id="0" value="128" />
-		<ctl name="HPOUT1 Digital Volume" id="1" value="128" />
-		<ctl name="HPOUT1 Digital Switch" id="0" value="1" />
-		<ctl name="HPOUT1 Digital Switch" id="1" value="1" />
+		<ctl name="ISRC2INT1 Input" value="SLIMRX1" />
+		<ctl name="OUT1L Input 1" value="ISRC2INT1" />
+		<ctl name="OUT1R Input 1" value="ISRC2INT1" />
+		<ctl name="OUT1 Digital Volume" id="0" value="128" />
+		<ctl name="OUT1 Digital Volume" id="1" value="128" />
+		<ctl name="OUT1 Digital Switch" id="0" value="1" />
+		<ctl name="OUT1 Digital Switch" id="1" value="1" />
 		<ctl name="OSPL Rx" value="Disable" />
 	</path>
 
@@ -1092,34 +1007,26 @@
 	<path name="speaker-and-headphones">
 		<path name="speaker" />
 		<ctl name="SLIM_0_RX Channels" value="Two" />
-		<ctl name="ISRC2INT1 Input 1" value="SLIMRX1" />
-		<ctl name="HPOUT1L Input 1" value="ISRC2INT1" />
-		<ctl name="ISRC2INT2 Input 1" value="SLIMRX2" />
-		<ctl name="HPOUT1R Input 1" value="ISRC2INT2" />
-		<ctl name="HPOUT1 Digital Volume" id="0" value="98" />
-		<ctl name="HPOUT1 Digital Volume" id="1" value="98" />
-		<ctl name="HPOUT1 Digital Switch" id="0" value="1" />
-		<ctl name="HPOUT1 Digital Switch" id="1" value="1" />
+		<ctl name="ISRC2INT1 Input" value="SLIMRX1" />
+		<ctl name="OUT1L Input 1" value="ISRC2INT1" />
+		<ctl name="ISRC2INT2 Input" value="SLIMRX2" />
+		<ctl name="OUT1R Input 1" value="ISRC2INT2" />
+		<ctl name="OUT1 Digital Volume" id="0" value="109" />
+		<ctl name="OUT1 Digital Volume" id="1" value="109" />
+		<ctl name="OUT1 Digital Switch" id="0" value="1" />
+		<ctl name="OUT1 Digital Switch" id="1" value="1" />
 	</path>
 
 	<path name="speaker-and-line">
 		<path name="speaker-and-headphones" />
-		<ctl name="HPOUT1 Digital Volume" id="0" value="128" />
-		<ctl name="HPOUT1 Digital Volume" id="1" value="128" />
+		<ctl name="OUT1 Digital Volume" id="0" value="128" />
+		<ctl name="OUT1 Digital Volume" id="1" value="128" />
 	</path>
 
 	<path name="afe-proxy">
 	</path>
 
 	<path name="hdmi">
-	</path>
-
-	<path name="usb-headphones">
-	</path>
-
-	<path name="speaker-and-usb-headphones">
-		<path name="speaker" />
-		<path name="usb-headphones" />
 	</path>
 
 	<path name="voice-rec-mic">
@@ -1140,12 +1047,6 @@
 	</path>
 
 	<path name="bt-sco-mic-wb">
-	</path>
-
-	<path name="usb-headset">
-	</path>
-
-	<path name="usb-headset-mic">
 	</path>
 
 	<path name="capture-fm">
@@ -1207,9 +1108,9 @@
 		<path name="AOV" />
 		<ctl name="SLIM_0_TX Channels" value="Two" />
 		<ctl name="SLIMTX1 Input 1" value="ISRC2DEC2" />
-		<ctl name="SLIMTX2 Input 1" value="ISRC2DEC1" />
+		<ctl name="SLIMTX2 Input 1" value="ISRC2DEC4" />
 		<ctl name="IN2L Volume" value="12" />
-		<ctl name="IN1L Volume" value="12" />
+		<ctl name="IN2R Volume" value="12" />
 	</path>
 
 	<path name="three-mic">
@@ -1258,10 +1159,10 @@
 
 	<path name="voice-tty-full-headset-mic">
 		<path name="AOV" />
-		<ctl name="ISRC2DEC4 Input 1" value="IN1R" />
-		<ctl name="SLIMTX1 Input 1" value="ISRC2DEC4" />
 		<ctl name="IN1R Digital Volume" value="128" />
 		<ctl name="IN1R Volume" value="0" />
+		<ctl name="ISRC2DEC4 Input" value="IN1R" />
+		<ctl name="SLIMTX1 Input 1" value="ISRC2DEC4" />
 	</path>
 
 	<path name="voice-tty-hco-headset-mic">
@@ -1353,7 +1254,6 @@
 
 	<path name="mod-speaker-int-hdmi">
 		<path name="mod-speaker" />
-		<path name="hdmi" />
 	</path>
 
 	<path name="mod-speaker-int-mic">
@@ -1414,16 +1314,16 @@
 		<ctl name="Mods Set Capture Use Case" value="Voice-Rec" />
 	</path>
 
-	<path name="mod-camcorder">
-		<!-- GB_AUDIO_DEVICE_IN_CAMCORDER_MIC -->
-		<ctl name="Mods Enable Input Devices" value="4" />
-		<ctl name="Mods Set Capture Use Case" value="Camcorder" />
-	</path>
-
 	<path name="mod-mic-ambisonic">
 		<!-- GB_AUDIO_DEVICE_IN_CAMCORDER_MIC -->
 		<ctl name="Mods Enable Input Devices" value="4" />
 		<ctl name="Mods Set Capture Use Case" value="Ambisonic" />
+	</path>
+
+	<path name="mod-camcorder">
+		<!-- GB_AUDIO_DEVICE_IN_CAMCORDER_MIC -->
+		<ctl name="Mods Enable Input Devices" value="4" />
+		<ctl name="Mods Set Capture Use Case" value="Camcorder" />
 	</path>
 
 	<path name="mod-capture-fm">
