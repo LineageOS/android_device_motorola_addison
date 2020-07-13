@@ -123,15 +123,10 @@ TARGET_USES_QTI_CAMERA_DEVICE := true
 BACKLIGHT_PATH := /sys/class/leds/lcd-backlight/brightness
 BOARD_NO_CHARGER_LED := true
 
-#CNE
-BOARD_USES_QCNE := true
-
 # Crypto
 TARGET_HW_DISK_ENCRYPTION := true
 
 # Display
-MAX_EGL_CACHE_KEY_SIZE := 12*1024
-MAX_EGL_CACHE_SIZE := 2048*1024
 OVERRIDE_RS_DRIVER := libRSDriver_adreno.so
 TARGET_USES_ION := true
 TARGET_USES_HWC2 := true
