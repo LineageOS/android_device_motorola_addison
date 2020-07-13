@@ -339,7 +339,7 @@ service sensors /vendor/bin/sensors.qcom
     user root
     group root
 
-service vl53l1_daemon /vendor/bin/vl53l1_daemon
+service vendor.vl53l1_daemon /vendor/bin/vl53l1_daemon
     class late_start
     user root
     group root
