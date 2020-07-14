@@ -238,7 +238,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.rmnet.mux=enabled \
     ro.telephony.call_ring.multiple=false \
     persist.vendor.radio.eri64_as_home=1 \
-    ro.vendor.telephony.default_network=10,10 \
     persist.vendor.radio.data_con_rprt=1
     
 PRODUCT_PROPERTY_OVERRIDES += \

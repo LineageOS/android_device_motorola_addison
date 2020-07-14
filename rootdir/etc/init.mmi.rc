@@ -301,14 +301,6 @@ on moto-charger
     start charge_only_mode
     start thermal-com
 
-on property:ro.boot.dualsim=true
-   setprop persist.radio.multisim.config dsds
-   setprop ro.telephony.default_network 10,10
-
-on property:ro.boot.dualsim=false
-   setprop persist.radio.multisim.config ""
-   setprop ro.telephony.default_network 10
-
 on property:ro.boot.hwrev=*
    start mmi-boot-sh
 
