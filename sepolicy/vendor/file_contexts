@@ -94,7 +94,6 @@
 /dev/mot_hob_ram                                         u:object_r:hob_device:s0
 /dev/smd3                                                u:object_r:hci_attach_dev:s0
 
-/dev/laser                   u:object_r:vl53l1_device:s0
 /(vendor|system/vendor)/bin/vl53l1_daemon                     u:object_r:vl53l1_exec:s0
 
 /dev/bcm2079x-i2c                                        u:object_r:nfc_device:s0
