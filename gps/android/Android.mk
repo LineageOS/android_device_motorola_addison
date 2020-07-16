@@ -1,7 +1,7 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE := android.hardware.gnss@1.1-impl-qti
+LOCAL_MODULE := android.hardware.gnss@1.0-impl-qti
 LOCAL_VENDOR_MODULE := true
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_SRC_FILES := \
@@ -49,19 +49,11 @@ LOCAL_SHARED_LIBRARIES += \
 LOCAL_CFLAGS += $(GNSS_CFLAGS)
 include $(BUILD_SHARED_LIBRARY)
 
-BUILD_GNSS_HIDL_SERVICE := true
-ifneq ($(BOARD_VENDOR_QCOM_LOC_PDK_FEATURE_SET), true)
-ifneq ($(LW_FEATURE_SET),true)
-BUILD_GNSS_HIDL_SERVICE := false
-endif # LW_FEATURE_SET
-endif # BOARD_VENDOR_QCOM_LOC_PDK_FEATURE_SET
-
-ifeq ($(BUILD_GNSS_HIDL_SERVICE), true)
 include $(CLEAR_VARS)
-LOCAL_MODULE := android.hardware.gnss@1.1-service-qti
+LOCAL_MODULE := android.hardware.gnss@1.0-service-qti
 LOCAL_VENDOR_MODULE := true
 LOCAL_MODULE_RELATIVE_PATH := hw
-LOCAL_INIT_RC := android.hardware.gnss@1.1-service-qti.rc
+LOCAL_INIT_RC := android.hardware.gnss@1.0-service-qti.rc
 LOCAL_SRC_FILES := \
     service.cpp \
 
@@ -90,4 +82,4 @@ LOCAL_SHARED_LIBRARIES += \
 
 LOCAL_CFLAGS += $(GNSS_CFLAGS)
 include $(BUILD_EXECUTABLE)
-endif # BUILD_GNSS_HIDL_SERVICE
+
