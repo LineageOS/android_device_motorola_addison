@@ -214,6 +214,7 @@ PRODUCT_PACKAGES += \
     
 # GPS
 PRODUCT_PACKAGES += \
+    libvehiclenetwork-native \
     libgnss \
     libgnsspps \
     libloc_pla \
