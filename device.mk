@@ -214,12 +214,13 @@ PRODUCT_PACKAGES += \
     
 # GPS
 PRODUCT_PACKAGES += \
+    libvehiclenetwork-native \
     libgnss \
     libgnsspps \
     libloc_pla \
     libloc_stub \
-    android.hardware.gnss@1.0-impl-qti \
-    android.hardware.gnss@1.0-service-qti \
+    android.hardware.gnss@1.1-impl-qti \
+    android.hardware.gnss@1.1-service-qti \
     libqsap_sdk \
     libqsap_shim
 
@@ -389,8 +390,6 @@ PRODUCT_COPY_FILES += \
 # RIL
 PRODUCT_PACKAGES += \
     librmnetctl \
-    libsensorndkbridge \
-    libshim_ril \
     libprotobuf-cpp-full \
     libxml2
 

@@ -1,6 +1,8 @@
 #
 # vendor prop for albus
 #
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.build.display.id= cKVT V0.9 by EmaMaker and AnIdiotWayOutOfIt'sLeague \
 
 # Audio
 PRODUCT_PROPERTY_OVERRIDES += \
