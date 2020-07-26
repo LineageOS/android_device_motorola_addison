@@ -230,6 +230,10 @@
           May be less than the minimum allowed brightness setting
           that can be set by the user. -->
     <integer name="config_screenBrightnessDoze">17</integer>
+    
+    <!-- Minimum screen brightness setting allowed by the power manager.
+         The user is forbidden from setting the brightness below this level. -->
+    <integer name="config_screenBrightnessSettingMinimum">1</integer>
 
     <!-- ComponentName of a dream to show whenever the system would otherwise have
          gone to sleep.  When the PowerManager is asked to go to sleep, it will instead
