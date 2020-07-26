@@ -344,11 +344,6 @@ PRODUCT_PACKAGES += \
     libOmxVenc \
     libstagefrighthw
 
-# Power
-PRODUCT_PACKAGES += \
-    android.hardware.power@1.0-impl \
-    android.hardware.power@1.0-service
-
 # QMI
 PRODUCT_PACKAGES += \
     libjson
@@ -464,9 +459,10 @@ PRODUCT_PACKAGES += \
 
 #Thermal
 PRODUCT_PACKAGES += \
+    android.hardware.power@1.2-service \
+    thermal.msm8953 \
     android.hardware.thermal@1.0-impl \
-    android.hardware.thermal@1.0-service \
-    thermal.msm8953
+    android.hardware.thermal@1.0-service
 
 PRODUCT_PACKAGES += \
     libcurl \
