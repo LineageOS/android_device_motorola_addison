@@ -40,7 +40,7 @@
     <integer-array name="config_autoBrightnessLevels">
         <item>1</item>
         <item>6</item>
-	<item>12</item>
+        <item>12</item>
         <item>25</item>
         <item>50</item>
         <item>80</item>
