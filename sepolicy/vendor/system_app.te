@@ -13,6 +13,7 @@ allow system_app sysfs_homebutton:dir search;
 allow system_app sysfs_screen_off_gestures:file { getattr open write };
 allow system_app sysfs_zram:dir { search read };
 allow system_app proc_pagetypeinfo:file { read open getattr };
+allow system_app sysfs_fingerprint:dir search;
 
 allow system_app sysfs_zram:file { read open getattr};
 allow system_app sysfs_rtc:dir { r_dir_perms search };

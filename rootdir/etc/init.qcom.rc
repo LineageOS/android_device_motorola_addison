@@ -51,6 +51,10 @@ on init
     # Change ownership for for cabc feature
     chown system system /sys/class/graphics/fb0/cabc
 
+    # Change ownership for Pocketmode feature
+    chown system system /sys/devices/soc/soc:fpc_fpc1020/proximity_state
+    chmod 0660 /sys/devices/soc/soc:fpc_fpc1020/proximity_state
+
 on early-boot
     # set RLIMIT_MEMLOCK to 64MB
     setrlimit 8 67108864 67108864

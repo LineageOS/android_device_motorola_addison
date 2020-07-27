@@ -322,6 +322,10 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     libjson
 
+# PocketMode
+PRODUCT_PACKAGES += \
+    MotoPocketMode
+
 # Protobuf
 PRODUCT_PACKAGES += \
     libprotobuf-cpp-full-vendorcompat \
