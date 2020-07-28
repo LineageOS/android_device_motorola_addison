@@ -333,7 +333,7 @@ service vendor.charge_only_mode /system/bin/charge_only_mode
     group graphics system input
     disabled
 
-service sensors /vendor/bin/sensors.qcom
+service sensors /vendor/bin/sensors.qti
     class core
     user root
     group root
