@@ -5,3 +5,5 @@ type touch_prop, property_type;
 type diag_prop, property_type;
 type thermal_prop, property_type;
 type qti_telephony_prop, property_type;
+type moto_boot_prop, property_type;
+type power_prop, property_type;

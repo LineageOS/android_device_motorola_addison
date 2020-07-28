@@ -52,13 +52,11 @@ on init
     setprop ro.product.manufacturer Motorola
 	
 # Translate MMI property in order to keep consistent with QCOM
-on property:ro.boot.dualsim=true
-   setprop persist.radio.multisim.config dsds
-   setprop ro.telephony.default_network 10,10
+on property:ro.vendor.hw.dualsim=true
+    setprop persist.radio.multisim.config dsds
 
-on property:ro.boot.dualsim=false
-   setprop persist.radio.multisim.config ""
-   setprop ro.telephony.default_network 10
+on property:ro.vendor.hw.dualsim=false
+    setprop persist.radio.multisim.config ""
 
 
 on property:ro.boot.radio=India

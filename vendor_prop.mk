@@ -13,9 +13,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     audio.parser.ip.buffer.size=262144 \
     ro.qc.sdk.audio.ssr=false \
     ro.qc.sdk.audio.fluencetype=none \
-    persist.audio.fluence.voicecall=true \
-    persist.audio.fluence.voicerec=false \
-    persist.audio.fluence.speaker=true \
     tunnel.audio.encode = false \
     audio.offload.buffer.size.kb=64 \
     audio.offload.min.duration.secs=30 \
@@ -97,11 +94,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # CNE
 PRODUCT_PROPERTY_OVERRIDES += \
-    persist.cne.feature=1 \
-    persist.cne.logging.qxdm=3974 \
-    persist.cne.rat.wlan.chip.oem=WCN \
-    persist.dpm.feature=0 \
-    persist.sys.cnd.iwlan=1 \
+    persist.vendor.cne.logging.qxdm=3974 \
+    persist.vendor.cne.rat.wlan.chip.oem=WCN \
+    persist.vendor.dpm.feature=0 \
+    persist.vendor.sys.cnd.iwlan=1 \
 
 # core_ctrl
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -174,8 +170,22 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.mm.sta.enable=0 \
     persist.vt.supported=0 \
     persist.volte_enabled_by_hw=1 \
-    persist.dbg.volte_avail_ovr=1
+    persist.dbg.volte_avail_ovr=1 \
+    DEVICE_PROVISIONED=1
 
+# VoLTE
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.vendor.radio.force_on_dc=true \
+    persist.radio.custom_ecc=1 \
+    persist.vendor.radio.data_ltd_sys_ind=1 \
+    persist.vendor.radio.ignore_dom_time=10 \
+    persist.radio.ignore_dom_time=10 \
+    persist.radio.is_wps_enabled=true \
+    persist.radio.videopause.mode=1 \
+    persist.radio.sap_silent_pin=1 \
+    persist.radio.always_send_plmn=true \
+    persist.rcs.supported=1 \
+    
 # Media
 PRODUCT_PROPERTY_OVERRIDES += \
     media.aac_51_output_enabled=true \
@@ -204,7 +214,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Radio
 PRODUCT_PROPERTY_OVERRIDES += \
-    persist.data.qmi.adb_logmask=0 \
     persist.radio.apn_delay=5000 \
     persist.radio.adam=true \
     persist.radio.apm_sim_not_pwdn=1 \
@@ -219,7 +228,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.mot.ignore_csim_appid=true \
     persist.sys.ssr.restart_level=ALL_ENABLE \
     persist.sys.qc.sub.rdump.on=1 \
-    persist.vendor.radio.sw_mbn_update=1 \
+    persist.vendor.radio.sw_mbn_update=0 \
     persist.sys.qc.sub.rdump.max=3 \
     persist.vendor.radio.custom_ecc=1 \
     persist.vendor.radio.is_wps_enabled=true \
@@ -240,13 +249,31 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.rmnet.mux=enabled \
     ro.telephony.call_ring.multiple=false \
     persist.vendor.radio.eri64_as_home=1 \
-    persist.vendor.radio.data_con_rprt=1
-    
+    persist.vendor.radio.data_con_rprt=1 \
+    persist.vendor.radio.qcril_uim_vcc_feature=1 \
+    persist.radio.schd.cache=3500 \
+    persist.vendor.radio.apm_sim_not_pwdn=1 \
+    persist.vendor.radio.lte_vrte_ltd=1 \
+    persist.vendor.radio.cs_srv_type=1 \
+    persist.vendor.radio.apm_sim_not_pwdn \
+    persist.sys.cnd.iwlan=1 \
+    persist.vendor.ims.disableDebugLogs=1 \
+    persist.vendor.ims.disableQXDMLogs=1 \
+    persist.vendor.radio.snapshot_timer=22 \
+    persist.vendor.radio.snapshot_enabled=1 \
+    persist.radio.rat_on=combine \
+    persist.radio.data_ltd_sys_ind=1 \
+    persist.radio.data_con_rprt=1 \
+    persist.radio.calls.on.ims=1 \
+    persist.vendor.radio.add_power_save=1 \
+
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.use_data_netmgrd=true \
+    ro.vendor.use_data_netmgrd=true \
     persist.data.qmi.adb_logmask=0 \
     persist.data.netmgrd.qos.enable=true \
     persist.data.mode=concurrent \
+    persist.vendor.data.mode=concurrent \
     persist.data.iwlan.enable=true
 
 # RmNet Data
