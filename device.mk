@@ -363,6 +363,8 @@ PRODUCT_PACKAGES += \
     wlan_carrier_bin.sh \
     init.mmi.rc \
     init.gbmods.sh \
+    init.qcom.early_boot.sh \
+    init.qcom.post_boot.sh \
     init.mmi.usb.rc \
     init.qcom.rc \
     init.albus.rc \
