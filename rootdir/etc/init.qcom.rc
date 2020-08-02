@@ -566,7 +566,6 @@ service vendor.time_daemon /vendor/bin/time_daemon
    writepid /dev/cpuset/system-background/tasks
 
 on property:vold.decrypt=trigger_restart_framework
-    start config_bt_addr
 
 on property:persist.env.fastdorm.enabled=true
     setprop persist.radio.data_no_toggle 1
@@ -582,12 +581,6 @@ service vendor.cnd /vendor/bin/cnd
     class main
     user system
     group system wifi inet radio wakelock net_admin
-
-service vendor.qseeproxydaemon /vendor/bin/qseeproxydaemon
-    class late_start
-    user system
-    group system
-    writepid /dev/cpuset/system-background/tasks
 
 service vendor.esepmdaemon /vendor/bin/esepmdaemon
     class core
@@ -665,14 +658,6 @@ service vendor.rmt_storage /vendor/bin/rmt_storage
     ioprio rt 0
     shutdown critical
     writepid /dev/cpuset/system-background/tasks
-
-
-service vendor.iop /vendor/bin/iop
-    class main
-    user root
-    group root
-    disabled
-    socket iop seqpacket 0666 root system
 
 on property:wc_transport.start_fmhci=true
     start fmhal_service
@@ -918,4 +903,4 @@ on property:sys.boot_completed=1
 
 
 on property:sys.boot_completed=1
-    start qcom-post-boot
+    start vendor.qcom-post-boot
