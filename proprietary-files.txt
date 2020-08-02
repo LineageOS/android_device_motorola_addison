@@ -776,7 +776,7 @@ vendor/lib64/libxtadapter.so|9a8fbd106994aaaf380be883fa2ef37d04e20401
 vendor/lib64/libxtwifi_ulp_adaptor.so|078124cc018badf89c1f5588e9102e9f7c034da2
 vendor/lib64/vendor.qti.gnss@1.0_vendor.so|057a56a22493343425c8b9019207fb33311d9035
 
-# Graphics
+# Graphics from PPX29.159-23
 vendor/firmware/a225_pfp.fw
 vendor/firmware/a225_pm4.fw
 vendor/firmware/a225p5_pm4.fw
@@ -860,19 +860,19 @@ vendor/lib64/vendor.display.postproc@1.0.so
 vendor/lib/libhdr_tm.so
 vendor/lib64/libhdr_tm.so|b8d140f6ae4ac8e8c4f4762e7a44b85082b969df
 
-# I-O Prefetcher
-lib64/vendor.qti.hardware.iop@1.0.so|4e6315eab00315e0a0a5fc67912c94e5a5478e75
-vendor/bin/hw/vendor.qti.hardware.iop@1.0-service|b9609cf76d5e8a52f27347a0182522663a124223
-vendor/etc/init/vendor.qti.hardware.iop@1.0-service.rc
-vendor/lib/hw/vendor.qti.hardware.iop@1.0-impl.so
-vendor/lib/vendor.qti.hardware.iop@1.0_vendor.so
-vendor/lib64/hw/vendor.qti.hardware.iop@1.0-impl.so|f47da84210d0b67742ea8a999df566d8b71f2165
-vendor/lib64/libqti-iop-client.so|a5b38e6764bd86e64c89d92fdde87c1311d9c721
-vendor/lib64/libqti-iop.so|ffc06ccc9665e344c4490f69b0cb6bac71f9c363
-vendor/lib64/libqti-iopd-client.so|e43b68dc4e29819ec268370ea9af5cb04f8af089
-vendor/lib64/libqti-iopd.so|79f44557d2f6519987189b61ed095ec45816cdcf
-vendor/lib64/vendor.qti.hardware.iop@1.0-impl.so|f47da84210d0b67742ea8a999df566d8b71f2165
-vendor/lib64/vendor.qti.hardware.iop@1.0_vendor.so|d7892f108d051a19383b20ff241461d6a122d90b
+# I-O Prefetcher from PPS29.133-30
+lib/vendor.qti.hardware.iop@1.0.so
+lib/vendor.qti.hardware.iop@2.0.so
+lib64/vendor.qti.hardware.iop@1.0.so
+lib64/vendor.qti.hardware.iop@2.0.so
+vendor/lib/hw/vendor.qti.hardware.iop@2.0-impl.so
+vendor/lib/libqti-iopd-client.so
+vendor/lib/vendor.qti.hardware.iop@1.0.so
+vendor/lib/vendor.qti.hardware.iop@2.0.so
+vendor/lib64/libqti-iopd-client.so
+vendor/lib64/hw/vendor.qti.hardware.iop@2.0-impl.so
+vendor/lib64/vendor.qti.hardware.iop@1.0.so
+vendor/lib64/vendor.qti.hardware.iop@2.0.so
 
 # Hotword Enrollment
 -priv-app/HotwordEnrollmentOKGoogleCS47L35/HotwordEnrollmentOKGoogleCS47L35.apk;PRESIGNED
@@ -983,30 +983,37 @@ vendor/firmware/libpn548ad_fw.so
 # Offmode charging
 vendor/bin/charge_only_mode|9c6cb9c1b27fd30eb236c13b9ec08a15febd32c0
 
-# Perf
+# Perf from PPS29.133-30
 lib/libqti-perfd-client_system.so
 lib/libqti_performance.so
+lib/libqti-util_system.so
 lib/vendor.qti.hardware.perf@1.0.so
-lib64/libqti-perfd-client_system.so|5785d4081a613ad164949f330904e8b7749b9e35
-lib64/libqti_performance.so|78b47de65ac492db51f368cddeee14f391540606
-lib64/vendor.qti.hardware.perf@1.0.so|db6d62913453c545bd057866aeb37a0d058bf6f6
-vendor/bin/energy-awareness|54429a69e058a80edb1ffc003889700f2a29b19a
-vendor/bin/hw/vendor.qti.hardware.perf@1.0-service|e34d3ab597388add3c68d0583cbb4e3a3fc5921e
-vendor/bin/msm_irqbalance|b9d9f8adcd63c9a996fdaa4428a45eb99a9c181d
+lib64/libqti-perfd-client_system.so
+lib64/libqti_performance.so
+lib64/libqti-util_system.so
+lib64/vendor.qti.hardware.perf@1.0.so
+vendor/bin/energy-awareness
+vendor/bin/hw/vendor.qti.hardware.perf@1.0-service
+vendor/bin/msm_irqbalance
 vendor/etc/init/vendor.qti.hardware.perf@1.0-service.rc
 vendor/etc/msm_irqbalance.conf
+vendor/etc/msm_irqbalance_little_big.conf
 vendor/etc/perf/perfboostsconfig.xml
+vendor/etc/perf/commonresourceconfigs.xml
+vendor/etc/perf/targetconfig.xml
+vendor/etc/perf/targetconfig.xml
 vendor/lib/libperfgluelayer.so
 vendor/lib/libqti-perfd-client.so
 vendor/lib/libqti-perfd.so
 vendor/lib/libqti-util.so
-vendor/lib/vendor.qti.hardware.perf@1.0_vendor.so
-vendor/lib64/libperfgluelayer.so|bf99ec37cbf4fd191ba641a915c98855b4e2797d
-vendor/lib64/libqti-perfd-client.so|d9724ac58072657c2ba9fc7502c0f2577ef75230
-vendor/lib64/libqti-perfd.so|0f64fb83756123e63d6e50577f1a98d59aa3b735
-vendor/lib64/libqti-util.so|6411586729d90e0c6a6f94e456f66d376ddb8969
-vendor/lib64/libqti-utils.so|3243d900cd6d7eb8272775d8839e9b8adc3dac7c
-vendor/lib64/vendor.qti.hardware.perf@1.0_vendor.so|fca94d3e81f9f6453b0cb781c2925be845bb2ddb
+vendor/lib/libqti-utils.so
+vendor/lib/vendor.qti.hardware.perf@1.0.so
+vendor/lib64/libperfgluelayer.so
+vendor/lib64/libqti-perfd-client.so
+vendor/lib64/libqti-perfd.so
+vendor/lib64/libqti-util.so
+vendor/lib64/libqti-utils.so
+vendor/lib64/vendor.qti.hardware.perf@1.0.so
 
 # Peripheral manager
 vendor/bin/pm-proxy|1d74d4cbffd87d28117f6524df9d8b34d78c9469
