@@ -321,13 +321,6 @@ service mmi-laser-sh /vendor/bin/sh /vendor/bin/init.mmi.laser.sh
     user root
     oneshot
 
-# Start Sensor daemon
-service motosh /vendor/bin/motosh boot
-    class main
-    user compass
-    group compass misc input
-    oneshot
-
 service vendor.charge_only_mode /vendor/bin/charge_only_mode
     user root
     group graphics system input
