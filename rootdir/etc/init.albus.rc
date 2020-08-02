@@ -27,7 +27,8 @@
 import /vendor/etc/init/hw/init.${ro.boot.hardware.sku}.rc
 
 on init
-	
+    
+    setprop ro.carrier ${ro.boot.carrier}
     setprop ro.vendor.fsg-id ${ro.boot.fsg-id}
     setprop ro.vendor.hw.dualsim ${ro.boot.dualsim}
     setprop ro.vendor.hw.device ${ro.boot.device}
