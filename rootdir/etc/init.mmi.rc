@@ -48,6 +48,8 @@ on post-fs
     mkdir /persist/sds 0700 vold vold
     mkdir /persist/rfs/msm/mpss/mot_rfs 0771 rfs system
     mkdir /persist/public/usc_dm 0775 radio radio
+    mkdir /mnt/vendor/persist/batt_health 0775 mot_pwric mot_pwric
+
 
     chown oem_5004 oem_5004 /persist/factory/fti
     chmod 0660 /persist/factory/fti
@@ -89,7 +91,9 @@ on post-fs-data
     mkdir /persist/paks 02770 mot_tcmd mot_tcmd
     
     # Create directory used by power_supply_logger
-    mkdir /data/power_supply_logger 0750 oem_5001 log
+    mkdir /data/vendor/power_supply_logger 0750 mot_pwric log
+    # Create directory power_supply_logger used by memtest and batt_health
+    mkdir /data/vendor_de/power_supply_logger 0770 root log
 
     # Create moodle directory that MOT_MOODLE can write to
     mkdir /data/local/moodle 0770 graphics oem_5004
@@ -342,12 +346,18 @@ on moto-charger
     start  vendor.qcom-post-boot
     start vendor.gbmodinstall
     start vendor.charge_only_mode
-    #start vendor.batt_health
+    start vendor.batt_health
     start vendor.thermal-com
 
 on property:ro.boot.hwrev=*
    start vendor.mmi-boot-sh
 
+service vendor.batt_health /vendor/bin/batt_health
+    class late_start
+    user mot_pwric
+    group mot_pwric cache net_admin log
+    disabled
+    
 service adspd /vendor/bin/adspd
    class main
    socket adspdsock stream 0660 system audio
@@ -413,3 +423,4 @@ on property:ro.bootmode=normal
 on property:sys.boot_completed=1
     # Enable ZRAM on boot_complete
     swapon_all /vendor/etc/fstab.qcom
+    start vendor.batt_health
