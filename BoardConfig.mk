@@ -79,7 +79,7 @@ BOARD_MKBOOTIMG_ARGS := --ramdisk_offset 0x01000000 --tags_offset 0x00000100
 TARGET_KERNEL_HEADER := arm64
 TARGET_KERNEL_HEADER_ARCH := arm64
 TARGET_KERNEL_CONFIG := albus_defconfig
-TARGET_KERNEL_SOURCE := kernel/motorola/msm8996
+TARGET_KERNEL_SOURCE := kernel/motorola/msm8953
 
 TARGET_USE_SDCLANG := true
 
