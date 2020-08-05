@@ -357,20 +357,18 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     fstab.qcom \
-    init.gbmods.sh \
     init.mmi.boot.sh \
     init.mmi.laser.sh \
-    init.mmi.usb.sh \
     init.qcom.ril.sh \
-    init.qcom.early_boot.sh \
-    init.qcom.post_boot.sh \
     wlan_carrier_bin.sh \
     init.mmi.rc \
+    init.gbmods.sh \
+    init.qcom.early_boot.sh \
+    init.qcom.post_boot.sh \
     init.mmi.usb.rc \
     init.qcom.rc \
     init.albus.rc \
-    init.mods.rc \
-    init.target.rc
+    init.mods.rc 
 
 PRODUCT_COPY_FILES += \
      $(LOCAL_PATH)/rootdir/etc/ueventd.qcom.rc:$(TARGET_COPY_OUT_VENDOR)/ueventd.rc

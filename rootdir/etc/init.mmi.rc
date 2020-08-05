@@ -68,7 +68,6 @@ on post-fs
     chmod 0711 /persist/rfs/msm/mpss
     chmod 0771 /persist/rfs/msm/mpss/mot_rfs
 
-    swapon_all /vendor/etc/fstab.qcom
     write /proc/sys/vm/page-cluster 0
 
    # Change permission for fingerprint sensor
@@ -79,15 +78,14 @@ on post-fs
    chmod 0440 /sys/devices/soc/soc:fpc_fpc1020/irq_cnt
 
 on post-fs-data
-    setprop ro.vendor.build.fingerprint ${ro.product.vendor.brand}/${ro.product.vendor.name}/${ro.product.vendor.device}:${ro.vendor.build.version.release}/${ro.vendor.build.id}/${ro.vendor.build.version.incremental}:${ro.vendor.build.type}/${ro.vendor.build.tags}
+
+    #setup folder for WLAN WAPI
+    chmod 0770 /data/wapi_certificate
 	
     # Setup folders for security
     mkdir /persist/security 02770 oem_5007 oem_5007
     mkdir /data/local/dbvc 0750 oem_5004 shell
 
-    # Setup folder for Pre-Activation Kill Switch app (PAKS)
-    mkdir /persist/paks 02770 mot_tcmd mot_tcmd
-    
     # Create directory used by power_supply_logger
     mkdir /data/power_supply_logger 0750 oem_5001 log
 
@@ -103,14 +101,6 @@ on post-fs-data
     chown oem_5001 oem_5001 /sys/class/power_supply/battery/device/force_chg_fail_clear
     chown oem_5001 oem_5001 /sys/class/power_supply/battery/device/force_chg_usb_otg_ctl
 
-    chown root mot_mod /sys/module/qpnp_smbcharger_mmi/parameters/eb_rechrg_start_soc
-    chown root mot_mod /sys/module/qpnp_smbcharger_mmi/parameters/eb_rechrg_stop_soc
-    chown root mot_mod /sys/module/qpnp_smbcharger_mmi/parameters/eb_attach_start_soc
-    chown root mot_mod /sys/module/qpnp_smbcharger_mmi/parameters/eb_attach_stop_soc
-    chown root mot_mod /sys/module/qpnp_smbcharger_mmi/parameters/eb_low_start_soc
-    chown root mot_mod /sys/module/qpnp_smbcharger_mmi/parameters/eb_low_stop_soc
-    chown root mot_mod /sys/module/qpnp_smbcharger_mmi/parameters/eb_on_sw
-
     chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_rechrg_start_soc
     chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_rechrg_stop_soc
     chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_attach_start_soc
@@ -119,20 +109,12 @@ on post-fs-data
     chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_low_stop_soc
     chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_on_sw
 
-    chown root mot_mod /sys/class/power_supply/usb/usb_priority
-    chmod 0660 /sys/class/power_supply/usb/usb_priority
-    chown root mot_mod /sys/module/dwc3_msm/parameters/usb_priority
-    chmod 0660 /sys/module/dwc3_msm/parameters/usb_priority
-    
     # Sensor Hub calibration data directory
     mkdir /data/misc/sensorhub 0770 system compass
 
     # Setup folder for native to transfer data to NativeDropBoxAgent
     mkdir /data/system/dropbox-add 0730 system diag
 
-    # Create panic dump dir.
-    mkdir /data/vendor/dontpanic 0750 root log
-    
     # Create directory for cutback
     mkdir /data/vendor/cutback 0770 radio wifi
 
@@ -145,9 +127,6 @@ on post-fs-data
 
     # Create bug2go folder
     mkdir /data/bug2go 0770 log log
-    
-    # Create directory used by chargeonlymode
-    mkdir /data/vendor/chargeonly 0750 root log
 
     # Permissions for phone power off log
     mkdir /data/power_log 0750 root log
@@ -185,15 +164,9 @@ on post-fs-data
 
     #setup folder for WLAN WAPI
     chmod 0770 /data/wapi_certificate
-    # This dir only for preinstall app so libs
-    mkdir /data/app-lib2 0771 system system
-    
+
     mkdir /data/misc/sensors 0755 system system
 
-    # Required by FingerPrint Cards (FPC) via init so we dont need to give qseecomd or fingerprintd permissions to create them
-    mkdir /data/fpc 0700 system system
-    mkdir /data/.fps 0770 system input
-    
     # Enable directory writer xattr for 2nd level directory /storage/emulated/xx/yy
     setfattr /data/media user.dwriter /%s/%s 0
 
@@ -227,14 +200,14 @@ on boot
    chmod 0660 /dev/stml0xx_ms
    chown compass compass /dev/stml0xx_akm
    chmod 0660 /dev/stml0xx_akm
-  
+
    # Change permission for type C params
-   chown root mot_tcmd /sys/devices/soc/78b6000.i2c/i2c-2/2-0022/CC_state
-   chown root mot_tcmd /sys/devices/soc/78b6000.i2c/i2c-2/2-0022/enable_vconn
+   chown root oem_5004 /sys/devices/soc/78b6000.i2c/i2c-2/2-0022/CC_state
+   chown root oem_5004 /sys/devices/soc/78b6000.i2c/i2c-2/2-0022/enable_vconn
    # Change ownership and permission for AMPS factory testing
-   chown root mot_tcmd /sys/class/i2c-adapter/i2c-2/2-002d/enable
+   chown root oem_5004 /sys/class/i2c-adapter/i2c-2/2-002d/enable
    chmod 0660 /sys/class/i2c-adapter/i2c-2/2-002d/enable
-   chown root mot_tcmd /sys/class/i2c-adapter/i2c-2/2-002d/hsic_vdd
+   chown root oem_5004 /sys/class/i2c-adapter/i2c-2/2-002d/hsic_vdd
    chmod 0660 /sys/class/i2c-adapter/i2c-2/2-002d/hsic_vdd
 
    # Change ownership and permission for backlight
@@ -256,13 +229,6 @@ on boot
    # Change ownership and permission for vibrator
    chown system system /sys/class/timed_output/vibrator/enable
    chmod 0660 /sys/class/timed_output/vibrator/enable
-   chown system system /sys/class/leds/vibrator/state
-   chmod 0660 /sys/class/leds/vibrator/state
-   chown system system /sys/class/leds/vibrator/activate
-   chmod 0660 /sys/class/leds/vibrator/activate
-   chown system system /sys/class/leds/vibrator/duration
-   chmod 0660 /sys/class/leds/vibrator/duration
-   chown root mot_mod /sys/bus/i2c/devices/2-005a/reduce
 
    # Change ownership and permission for laser_sensor
    chown system system /sys/class/input/input3/enable_sar
@@ -292,6 +258,7 @@ on boot
    chmod 0644 /persist/sensors/sensors_settings
    chown system root /persist/sensors/sensors_settings
 
+
 # FPC device parameter permissions
    chown system oem_5004 /sys/bus/spi/devices/spi12.0/nav
    chown system oem_5004 /sys/bus/spi/devices/spi12.0/clk_enable
@@ -312,12 +279,6 @@ on boot
    # Change ownership for vibrator
    chown oem5001 oem_5001 /sys/bus/i2c/devices/2-005a/reduce
 
-on nonencrypted
-    setprop ro.vendor.kick.logcopy ${ro.vendor.bootreason}
-
-on property:vold.decrypt=trigger_restart_framework
-    setprop ro.vendor.kick.logcopy ${ro.vendor.bootreason}
-   
 # Pass carrier to wlan
 service vendor.init_wifi /vendor/bin/sh /vendor/bin/wlan_carrier_bin.sh
     class main
@@ -329,7 +290,6 @@ on charger
     trigger early-fs
     trigger fs
     trigger post-fs
-    trigger late-fs
     trigger post-fs-data
     trigger moto-charger
     class_stop main
@@ -337,12 +297,8 @@ on charger
 
 on moto-charger
     setprop ro.board.platform msm8953
-    load_system_props
     trigger firmware_mounts_complete
-    start  vendor.qcom-post-boot
-    start vendor.gbmodinstall
     start vendor.charge_only_mode
-    #start vendor.batt_health
     start vendor.thermal-com
 
 on property:ro.boot.hwrev=*
@@ -398,14 +354,6 @@ on property:sys.wifi.tethering=true
 
 on property:sys.wifi.tethering=false
     write /sys/class/net/rmnet_data0/queues/rx-0/rps_cpus ${sys.rmnet_vnd.rps_mask}
-    
-# Override the AOSP sensor HAL service definition to add input group access
-service vendor.sensors-hal-1-0 /vendor/bin/hw/android.hardware.sensors@1.0-service
-    class hal
-    user system
-    group system input wakelock
-    capabilities BLOCK_SUSPEND
-    rlimit rtprio 10 10
 
 on property:ro.bootmode=normal
    write /sys/module/usb3813_hub/parameters/boost_val 3
