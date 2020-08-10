@@ -51,7 +51,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
     audio.offload.min.duration.secs=60 \
     audio.offload.gapless.enabled=false \
     qcom.hw.aac.encoder=false \
-    audio_hal.period_size=240 
+    audio_hal.period_size=240  \
+    vendor.audio.use.sw.alac.decoder=false \
+    vendor.audio.use.sw.ape.decoder=false
+
 
 # Bluetooth
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -185,14 +188,21 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.radio.sap_silent_pin=1 \
     persist.radio.always_send_plmn=true \
     persist.rcs.supported=1 \
+
+# OMX
+# Rank OMX SW codecs lower than OMX HW codecs
+PRODUCT_PROPERTY_OVERRIDES += \
+    debug.stagefright.omx_default_rank.sw-audio=1 \
+    debug.stagefright.omx_default_rank=0
     
 # Media
 PRODUCT_PROPERTY_OVERRIDES += \
+    media.settings.xml=/vendor/etc/media_profiles.xml \
     media.aac_51_output_enabled=true \
-    mm.enable.qcom_parser=135715 \
-    mm.enable.sec.smoothstreaming=false \
-    mm.enable.smoothstreaming=false \
-    mmp.enable.3g2=true
+    vendor.mm.enable.qcom_parser=135715 \
+    vendor.mm.en.sec.smoothstreaming=false \
+    vendor.mm.enable.smoothstreaming=false \
+    vendor.mmp.enable.3g2=true
 
 # NITZ
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -333,3 +343,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.vendor.extension_library=libqti-perfd-client.so \
     ro.vendor.at_library=libqti-at.so \
     ro.vendor.gt_library=libqti-gt.so
+
+
+#Fast app launch
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.device_config.runtime_native.usap_pool_enabled=true
