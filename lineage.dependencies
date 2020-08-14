@@ -1,7 +1,7 @@
 [
   {
-    "repository":  "android_kernel_motorola_msm8996",
-    "target_path": "kernel/motorola/msm8996"
+    "repository":  "android_kernel_motorola_msm8953-common",
+    "target_path": "kernel/motorola/msm8953"
   },
   {
     "repository":  "android_hardware_qcom_media",
@@ -21,5 +21,9 @@
   {
     "repository": "android_packages_resources_devicesettings",
     "target_path": "packages/resources/devicesettings"
+  },
+  {
+    "repository": "android_system_qcom",
+    "target_path": "system/qcom"
   }
 ]

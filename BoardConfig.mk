@@ -79,7 +79,7 @@ BOARD_MKBOOTIMG_ARGS := --ramdisk_offset 0x01000000 --tags_offset 0x00000100
 TARGET_KERNEL_HEADER := arm64
 TARGET_KERNEL_HEADER_ARCH := arm64
 TARGET_KERNEL_CONFIG := albus_defconfig
-TARGET_KERNEL_SOURCE := kernel/motorola/msm8996
+TARGET_KERNEL_SOURCE := kernel/motorola/msm8953
 
 TARGET_USE_SDCLANG := true
 
@@ -207,8 +207,6 @@ BOARD_HARDWARE_CLASS += \
 # Manifest
 DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/configs/manifest.xml
 DEVICE_MATRIX_FILE   := $(DEVICE_PATH)/configs/compatibility_matrix.xml
-
-PRODUCT_BOOT_JARS += telephony-ext
 
 NXP_CHIP_TYPE := PN551
 BOARD_NFC_HAL_SUFFIX := $(TARGET_BOARD_PLATFORM)

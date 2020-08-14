@@ -113,11 +113,6 @@ PRODUCT_PACKAGES += \
     android.hardware.bluetooth@1.0-impl \
     android.hardware.bluetooth@1.0-service
 
-# Broadcast Radio
-PRODUCT_PACKAGES += \
-    android.hardware.broadcastradio@1.1 \
-    android.hardware.broadcastradio@1.0-impl
-
 # Browser
 PRODUCT_PACKAGES += \
     Gello
@@ -352,20 +347,18 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     fstab.qcom \
-    init.gbmods.sh \
     init.mmi.boot.sh \
     init.mmi.laser.sh \
-    init.mmi.usb.sh \
     init.qcom.ril.sh \
-    init.qcom.early_boot.sh \
-    init.qcom.post_boot.sh \
     wlan_carrier_bin.sh \
     init.mmi.rc \
+    init.gbmods.sh \
+    init.qcom.early_boot.sh \
+    init.qcom.post_boot.sh \
     init.mmi.usb.rc \
     init.qcom.rc \
     init.albus.rc \
-    init.mods.rc \
-    init.target.rc
+    init.mods.rc 
 
 PRODUCT_COPY_FILES += \
      $(LOCAL_PATH)/rootdir/etc/ueventd.qcom.rc:$(TARGET_COPY_OUT_VENDOR)/ueventd.rc
@@ -384,12 +377,7 @@ PRODUCT_COPY_FILES += \
 # RIL
 PRODUCT_PACKAGES += \
     librmnetctl \
-    libprotobuf-cpp-full \
-    libxml2
-
-#RIL
-PRODUCT_PACKAGES += \
-    android.hardware.radio@1.0
+    libprotobuf-cpp-full
 
 # Seccomp policy
 PRODUCT_COPY_FILES += \
@@ -398,17 +386,19 @@ PRODUCT_COPY_FILES += \
 
 # IMS
 PRODUCT_PACKAGES += \
-    ims-ext-common \
-    telephony-ext
-
-PRODUCT_PACKAGES += \
-    com.android.ims.rcsmanager
+    ims-ext-common
 
 # Sensors
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/sensors/hals.conf:vendor/etc/sensors/hals.conf \
     $(LOCAL_PATH)/configs/sensors/sensor_def_qcomdev.conf:vendor/etc/sensors/sensor_def_qcomdev.conf
 
+# Telephony
+PRODUCT_PACKAGES += \
+    telephony-ext
+    
+PRODUCT_BOOT_JARS += \
+    telephony-ext
 
 PRODUCT_PACKAGES += \
     android.hardware.sensors@1.0-impl \
@@ -484,7 +474,7 @@ PRODUCT_PACKAGES += \
     WCNSS_wlan_dictionary.dat
 
 PRODUCT_COPY_FILES += \
-    kernel/motorola/msm8996/drivers/staging/prima/firmware_bin/WCNSS_cfg.dat:$(TARGET_COPY_OUT_VENDOR)/firmware/wlan/prima/WCNSS_cfg.dat \
+    kernel/motorola/msm8953/drivers/staging/prima/firmware_bin/WCNSS_cfg.dat:$(TARGET_COPY_OUT_VENDOR)/firmware/wlan/prima/WCNSS_cfg.dat \
     $(LOCAL_PATH)/wifi/p2p_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/p2p_supplicant_overlay.conf \
     $(LOCAL_PATH)/wifi/wpa_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant_overlay.conf \
     $(LOCAL_PATH)/wifi/WCNSS_qcom_cfg.ini:$(TARGET_COPY_OUT_VENDOR)/firmware/wlan/prima/WCNSS_qcom_cfg.ini \
@@ -501,7 +491,7 @@ PRODUCT_PACKAGES += \
     android.hidl.base@1.0_system \
     android.hidl.manager@1.0 \
     android.hidl.manager-V1.0-java
-
+    
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
 
 PRODUCT_GMS_CLIENTID_BASE := android-motorola
