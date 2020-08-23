@@ -113,6 +113,11 @@ PRODUCT_PACKAGES += \
     android.hardware.bluetooth@1.0-impl \
     android.hardware.bluetooth@1.0-service
 
+# Broadcast Radio
+PRODUCT_PACKAGES += \
+    android.hardware.broadcastradio@1.1 \
+    android.hardware.broadcastradio@1.0-impl
+
 # Browser
 PRODUCT_PACKAGES += \
     Gello
@@ -377,7 +382,12 @@ PRODUCT_COPY_FILES += \
 # RIL
 PRODUCT_PACKAGES += \
     librmnetctl \
-    libprotobuf-cpp-full
+    libprotobuf-cpp-full \
+    libxml2
+
+#RIL
+PRODUCT_PACKAGES += \
+    android.hardware.radio@1.0
 
 # Seccomp policy
 PRODUCT_COPY_FILES += \
@@ -386,19 +396,17 @@ PRODUCT_COPY_FILES += \
 
 # IMS
 PRODUCT_PACKAGES += \
-    ims-ext-common
+    ims-ext-common \
+    telephony-ext
+
+PRODUCT_PACKAGES += \
+    com.android.ims.rcsmanager
 
 # Sensors
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/sensors/hals.conf:vendor/etc/sensors/hals.conf \
     $(LOCAL_PATH)/configs/sensors/sensor_def_qcomdev.conf:vendor/etc/sensors/sensor_def_qcomdev.conf
 
-# Telephony
-PRODUCT_PACKAGES += \
-    telephony-ext
-    
-PRODUCT_BOOT_JARS += \
-    telephony-ext
 
 PRODUCT_PACKAGES += \
     android.hardware.sensors@1.0-impl \
@@ -491,7 +499,7 @@ PRODUCT_PACKAGES += \
     android.hidl.base@1.0_system \
     android.hidl.manager@1.0 \
     android.hidl.manager-V1.0-java
-    
+
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
 
 PRODUCT_GMS_CLIENTID_BASE := android-motorola
