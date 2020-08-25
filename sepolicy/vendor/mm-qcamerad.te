@@ -16,8 +16,6 @@ allow mm-qcamerad sysfs_graphics:file r_file_perms;
 
 allow mm-qcamerad hal_sensors_default:unix_stream_socket { read write };
 
-allow mm-qcamerad hal_configstore_default:binder call;
-
 #allow camera to access Isensormanager
 typeattribute mm-qcamerad binder_in_vendor_violators;
 allow mm-qcamerad fwk_sensor_hwservice:hwservice_manager find;
