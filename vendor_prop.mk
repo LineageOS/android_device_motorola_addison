@@ -174,12 +174,11 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.vt.supported=0 \
     persist.volte_enabled_by_hw=1 \
     persist.dbg.volte_avail_ovr=1 \
-    DEVICE_PROVISIONED=1
-
-# VoLTE
-PRODUCT_PROPERTY_OVERRIDES += \
+    persist.dbg.ims_volte_enable=1 \
+    persist.dbg.volte_avail_ovr=1 \
+    persist.dbg.vt_avail_ovr=1 \
+    persist.dbg.wfc_avail_ovr=1 \
     persist.vendor.radio.force_on_dc=true \
-    persist.radio.custom_ecc=1 \
     persist.vendor.radio.data_ltd_sys_ind=1 \
     persist.vendor.radio.ignore_dom_time=10 \
     persist.radio.ignore_dom_time=10 \
@@ -188,6 +187,11 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.radio.sap_silent_pin=1 \
     persist.radio.always_send_plmn=true \
     persist.rcs.supported=1 \
+    persist.vendor.radio.qcril_uim_vcc_feature=1 \
+    persist.radio.schd.cache=3500 \
+    persist.vendor.radio.apm_sim_not_pwdn=1 \
+    persist.vendor.radio.lte_vrte_ltd=1 \
+    persist.vendor.radio.cs_srv_type=1 \
     
 # OMX
 # Rank OMX SW codecs lower than OMX HW codecs
@@ -225,6 +229,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Radio
 PRODUCT_PROPERTY_OVERRIDES += \
+    persist.data.qmi.adb_logmask=0 \
     persist.radio.apn_delay=5000 \
     persist.radio.adam=true \
     persist.radio.apm_sim_not_pwdn=1 \
@@ -234,7 +239,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.vendor.radio.no_wait_for_card=1 \
     persist.vendor.radio.oem_ind_to_both=0 \
     persist.vendor.radio.relay_oprt_change=1 \
-    rild.libargs=-d[SPACE]/dev/smd0 \
     rild.libpath=/vendor/lib64/libril-qc-qmi-1.so \
     ro.mot.ignore_csim_appid=true \
     persist.sys.ssr.restart_level=ALL_ENABLE \
@@ -261,31 +265,49 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.telephony.call_ring.multiple=false \
     persist.vendor.radio.eri64_as_home=1 \
     persist.vendor.radio.data_con_rprt=1 \
-    persist.vendor.radio.qcril_uim_vcc_feature=1 \
-    persist.radio.schd.cache=3500 \
-    persist.vendor.radio.apm_sim_not_pwdn=1 \
-    persist.vendor.radio.lte_vrte_ltd=1 \
-    persist.vendor.radio.cs_srv_type=1 \
-    persist.vendor.radio.apm_sim_not_pwdn \
-    persist.sys.cnd.iwlan=1 \
-    persist.vendor.ims.disableDebugLogs=1 \
-    persist.vendor.ims.disableQXDMLogs=1 \
-    persist.vendor.radio.snapshot_timer=22 \
-    persist.vendor.radio.snapshot_enabled=1 \
     persist.radio.rat_on=combine \
     persist.radio.data_ltd_sys_ind=1 \
     persist.radio.data_con_rprt=1 \
     persist.radio.calls.on.ims=1 \
     persist.vendor.radio.add_power_save=1 \
-
-PRODUCT_PROPERTY_OVERRIDES += \
+    persist.vendor.dpm.feature=0 \
+    persist.vendor.radio.force_on_dc=true \
+    persist.radio.custom_ecc=1 \
+    persist.vendor.radio.data_ltd_sys_ind=1 \
+    persist.vendor.radio.ignore_dom_time=10 \
+    persist.radio.ignore_dom_time=10 \
+    persist.radio.is_wps_enabled=true \
+    persist.radio.videopause.mode=1 \
+    persist.radio.sap_silent_pin=1 \
+    persist.radio.always_send_plmn=true \
+    persist.rcs.supported=1 \
+    ro.telephony.default_network=10,0 \
+    persist.radio.msgtunnel.start=true \
+    persist.radio.apm_sim_not_pwdn=1 \
+    persist.vendor.radio.qcril_uim_vcc_feature=1 \
+    persist.radio.schd.cache=3500 \
+    persist.vendor.radio.apm_sim_not_pwdn=1 \
+    persist.vendor.radio.lte_vrte_ltd=1 \
+    persist.vendor.radio.cs_srv_type=1 \
     ro.use_data_netmgrd=true \
     ro.vendor.use_data_netmgrd=true \
     persist.data.qmi.adb_logmask=0 \
+    persist.vendor.radio.snapshot_timer=22 \
+    persist.vendor.radio.snapshot_enabled=1 \
+    persist.radio.calls.on.ims=true \
+    persist.radio.domain.ps=0 \
+    persist.rmnet.mux=enabled \
+    persist.radio.REVERSE_QMI=0 \
+    persist.cne.feature=1 \
     persist.data.netmgrd.qos.enable=true \
     persist.data.mode=concurrent \
     persist.vendor.data.mode=concurrent \
-    persist.data.iwlan.enable=true
+    persist.data.iwlan.enable=true \
+    persist.sys.cnd.iwlan=1 \
+    persist.cne.logging.qxdm=3974 \
+    persist.vendor.ims.disableDebugLogs=1 \
+    persist.vendor.ims.disableQXDMLogs=1 \
+    DEVICE_PROVISIONED=1 \
 
 # RmNet Data
 PRODUCT_PROPERTY_OVERRIDES += \
