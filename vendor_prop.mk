@@ -101,6 +101,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.vendor.cne.rat.wlan.chip.oem=WCN \
     persist.vendor.dpm.feature=0 \
     persist.vendor.sys.cnd.iwlan=1 \
+    persist.vendor.cne.feature=1 \
+    persist.dpm.feature=1
 
 # core_ctrl
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -175,7 +177,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.volte_enabled_by_hw=1 \
     persist.dbg.volte_avail_ovr=1 \
     persist.dbg.ims_volte_enable=1 \
-    persist.dbg.volte_avail_ovr=1 \
     persist.dbg.vt_avail_ovr=1 \
     persist.dbg.wfc_avail_ovr=1 \
     persist.vendor.radio.force_on_dc=true \
@@ -189,9 +190,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.rcs.supported=1 \
     persist.vendor.radio.qcril_uim_vcc_feature=1 \
     persist.radio.schd.cache=3500 \
-    persist.vendor.radio.apm_sim_not_pwdn=1 \
     persist.vendor.radio.lte_vrte_ltd=1 \
     persist.vendor.radio.cs_srv_type=1 \
+    service.qti.ims.enabled=1
     
 # OMX
 # Rank OMX SW codecs lower than OMX HW codecs
@@ -307,6 +308,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.cne.logging.qxdm=3974 \
     persist.vendor.ims.disableDebugLogs=1 \
     persist.vendor.ims.disableQXDMLogs=1 \
+    ril.subscription.types=NV,RUIM \
+    rild.libargs=-d/dev/smd0 \
     DEVICE_PROVISIONED=1 \
 
 # RmNet Data
