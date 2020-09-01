@@ -379,29 +379,23 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
      $(LOCAL_PATH)/configs/powerhint.xml:system/etc/powerhint.xml \
 
-# RIL
-PRODUCT_PACKAGES += \
-    librmnetctl \
-    libprotobuf-cpp-full \
-    libxml2
-
 #RIL
 PRODUCT_PACKAGES += \
+    android.hardware.radio@1.2 \
+    android.hardware.radio.config@1.0 \
+    android.hardware.secure_element@1.0 \
     librmnetctl \
-    libprotobuf-cpp-full \
+    libcnefeatureconfig \
     libxml2 \
-    android.hardware.radio@1.0 \
-    android.hardware.radio.config@1.0
+    telephony-ext
+
+PRODUCT_BOOT_JARS += \
+    telephony-ext
 
 # Seccomp policy
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/seccomp_policy/mediacodec.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediacodec.policy \
     $(LOCAL_PATH)/seccomp_policy/mediaextractor.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediaextractor.policy
-
-# IMS
-PRODUCT_PACKAGES += \
-    ims-ext-common \
-    telephony-ext
 
 # Sensors
 PRODUCT_COPY_FILES += \
@@ -430,20 +424,6 @@ PRODUCT_PACKAGES += \
     android.hardware.vibrator@1.0-impl \
     android.hardware.vibrator@1.0-service
 
-# Wifi
-PRODUCT_PACKAGES += \
-    android.hardware.wifi@1.0-service \
-    hostapd \
-    libqsap_sdk \
-    libwpa_client \
-    wcnss_service \
-    wificond \
-    wifilogd \
-    wpa_supplicant \
-    ipacm \
-    ipacm-diag \
-    IPACM_cfg.xml \
-    wpa_supplicant.conf
 
 # Launcher3
 PRODUCT_PACKAGES += \
@@ -462,14 +442,26 @@ PRODUCT_PACKAGES += \
     android.hardware.thermal@1.0-impl \
     android.hardware.thermal@1.0-service
 
+# Wifi
+PRODUCT_PACKAGES += \
+    android.hardware.wifi@1.0-service \
+    hostapd \
+    libqsap_sdk \
+    libwpa_client \
+    wcnss_service \
+    wificond \
+    wifilogd \
+    wpa_supplicant \
+    ipacm \
+    IPACM_cfg.xml \
+    wpa_supplicant.conf
+
 PRODUCT_PACKAGES += \
     libcurl \
     libQWiFiSoftApCfg \
     wificond \
     wifilogd \
     tcpdump \
-    wcnss_service \
-    wpa_supplicant \
     wpa_supplicant.conf \
     libwpa_client
 

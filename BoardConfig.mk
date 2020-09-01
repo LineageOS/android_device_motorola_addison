@@ -153,6 +153,9 @@ BACKLIGHT_PATH := /sys/class/leds/lcd-backlight/brightness
 BOARD_CHARGER_ENABLE_SUSPEND := true
 BOARD_NO_CHARGER_LED := true
 
+#CNE
+BOARD_USES_QCNE := true
+
 # DT2W
 TARGET_TAP_TO_WAKE_NODE := "/sys/android_touch/doubletap2wake"
 
@@ -207,8 +210,6 @@ BOARD_HARDWARE_CLASS += \
 # Manifest
 DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/configs/manifest.xml
 DEVICE_MATRIX_FILE   := $(DEVICE_PATH)/configs/compatibility_matrix.xml
-
-PRODUCT_BOOT_JARS += telephony-ext
 
 NXP_CHIP_TYPE := PN551
 BOARD_NFC_HAL_SUFFIX := $(TARGET_BOARD_PLATFORM)
