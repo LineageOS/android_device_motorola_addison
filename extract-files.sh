@@ -72,6 +72,10 @@ sed -i "s|/system/etc/|/vendor/etc/|g" "$ZAF_CORE"
 CAMERAHAL="$BLOB_ROOT"/vendor/lib/hw/camera.msm8998.so
 patchelf --replace-needed libcamera_client.so libcamera_metadata_helper.so "$CAMERAHAL"
 
+# Patch libcutils dep into audio HAL
+vendor/lib/hw/audio.primary.msm8953.so)
+    patchelf --replace-needed "libcutils.so" "libprocessgroup.so" "${2}"
+    ;;
 
 vendor/lib/libcamerabgprocservice.so)
     patchelf --remove-needed libcamera_client.so "${2}"
