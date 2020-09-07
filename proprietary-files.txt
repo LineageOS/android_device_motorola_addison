@@ -11,6 +11,22 @@ vendor/lib64/libadsprpc.so|e09e81f0974895b51cf0cf5be79f70856982f15b
 vendor/lib64/libfastcvadsp_stub.so|d28fe888b94579428d368f3adbadc59febc280b0
 vendor/lib64/libfastcvopt.so|b580d51f754a66592f99470a1e5a792f135c34d3
 
+# ADSP modules - from deen_sprout - QPKS30.54-22-11
+vendor/lib/rfsa/adsp/libFastRPC_AUE_Forward_skel.so
+vendor/lib/rfsa/adsp/libFastRPC_UTF_Forward_Qtc2_skel.so
+vendor/lib/rfsa/adsp/libadsp_hvx_add_constant.so
+vendor/lib/rfsa/adsp/libadsp_hvx_skel.so
+vendor/lib/rfsa/adsp/libadsp_hvx_stats.so
+vendor/lib/rfsa/adsp/libadsp_hvx_zzhdr_BGGR.so
+vendor/lib/rfsa/adsp/libadsp_hvx_zzhdr_RGGB.so
+vendor/lib/rfsa/adsp/libapps_mem_heap.so
+vendor/lib/rfsa/adsp/libdspCV_skel.so
+vendor/lib/rfsa/adsp/libfastcvadsp.so
+vendor/lib/rfsa/adsp/libfastcvadsp_skel.so
+vendor/lib/rfsa/adsp/libscveBlobDescriptor_skel.so
+vendor/lib/rfsa/adsp/libscveObjectSegmentation_skel.so
+vendor/lib/rfsa/adsp/libscveT2T_skel.so
+
 # AptX
 vendor/lib64/libaptXHD_encoder.so|76eb03998f9b4f98029a4408076685892726e45a
 vendor/lib64/libaptX_encoder.so|a407a92a6eb467886c3970629ebcab4db95b7600
@@ -660,34 +676,6 @@ vendor/lib/rfsa/adsp/libsns_low_lat_stream_skel.so
 vendor/lib/rfsa/adsp/libvpp_frc.so
 vendor/lib/rfsa/adsp/libvpp_svc_skel.so
 vendor/lib64/libsdsprpc.so|3ba4bf3e3da8244e852700468c89ff00f0c8a6db
-
-# DSP - SCVE
-vendor/lib/libscveBlobDescriptor.so
-vendor/lib/libscveBlobDescriptor_stub.so
-vendor/lib/libscveCommon.so
-vendor/lib/libscveCommon_stub.so
-vendor/lib/libscveFaceLandmarks.so
-vendor/lib/libscveFaceLandmarks_stub.so
-vendor/lib/libscveFaceRecognition.so
-vendor/lib/libscveImageCorrection.so
-vendor/lib/libscveObjectSegmentation.so
-vendor/lib/libscveObjectTracker.so
-vendor/lib/libscveObjectTracker_stub.so
-vendor/lib/libscvePanorama.so
-vendor/lib/libscvePanorama_lite.so
-vendor/lib64/libscveBlobDescriptor.so|b340f755ecb87c89437c6be429f4159823386517
-vendor/lib64/libscveBlobDescriptor_stub.so|b2a3d7ca3cab09a76fd3c967275cf15acb78b1fb
-vendor/lib64/libscveCommon.so|36ca60b55d803fe0f4134fb511958e4f9fd5cd0b
-vendor/lib64/libscveCommon_stub.so|c09e2c85e709f3a0b90c4c7ed694a629bcd3387c
-vendor/lib64/libscveFaceLandmarks.so|09f2f42ce6f94f4cf4609101a1187300d5d819c7
-vendor/lib64/libscveFaceLandmarks_stub.so|b74109fe8d99c296493769de42f6e2c931b785ae
-vendor/lib64/libscveFaceRecognition.so|45137fa71ebf3fec64b64491002da13e84efba45
-vendor/lib64/libscveImageCorrection.so|47121e93aa82370fe272fd917549b7925c288314
-vendor/lib64/libscveObjectSegmentation.so|fcc69e3153592cb810442ec42d739e83a87004d0
-vendor/lib64/libscveObjectTracker.so|7527e0b6832e59b2460e077de0597a571954e3c3
-vendor/lib64/libscveObjectTracker_stub.so|320f1a4eae179fd5f4303eeb3793fb6e9117c971
-vendor/lib64/libscvePanorama.so|7681fd812ad9f62115789a806ae926db14961c6b
-vendor/lib64/libscvePanorama_lite.so|bfce65b0f201fb7757d4ef9616c8aefb7722adbd
 
 # DTV
 -vendor/app/DTVPlayer/DTVPlayer.apk
