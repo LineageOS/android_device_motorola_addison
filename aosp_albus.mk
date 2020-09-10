@@ -18,26 +18,31 @@
 # Inherit from those products. Most specific first.
 $(call inherit-product, device/motorola/albus/full_albus.mk)
 
-# Inherit some common lineage stuff.
-$(call inherit-product, vendor/lineage/config/common_full_phone.mk)
 
-# Boot animation
-TARGET_SCREEN_WIDTH := 1080
-TARGET_SCREEN_HEIGHT := 1920
+# Inherit from those products. Most specific first.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_n.mk)
+
+# Inherit some common AEX stuff.
+$(call inherit-product, vendor/aosp/common.mk)
+
+# Boot animation res
+TARGET_BOOT_ANIMATION_RES := 1080
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := albus
-PRODUCT_NAME := lineage_albus
+PRODUCT_NAME := aosp_albus
 PRODUCT_BRAND := motorola
 PRODUCT_MODEL := Moto Z2 Play
 PRODUCT_MANUFACTURER := motorola
 PRODUCT_RELEASE_NAME := albus
 
-PRODUCT_ENFORCE_RRO_TARGETS := \
-    framework-res
+PRODUCT_SYSTEM_PROPERTY_BLACKLIST := ro.product.model
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
-    PRODUCT_NAME=albus \
-    PRIVATE_BUILD_DESC="albus-user 8.0.0 OPSS27.76-12-25-3 4 release-keys"
+    PRODUCT_NAME="Moto Z2 Play" \
+    DEVICE_MAINTAINERS="marcost2"
 
-BUILD_FINGERPRINT := google/walleye/walleye:8.1.0/OPM1.171019.011/4448085:user/release-keys
+    # for specific
+$(call inherit-product, vendor/motorola/albus/albus-vendor.mk)
