@@ -659,7 +659,6 @@ case "$target" in
             for cpubw in /sys/class/devfreq/*qcom,cpubw*
             do
                 echo "bw_hwmon" > $cpubw/governor
-                echo 50 > $cpubw/polling_interval
                 echo "1611 3221 5859 6445 7104" > $cpubw/bw_hwmon/mbps_zones
                 echo 4 > $cpubw/bw_hwmon/sample_ms
                 echo 34 > $cpubw/bw_hwmon/io_percent
@@ -667,6 +666,7 @@ case "$target" in
                 echo 80 > $cpubw/bw_hwmon/down_thres
                 echo 0 > $cpubw/bw_hwmon/hyst_length
                 echo 0 > $cpubw/bw_hwmon/guard_band_mbps
+                echo 50 > $cpubw/polling_interval
                 echo 250 > $cpubw/bw_hwmon/up_scale
                 echo 1600 > $cpubw/bw_hwmon/idle_mbps
             done
