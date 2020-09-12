@@ -17,18 +17,6 @@ ifneq ($(filter albus,$(TARGET_DEVICE)),)
 
 LOCAL_PATH := $(call my-dir)
 
-FIRMWARE_ZAP_IMAGES := \
-    a506_zap.b00 a506_zap.b01 a506_zap.b02 a506_zap.mdt
-
-FIRMWARE_ZAP_SYMLINKS := $(addprefix $(TARGET_OUT_VENDOR)/firmware/,$(notdir $(FIRMWARE_ZAP_IMAGES)))
-$(FIRMWARE_ZAP_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
-	@echo "ZAP Firmware link: $@"
-	@mkdir -p $(dir $@)
-	@rm -rf $@
-	$(hide) ln -sf /firmware/image/$(notdir $@) $@
-
-ALL_DEFAULT_INSTALLED_MODULES += $(FIRMWARE_ZAP_SYMLINKS)
-
 FIRMWARE_ADSP_IMAGES := \
     adsp.b00 adsp.b01 adsp.b02 adsp.b03 adsp.b04 adsp.b05 adsp.b06 \
     adsp.b07 adsp.b08 adsp.b09 adsp.b10 adsp.b11 adsp.b12 adsp.b13 \
