@@ -33,16 +33,20 @@ TARGET_BOOT_ANIMATION_RES := 1080
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := albus
 PRODUCT_NAME := aosp_albus
-PRODUCT_BRAND := motorola
+PRODUCT_BRAND := Motorola
 PRODUCT_MODEL := Moto Z2 Play
-PRODUCT_MANUFACTURER := motorola
+PRODUCT_MANUFACTURER := Motorola
 PRODUCT_RELEASE_NAME := albus
 
-PRODUCT_SYSTEM_PROPERTY_BLACKLIST := ro.product.model
+PRODUCT_GMS_CLIENTID_BASE := android-motorola
+
+PRODUCT_ENFORCE_RRO_TARGETS := \
+    framework-res
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
     PRODUCT_NAME="Moto Z2 Play" \
     DEVICE_MAINTAINERS="marcost2"
 
+BUILD_FINGERPRINT := "motorola/payton/payton:8.0.0/OPWS27.57-25-6-10/12:user/release-keys"
     # for specific
 $(call inherit-product, vendor/motorola/albus/albus-vendor.mk)
