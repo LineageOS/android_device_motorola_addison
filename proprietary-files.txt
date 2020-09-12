@@ -41,18 +41,16 @@ vendor/lib64/libaudioalsa.so|ec1afaf77d82033bf3e603ff54933e7d022633b3
 vendor/lib64/libqtigef.so|c30d330be2057ef1a229b7fc7c093df3202fbadc
 
 
-# Bluetooth
-vendor/bin/btnvtool|35148aebc0d9b8cc0d1cf55c08a4bfe2d1860945
-vendor/bin/hci_qcomm_init|3fa902b824cb07949f322d1e5a38f54ed4d04213
-vendor/bin/hw/android.hardware.bluetooth@1.0-service-qti|b6526856cac0db84cc74d5f8b205a97a1928fa33
-vendor/bin/wcnss_filter|dc8e615b6dd08a0a3c430007a1249d5b46ce43e2
+# Bluetooth from deen PPS29.133-30
+vendor/bin/hw/android.hardware.bluetooth@1.0-service-qti
+vendor/bin/wcnss_filter
 vendor/etc/init/android.hardware.bluetooth@1.0-service-qti.rc
-vendor/lib/libbtnv.so
-vendor/lib64/com.qualcomm.qti.bluetooth_audio@1.0_vendor.so|a1fd8deaeb7eddc94823f11563c5be540e303c17
-vendor/lib64/hw/android.hardware.bluetooth@1.0-impl-qti.so|737b9bfb07f331b1d506af09ce0911be104e4023
-vendor/lib64/libbtnv.so|55514b942a9eadf6b179bc1daf5cad138738c100
-vendor/lib64/libldacBT_abr.so|26aa6bf2bac014ba80f09f835354093fbc209037
-vendor/lib64/libldacBT_enc.so|a5fb63c23a748ed3e1ddf39c6da353f3d2da88f1
+vendor/lib64/hw/android.hardware.bluetooth@1.0-impl-qti.so
+vendor/lib64/libbtnv.so
+vendor/lib64/libbt-hidlclient.so
+
+# Bluetooth (shared dependencies) from PPS29.133-30
+vendor/lib64/vendor.qti.hardware.fm@1.0.so
 
 # Camera
 vendor/etc/permissions/com.motorola.camera2.xml
@@ -725,14 +723,6 @@ vendor/lib64/libdtvtuner.so|1667ff29c199f9ae9abe1d57f9a43300ab594b07
 vendor/bin/hw/android.hardware.biometrics.fingerprint@2.1-fpcservice
 vendor/etc/init/android.hardware.biometrics.fingerprint@2.1-service.rc
 vendor/lib/com.fingerprints.extension@1.0_vendor.so
-
-# FM
-vendor/bin/fm_qsoc_patches|97fa3163ad9ff8e201f2f045bde02d62b9d07c4d
-vendor/bin/fmhal_service|d7560740ef9846eb20bb2b99f49ecf8829ead8c7
-vendor/lib/hw/vendor.qti.hardware.fm@1.0-impl.so
-vendor/lib/vendor.qti.hardware.fm@1.0_vendor.so
-vendor/lib64/hw/vendor.qti.hardware.fm@1.0-impl.so|b7ee86cfc38ef3c6420e97bf2d21b577e7abce8b
-vendor/lib64/vendor.qti.hardware.fm@1.0_vendor.so|800573399341e43daa1da8341f0eb757c6e54d5d
 
 # Gatekeeper
 vendor/lib/hw/gatekeeper.msm8953.so
