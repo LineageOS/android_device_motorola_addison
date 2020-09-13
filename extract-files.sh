@@ -62,6 +62,15 @@ fi
 function blob_fixup() {
     case "${1}" in
 
+    vendor/lib64/libmdmcutback.so)
+        patchelf --add-needed libqsap_shim.so "${2}"
+        ;;
+
+    # Fix missing symbols
+    vendor/lib64/libril-qc-qmi-1.so)
+        patchelf --add-needed "libcutils_shim.so" "${2}"
+        ;;
+
     # Fix xml version
     product/etc/permissions/vendor.qti.hardware.data.connection-V1.0-java.xml | product/etc/permissions/vendor.qti.hardware.data.connection-V1.1-java.xml)
         sed -i 's/xml version="2.0"/xml version="1.0"/' "${2}"
