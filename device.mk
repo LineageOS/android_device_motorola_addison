@@ -228,7 +228,7 @@ PRODUCT_COPY_FILES += \
 
 # health
 PRODUCT_PACKAGES += \
-    android.hardware.health@2.0-service
+    android.hardware.health@2.0-service.albus
 
 # IRSC
 PRODUCT_COPY_FILES += \
