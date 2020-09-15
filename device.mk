@@ -307,7 +307,7 @@ PRODUCT_COPY_FILES += \
 
 # ModService
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/whitelist_modservice.xml:$(TARGET_COPY_OUT_VENDOR)/etc/sysconfig/whitelist_modservice.xml
+    $(LOCAL_PATH)/configs/whitelist_modservice.xml:system/etc/sysconfig/whitelist_modservice.xml
 
 PRODUCT_PACKAGES += \
     CarrierConfig
@@ -357,8 +357,7 @@ PRODUCT_PACKAGES += \
     init.qcom.post_boot.sh \
     init.mmi.usb.rc \
     init.qcom.rc \
-    init.albus.rc \
-    init.mods.rc 
+    init.albus.rc 
 
 PRODUCT_COPY_FILES += \
      $(LOCAL_PATH)/rootdir/etc/ueventd.qcom.rc:$(TARGET_COPY_OUT_VENDOR)/ueventd.rc

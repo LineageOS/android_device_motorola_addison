@@ -165,6 +165,20 @@ on boot
     #enable camera read sensors data
     setprop persist.camera.gyro.disable 0
 
+    # Change ownership for vibrator
+    chown root oem_5020 /sys/bus/i2c/devices/7-005a/reduce
+
+    # Change ownership and permission for vibrator
+    chown system system /sys/class/timed_output/vibrator/enable
+    chmod 0660 /sys/class/timed_output/vibrator/enable
+    chown system system /sys/class/leds/vibrator/state
+    chmod 0660 /sys/class/leds/vibrator/state
+    chown system system /sys/class/leds/vibrator/activate
+    chmod 0660 /sys/class/leds/vibrator/activate
+    chown system system /sys/class/leds/vibrator/duration
+    chmod 0660 /sys/class/leds/vibrator/duration
+    chown root oem_5020 /sys/bus/i2c/devices/2-005a/reduce
+
     chown bluetooth net_bt /sys/class/rfkill/rfkill0/device/extldo
     chmod 0660 /sys/class/rfkill/rfkill0/device/extldo
 
@@ -480,6 +494,10 @@ on post-fs-data
     mkdir /data/fota 0771
     chown system system /data/fota
 
+
+    # Start Loading mods kernel modules
+    start vendor.gbmodinstall
+
     # Create /data/time folder for time-services
     mkdir /data/vendor/time/ 0700 system system
 
@@ -511,6 +529,55 @@ on post-fs-data
     #Create SWAP related dirs
     mkdir /data/vendor/swap 0770 root system
     chmod 2770 /data/vendor/swap
+
+
+    # Create directory used by power_supply_logger
+    mkdir /data/vendor/power_supply_logger 0750 oem_5001 log
+    # Create directory power_supply_logger used by memtest and batt_health
+    mkdir /data/vendor_de/power_supply_logger 0770 root log
+    chown oem_5001 oem_5001 /sys/class/power_supply/battery/cycle_count
+    chmod 0664 /sys/class/power_supply/battery/cycle_count
+
+    # Permissions for Factory Test of Charging Paths
+    chown oem_5001 oem_5001 /sys/class/power_supply/battery/device/force_chg_auto_enable
+    chown oem_5001 oem_5001 /sys/class/power_supply/battery/device/force_chg_ibatt
+    chown oem_5001 oem_5001 /sys/class/power_supply/battery/device/force_chg_itrick
+    chown oem_5001 oem_5001 /sys/class/power_supply/battery/device/force_chg_iusb
+    chown oem_5001 oem_5001 /sys/class/power_supply/battery/device/force_chg_idc
+    chown oem_5001 oem_5001 /sys/class/power_supply/battery/device/force_chg_usb_suspend
+    chown oem_5001 oem_5001 /sys/class/power_supply/battery/device/force_chg_fail_clear
+    chown oem_5001 oem_5001 /sys/class/power_supply/battery/device/force_chg_usb_otg_ctl
+
+    chown oem_5001 oem_5001 /sys/class/power_supply/mmi_battery/device/force_chg_auto_enable
+    chown oem_5001 oem_5001 /sys/class/power_supply/mmi_battery/device/force_chg_ibatt
+    chown oem_5001 oem_5001 /sys/class/power_supply/mmi_battery/device/force_chg_itrick
+    chown oem_5001 oem_5001 /sys/class/power_supply/mmi_battery/device/force_chg_iusb
+    chown oem_5001 oem_5001 /sys/class/power_supply/mmi_battery/device/force_chg_idc
+    chown oem_5001 oem_5001 /sys/class/power_supply/mmi_battery/device/force_chg_usb_suspend
+    chown oem_5001 oem_5001 /sys/class/power_supply/mmi_battery/device/force_chg_fail_clear
+    chown oem_5001 oem_5001 /sys/class/power_supply/mmi_battery/device/force_chg_usb_otg_ctl
+
+    chown root oem_5020 /sys/module/qpnp_smbcharger_mmi/parameters/eb_rechrg_start_soc
+    chown root oem_5020 /sys/module/qpnp_smbcharger_mmi/parameters/eb_rechrg_stop_soc
+    chown root oem_5020 /sys/module/qpnp_smbcharger_mmi/parameters/eb_attach_start_soc
+    chown root oem_5020 /sys/module/qpnp_smbcharger_mmi/parameters/eb_attach_stop_soc
+    chown root oem_5020 /sys/module/qpnp_smbcharger_mmi/parameters/eb_low_start_soc
+    chown root oem_5020 /sys/module/qpnp_smbcharger_mmi/parameters/eb_low_stop_soc
+    chown root oem_5020 /sys/module/qpnp_smbcharger_mmi/parameters/eb_on_sw
+
+    chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_rechrg_start_soc
+    chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_rechrg_stop_soc
+    chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_attach_start_soc
+    chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_attach_stop_soc
+    chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_low_start_soc
+    chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_low_stop_soc
+    chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_on_sw
+
+    chown root oem_5020 /sys/class/power_supply/usb/usb_priority
+    chmod 0660 /sys/class/power_supply/usb/usb_priority
+    chown root oem_5020 /sys/module/dwc3_msm/parameters/usb_priority
+    chmod 0660 /sys/module/dwc3_msm/parameters/usb_priority
+    chown root oem_5020 /sys/module/usbnet/parameters/force_on
 
     # Force all SSR systems to 'related' so they attempt
     # self-recovery without rebooting the device
@@ -853,3 +920,16 @@ on property:sys.boot_completed=1
 
 on property:sys.boot_completed=1
     start vendor.qcom-post-boot
+
+service vendor.mods_camd /vendor/bin/mods_camd
+    class late_start
+    user camera
+    group camera system inet input graphics
+    disabled
+    rlimit 14 4 4
+    ioprio rt 4
+
+service vendor.gbmodinstall /vendor/bin/init.gbmods.sh
+    user root
+    oneshot
+    disabled

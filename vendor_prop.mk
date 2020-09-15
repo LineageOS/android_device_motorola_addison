@@ -374,4 +374,5 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Fast App Launch
 PRODUCT_PROPERTY_OVERRIDES += \
-    persist.device_config.runtime_native.usap_pool_enabled=true
+    persist.device_config.runtime_native.usap_pool_enabled=true \
+    ro.control_privapp_permissions=log
