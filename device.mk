@@ -405,6 +405,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     libqsapshim \
     libshim_camera \
+    libmemset_shim \
     libcutils_shim
 
 # Soong

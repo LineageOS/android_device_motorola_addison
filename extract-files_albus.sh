@@ -96,6 +96,11 @@ function blob_fixup() {
         sed -i "s|/system/etc/zaf|/vendor/etc/zaf|g" "${2}"
         ;;
 
+    # memset shim
+    vendor/bin/charge_only_mode)
+        patchelf --add-needed "libmemset_shim.so" "${2}"
+        ;;
+
     esac
 }
 
