@@ -41,7 +41,7 @@ on post-fs
     mkdir /mnt/vendor/persist/factory/wlan 0755 oem_5004 oem_5004
     mkdir /mnt/vendor/persist/factory/regulatory 0755 oem_5004 system
     mkdir /mnt/vendor/persist/public 0755 oem_5004 oem_5004
-    mkdir /mnt/vendor/persist/public/atvc 0770 oem_5012 shell
+    mkdir /mnt/vendor/persist/public/atvc 0770 oem_5012 root
     mkdir /mnt/vendor/persist/public/battd 0755 oem_5000 oem_5004
     mkdir /mnt/vendor/persist/public/att_dm 0775 radio oem_5004
     mkdir /mnt/vendor/persist/public/hiddenmenu 0775 radio oem_5004
@@ -53,8 +53,8 @@ on post-fs
     mkdir /mnt/vendor/persist/bt 0755 oem_5004 bluetooth
     mkdir /mnt/vendor/persist/wmdrm 0775 oem_5003 oem_5003
     mkdir /mnt/vendor/persist/public/usc_dm 0775 radio radio
-    mkdir /mnt/vendor/persist/sds 0700 vold vold
-    mkdir /mnt/vendor/persist/rfs/msm/mpss/mot_rfs 0771 rfs system
+    mkdir /mnt/vendor/persist/sds 0700 root root
+    mkdir /mnt/vendor/persist/rfs/msm/mpss/mot_rfs 0771 oem_2903 system
 
     # This dir is used to store any OMA(both DM and CP) files in persist partition
     # Any app with radio UID or oem_5004 GID can read/write/execute files in this dir.
@@ -86,7 +86,7 @@ on post-fs-data
 
     # Setup folders for security
     mkdir /mnt/vendor/persist/security 02770 drmrpc drmrpc
-    mkdir /data/vendor/dbvc 0750 oem_5004 shell
+    mkdir /data/vendor/dbvc 0750 oem_5004 root
     chown drmrpc oem_5004 /mnt/vendor/persist/security
 
     # Setup folder for Pre-Activation Kill Switch app (PAKS)
@@ -187,7 +187,7 @@ on boot
    chmod 0660 /sys/class/leds/vibrator/seq
    chown system system /sys/class/leds/vibrator/extra
    chmod 0660 /sys/class/leds/vibrator/extra
-   chown root vendor_mod /sys/bus/i2c/devices/2-005a/reduce
+   chown root oem_5020 /sys/bus/i2c/devices/2-005a/reduce
 
    # Change ownership of aov related sysfs entries
    chown audio audio /sys/kernel/aov/trigger
