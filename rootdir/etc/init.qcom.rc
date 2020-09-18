@@ -482,7 +482,7 @@ on post-fs-data
     #mkdir /data/vendor/qti-logkit/shared-public/ 2770 system diag
     #mkdir /data/vendor/qti-logkit/socket-privileged/ 2770 system system
     #mkdir /data/vendor/qti-logkit/socket-public/ 2750 system diag
-    #mkdir /data/vendor/qti-logkit/logdata/ 2750 system shell
+    #mkdir /data/vendor/qti-logkit/logdata/ 2750 system root
 
     #Create SWAP related dirs
     mkdir /data/vendor/swap 0770 root system
