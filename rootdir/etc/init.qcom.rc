@@ -642,21 +642,17 @@ service vendor.cnd /vendor/bin/cnd
     group system wifi inet radio wakelock net_admin
     writepid /dev/cpuset/system-background/tasks
 
-service vendor.esepmdaemon /vendor/bin/esepmdaemon
-    class core
-    user system
-    group nfc
-
 service vendor.wcnss-service /vendor/bin/wcnss_service
     class main
     user system
     group system wifi radio
     oneshot
 
-service vendor.adsprpcd /vendor/bin/adsprpcd
-    class main
-    user media
-    group media
+#service vendor.adsprpcd /vendor/bin/adsprpcd
+#    class main
+#    user media
+#    group media
+# UNCOMMENT WHEN DOING AUDIO UPGRADE
 
 # Start AKM executable
 service ecompassd /vendor/bin/akmd09912
@@ -803,12 +799,6 @@ service vendor.qti /vendor/bin/qti
     class main
     user radio
     group radio net_raw oem_2950 usb net_admin
-    writepid /dev/cpuset/system-background/tasks
-
-service vendor.dataadpl /system/vendor/bin/adpl
-    class main
-    user radio
-    group radio oem_2901 diag usb net_admin
     writepid /dev/cpuset/system-background/tasks
 
 on property:ro.use_data_netmgrd=false
