@@ -74,16 +74,14 @@ PRODUCT_PACKAGES += \
     android.hardware.soundtrigger@2.0-service \
     audiod \
     audio.a2dp.default \
-    audio.primary.msm8953 \
     audio.r_submix.default \
     audio.usb.default \
+    libaacwrapper \
     libaudio-resampler \
-    libqcompostprocbundle \
     libqcomvisualizer \
     libqcomvoiceprocessing \
     libvolumelistener \
     tinymix \
-    libasphere \
     libmmieffectswrapper \
     libspeakerbundle \
     libasphere

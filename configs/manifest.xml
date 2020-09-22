@@ -308,6 +308,16 @@
         </interface>
     </hal>
     <hal format="hidl">
+        <name>motorola.hardware.audio.eqservice</name>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>IEQServiceHIDL</name>
+            <instance>default</instance>
+        </interface>
+        <fqname>@1.0::IEQServiceHIDL/default</fqname>
+    </hal>
+    <hal format="hidl">
         <name>com.qualcomm.qti.ant</name>
         <transport>hwbinder</transport>
         <version>1.0</version>
