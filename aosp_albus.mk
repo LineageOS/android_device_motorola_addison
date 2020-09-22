@@ -47,6 +47,7 @@ PRODUCT_BUILD_PROP_OVERRIDES += \
     PRODUCT_NAME="Moto Z2 Play" \
     DEVICE_MAINTAINERS="marcost2"
 
-BUILD_FINGERPRINT := "motorola/payton/payton:8.0.0/OPWS27.57-25-6-10/12:user/release-keys"
+BUILD_FINGERPRINT := "motorola/albus/albus:8.0.0/OPS27.76-12-25/26:user/release-keys"
+TARGER_VENDOR := motorola
     # for specific
 $(call inherit-product, vendor/motorola/albus/albus-vendor.mk)
