@@ -15,7 +15,7 @@ vendor/lib64/libfastcvopt.so|b580d51f754a66592f99470a1e5a792f135c34d3
 vendor/lib64/libaptXHD_encoder.so|76eb03998f9b4f98029a4408076685892726e45a
 vendor/lib64/libaptX_encoder.so|a407a92a6eb467886c3970629ebcab4db95b7600
 
-# Audio
+# Audio - ACDB from Albus PPS29.133
 vendor/etc/acdbdata/Bluetooth_cal.acdb
 vendor/etc/acdbdata/General_cal.acdb
 vendor/etc/acdbdata/Global_cal.acdb
@@ -23,23 +23,36 @@ vendor/etc/acdbdata/Handset_cal.acdb
 vendor/etc/acdbdata/Hdmi_cal.acdb
 vendor/etc/acdbdata/Headset_cal.acdb
 vendor/etc/acdbdata/Speaker_cal.acdb
+
+# Audio (Prebuilt Audio HAL) from Albus PPS29.133
+vendor/lib/hw/audio.primary.msm8998.so
+vendor/lib/libmotaudioutils.so
+vendor/lib/libtinyalsa.so
+vendor/lib/libtinycompress.so
+vendor/lib/libtinycompress_vendor.so
+vendor/lib/libunshorten.so
+
+# Audio from tissot PKQ1.180917
 vendor/lib/libacdb-fts.so
 vendor/lib/libacdbloader.so
-vendor/lib/libacdbmapper.so
 vendor/lib/libacdbrtac.so
 vendor/lib/libadiertac.so
 vendor/lib/libaudcal.so
 vendor/lib/libaudioalsa.so
 vendor/lib/libqtigef.so
-vendor/lib64/libacdb-fts.so|f7b4131510a3720c8508932a4d4a0116677d5a85
-vendor/lib64/libacdbloader.so|36cc7a3d463940f0542d076c70df8ab7a8396819
-vendor/lib64/libacdbmapper.so|e3c2e065273c9f7d6bbd9649b5067c0462388243
-vendor/lib64/libacdbrtac.so|d06dcb0c25bd3358990a89c93b09c62ea6e09135
-vendor/lib64/libadiertac.so|cd44e5cbd3ba428646899b02c6efcbe690a800c6
-vendor/lib64/libaudcal.so|41be59fe613f2cf255af6a0aa429c28f1373180c
-vendor/lib64/libaudioalsa.so|ec1afaf77d82033bf3e603ff54933e7d022633b3
-vendor/lib64/libqtigef.so|c30d330be2057ef1a229b7fc7c093df3202fbadc
+vendor/lib64/libacdb-fts.so
+vendor/lib64/libacdbloader.so
+vendor/lib64/libacdbrtac.so
+vendor/lib64/libadiertac.so
+vendor/lib64/libaudcal.so
+vendor/lib64/libaudioalsa.so
+vendor/lib64/libqtigef.so
 
+# Audio - Soundfx from Albus PPS29.133
+vendor/lib/soundfx/libspeakerbundle.so
+vendor/lib/soundfx/libmmieffectswrapper.so
+vendor/lib/libeqservicebridge.so
+vendor/lib/motorola.hardware.audio.eqservice@1.0_vendor.so
 
 # Bluetooth from deen PPS29.133-30
 vendor/bin/hw/android.hardware.bluetooth@1.0-service-qti
