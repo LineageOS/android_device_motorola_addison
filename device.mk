@@ -108,6 +108,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     Gello
     
+# Bluetooth
+PRODUCT_PACKAGES += \
+    android.hardware.bluetooth@1.0 \
+    libbt-vendor
 #Camera
 PRODUCT_PACKAGES += \
     android.hardware.camera.device@1.0 \
