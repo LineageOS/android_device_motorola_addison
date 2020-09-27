@@ -70,10 +70,8 @@ vendor/etc/init/android.hardware.bluetooth@1.0-service-qti.rc
 # Bluetooth (shared dependencies) from PPS29.133-30
 vendor/lib64/com.qualcomm.qti.ant@1.0.so
 vendor/lib64/com.qualcomm.qti.bluetooth_audio@1.0.so
-vendor/lib64/vendor.qti.hardware.fm@1.0.so
 vendor/lib/com.qualcomm.qti.ant@1.0.so
 vendor/lib/com.qualcomm.qti.bluetooth_audio@1.0.so
-vendor/lib/vendor.qti.hardware.fm@1.0.so
 
 # Camera
 vendor/etc/permissions/com.motorola.camera2.xml
@@ -763,6 +761,13 @@ vendor/lib64/libdtvtuner.so|1667ff29c199f9ae9abe1d57f9a43300ab594b07
 vendor/bin/hw/android.hardware.biometrics.fingerprint@2.1-fpcservice
 vendor/etc/init/android.hardware.biometrics.fingerprint@2.1-service.rc
 vendor/lib/com.fingerprints.extension@1.0_vendor.so
+
+#FM from deen PPS29.133-30
+vendor/lib64/hw/vendor.qti.hardware.fm@1.0-impl.so
+vendor/lib64/vendor.qti.hardware.fm@1.0.so
+vendor/lib/hw/vendor.qti.hardware.fm@1.0-impl.so
+vendor/lib/vendor.qti.hardware.fm@1.0.so
+vendor/bin/fm_qsoc_patches
 
 # Gatekeeper
 vendor/lib/hw/gatekeeper.msm8953.so

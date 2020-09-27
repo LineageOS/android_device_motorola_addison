@@ -198,6 +198,7 @@ TARGET_EXFAT_DRIVER := exfat
 
 # FM
 BOARD_HAVE_QCOM_FM := true
+BOARD_HAS_QCA_FM_SOC := "smd"
 
 # Keymaster
 TARGET_PROVIDES_KEYMASTER := true

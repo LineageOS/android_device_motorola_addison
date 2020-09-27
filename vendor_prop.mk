@@ -118,7 +118,12 @@ PRODUCT_PROPERTY_OVERRIDES += \
     
 # FM
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.fm.transmitter=false
+    vendor.hw.fm.init=0
+
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    vendor.bluetooth.soc=smd \
+    ro.fm.transmitter=false \
+    ro.vendor.fm.use_audio_session=true
 
 # HWUI
 PRODUCT_PROPERTY_OVERRIDES += \

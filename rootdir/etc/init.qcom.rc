@@ -573,6 +573,9 @@ on post-fs-data
     chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_low_stop_soc
     chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_on_sw
 
+    # Create directory for fm_radio
+    mkdir /data/misc/fm_radio 0770 system system
+
     chown root oem_5020 /sys/class/power_supply/usb/usb_priority
     chmod 0660 /sys/class/power_supply/usb/usb_priority
     chown root oem_5020 /sys/module/dwc3_msm/parameters/usb_priority
@@ -587,6 +590,12 @@ on post-fs-data
     write /sys/bus/msm_subsys/devices/subsys3/restart_level related
     write /sys/bus/msm_subsys/devices/subsys4/restart_level related
 
+
+on property:hw.fm.init=0
+    write /sys/module/radio_iris_transport/parameters/fmsmd_set 0
+
+on property:hw.fm.init=1
+    write /sys/module/radio_iris_transport/parameters/fmsmd_set 1
 
 service vendor.charger /charger
     class charger
@@ -722,12 +731,6 @@ service vendor.tftp_server /vendor/bin/tftp_server
    user root
    writepid /dev/cpuset/system-background/tasks
 
-on property:wc_transport.start_fmhci=true
-    start fmhal_service
-
-on property:wc_transport.start_fmhci=false
-    stop fmhal_service
-
 service vendor.start_hci_filter /vendor/bin/wcnss_filter
     class late_start
     user root
@@ -747,13 +750,6 @@ service wcnss-service /vendor/bin/wcnss_service
     user system
     group system wifi radio
     oneshot
-    
-#net_admin capability needed to write rfkill sysfs entry
-service fmhal_service /vendor/bin/fmhal_service
-    class late_start
-    user bluetooth
-    group bluetooth net_bt_admin net_admin
-    disabled
 
 service vendor.per_mgr /vendor/bin/pm-service
     class core
@@ -857,13 +853,6 @@ service vendor.msm_irqbal_lb /vendor/bin/msm_irqbalance -f /vendor/etc/msm_irqba
     group root
     disabled
 
-service fm_dl /vendor/bin/init.qti.fm.sh
-    class late_start
-    user system
-    group system
-    disabled
-    oneshot
-
 service atfwd /vendor/bin/ATFWD-daemon
     class late_start
     user system
@@ -923,3 +912,26 @@ service vendor.gbmodinstall /vendor/bin/init.gbmods.sh
     user root
     oneshot
     disabled
+
+service fm_dl /vendor/bin/init.qti.fm.sh
+    class late_start
+    user system
+    group system
+    disabled
+    oneshot
+
+service vendor.audio-hal-2-0 /vendor/bin/hw/android.hardware.audio@2.0-service
+    override
+    class hal
+    user audioserver
+    # media gid needed for /dev/fm (radio) and for /data/misc/media (tee)
+    group audio camera drmrpc inet media mediadrm net_bt net_bt_admin net_bw_acct oem_2901 wakelock
+    capabilities BLOCK_SUSPEND
+    ioprio rt 4
+    writepid /dev/cpuset/foreground/tasks /dev/stune/foreground/tasks
+    # audioflinger restarts itself when it loses connection with the hal
+    # and its .rc file has an "onrestart restart audio-hal" rule, thus
+    # an additional auto-restart from the init process isn't needed.
+    oneshot
+    interface android.hardware.audio@4.0::IDevicesFactory default
+    interface android.hardware.audio@2.0::IDevicesFactory default
