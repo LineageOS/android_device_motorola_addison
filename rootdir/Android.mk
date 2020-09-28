@@ -5,16 +5,16 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 LOCAL_MODULE       := init.qti.fm.sh
 LOCAL_MODULE_TAGS  := optional eng
-LOCAL_MODULE_CLASS := ETC
-LOCAL_SRC_FILES    := etc/init.qti.fm.sh
+LOCAL_MODULE_CLASS := EXECUTABLES
+LOCAL_SRC_FILES    := bin/init.qti.fm.sh
 LOCAL_MODULE_PATH  := $(TARGET_OUT_VENDOR_EXECUTABLES)
 include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE       := init.mmi.boot.sh
 LOCAL_MODULE_TAGS  := optional eng
-LOCAL_MODULE_CLASS := ETC
-LOCAL_SRC_FILES    := etc/init.mmi.boot.sh
+LOCAL_MODULE_CLASS := EXECUTABLES
+LOCAL_SRC_FILES    := bin/init.mmi.boot.sh
 LOCAL_MODULE_PATH  := $(TARGET_OUT_VENDOR_EXECUTABLES)
 include $(BUILD_PREBUILT)
 
@@ -22,15 +22,15 @@ include $(CLEAR_VARS)
 LOCAL_MODULE       := init.mmi.laser.sh
 LOCAL_MODULE_TAGS  := optional eng
 LOCAL_MODULE_CLASS := EXECUTABLES
-LOCAL_SRC_FILES    := etc/init.mmi.laser.sh
+LOCAL_SRC_FILES    := bin/init.mmi.laser.sh
 LOCAL_MODULE_PATH  := $(TARGET_OUT_VENDOR_EXECUTABLES)
 include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE       := init.qcom.ril.sh
 LOCAL_MODULE_TAGS  := optional eng
-LOCAL_MODULE_CLASS := ETC
-LOCAL_SRC_FILES    := etc/init.qcom.ril.sh
+LOCAL_MODULE_CLASS := EXECUTABLES
+LOCAL_SRC_FILES    := bin/init.qcom.ril.sh
 LOCAL_MODULE_PATH  := $(TARGET_OUT_VENDOR_EXECUTABLES)
 include $(BUILD_PREBUILT)
 
@@ -38,16 +38,15 @@ include $(CLEAR_VARS)
 LOCAL_MODULE       := wlan_carrier_bin.sh
 LOCAL_MODULE_TAGS  := optional eng
 LOCAL_MODULE_CLASS := EXECUTABLES
-LOCAL_SRC_FILES    := etc/wlan_carrier_bin.sh
+LOCAL_SRC_FILES    := bin/wlan_carrier_bin.sh
 LOCAL_MODULE_PATH  := $(TARGET_OUT_VENDOR_EXECUTABLES)
 include $(BUILD_PREBUILT)
 
-# Init scripts
 include $(CLEAR_VARS)
 LOCAL_MODULE       := fstab.qcom
 LOCAL_MODULE_TAGS  := optional eng
 LOCAL_MODULE_CLASS := ETC
-LOCAL_SRC_FILES    := etc/fstab.qcom
+LOCAL_SRC_FILES    := root/fstab.qcom
 LOCAL_MODULE_PATH  := $(TARGET_OUT_VENDOR_ETC)
 include $(BUILD_PREBUILT)
 
@@ -87,7 +86,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE       := init.qcom.early_boot.sh
 LOCAL_MODULE_TAGS  := optional
 LOCAL_MODULE_CLASS := EXECUTABLES
-LOCAL_SRC_FILES    := etc/init.qcom.early_boot.sh
+LOCAL_SRC_FILES    := bin/init.qcom.early_boot.sh
 LOCAL_VENDOR_MODULE    := true
 include $(BUILD_PREBUILT)
 
@@ -95,7 +94,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE       := init.qcom.post_boot.sh
 LOCAL_MODULE_TAGS  := optional
 LOCAL_MODULE_CLASS := EXECUTABLES
-LOCAL_SRC_FILES    := etc/init.qcom.post_boot.sh
+LOCAL_SRC_FILES    := bin/init.qcom.post_boot.sh
 LOCAL_VENDOR_MODULE    := true
 include $(BUILD_PREBUILT)
 
@@ -103,6 +102,6 @@ include $(CLEAR_VARS)
 LOCAL_MODULE       := init.gbmods.sh
 LOCAL_MODULE_TAGS  := optional eng
 LOCAL_MODULE_CLASS := EXECUTABLES
-LOCAL_SRC_FILES    := etc/init.gbmods.sh
+LOCAL_SRC_FILES    := bin/init.gbmods.sh
 LOCAL_VENDOR_MODULE    := true
 include $(BUILD_PREBUILT)
