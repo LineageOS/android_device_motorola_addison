@@ -22,8 +22,6 @@ allow cameraserver mnt_user_file:lnk_file r_file_perms;
 allow cameraserver media_rw_data_file:dir { open read search write add_name };
 allow cameraserver media_rw_data_file:file { create read write open };
 
-allow cameraserver sysfs:file { open write };
-
 allow cameraserver cameraserver:process { execmem };
 
 allow cameraserver self:netlink_kobject_uevent_socket { read bind create setopt };

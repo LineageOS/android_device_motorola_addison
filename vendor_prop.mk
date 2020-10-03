@@ -360,3 +360,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.device_config.runtime_native.usap_pool_enabled=true \
     ro.control_privapp_permissions=log
+    
+# DRM
+PRODUCT_PROPERTY_OVERRIDES += \
+    drm.service.enabled = true

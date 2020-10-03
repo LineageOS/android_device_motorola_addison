@@ -8,16 +8,10 @@ allow system_server sysfs_capsense:file rw_file_perms;
 allow system_server init:unix_stream_socket { read };
 # allow system_server dalvikcache_data_file:file { execute };
 
-# Screen off gestures
-allow system_server sysfs_screen_off_gestures:dir search;
-allow system_server sysfs_screen_off_gestures:file rw_file_perms;
-
 allow system_server qti_debugfs:file { getattr open read };
 allow system_server init:unix_stream_socket write;
 
 allow system_server sensors_device:chr_file { ioctl open read };
-
-allow system_server vendor_file:file { getattr open read execute };
 
 allow system_server mm-qcamerad:binder call;
 

@@ -667,41 +667,27 @@ vendor/firmware/synaptics-s3508sga-17022300-255c40-albus.tdat
 -framework/dpmapi.jar
 etc/permissions/com.qti.dpmframework.xml
 
-# DRM
-vendor/bin/qseecomd|2237e318792e63d929ded13e7c456f2dc5d49482
-vendor/lib/libQSEEComAPI.so
-vendor/lib/libcppf.so
-vendor/lib/liboemcrypto.so
-vendor/lib/libsdedrm.so
-vendor/lib/libspl.so
-vendor/lib64/libGPreqcancel.so|0d00de12dc76b0bcfaf2328b80df05293368cc0f
-vendor/lib64/libGPreqcancel_svc.so|4b372b1e30f0474da4257ac14443165b7bb3c829
-vendor/lib64/libQSEEComAPI.so|0d6ea46d5d0f03c6c47faae751c38b2f942bb61d
-vendor/lib64/libSecureUILib.so|1c7084b77fecd878185bbff975d2cd33246691f5
-vendor/lib64/libdrmfs.so|71e2b6581edacb3184187aeeaa61f21d062dc527
-vendor/lib64/libdrmtime.so|093a78649852147d7134f65057973f2552fa8796
-vendor/lib64/libqisl.so|99d7e878ec3e6c0137ecd9ec0d98af5694bac18c
-vendor/lib64/librpmb.so|1fecc812ea979d4a62d55f5ef9d61835c39a47be
-vendor/lib64/libsdedrm.so|97b2a84696d56c43b1fbc740078fae4b7167c10d
-vendor/lib64/libspl.so|6524741dbb23d2e0fc8ba2adf436d4efe9e60f5a
-vendor/lib64/libssd.so|56efb205c07bf8aae9bc45e81675e20b51cbe362
+# DRM and SEE - from daisy_sprout - PKQ1.180917.001/V10.0.1.0.PDLMIFJ
+vendor/bin/qseecomd
+vendor/lib64/libGPreqcancel.so
+vendor/lib64/libGPreqcancel_svc.so
+vendor/lib64/libQSEEComAPI.so
+vendor/lib64/libStDrvInt.so
+vendor/lib64/libdrmfs.so
+vendor/lib64/libdrmtime.so
+vendor/lib64/libqisl.so
+vendor/lib64/librpmb.so
+vendor/lib64/libsecureui_svcsock.so
+vendor/lib64/libssd.so
 
-# DRM - HDCP
-vendor/lib/libmm-hdcpmgr.so
-vendor/lib64/libmm-hdcpmgr.so|1abfeecc9332421469df76e02023bbfb6eb6ea60
-
-# DRM - Qualcomm Trusted Execution Environment
-vendor/bin/hw/vendor.qti.hardware.qteeconnector@1.0-service|67f7f4beebed7801373aacbc937fbd19f7f2b7a0
+# DRM - Qualcomm Trusted Execution Enviornment - from daisy_sprout - PKQ1.180917.001/V10.0.1.0.PDLMIFJ
+lib64/vendor.qti.hardware.qteeconnector@1.0.so
+vendor/bin/hw/vendor.qti.hardware.qteeconnector@1.0-service
 vendor/etc/init/vendor.qti.hardware.qteeconnector@1.0-service.rc
 vendor/lib/hw/vendor.qti.hardware.qteeconnector@1.0-impl.so
-vendor/lib/vendor.qti.hardware.qteeconnector@1.0_vendor.so
-vendor/lib64/hw/vendor.qti.hardware.qteeconnector@1.0-impl.so|3d20187a07e660b68af7e7ecf49bd07ccef16453
-vendor/lib64/vendor.qti.hardware.qteeconnector@1.0_vendor.so|eb3c5393943bb19b00c1789afadd81fcc27667d1
-
-# DRM - Widevine
-vendor/bin/hw/android.hardware.drm@1.0-service.widevine|c1b330dc14f1445955610df174245681aa709f86
-vendor/etc/init/android.hardware.drm@1.0-service.widevine.rc
-vendor/lib/libwvhidl.so
+vendor/lib/vendor.qti.hardware.qteeconnector@1.0.so
+vendor/lib64/hw/vendor.qti.hardware.qteeconnector@1.0-impl.so
+vendor/lib64/vendor.qti.hardware.qteeconnector@1.0.so
 
 # DSP
 vendor/lib/libsdsprpc.so
@@ -769,9 +755,11 @@ vendor/lib/hw/vendor.qti.hardware.fm@1.0-impl.so
 vendor/lib/vendor.qti.hardware.fm@1.0.so
 vendor/bin/fm_qsoc_patches
 
-# Gatekeeper
-vendor/lib/hw/gatekeeper.msm8953.so
-vendor/lib64/hw/gatekeeper.msm8953.so|4d81962cd8d3debc98a479b27553de7f55b1d93a
+# Gatekeeper - from daisy_sprout - PKQ1.180917.001/V10.0.1.0.PDLMIFJ
+vendor/bin/hw/android.hardware.gatekeeper@1.0-service-qti
+vendor/etc/init/android.hardware.gatekeeper@1.0-service-qti.rc
+vendor/lib64/hw/android.hardware.gatekeeper@1.0-impl-qti.so
+vendor/lib64/hw/gatekeeper.msm8953.so
 
 # GPS
 -vendor/lib64/libloc_api_v02.so|2418566622353e74a5ebf79a63bc32a74325b873
@@ -914,9 +902,14 @@ vendor/lib64/vendor.qti.hardware.iop@2.0.so
 -priv-app/HotwordEnrollmentTGoogleCS47L35/HotwordEnrollmentTGoogleCS47L35.apk;PRESIGNED
 -priv-app/HotwordEnrollmentXGoogleCS47L35/HotwordEnrollmentXGoogleCS47L35.apk;PRESIGNED
 
-# Keystore
-vendor/lib/hw/keystore.msm8953.so
-vendor/lib64/hw/keystore.msm8953.so|a8901a748f3187696a95acc87087806b0a361c7e
+# Keymaster and Keystore - from daisy_sprout - PKQ1.180917.001/V10.0.1.0.PDLMIFJ
+vendor/bin/hw/android.hardware.keymaster@3.0-service-qti
+vendor/etc/init/android.hardware.keymaster@3.0-service-qti.rc
+vendor/lib64/hw/android.hardware.keymaster@3.0-impl-qti.so
+vendor/lib64/hw/keystore.msm8953.so
+vendor/lib64/libkeymasterdeviceutils.so
+vendor/lib64/libkeymasterprovision.so
+vendor/lib64/libkeymasterutils.so
 
 # Listen
 vendor/lib/libgcs-calwrapper.so
@@ -1296,6 +1289,13 @@ vendor/firmware/wlan/prima/WCNSS_qcom_wlan_nv_Brazil.bin
 vendor/firmware/wlan/prima/WCNSS_qcom_wlan_nv_India.bin
 vendor/firmware/wlan/prima/WCNSS_wlan_dictionary.dat
 vendor/lib/libxtwifi_ulp_adaptor.so
+
+# Widevine - from deen_sprout - PPKS29.68-16-33-3
+vendor/bin/hw/android.hardware.drm@1.1-service.widevine
+vendor/etc/init/android.hardware.drm@1.1-service.widevine.rc
+vendor/lib64/mediadrm/libwvdrmengine.so
+vendor/lib64/liboemcrypto.so
+vendor/lib64/libwvhidl.so
 
 # MISC
 bin/radish|abd1202b6936215570fddc77490f5b42d7e7ae85
