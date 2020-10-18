@@ -22,6 +22,9 @@ on fs
     symlink /persist /pds
 
 on post-fs
+    # MOT_LED_CALIBRATION
+    chown cameraserver /mnt/vendor/persist/camera/ledcal
+
     mkdir /persist/camera 0755 oem_5004 oem_5004
     mkdir /persist/camera/focus 0775 camera oem_5004
     mkdir /persist/camera/ledcal 0775 camera oem_5004
@@ -148,7 +151,7 @@ on post-fs-data
     mkdir /data/camera_dump 0750 media media
 
     # Imager tuning data for camera subsystem
-    mkdir /data/vendor/misc/imager 0771 camera camera    
+    mkdir /data/misc/imager 0771 camera camera    
 
     # OTA Package directory
     mkdir /data/misc_ne 0770 system cache

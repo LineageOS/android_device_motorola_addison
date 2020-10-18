@@ -109,15 +109,11 @@ PRODUCT_PACKAGES += \
     libbt-vendor
 #Camera
 PRODUCT_PACKAGES += \
-    android.hardware.camera.device@1.0 \
-    android.hardware.camera.device@3.2 \
-    android.hardware.camera.provider@2.4 \
     android.hardware.camera.provider@2.4-impl \
-    android.hardware.camera.common@1.0 \
     vendor.qti.hardware.camera.device@1.0 \
     vendor.qti.hardware.camera.device@1.0_vendor \
-    camera.device@1.0-impl \
     camera.device@3.2-impl \
+    libcamera_metadata_helper \
     libbson.vendor \
     libxml2 \
     Camera2 \
@@ -125,7 +121,7 @@ PRODUCT_PACKAGES += \
     libwui 
 
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/camera/msm8953_mot_albus_camera.xml:$(TARGET_COPY_OUT_VENDOR)/etc/camera/msm8953_mot_potter_camera.xml \
+    $(LOCAL_PATH)/configs/camera/msm8953_mot_albus_camera.xml:$(TARGET_COPY_OUT_VENDOR)/etc/camera/msm8953_mot_albus_camera.xml \
     $(LOCAL_PATH)/configs/camera/mot_ov5695_chromatix.xml:$(TARGET_COPY_OUT_VENDOR)/etc/camera/mot_ov5695_chromatix.xml \
     $(LOCAL_PATH)/configs/camera/mot_ov5695_ofilm_chromatix.xml:$(TARGET_COPY_OUT_VENDOR)/etc/camera/mot_ov5695_ofilm_chromatix.xml \
     $(LOCAL_PATH)/configs/camera/mot_imx362_chromatix.xml:$(TARGET_COPY_OUT_VENDOR)/etc/camera/mot_imx362_chromatix.xml \
@@ -473,8 +469,15 @@ PRODUCT_COPY_FILES += \
 
 # ZAF
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/zaf/zaf_mot_imx362.json:system/etc/zaf/zaf_mot_imx362.json \
-    $(LOCAL_PATH)/configs/zaf/zaf_mot_s5k2l7.json:system/etc/zaf/zaf_mot_s5k2l7.json
+    $(LOCAL_PATH)/configs/zaf/zaf_mot_imx362.json:$(TARGET_COPY_OUT_VENDOR)/etc/zaf/zaf_mot_imx362.json \
+    $(LOCAL_PATH)/configs/zaf/zaf_mot_s5k2l7.json:$(TARGET_COPY_OUT_VENDOR)/etc/zaf/zaf_mot_s5k2l7.json
+
+# VNDK
+# Update this list with what each blob is actually for
+# libstdc++: camera.msm8953
+PRODUCT_PACKAGES += \
+    libstdc++.vendor \
+    vndk_package
 
 # HIDL
 PRODUCT_PACKAGES += \

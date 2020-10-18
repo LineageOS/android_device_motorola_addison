@@ -67,4 +67,14 @@ sed -i "s|/system/etc/|/vendor/etc/|g" "$CAM2_SENSOR_MODULES"
 ZAF_CORE="$BLOB_ROOT"/vendor/lib/libzaf_core.so
 sed -i "s|/system/etc/|/vendor/etc/|g" "$ZAF_CORE"
 
+
+# Load camera metadata shim
+CAMERAHAL="$BLOB_ROOT"/vendor/lib/hw/camera.msm8998.so
+patchelf --replace-needed libcamera_client.so libcamera_metadata_helper.so "$CAMERAHAL"
+
+
+vendor/lib/libcamerabgprocservice.so)
+    patchelf --remove-needed libcamera_client.so "${2}"
+    ;;
+
 "$MY_DIR"/setup-makefiles.sh

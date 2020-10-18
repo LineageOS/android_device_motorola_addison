@@ -345,6 +345,17 @@ on boot
     # default country code
     setprop ro.boot.wificountrycode 00
 
+    # add a cpuset for the camera daemon
+    # we want all cores for camera
+    mkdir /dev/cpuset/camera-daemon
+    write /dev/cpuset/camera-daemon/cpus 0-7
+    write /dev/cpuset/camera-daemon/mems 0
+    chown system system /dev/cpuset/camera-daemon
+    chown system system /dev/cpuset/camera-daemon/tasks
+    chmod 0664 /dev/cpuset/camera-daemon/tasks
+    chown system system /sys/kernel/hbtp/display_pwr
+
+
 # msm specific files that need to be created on /data
 on post-fs-data
     mkdir /tombstones/modem 0771 system system
@@ -392,6 +403,9 @@ on post-fs-data
 
     #Create directory for tftp
     mkdir /data/vendor/tombstones 0771 system system
+
+    #Create folder for mm-qcamera-daemon
+    mkdir /data/misc/camera 0770 camera camera
 
     mkdir /data/media 0770 media_rw media_rw
     chown media_rw media_rw /data/media
@@ -907,6 +921,7 @@ service vendor.mods_camd /vendor/bin/mods_camd
     disabled
     rlimit 14 4 4
     ioprio rt 4
+    disabled
 
 service vendor.gbmodinstall /vendor/bin/init.gbmods.sh
     user root
