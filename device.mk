@@ -412,6 +412,13 @@ PRODUCT_PACKAGES += \
 # Soong
 PRODUCT_SOONG_NAMESPACES += $(LOCAL_PATH)
 
+# Tethering
+PRODUCT_PACKAGES += \
+    TetheringConfigOverlay
+
+PRODUCT_PROPERTY_OVERRIDES += \
+    net.tethering.noprovisioning=true
+
 #Thermal
 PRODUCT_PACKAGES += \
     thermal.msm8953 \
