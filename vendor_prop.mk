@@ -315,28 +315,27 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Sensors
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.hardware.sensors=albus \
-    ro.qti.sensors.pmd=false \
-    ro.qti.sensors.sta_detect=true \
+    ro.qti.sensors.dev_ori=false \
+    ro.qti.sensors.dpc=true \
+    ro.qti.sensors.iod=true \
+    ro.qti.sensors.pmd=true \
     ro.qti.sensors.mot_detect=true \
-    ro.qti.sensors.amd=false \
-    ro.qti.sensors.rmd=false \
-    ro.qti.sdk.sensors.gestures=false \
-    ro.qti.sensors.facing=false \
-    ro.qti.sensors.scrn_ortn=false \
-    ro.qti.sensors.cmc=false \
-    ro.qti.sensors.pedometer=false \
-    ro.vendor.sdk.sensors.gestures=false \
+    ro.qti.sensors.multishake=true \
+    ro.qti.sensors.sta_detect=true \
+    ro.hardware.sensors=albus \
+    ro.vendor.sensors.maghalcal=true \
     ro.vendor.sensors.amd=false \
-    ro.vendor.sensors.facing=false \
-    ro.vendor.sensors.mot_detect=true \
-    ro.vendor.sensors.pedometer=false \
     ro.vendor.sensors.pmd=false \
     ro.vendor.sensors.rmd=false \
+    ro.vendor.sdk.sensors.gestures=false \
+    ro.vendor.sensors.facing=false \
     ro.vendor.sensors.scrn_ortn=false \
-    ro.vendor.sensors.sta_detect=true \
+    ro.vendor.sensors.cmc=false \
+    ro.vendor.sensors.pedometer=false \
     ro.sensors.tof.interval_ms=5000 \
-    persist.qfp=false
+    ro.vendor.sensors.dev_ori=true \
+    ro.vendor.sensors.sta_detect=true \
+    ro.vendor.sensors.mot_detect=true
 
 #Trim properties
 PRODUCT_PROPERTY_OVERRIDES += \

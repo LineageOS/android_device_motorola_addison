@@ -270,6 +270,9 @@ vendor/firmware/cpp_firmware_v1_8_0.fw
 vendor/firmware/cpp_firmware_v1_10_0.fw
 vendor/firmware/cpp_firmware_v1_12_0.fw
 
+#Camera - Laser sensor from Albus PPS29.133
+vendor/bin/vl53l1_daemon
+
 #Camera - Postprocessing from Albus PPS29.133
 vendor/lib/libdualcameraddm.so
 vendor/lib/libS5k2l7Pdaf.so
@@ -958,24 +961,26 @@ vendor/lib/mmi_touch.so
 vendor/lib/mmi_vibrator.so
 vendor/lib/mmi_wifi.so
 
-# Moto Mods
--priv-app/ModFmwkProxyService/ModFmwkProxyService.apk|36fdc66b39643433d2ffa46c986e300c6e6f7288
+# Moto Mods from Nash PPX29.159-33
+-priv-app/ModFmwkProxyService/ModFmwkProxyService.apk|8b52ee03261ef10cae325182e246e66f8b527368
 etc/firmware/upd-00000126-00001001-fed70128-fffe0001-02.tftf
 etc/permissions/com.motorola.aov.xml
 etc/permissions/com.motorola.mod.protocols.xml
-etc/permissions/com.motorola.mod.xml|b25e55275b7ecc5f4d46db52c6148fe7c75ff60b
-etc/permissions/com.motorola.moto-premium.xml
-etc/permissions/com.motorola.motodisplay.xml
+etc/permissions/com.motorola.mod.xml
+etc/permissions/com.motorola.mod_config.xml
+etc/permissions/com.motorola.mod_v2.xml
+etc/permissions/com.motorola.moto.permissions.xml
 etc/permissions/privapp-permissions-com.motorola.modservice.xml
 etc/permissions/privapp-permissions-com.motorola.projectormod.xml
-lib64/libmodhw.so|18abdcb5beff7b348dde44a967526224040778bd
--priv-app/ModService/ModService.apk;PRESIGNED|8acc52de7a5d4f02ae0da7a0580f54f6cd52cf22
--priv-app/ProjectorApp/ProjectorApp.apk;PRESIGNED
-vendor/bin/mods_camd|ab121a6a42d911a8fff16d8364f0f64d643bab64
+lib64/libmodhw.so
+lib64/libvibratorhw.so
+lib64/motorola.hardware.vibrator@1.0.so
+-priv-app/ModService/ModService.apk:priv-app/ModService/ModService.apk;PRESIGNED
+-priv-app/ProjectorApp/ProjectorApp.apk:priv-app/ProjectorApp/ProjectorApp.apk;PRESIGNED
+vendor/bin/mods_camd
 vendor/lib/libmodmanager.so
-vendor/lib64/libmodmanager.so|22dc3f4eb78bae425fbbf7d7777fe37d71a52b6e
-vendor/lib64/com.motorola.mod@1.0.so|7a8a0882a5dbde85b889f878508ae44d8589bdbf
-vendor/lib64/com.motorola.mod@1.0_vendor.so|40d32566198a77fdf66d8a884da56477944d7d4e
+vendor/lib64/libmodmanager.so
+vendor/lib64/com.motorola.mod@1.0_vendor.so
 vendor/lib/com.motorola.mod@1.0_vendor.so
 
 # NFC
@@ -984,7 +989,7 @@ vendor/firmware/libpn548ad_fw.so
 # Offmode charging
 vendor/bin/charge_only_mode|9c6cb9c1b27fd30eb236c13b9ec08a15febd32c0
 
-# Perf from PPS29.133-30
+# Perf from Deen PPS29.133-30
 lib/libqti-perfd-client_system.so
 lib/libqti_performance.so
 lib/libqti-util_system.so
@@ -1214,30 +1219,26 @@ vendor/lib64/libmdmcutback.so|25f287086a09dd48e23435abead254922361e4ba
 vendor/lib64/libmotext_inf.so|51195211345dac45ba63bb5a0a8ea45349d527d0
 vendor/lib64/libqmimotext.so|c47646df93d9f0807dc140055bacccf7d5e37224
 
-# Sensors
-lib/libiio.so
-vendor/bin/sensors.qcom|b7087f7c0fdc80a364b5c1c04a4b1e274110e956
+# Sensors from nash PPX29.159-23
+vendor/bin/sensors.qti
 vendor/lib/hw/activity_recognition.msm8953.so
-vendor/lib/lib_motsensorlistener.so
 vendor/lib/libiio.so
-vendor/lib/libsensor1.so
 vendor/lib/libsensor_reg.so
-vendor/lib/libsensorndkbridge.so
+vendor/lib/libsensor1.so
 vendor/lib/sensor_calibrate.so
 vendor/lib/sensors.iio.so
 vendor/lib/sensors.ssc.so
 vendor/lib/sensors.tof.so
-vendor/lib64/hw/activity_recognition.msm8953.so|1f7ad65956981c5c59e773f8fa029541d8e6b931
-vendor/lib64/hw/sensors.msm8953.so|9ae9692c2467f30605f9f68fb44e13bcd0b48e7e
-vendor/lib64/libiio.so|fab317a4ca3cbce6df25cc190f1fd7642c682d7c
-vendor/lib64/libsensor1.so|b679da063bc3716185d3abfc94c0afc514284a91
-vendor/lib64/libsensor_reg.so|0d963c1b4909be75c909cdfb9195439e414c68c0
-vendor/lib64/libsensorndkbridge.so|fbc6c83c476f7aeccac89bfa6e3e68a5d284f5d5
-vendor/lib64/libsns_low_lat_stream_stub.so|e32b4601f86923ff6dfafae15014c8c3807fd958
-vendor/lib64/sensor_calibrate.so|a705eab941dcd84870bffd97f2067334ce23ef61
-vendor/lib64/sensors.iio.so|8a115a8a1087c0b8663f7bb47bba11f15f3a62aa
-vendor/lib64/sensors.ssc.so|41d3e7933ffc5401db31fbc5aea4415f9082311b
-vendor/lib64/sensors.tof.so|81b4a0377bbe19ba8b69880b40b17fc80c2606c6
+vendor/lib/libsns_low_lat_stream_stub.so
+vendor/lib64/hw/activity_recognition.msm8953.so
+vendor/lib64/libsensor_reg.so
+vendor/lib64/libsensor1.so
+vendor/lib64/sensor_calibrate.so
+vendor/lib64/sensors.ssc.so
+vendor/lib64/sensors.iio.so
+vendor/lib64/sensors.tof.so
+vendor/lib64/libiio.so
+vendor/lib64/libsns_low_lat_stream_stub.so
 
 # Thermal
 -vendor/lib/libthermalclient.so
@@ -1269,43 +1270,3 @@ vendor/etc/init/android.hardware.drm@1.1-service.widevine.rc
 vendor/lib64/mediadrm/libwvdrmengine.so
 vendor/lib64/liboemcrypto.so
 vendor/lib64/libwvhidl.so
-
-# MISC
-bin/radish|abd1202b6936215570fddc77490f5b42d7e7ae85
-vendor/lib/libmpbase.so
-etc/xtra_root_cert.pem
-lib/lib_mot_app6_metadata.so
-lib/libadropbox.so
-vendor/bin/gamed|0ea87fc9e6c4fb144afcd49d8c513dca12a501fc
-vendor/bin/mm-pp-dpps|25195ef9f617154420c9ce5d57499e671c4e6d6a
-vendor/firmware/ice40.bin
-vendor/lib/hw/flp.default.so
-vendor/lib/libCommandSvc.so
-vendor/lib/libS5k2l7Pdaf.so
-vendor/lib/libS5k2l7PdafCamif.so
-vendor/lib/libSampleAuthJNI.so
-vendor/lib/libSampleExtAuthJNI.so
-vendor/lib/lib_mottof.so
-vendor/lib/libadvalgcore.so
-vendor/lib/libavenhancements.so
-vendor/lib/libfeedbackhandler.so
-vendor/lib/libmdsprpc.so
-vendor/lib/libmmosal.so
-vendor/lib/libmmparser.so
-vendor/lib/libmmparser_lite.so
-vendor/lib/libmmrtpdecoder.so
-vendor/lib/libmmrtpencoder.so
-vendor/lib/libqti-at.so
-vendor/lib/libqti-gt-prop.so
-vendor/lib/libulp2.so
-vendor/lib/libunshorten.so
-vendor/lib/libvendorconn.so
-vendor/lib/libwbc_jni.so
-vendor/lib/libwfdavenhancements.so
-vendor/lib/libwfdmmsink.so
-vendor/lib/libwfduibcsink.so
-vendor/lib/libwfduibcsinkinterface.so
-vendor/lib/libzxingcpp.so
-vendor/lib64/libadropbox.so|22c68f8fe4d9cddabe3f2db07954bab55a60aca6
-vendor/lib64/libfeedbackhandler.so|82728d38aa14268617868ab0750cbb8fb244bf9a
-vendor/lib64/libqti-gt-prop.so|d78660db93b340411ba34dc458ed0d1ee821c82d

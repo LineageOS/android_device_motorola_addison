@@ -345,6 +345,7 @@ PRODUCT_PACKAGES += \
     init.mmi.rc \
     init.gbmods.sh \
     init.qcom.early_boot.sh \
+    init.qcom.sensors.sh \
     init.qcom.post_boot.sh \
     init.mmi.usb.rc \
     init.qcom.rc \
