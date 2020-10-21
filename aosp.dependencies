@@ -1,0 +1,22 @@
+[
+  {
+    "remote": "github",
+    "repository":  "marcost2/kernel_motorola_msm8953",
+    "target_path": "kernel/motorola/msm8953"
+  },
+  {
+    "remote": "github",
+    "repository": "marcost2/proprietary_vendor_motorola-1",
+    "target_path": "vendor/motorola",
+  },
+  {
+    "repository": "android_packages_resources_devicesettings",
+    "target_path": "packages/resources/devicesettings"
+  },
+  {
+    "remote": "github",
+    "repository": "LineageOS/android_external_bson",
+    "target_path": "external/bson"
+  }
+]
+
