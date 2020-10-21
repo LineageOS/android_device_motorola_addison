@@ -29,6 +29,7 @@ $(call inherit-product, vendor/aosp/common.mk)
 
 # Boot animation res
 TARGET_BOOT_ANIMATION_RES := 1080
+TARGET_BOOTANIMATION_HALF_RES := true
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := albus
