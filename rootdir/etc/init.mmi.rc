@@ -153,7 +153,7 @@ on post-fs-data
     chmod 0660 /sys/module/dwc3_msm/parameters/usb_priority
 
     # Sensor Hub calibration data directory
-    mkdir /data/misc/sensorhub 0770 system compass
+    mkdir /data/vendor/sensorhub 0770 system compass
     
     # Create panic dump dir.
     mkdir /data/vendor/dontpanic 0750 root log

@@ -61,8 +61,8 @@
 #define CSPEC_NSF				0x40
 
 // Setting file
-#define CSPEC_SETTING_FILE	"/data/misc/akmd/akmd_set.txt"
-#define CSPEC_PDC_FILE		"/data/misc/akmd/pdc.txt"
+#define CSPEC_SETTING_FILE	"/data/vendor/akmd/akmd_set.txt"
+#define CSPEC_PDC_FILE		"/data/vendor/akmd/pdc.txt"
 
 #endif //AKMD_INC_CUSTOMERSPEC_H
 

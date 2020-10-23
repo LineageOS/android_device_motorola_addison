@@ -56,8 +56,8 @@
 #define DROPBOX_FLAG_GZIP        4
 #define COPYSIZE 256
 
-#define GYRO_CAL_FILE  "/data/misc/sensorhub/gyro_cal.bin"
-#define ACCEL_CAL_FILE "/data/misc/sensorhub/accel_cal.bin"
+#define GYRO_CAL_FILE  "/data/vendor/sensorhub/gyro_cal.bin"
+#define ACCEL_CAL_FILE "/data/vendor/sensorhub/accel_cal.bin"
 
 // Defines for offsets into the sensorhub event data.
 #define ACCEL_X (0 * sizeof(int16_t))
