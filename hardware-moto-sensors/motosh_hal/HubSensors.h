@@ -52,7 +52,7 @@
 #define MAG_CAL_FILE "/data/vendor/sensorhub/akmd_set.bin"
 #define GYRO_CAL_FILE "/data/vendor/sensorhub/gyro_cal.bin"
 #define ACCEL_CAL_FILE "/data/vendor/sensorhub/accel_cal.bin"
-#define DROPBOX_DIR "/data/system/dropbox-add"
+#define DROPBOX_DIR "/data/vendor/sensorhub_logs"
 #define DROPBOX_TAG "SENSOR_HUB"
 #define SENSORHUB_DUMPFILE  "sensor_hub"
 #define DROPBOX_FLAG_TEXT        2

@@ -155,6 +155,9 @@ on post-fs-data
     # Sensor Hub calibration data directory
     mkdir /data/vendor/sensorhub 0770 system compass
     
+    # Setup folder for native to transfer data to NativeDropBoxAgent
+    mkdir /data/vendor/sensorhub_logs 0730 system diag
+
     # Create panic dump dir.
     mkdir /data/vendor/dontpanic 0750 root log
 
