@@ -60,8 +60,8 @@ SensorsPollContext SensorsPollContext::self;
 SensorsPollContext::SensorsPollContext()
 {
     char prop[PROPERTY_VALUE_MAX];
-    char *cap_prop = {"ro.hw.capsense"};
-    char *ecomp_prop = {"ro.hw.ecompass"};
+    char *cap_prop = {"ro.vendor.hw.capsense"};
+    char *ecomp_prop = {"ro.vendor.hw.ecompass"};
     mSensors[sensor_hub] = HubSensors::getInstance();
     if (mSensors[sensor_hub]) {
         mPollFds[sensor_hub].fd = mSensors[sensor_hub]->getFd();

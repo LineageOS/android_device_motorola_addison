@@ -813,7 +813,7 @@ int  main(int argc, char *argv[])
             configure_capsense();
         #endif
 
-        property_set("hw.motosh.booted", "1");
+        property_set("vendor.hw.motosh.booted", "1");
     }
     if(emode == NORMAL) {
         LOGDEBUG("Ioctl call to reset STM\n");
