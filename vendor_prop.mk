@@ -174,7 +174,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.telephony.iwlan_operation_mode=legacy
 
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    persist.sys.fflag.override.settings_network_and_internet_v2=true \
     ril.subscription.types=NV,RUIM \
     telephony.lteOnCdmaDevice=1 \
 
