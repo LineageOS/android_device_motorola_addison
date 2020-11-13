@@ -738,17 +738,21 @@ vendor/lib64/hw/android.hardware.gatekeeper@1.0-impl-qti.so
 vendor/lib64/hw/gatekeeper.msm8953.so
 
 # GPS
--vendor/lib64/libloc_api_v02.so|2418566622353e74a5ebf79a63bc32a74325b873
+lib64/libxt_native.so|900aa51d3d2f731b906a321e25c259fbab656f1c
 vendor/bin/DR_AP_Service|b2a9d91ebb0bdefe47792039942532a2f842019b
 vendor/bin/garden_app|6127ea8179f4376c00c475c4a4d6dacd71bf1ef4
 vendor/bin/hw/vendor.qti.gnss@1.0-service|bdf23fe2af07c2afb74721023431446104fd828d
 vendor/bin/loc_launcher|0675f4524d2c9e94f7e978b5e00734c0835ddf15
 vendor/bin/lowi-server|7ac4c11816a2c41b3d1fde5714216420b7e5c025
 vendor/bin/slim_daemon|0a03406c8ec8fd17f9d0d770113736fbd200c4d3
+vendor/bin/xtwifi-client|d26c234ef81dffaecb706291d5307420be4e9a32
+vendor/bin/xtwifi-inet-agent|f69bbc19b52f373c46d7d82615f87840f645330e
 vendor/bin/xtra-daemon|26599c9c3ba0984c15c83b77305c1eb154ac39a5
 vendor/etc/init/vendor.qti.gnss@1.0-service.rc
 vendor/lib/hw/vendor.qti.gnss@1.0-impl.so
+vendor/lib/libxtwifi_ulp_adaptor.so
 vendor/lib/vendor.qti.gnss@1.0_vendor.so
+-vendor/lib64/libloc_api_v02.so|2418566622353e74a5ebf79a63bc32a74325b873
 vendor/lib64/hw/vendor.qti.gnss@1.0-impl.so|7c40a3f02f8c022333655b41f9c5ddc636dba85f
 vendor/lib64/libDRPlugin.so|d4f1127ed8f98011fe9687d40e8942e5738f4273
 vendor/lib64/lib_drplugin_server.so|3621ce48b9519c7388951767dd59a01ca8d1c19c
@@ -1253,16 +1257,12 @@ vendor/lib64/libthermalioctl.so|4c1f9451733bc0a006ebb55ba2e36bf9e78f22bf
 vendor/bin/time_daemon|266da8c03b97e17656abc5bd7d67062199c73e43
 
 # Wi-Fi
-lib64/libxt_native.so|900aa51d3d2f731b906a321e25c259fbab656f1c
 vendor/bin/cnss-daemon|90f31c8a159a1d8836730196314e6a2b6f32149e
-vendor/bin/xtwifi-client|d26c234ef81dffaecb706291d5307420be4e9a32
-vendor/bin/xtwifi-inet-agent|f69bbc19b52f373c46d7d82615f87840f645330e
 vendor/firmware/wlan/prima/WCNSS_qcom_wlan_nv.bin
 vendor/firmware/wlan/prima/WCNSS_qcom_wlan_nv_Argentina.bin
 vendor/firmware/wlan/prima/WCNSS_qcom_wlan_nv_Brazil.bin
 vendor/firmware/wlan/prima/WCNSS_qcom_wlan_nv_India.bin
 vendor/firmware/wlan/prima/WCNSS_wlan_dictionary.dat
-vendor/lib/libxtwifi_ulp_adaptor.so
 
 # Widevine - from deen_sprout - PPKS29.68-16-33-3
 vendor/bin/hw/android.hardware.drm@1.1-service.widevine
