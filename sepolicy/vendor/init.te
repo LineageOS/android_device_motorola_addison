@@ -40,10 +40,10 @@ allow init sysfs_screen_off_gestures:file { rw_file_perms setattr };
 
 allow init self:capability sys_nice;
 
-allow init bt_firmware_file:filesystem { associate };
 allow init firmware_file:filesystem { associate };
 
 allow init sensors_device:chr_file { rw_file_perms create };
+allow init pmsg_device:chr_file { open };
 
 allow init self:netlink_route_socket { bind create getopt nlmsg_read read setopt write };
 
@@ -63,4 +63,7 @@ allow init sysfs_battery_supply:lnk_file {open read };
 allow init sysfs_fpc:file { rw_file_perms setattr };
 allow init sysfs_capsense:file setattr;
 
+allow init adsprpcd_file:filesystem { mount relabelfrom relabelto };
+allow init adsprpcd_file:filesystem { mount relabelfrom relabelto };
 
+allow init vendor_file:file { execute };

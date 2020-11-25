@@ -1,0 +1,5 @@
+typeattribute sensors data_between_core_and_vendor_violators;
+allow sensors hw_rev_prop:file { getattr read open };
+allow sensors persist_file:file { getattr read write open };
+allow sensors persist_file:dir { getattr read write open search };
+allow sensors diag_device:chr_file { open ioctl };

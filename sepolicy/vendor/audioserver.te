@@ -1,1 +1,2 @@
 allow audioserver sysfs:dir { open read };
+allow audioserver vendor_file:file getattr;

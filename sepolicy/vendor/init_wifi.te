@@ -2,8 +2,6 @@ type init_wifi, domain;
 type init_wifi_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(init_wifi)
 
-binder_use(init_wifi)
-binder_service(init_wifi)
 binder_call(init_wifi, system_server)
 
 # shell scripts need to execute /system/bin/sh

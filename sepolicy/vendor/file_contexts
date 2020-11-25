@@ -10,7 +10,7 @@
 
 # Binaries
 /vendor/bin/adspd                                        u:object_r:adspd_exec:s0
-/system/bin/charge_only_mode                             u:object_r:charge_only_exec:s0
+/vendor/bin/charge_only_mode                             u:object_r:charge_only_exec:s0
 /vendor/bin/init\.mmi\.boot\.sh                          u:object_r:mmi_boot_exec:s0
 /vendor/bin/init\.mmi\.laser\.sh                         u:object_r:mmi_laser_exec:s0
 /vendor/bin/wlan_carrier_bin\.sh                         u:object_r:init_wifi_exec:s0
@@ -21,26 +21,29 @@
 /vendor/lib/motorola\.hardware\.camera\.device@1\.0.so                  u:object_r:hal_camera_default_exec:s0
 /vendor/lib/motorola\.hardware\.camera\.provider@2\.4.so                u:object_r:hal_camera_default_exec:s0
 
+/data/misc/sensorhub(/.*)?                               u:object_r:sensorhub_data_file:s0 
+
 #binder to fix camera daemon
 /dev/binder(/.*)?                                                             u:object_r:binder_device:s0
 
 # Camera
 /sys/kernel/range(/.*)?                                 u:object_r:sysfs_mmi_laser:s0
 
-# CMActions
-/sys/homebutton(/.*)?                                    u:object_r:sysfs_homebutton:s0
-
 # Motorola services
 /data/chargeonlymode(/.*)?                               u:object_r:chargeonly_data_file:s0
 
+# CMActions
+/sys/homebutton(/.*)?                                    u:object_r:sysfs_homebutton:s0
+
 # Fingerprint
-/data/\.fps(/.*)?                                         u:object_r:fps_data_file:s0
-/data/fpc(/.*)?                                          u:object_r:fpc_data_file:s0
-/data/fpc/socket                                         u:object_r:fpc_socket:s0
+/sys/devices/soc/soc:fpc_fpc1020(/.*)?                        u:object_r:sysfs_fingerprint:s0
+/data/fpc(/.*)?                                               u:object_r:fingerprint_data_file:s0
+/data/fpc/socket                                              u:object_r:fingerprint_socket:s0
+/data/.fps                                                    u:object_r:fingerprint_data_file:s0
 
-
-/sys/devices/soc/7af8000.spi/spi_master/spi8/spi8.0(/.*)? u:object_r:sysfs_fpc:s0
-/sys/devices/soc/soc:fpc_fpc1020(/.*)?		u:object_r:sysfs_fpc:s0
+# Input devices 
+/(vendor|system/vendor)/usr/idc(/.*)?                         u:object_r:idc_file:s0 
+/(vendor|system/vendor)/usr/keylayout(/.*)?                   u:object_r:keylayout_file:s0
 
 # Modem
 /persist/mdm(/.*)?                                       u:object_r:persist_modem_file:s0
@@ -141,22 +144,33 @@
 
 /vendor/bin/perfd           u:object_r:perfd_exec:s0
 /vendor/bin/hw/android\.hardware\.power@1\.1-service-qti          u:object_r:hal_power_default_exec:s0
-/vendor/radio(/.*)? u:object_r:radio_data_file:s0
+#/vendor/radio(/.*)? u:object_r:radio_data_file:s0
+
+# Firmware
+/dev/sdc4                                                u:object_r:firmware_file:s0
+/fsg/(/.*)                                               u:object_r:firmware_file:s0
+/firmware/image/(/.*)                                   u:object_r:firmware_file:s0
+/dev/sda16                                              u:object_r:firmware_file:s0
 
 /vendor/bin/qmi_motext_hook u:object_r:rild_exec:s0
 
 /sys/kernel/debug/rmt_storage(/.*)? u:object_r:debugfs_rmt_storage:s0
 
+# Usb hal
+/(vendor|system/vendor)/bin/hw/android\.hardware\.usb@1\.0-service\.albus       u:object_r:hal_usb_default_exec:s0
+
+# Light HAL
+/(vendor|system/vendor)/bin/hw/android\.hardware\.light@2\.0-service.albus                                     u:object_r:hal_light_default_exec:s0
+/sys/devices/soc/leds-atc-20/leds(/.*)?                  u:object_r:sysfs_leds:s0
+
 # Fingerprint custom hal
 /(vendor|system/vendor)/bin/hw/android\.hardware\.biometrics\.fingerprint@2\.1-service_32 u:object_r:hal_fingerprint_default_exec:s0
-
-# Usb hal
-/(vendor|system/vendor)/bin/hw/android\.hardware\.usb@1\.0-service\.potter       u:object_r:hal_usb_default_exec:s0
-
-# Fingerprint custom hal
 /(vendor|system/vendor)/bin/hw/android\.hardware\.biometrics\.fingerprint@2\.1-fpcservice u:object_r:hal_fingerprint_default_exec:s0
 
 # DRM
 /vendor/bin/hw/android\.hardware\.drm@1\.1-service\.widevine         u:object_r:hal_drm_widevine_exec:s0
 /vendor/bin/hw/android\.hardware\.drm@1\.1-service\.clearkey         u:object_r:hal_drm_clearkey_exec:s0
 
+# Health HAL
+/(vendor|system/vendor)/bin/hw/android\.hardware\.health@2\.0-service\.albus          u:object_r:hal_health_default_exec:s0
+/persist/battery(/.*)?  u:object_r:persist_battery_file:s0

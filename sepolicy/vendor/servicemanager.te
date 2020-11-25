@@ -42,4 +42,5 @@ allow servicemanager hal_sensors_default:process getattr;
 allow servicemanager sensors:dir search;
 allow servicemanager sensors:file { open read };
 allow servicemanager sensors:process getattr;
+allow servicemanager vendor_file:file getattr;
 

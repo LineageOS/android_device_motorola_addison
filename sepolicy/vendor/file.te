@@ -4,6 +4,12 @@ type adspd_data_file, file_type, data_file_type, core_data_file_type;
 # charge_only_mode
 type chargeonly_data_file, file_type, data_file_type, core_data_file_type;
 
+type sensorhub_data_file, file_type, data_file_type, core_data_file_type; 
+
+# Battery health
+type batt_health_data_file, file_type, data_file_type;
+type persist_battery_file, file_type;
+
 # FSG
 type fsg_file, fs_type, contextmount_type;
 
@@ -41,6 +47,9 @@ type sysfs_capsense, fs_type, sysfs_type;
 type sysfs_batt, fs_type, sysfs_type;
 type sysfs_cnss, fs_type, sysfs_type;
 type sysfs_fpc, fs_type, sysfs_type;
+type sysfs_spi, fs_type, sysfs_type;
+
+type sysfs_fingerprint, sysfs_type, fs_type;
 
 type fpc_socket, file_type, data_file_type, core_data_file_type;
 type fpc_data_file, file_type, data_file_type, core_data_file_type;
@@ -63,3 +72,8 @@ type proc_touchpanel, fs_type;
 
 type sysfs_msm_subsys, sysfs_type, fs_type;
 
+type fingerprint_data_file, core_data_file_type, data_file_type, file_type;
+type fingerprint_socket, core_data_file_type, data_file_type, file_type;
+
+type idc_file, file_type, vendor_file_type;
+type keylayout_file, file_type, vendor_file_type;

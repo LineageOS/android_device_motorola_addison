@@ -2,9 +2,8 @@ type adspd, domain;
 type adspd_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(adspd)
 
-binder_use(adspd)
-binder_service(adspd)
-binder_call(adspd, system_server)
+#binder_use(adspd)
+#binder_call(adspd, system_server)
 
 allow adspd vendor_shell_exec:file entrypoint;
 
