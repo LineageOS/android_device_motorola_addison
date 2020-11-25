@@ -7,6 +7,7 @@ allow qti_init_shell sysfs_wcnsscore:file write;
 allow qti_init_shell kmsg_device:chr_file open;
 
 allow qti_init_shell sysfs:file { rw_file_perms setattr };
+allow qti_init_shell sysfs_dm:file { rw_file_perms setattr };
 allow qti_init_shell persist_camera_file:file { getattr read open };
 allow qti_init_shell ctl_start_prop:property_service set;
 

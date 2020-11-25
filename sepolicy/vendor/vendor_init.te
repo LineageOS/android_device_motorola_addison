@@ -9,6 +9,7 @@ allow vendor_init {
   camera_data_file
   bluetooth_data_file
   fingerprintd_data_file
+  fingerprint_data_file
   gbfirmware_file
   persist_file
   netmgr_data_file
@@ -23,3 +24,4 @@ allow vendor_init debugfs:dir write;
 allow vendor_init media_rw_data_file:file { create getattr open read write setattr relabelfrom unlink };
 allow vendor_init rootfs:lnk_file { setattr };
 allow vendor_init rootfs:dir { write add_name };
+allow vendor_init adsprpcd_file:filesystem getattr;
