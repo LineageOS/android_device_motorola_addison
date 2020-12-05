@@ -332,9 +332,6 @@ vendor/lib64/libqti-iopd-client.so
 vendor/lib64/vendor.qti.hardware.iop@1.0.so
 vendor/lib64/vendor.qti.hardware.iop@2.0.so
 
-# Keystore
-vendor/lib64/hw/keystore.msm8953.so
-
 # Listen
 vendor/lib/libgcs-calwrapper.so
 vendor/lib/libgcs-ipc.so
