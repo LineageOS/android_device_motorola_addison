@@ -56,7 +56,7 @@
 /persist/captouch_(.*)?                                  u:object_r:persist_antcap_file:s0
 /persist/telephony(/.*)?                                 u:object_r:pds_telephony_file:s0
 /persist/public/telephony(/.*)?                          u:object_r:pds_telephony_file:s0
-/persist/factory/audio(/.*)?                             u:object_r:persist_audio_file:s0
+/(mnt/vendor/persist|persist)/factory/audio(/.*)?                u:object_r:persist_audio_file:s0
 /persist/\.bt_nv\.bin                                    u:object_r:bluetooth_data_file:s0
 
 /data/wapi_certificate(/.*)?                             u:object_r:wapi_supplicant_data_file:s0
