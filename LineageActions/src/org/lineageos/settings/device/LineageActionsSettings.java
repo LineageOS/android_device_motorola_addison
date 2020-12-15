@@ -67,25 +67,11 @@ public class LineageActionsSettings {
     }
 
     public static boolean isAODEnabled(Context context) {
-        //return new AmbientDisplayConfiguration(context).alwaysOnEnabled(UserHandle.USER_CURRENT);
-        try{
-            return new AmbientDisplayConfiguration(context).alwaysOnEnabled(UserHandle.USER_CURRENT);
-        }catch(java.lang.NoClassDefFoundError e){
-            return false;
-        }
+        return new AmbientDisplayConfiguration(context).alwaysOnEnabled(UserHandle.USER_CURRENT);
     }
 
     public static boolean isDozeEnabled(Context context) {
-        try{
-            return new AmbientDisplayConfiguration(context).pulseOnNotificationEnabled(UserHandle.USER_CURRENT);
-        }catch(java.lang.NoClassDefFoundError e){
-            return true;
-        }
-        /*try{
-            return new AmbientDisplayConfiguration(context).pulseOnNotificationEnabled(UserHandle.USER_CURRENT);
-        }catch(java.lang.NoClassDefFoundError e){
-            return true;
-        }*/
+        return new AmbientDisplayConfiguration(context).pulseOnNotificationEnabled(UserHandle.USER_CURRENT);
     }
 
     public boolean isAODEnabled() {
