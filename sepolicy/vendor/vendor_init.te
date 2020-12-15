@@ -12,7 +12,6 @@ allow vendor_init {
   fingerprint_data_file
   gbfirmware_file
   persist_file
-  netmgr_data_file
   dbvc_data_file
   moodle_data_file
   wapi_supplicant_data_file
