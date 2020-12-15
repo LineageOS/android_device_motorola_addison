@@ -22,8 +22,7 @@ type pds_public_file, file_type, data_file_type;
 type persist_camera_file, file_type, data_file_type;
 type persist_antcap_file, file_type, data_file_type;
 type pds_telephony_file, file_type, data_file_type;
-type pds_omadm_file, file_type, data_file_type;
-type persist_audio_file, file_type, data_file_type;
+
 
 type moodle_data_file, file_type, data_file_type, core_data_file_type;
 type cutback_data_file, file_type, data_file_type;
@@ -35,7 +34,6 @@ type akmd_data_file, file_type, data_file_type, core_data_file_type;
 type wapi_supplicant_data_file, file_type, data_file_type, core_data_file_type;
 
 # RIL
-type netmgr_data_file, file_type, data_file_type, core_data_file_type;
 
 # sysfs
 type sysfs_homebutton, fs_type, sysfs_type, mlstrustedobject;
