@@ -16,6 +16,7 @@
 ifneq ($(filter albus,$(TARGET_DEVICE)),)
 
 LOCAL_PATH := $(call my-dir)
+include $(call all-makefiles-under,$(LOCAL_PATH))
 
 #A/B builds require us to create the mount points at compile time.
 #Just creating it for all cases since it does not hurt.
@@ -57,7 +58,7 @@ $(FIRMWARE_ADSP_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "ADSP Firmware link: $@"
 	@mkdir -p $(dir $@)
 	@rm -rf $@
-	$(hide) ln -sf /firmware/image/$(notdir $@) $@
+	$(hide) ln -sf /vendor/firmware_mnt/image/$(notdir $@) $@
 
 ALL_DEFAULT_INSTALLED_MODULES += $(FIRMWARE_ADSP_SYMLINKS)
 include $(CLEAR_VARS)
@@ -70,7 +71,7 @@ $(FIRMWARE_CMNLIB_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "Cmnlib Firmware link: $@"
 	@mkdir -p $(dir $@)
 	@rm -rf $@
-	$(hide) ln -sf /firmware/image/$(notdir $@) $@
+	$(hide) ln -sf /vendor/firmware_mnt/image/$(notdir $@) $@
 
 ALL_DEFAULT_INSTALLED_MODULES += $(FIRMWARE_CMNLIB_SYMLINKS)
 
@@ -82,7 +83,7 @@ $(FIRMWARE_CMNLIB64_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "Cmnlib64 Firmware link: $@"
 	@mkdir -p $(dir $@)
 	@rm -rf $@
-	$(hide) ln -sf /firmware/image/$(notdir $@) $@
+	$(hide) ln -sf /vendor/firmware_mnt/image/$(notdir $@) $@
 
 ALL_DEFAULT_INSTALLED_MODULES += $(FIRMWARE_CMNLIB64_SYMLINKS)
 
@@ -95,7 +96,7 @@ $(FIRMWARE_CPE_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "CPE Firmware link: $@"
 	@mkdir -p $(dir $@)
 	@rm -rf $@
-	$(hide) ln -sf /firmware/image/$(notdir $@) $@
+	$(hide) ln -sf /vendor/firmware_mnt/image/$(notdir $@) $@
 
 ALL_DEFAULT_INSTALLED_MODULES += $(FIRMWARE_CPE_SYMLINKS)
 
@@ -107,7 +108,7 @@ $(FIRMWARE_CPPF_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "Fingerprint Firmware link: $@"
 	@mkdir -p $(dir $@)
 	@rm -rf $@
-	$(hide) ln -sf /firmware/image/$(notdir $@) $@
+	$(hide) ln -sf /vendor/firmware_mnt/image/$(notdir $@) $@
 
 ALL_DEFAULT_INSTALLED_MODULES += $(FIRMWARE_CPPF_SYMLINKS)
 
@@ -119,7 +120,7 @@ $(FIRMWARE_JSLR_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "JSLR firmware link: $@"
 	@mkdir -p $(dir $@)
 	@rm -rf $@
-	$(hide) ln -sf /firmware/image/$(notdir $@) $@
+	$(hide) ln -sf /vendor/firmware_mnt/image/$(notdir $@) $@
 
 ALL_DEFAULT_INSTALLED_MODULES += $(FIRMWARE_JSLR_SYMLINKS)
 
@@ -130,7 +131,7 @@ $(MBA_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "MBA firmware link: $@"
 	@mkdir -p $(dir $@)
 	@rm -rf $@
-	$(hide) ln -sf /firmware/image/$(notdir $@) $@
+	$(hide) ln -sf /vendor/firmware_mnt/image/$(notdir $@) $@
 
 ALL_DEFAULT_INSTALLED_MODULES += $(MBA_SYMLINKS)
 
@@ -141,7 +142,7 @@ $(QDSP6M_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "QDSP6M firmware link: $@"
 	@mkdir -p $(dir $@)
 	@rm -rf $@
-	$(hide) ln -sf /firmware/image/$(notdir $@) $@
+	$(hide) ln -sf /vendor/firmware_mnt/image/$(notdir $@) $@
 
 ALL_DEFAULT_INSTALLED_MODULES += $(QDSP6M_SYMLINKS)
 
@@ -153,7 +154,7 @@ $(FIRMWARE_VENUS_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "Venus firmware link: $@"
 	@mkdir -p $(dir $@)
 	@rm -rf $@
-	$(hide) ln -sf /firmware/image/$(notdir $@) $@
+	$(hide) ln -sf /vendor/firmware_mnt/image/$(notdir $@) $@
 
 ALL_DEFAULT_INSTALLED_MODULES += $(FIRMWARE_VENUS_SYMLINKS)
 
@@ -166,7 +167,7 @@ $(FIRMWARE_WCNSS_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "WCNSS Firmware link: $@"
 	@mkdir -p $(dir $@)
 	@rm -rf $@
-	$(hide) ln -sf /firmware/image/$(notdir $@) $@
+	$(hide) ln -sf /vendor/firmware_mnt/image/$(notdir $@) $@
 
 ALL_DEFAULT_INSTALLED_MODULES += $(FIRMWARE_WCNSS_SYMLINKS)
 
@@ -179,7 +180,7 @@ $(FIRMWARE_WIDEVINE_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "Widevine Firmware link: $@"
 	@mkdir -p $(dir $@)
 	@rm -rf $@
-	$(hide) ln -sf /firmware/image/$(notdir $@) $@
+	$(hide) ln -sf /vendor/firmware_mnt/image/$(notdir $@) $@
 
 ALL_DEFAULT_INSTALLED_MODULES += $(FIRMWARE_WIDEVINE_SYMLINKS)
 
@@ -230,15 +231,6 @@ $(IMS_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	$(hide) ln -sf /vendor/lib64/$(notdir $@) $@
 
 ALL_DEFAULT_INSTALLED_MODULES += $(IMS_SYMLINKS)
-
-NUKE_NOTEPAD := $(TARGET_OUT)/app/Notepadv3Solution
-$(NUKE_NOTEPAD): $(LOCAL_INSTALLED_MODULE)
-	@echo "Removing: $@"
-	@rm -rf $@
-
-ALL_DEFAULT_INSTALLED_MODULES += $(NUKE_NOTEPAD)
-
-include $(call all-makefiles-under,$(LOCAL_PATH))
 
 MODS_LIBS := libmodhw.so libvibratorhw.so
 MODS_SYMLINKS := $(addprefix $(TARGET_OUT)/priv-app/ModFmwkProxyService/lib/arm64/,$(notdir $(MODS_LIBS)))
