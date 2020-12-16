@@ -12,7 +12,6 @@ allow init system_data_file:file lock;
 allow init audio_device:chr_file { write ioctl };
 allow init input_device:chr_file rw_file_perms;
 allow init sensors_device:chr_file { write ioctl };
-allow init tee_device:chr_file { write ioctl };
 
 allow init servicemanager:binder { transfer call };
 allow init system_server:binder { transfer call };
@@ -49,9 +48,6 @@ allow init self:netlink_route_socket { bind create getopt nlmsg_read read setopt
 
 allow init self:capability2 { block_suspend };
 
-allow init hal_sensors_hwservice:hwservice_manager find;
-
-allow init { domain -lmkd -crash_dump }:process noatsecure;
 
 allow init hal_perf_hwservice:hwservice_manager find;
 allow init hidl_base_hwservice:hwservice_manager add;

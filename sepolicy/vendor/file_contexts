@@ -2,7 +2,6 @@
 /vendor/etc/audio_policy_configuration.xml               u:object_r:vendor_configs_file:s0
 
 # ADSP
-/sys/kernel/aov(/.*)?                                    u:object_r:sysfs_adsp:s0
 /data/adspd(/.*)?                                        u:object_r:adspd_data_file:s0
 
 # AMPS
@@ -58,7 +57,6 @@
 /persist/captouch_(.*)?                                  u:object_r:persist_antcap_file:s0
 /persist/telephony(/.*)?                                 u:object_r:pds_telephony_file:s0
 /persist/public/telephony(/.*)?                          u:object_r:pds_telephony_file:s0
-/persist/public/omadm(/.*)?                              u:object_r:pds_omadm_file:s0
 /persist/factory/audio(/.*)?                             u:object_r:persist_audio_file:s0
 /persist/\.bt_nv\.bin                                    u:object_r:bluetooth_data_file:s0
 
@@ -76,9 +74,6 @@
 /sys/module/qpnp_bms(/.*)?                               u:object_r:sysfs_batt:s0
 /sys/module/cnss_pci(/.*)?                               u:object_r:sysfs_cnss:s0
 
-/sys/devices/iio_sysfs_trigger(/.*)?                     u:object_r:sysfs_sensors:s0
-/sys/devices/virtual/stm401/stm401_ms(/.*)?              u:object_r:sysfs_sensors:s0
-/sys/devices/virtual/stm401/stm401_as(/.*)?              u:object_r:sysfs_sensors:s0
 
 /sys/devices/platform/msm_ssbi.0/pm8921-core/pm8921-charger(/.*)? u:object_r:sysfs_batt:s0
 
@@ -114,7 +109,6 @@
 /dev/block/bootdevice/by-name/utags                      u:object_r:utags_block_device:s0
 
 # RIL
-/data/misc/netmgr(/.*)?                                  u:object_r:netmgr_data_file:s0
 
 # Sensors
 /dev/laser                                               u:object_r:laser_device:s0
