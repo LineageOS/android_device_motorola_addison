@@ -110,8 +110,11 @@ vendor/lib/motorola.hardware.camera.device@1.0.so
 vendor/lib/libmot_lux_standardization.so
 vendor/lib/lib_mot_app6_metadata.so
 vendor/lib/lib_mot_led_calibration.so
-vendor/lib/libmot_gpu_mapper.so
 vendor/lib/libmot_afd.so
+
+#Camera from deen_sprout 10 QPKS30.54-22-14
+vendor/lib/libmot_gpu_mapper.so
+
 
 #Camera from Albus OPSS27.76-12
 vendor/lib/libchromaflash.so
