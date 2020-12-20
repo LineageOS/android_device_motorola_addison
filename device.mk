@@ -134,6 +134,10 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/camera/mot_ov5695_ofilm_chromatix.xml:$(TARGET_COPY_OUT_VENDOR)/etc/camera/mot_ov5695_ofilm_chromatix.xml \
     $(LOCAL_PATH)/configs/camera/com.motorola.camera/always_aware_ocr.json:$(TARGET_COPY_OUT_VENDOR)/etc/motorola/com.motorola.camera/always_aware_ocr.json
 
+# CNE
+PRODUCT_PACKAGES += \
+    libcnefeatureconfig
+
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/privapp-permissions-albus.xml:system/etc/permissions/privapp-permissions-albus.xml 
     
@@ -244,6 +248,11 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/idc/uinput-fpc.idc:$(TARGET_COPY_OUT_VENDOR)/usr/idc/uinput-fpc.idc
 
+# IMS
+PRODUCT_PACKAGES += \
+    ims-ext-common \
+    ims_ext_common.xml
+
 # Lights
 PRODUCT_PACKAGES += \
     android.hardware.light@2.0-impl \
@@ -299,19 +308,19 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/libnfc-nci.conf:$(TARGET_COPY_OUT_VENDOR)/etc/libnfc-nci.conf \
     $(LOCAL_PATH)/configs/libnfc-nxp.conf:$(TARGET_COPY_OUT_VENDOR)/etc/libnfc-nxp.conf
 
+# Net
+PRODUCT_PACKAGES += \
+    android.system.net.netd@1.0 \
+    libandroid_net \
+    libnl \
+    netutils-wrapper-1.0
+    
 # ModService
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/whitelist_modservice.xml:system/etc/sysconfig/whitelist_modservice.xml
 
 PRODUCT_PACKAGES += \
     CarrierConfig
-
-# Netutils
-PRODUCT_PACKAGES += \
-    android.system.net.netd@1.0 \
-    netutils-wrapper-1.0 \
-    libandroid_net \
-    libandroid_net_32
 
 # OMX
 PRODUCT_PACKAGES += \
@@ -329,6 +338,12 @@ PRODUCT_PACKAGES += \
 # QMI
 PRODUCT_PACKAGES += \
     libjson
+
+# QTI
+PRODUCT_PACKAGES += \
+    libqti_vndfwk_detect \
+    libvndfwk_detect_jni.qti \
+    libvndfwk_detect_jni.qti.vendor
 
 # Qualcomm
 PRODUCT_COPY_FILES += \
@@ -357,29 +372,24 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
      $(LOCAL_PATH)/rootdir/etc/ueventd.qcom.rc:$(TARGET_COPY_OUT_VENDOR)/ueventd.rc
 
-# RCS
-PRODUCT_PACKAGES += \
-    rcs_service_aidl \
-    rcs_service_aidl.xml \
-    rcs_service_api \
-    rcs_service_api.xml
-
 # Powerhint configuration file
 PRODUCT_COPY_FILES += \
      $(LOCAL_PATH)/configs/powerhint.xml:system/etc/powerhint.xml \
 
-#RIL
+# RCS
 PRODUCT_PACKAGES += \
-    android.hardware.radio@1.2 \
-    android.hardware.radio.config@1.0 \
-    android.hardware.secure_element@1.0 \
-    librmnetctl \
-    libcnefeatureconfig \
-    libxml2 \
-    telephony-ext
+    com.android.ims.rcsmanager \
+    PresencePolling \
+    RcsService
 
-PRODUCT_BOOT_JARS += \
-    telephony-ext
+# RIL
+PRODUCT_PACKAGES += \
+    librmnetctl \
+    libxml2 \
+    qti-telephony-hidl-wrapper \
+    qti_telephony_hidl_wrapper.xml \
+    qti-telephony-utils \
+    qti_telephony_utils.xml
 
 # Seccomp policy
 PRODUCT_COPY_FILES += \
@@ -398,12 +408,18 @@ PRODUCT_PACKAGES += \
     libsensorndkbridge
 
 # Soong
-PRODUCT_SOONG_NAMESPACES += \
-    $(LOCAL_PATH)
+PRODUCT_SOONG_NAMESPACES += $(LOCAL_PATH)
 
 # Thermal
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/thermal-engine-albus.conf:$(TARGET_COPY_OUT_VENDOR)/etc/thermal-engine.conf
+
+# Telephony
+PRODUCT_PACKAGES += \
+    telephony-ext
+
+PRODUCT_BOOT_JARS += \
+    telephony-ext
 
 # TextClassifier smart selection model files
 PRODUCT_PACKAGES += \
@@ -425,8 +441,7 @@ PRODUCT_PACKAGES += \
 
 # Shims
 PRODUCT_PACKAGES += \
-    libqsap_shim \
-    libgnss_shim \
+    libqsapshim \
     libjustshoot_shim
 
 #Thermal
