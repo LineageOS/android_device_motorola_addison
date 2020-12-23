@@ -1,15 +1,19 @@
-# ADSP
-vendor/bin/adsprpcd|edaaaa249ab22de6fba8bf07d677d060a143218a
-vendor/lib/libadsp_default_listener.so
-vendor/lib/libadsp_hvx_callback_skel.so
-vendor/lib/libadsp_hvx_stub.so
+# ADSP - from deen_sprout - QPKS30.54-22-11
+vendor/bin/adsprpcd
+vendor/lib/libadspd.so
 vendor/lib/libadsprpc.so
+vendor/lib/libadsp_default_listener.so
 vendor/lib/libfastcvadsp_stub.so
 vendor/lib/libfastcvopt.so
-vendor/lib64/libadsp_default_listener.so|686134d7c74a39eb26bc80c4598e61596e9e0765
-vendor/lib64/libadsprpc.so|e09e81f0974895b51cf0cf5be79f70856982f15b
-vendor/lib64/libfastcvadsp_stub.so|d28fe888b94579428d368f3adbadc59febc280b0
-vendor/lib64/libfastcvopt.so|b580d51f754a66592f99470a1e5a792f135c34d3
+vendor/lib/libmdsprpc.so
+vendor/lib/libsdsprpc.so
+vendor/lib64/libadspd.so
+vendor/lib64/libadsprpc.so
+vendor/lib64/libadsp_default_listener.so
+vendor/lib64/libfastcvadsp_stub.so
+vendor/lib64/libfastcvopt.so
+vendor/lib64/libmdsprpc.so
+vendor/lib64/libsdsprpc.so
 
 # ADSP modules - from deen_sprout - QPKS30.54-22-11
 vendor/lib/rfsa/adsp/libFastRPC_AUE_Forward_skel.so
