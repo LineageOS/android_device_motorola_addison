@@ -214,7 +214,6 @@ BOARD_ROOT_EXTRA_SYMLINKS := \
     /mnt/vendor/persist:/persist
 
 # Power
-TARGET_PROVIDES_POWERHAL := true
 TARGET_HAS_NO_WLAN_STATS := true
 TARGET_USES_INTERACTION_BOOST := true
 
@@ -239,9 +238,6 @@ BOARD_PLAT_PRIVATE_SEPOLICY_DIR += $(DEVICE_PATH)/sepolicy/private
 
 # Timeservice
 BOARD_USES_QC_TIME_SERVICES := true
-
-# Thermal
-USE_DEVICE_SPECIFIC_THERMAL := true
 
 # Treble
 PRODUCT_FULL_TREBLE_OVERRIDE := true
