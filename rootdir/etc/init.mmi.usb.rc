@@ -29,9 +29,11 @@ on init
     write /sys/class/android_usb/android0/f_rndis/wceis 1
 
 on boot
-    write /sys/class/android_usb/android0/iSerial ${ro.serialno}
     write /sys/class/android_usb/android0/iManufacturer ${ro.product.manufacturer}
     write /sys/class/android_usb/android0/iProduct ${ro.product.model}
+	write /sys/class/android_usb/android0/iSerial ${ro.serialno}
+    #create motorola usblan driver instance for factory
+    mkdir /config/usb_gadget/g1/functions/usbnet.usb0
     mkdir /dev/bus 0755 root root
     mkdir /dev/bus/usb 0755 root root
     chown system system /sys/class/android_usb/android0/secure
@@ -42,11 +44,13 @@ on boot
     write /sys/class/android_usb/android0/f_rndis_qc/max_pkt_per_xfer 1
     write /sys/module/g_android/parameters/mtp_rx_req_len 524288
     write /sys/module/g_android/parameters/mtp_tx_req_len 524288
+	write /sys/class/android_usb/f_mass_storage/lun/nofua 1
 
     chown root system /sys/module/uvcvideo/parameters/quirks
     chmod 0660 /sys/module/uvcvideo/parameters/quirks
 
 on charger
+    write /sys/class/android_usb/android0/iSerial ${ro.serialno}
     write /sys/class/android_usb/android0/enable 0
     write /sys/class/android_usb/android0/idVendor 22B8
     write /sys/class/android_usb/android0/idProduct 2EB7
@@ -59,9 +63,38 @@ on fs
     mount functionfs adb /dev/usb-ffs/adb uid=2000,gid=2000
     write /sys/class/android_usb/android0/f_ffs/aliases adb
 
+on property:ro.persistent_properties.ready=true && property:vold.decrypt=trigger_load_persist_props
+    setprop vendor.usb.config  ${sys.usb.config}
+    setprop persist.vendor.mot.usb.config  ${persist.sys.usb.config:-" "}
+    setprop persist.vendor.usb.config " "
+
+on property:sys.boot_completed=*
+    setprop vendor.boot_completed ${sys.boot_completed}
+
+on property:persist.vendor.usb.config=*
+    setprop persist.sys.usb.config ${persist.vendor.usb.config}
+
+on property:vendor.usb.config=*
+    setprop sys.usb.config ${vendor.usb.config}
+
+on property:vendor.usb.controller=*
+    setprop sys.usb.controller ${vendor.usb.controller}
+
+on property:persist.vendor.usb.qcom.config=*
+    setprop persist.sys.usb.qcom.config ${persist.vendor.usb.qcom.config}
+    setprop persist.sys.usb.qcom.func ${persist.vendor.usb.qcom.config}
+
+on property:persist.vendor.usb.bp-tools.config=*
+    setprop persist.sys.usb.bp-tools.config ${persist.vendor.usb.bp-tools.config}
+    setprop persist.sys.usb.bp-tools.func ${persist.vendor.usb.bp-tools.config}
+
+on property:persist.vendor.usb.mot-factory.config=*
+    setprop persist.sys.usb.mot-factory.config ${persist.vendor.usb.mot-factory.config}
+    setprop persist.sys.usb.mot-factory.func ${persist.vendor.usb.mot-factory.config}
+    
 #  Disable USB-SS in bp-tools
 on property:ro.bootmode=bp-tools
-   write /sys/module/fusb302/parameters/disable_ss_switch 1
+   write /sys/module/dwc3_msm/parameters/disable_ss_switch 1
 
 # USB compositions
 # QC compositions for msm8953
@@ -365,6 +398,21 @@ on property:sys.usb.config=mtp
     write /sys/class/android_usb/android0/enable 1
     setprop sys.usb.state ${sys.usb.config}
 
+on property:sys.usb.config=mtp,cdrom,adb
+    stop adbd
+    write /sys/class/android_usb/android0/f_mass_storage/lun/file ""
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/bDeviceClass 0
+    write /sys/class/android_usb/android0/bDeviceSubClass 0
+    write /sys/class/android_usb/android0/bDeviceProtocol 0
+    write /sys/class/android_usb/android0/idVendor 22b8
+    write /sys/class/android_usb/android0/idProduct ${ro.usb.mtp_cdrom}
+    write /sys/class/android_usb/android0/f_mass_storage/cdrom 1
+    write /sys/class/android_usb/android0/functions mtp,mass_storage
+    write /sys/class/android_usb/android0/enable 1
+    write /sys/class/android_usb/android0/f_mass_storage/lun/file "/system/etc/cdrom"
+    setprop sys.usb.state ${sys.usb.config}
+
 on property:sys.usb.config=mtp,cdrom
     stop adbd
     write /sys/class/android_usb/android0/f_mass_storage/lun/file ""
@@ -436,11 +484,3 @@ on property:sys.usb.config=midi,adb
     write /sys/class/android_usb/android0/enable 1
     start adbd
     setprop sys.usb.state ${sys.usb.config}
-
-# Set RPS Mask for USB tethering
-on property:sys.usb.tethering=true
-    write /sys/class/net/rndis0/queues/rx-0/rps_cpus ${sys.usb.rps_mask}
-    write /sys/class/net/rmnet_data0/queues/rx-0/rps_cpus ${sys.usb.rps_mask}
-
-on property:sys.usb.tethering=false
-    write /sys/class/net/rmnet_data0/queues/rx-0/rps_cpus ${sys.rmnet_vnd.rps_mask}
