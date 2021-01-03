@@ -355,9 +355,7 @@ PRODUCT_COPY_FILES += \
 # Ramdisk
 PRODUCT_PACKAGES += \
     init.qcom.fm.sh \
-    wlan_carrier_bin.sh
-
-PRODUCT_PACKAGES += \
+    fstab_ramdisk.qcom \
     fstab.qcom \
     init.mmi.boot.sh \
     init.mmi.laser.sh \
