@@ -6,7 +6,7 @@
   },
   {
     "remote": "github",
-    "repository": "marcost2/proprietary_vendor_motorola-1",
+    "repository": "marcost2/proprietary_vendor_motorola",
     "target_path": "vendor/motorola",
   },
   {
@@ -17,6 +17,11 @@
     "remote": "github",
     "repository": "LineageOS/android_external_bson",
     "target_path": "external/bson"
+  },
+  {
+    "remote": "github",
+    "repository": "LineageOS/android_hardware_motorola",
+    "target_path": "hardware/motorola"
   }
 ]
 
