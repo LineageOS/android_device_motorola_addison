@@ -164,6 +164,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
     debug.qc.hardware=true \
     persist.timed.enable=true
 
+# Perf
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.vendor.extension_library=libqti-perfd-client.so
+    
 # RIL
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.vendor.data.iwlan.enable=true \
@@ -256,12 +260,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.usb.bpt_adb=2ee6 \
     ro.usb.bpteth=2ee7 \
     ro.usb.bpteth_adb=2ee8
-
-# Vendor Extension
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.vendor.extension_library=libqti-perfd-client.so \
-    ro.vendor.at_library=libqti-at.so \
-    ro.vendor.gt_library=libqti-gt.so
 
 # Fast App Launch
 PRODUCT_PROPERTY_OVERRIDES += \

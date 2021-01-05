@@ -867,17 +867,21 @@ vendor/firmware/a540_gpmu.fw2
 vendor/firmware/a630_gmu.bin
 vendor/firmware/a630_sqe.fw
 
-# I-O Prefetcher from PPS29.133-30
-lib/vendor.qti.hardware.iop@1.0.so
-lib/vendor.qti.hardware.iop@2.0.so
-lib64/vendor.qti.hardware.iop@1.0.so
-lib64/vendor.qti.hardware.iop@2.0.so
+# I-O Prefetcher from from deen_sprout QPKS30.54-22-14
+lib/libqti-iopd-client_system.so
+lib/libqti-util_system.so
+lib64/libqti-iopd-client_system.so
+lib64/libqti-util_system.so
+product/lib/vendor.qti.hardware.iop@1.0.so
+product/lib/vendor.qti.hardware.iop@2.0.so
+product/lib64/vendor.qti.hardware.iop@1.0.so
+product/lib64/vendor.qti.hardware.iop@2.0.so
 vendor/lib/hw/vendor.qti.hardware.iop@2.0-impl.so
 vendor/lib/libqti-iopd-client.so
 vendor/lib/vendor.qti.hardware.iop@1.0.so
 vendor/lib/vendor.qti.hardware.iop@2.0.so
-vendor/lib64/libqti-iopd-client.so
 vendor/lib64/hw/vendor.qti.hardware.iop@2.0-impl.so
+vendor/lib64/libqti-iopd-client.so
 vendor/lib64/vendor.qti.hardware.iop@1.0.so
 vendor/lib64/vendor.qti.hardware.iop@2.0.so
 
@@ -998,36 +1002,41 @@ vendor/firmware/libpn548ad_fw.so
 vendor/bin/charge_only_mode|9c6cb9c1b27fd30eb236c13b9ec08a15febd32c0
 
 # Perf from Deen PPS29.133-30
-lib/libqti-perfd-client_system.so
 lib/libqti_performance.so
-lib/libqti-util_system.so
-lib/vendor.qti.hardware.perf@1.0.so
-lib64/libqti-perfd-client_system.so
+lib/libqti-perfd-client_system.so
 lib64/libqti_performance.so
-lib64/libqti-util_system.so
-lib64/vendor.qti.hardware.perf@1.0.so
+lib64/libqti-perfd-client_system.so
+product/lib/vendor.qti.hardware.perf@1.0.so
+product/lib/vendor.qti.hardware.perf@2.0.so
+product/lib64/vendor.qti.hardware.perf@1.0.so
+product/lib64/vendor.qti.hardware.perf@2.0.so
 vendor/bin/energy-awareness
-vendor/bin/hw/vendor.qti.hardware.perf@1.0-service
 vendor/bin/msm_irqbalance
-vendor/etc/init/vendor.qti.hardware.perf@1.0-service.rc
+vendor/bin/hw/vendor.qti.hardware.perf@2.0-service
+vendor/etc/init/vendor.qti.hardware.perf@2.0-service.rc
 vendor/etc/msm_irqbalance.conf
 vendor/etc/msm_irqbalance_little_big.conf
-vendor/etc/perf/perfboostsconfig.xml
 vendor/etc/perf/commonresourceconfigs.xml
+vendor/etc/perf/perfboostsconfig.xml
+vendor/etc/perf/perfconfigstore.xml
 vendor/etc/perf/targetconfig.xml
-vendor/etc/perf/targetconfig.xml
+vendor/etc/perf/targetresourceconfigs.xml
+vendor/lib/libperfconfig.so
 vendor/lib/libperfgluelayer.so
 vendor/lib/libqti-perfd-client.so
 vendor/lib/libqti-perfd.so
 vendor/lib/libqti-util.so
 vendor/lib/libqti-utils.so
 vendor/lib/vendor.qti.hardware.perf@1.0.so
+vendor/lib/vendor.qti.hardware.perf@2.0.so
+vendor/lib64/libperfconfig.so
 vendor/lib64/libperfgluelayer.so
 vendor/lib64/libqti-perfd-client.so
 vendor/lib64/libqti-perfd.so
 vendor/lib64/libqti-util.so
 vendor/lib64/libqti-utils.so
 vendor/lib64/vendor.qti.hardware.perf@1.0.so
+vendor/lib64/vendor.qti.hardware.perf@2.0.so
 
 # Peripheral manager
 vendor/bin/pm-proxy|1d74d4cbffd87d28117f6524df9d8b34d78c9469
