@@ -1345,8 +1345,7 @@ vendor/lib64/libthermalioctl.so|4c1f9451733bc0a006ebb55ba2e36bf9e78f22bf
 -vendor/lib64/libtime_genoff.so|7683a85cae9f17cd535e8960fceda1d6831074a0
 vendor/bin/time_daemon|266da8c03b97e17656abc5bd7d67062199c73e43
 
-# Wi-Fi
-vendor/bin/cnss-daemon|90f31c8a159a1d8836730196314e6a2b6f32149e
+# Wi-Fi - from Albus OPS27.76-12
 vendor/firmware/wlan/prima/WCNSS_qcom_wlan_nv.bin
 vendor/firmware/wlan/prima/WCNSS_qcom_wlan_nv_Argentina.bin
 vendor/firmware/wlan/prima/WCNSS_qcom_wlan_nv_Brazil.bin
