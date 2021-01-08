@@ -25,7 +25,6 @@ allow cameraserver media_rw_data_file:file { create read write open };
 allow cameraserver cameraserver:process { execmem };
 
 allow cameraserver self:netlink_kobject_uevent_socket { read bind create setopt };
-allow cameraserver default_android_service:service_manager find;
 allow cameraserver rootfs:lnk_file getattr;
 allow cameraserver init:unix_dgram_socket { sendto};
 
