@@ -406,16 +406,16 @@ case "$target" in
              "293" | "304" | "338" | "351" | "349" | "350" )
                   case "$hw_platform" in
                        "Surf")
-                                    setprop qemu.hw.mainkeys 0
+                                    setprop qemu.hw.mainkeys 1
                                     ;;
                        "MTP")
-                                    setprop qemu.hw.mainkeys 0
+                                    setprop qemu.hw.mainkeys 1
                                     ;;
                        "RCM")
-                                    setprop qemu.hw.mainkeys 0
+                                    setprop qemu.hw.mainkeys 1
                                     ;;
                        "QRD")
-                                    setprop qemu.hw.mainkeys 0
+                                    setprop qemu.hw.mainkeys 1
                                     ;;
                   esac
                   ;;
