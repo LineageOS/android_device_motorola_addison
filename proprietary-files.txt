@@ -1345,12 +1345,13 @@ vendor/lib64/libthermalioctl.so|4c1f9451733bc0a006ebb55ba2e36bf9e78f22bf
 -vendor/lib64/libtime_genoff.so|7683a85cae9f17cd535e8960fceda1d6831074a0
 vendor/bin/time_daemon|266da8c03b97e17656abc5bd7d67062199c73e43
 
-# Wi-Fi - from Albus OPS27.76-12
-vendor/firmware/wlan/prima/WCNSS_qcom_wlan_nv.bin
-vendor/firmware/wlan/prima/WCNSS_qcom_wlan_nv_Argentina.bin
-vendor/firmware/wlan/prima/WCNSS_qcom_wlan_nv_Brazil.bin
-vendor/firmware/wlan/prima/WCNSS_qcom_wlan_nv_India.bin
-vendor/firmware/wlan/prima/WCNSS_wlan_dictionary.dat
+# Wi-Fi - Firmware - from deen_sprout QPKS30.54-22-11
+vendor/etc/wifi/WCNSS_qcom_wlan_nv.bin
+vendor/etc/wifi/WCNSS_qcom_wlan_nv_Argentina.bin
+vendor/etc/wifi/WCNSS_qcom_wlan_nv_Brazil.bin
+vendor/etc/wifi/WCNSS_qcom_wlan_nv_epa.bin
+vendor/etc/wifi/WCNSS_qcom_wlan_nv_India.bin
+vendor/etc/wifi/WCNSS_wlan_dictionary.dat
 
 # Widevine - from deen_sprout - PPKS29.68-16-33-3
 vendor/bin/hw/android.hardware.drm@1.1-service.widevine
