@@ -157,7 +157,7 @@ LOC_HIDL_VERSION := 3.0
 USE_DEVICE_SPECIFIC_GPS := true
 
 #Hidl
-DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/configs/manifest.xml
+DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/manifest.xml
 DEVICE_MATRIX_FILE := $(DEVICE_PATH)/compatibility_matrix.xml
 DEVICE_FRAMEWORK_MANIFEST_FILE := $(DEVICE_PATH)/framework_manifest.xml
 TARGET_FS_CONFIG_GEN += \
@@ -258,9 +258,9 @@ WIFI_DRIVER_FW_PATH_AP           := "ap"
 WIFI_DRIVER_FW_PATH_STA          := "sta"
 WIFI_DRIVER_FW_PATH_P2P          := "p2p"
 WPA_SUPPLICANT_VERSION           := VER_0_8_X
+TARGET_DISABLE_WCNSS_CONFIG_COPY := true
 PRODUCT_VENDOR_MOVE_ENABLED := true
 
 # Shim
 TARGET_LD_SHIM_LIBS := \
-    /vendor/lib64/vendor.qti.gnss@1.0_vendor.so|libgnss_shim.so \
     /vendor/lib/libjustshoot.so|libjustshoot_shim.so 
