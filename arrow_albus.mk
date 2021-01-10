@@ -24,11 +24,8 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_n_mr1.mk)
 
-# Enable updating of APEXes
-$(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
-
-# Inherit some common AEX stuff.
-$(call inherit-product, vendor/aosp/common.mk)
+# Inherit some common Arrow stuff.
+$(call inherit-product, vendor/arrow/config/common.mk)
 
 # Boot animation res
 TARGET_BOOT_ANIMATION_RES := 1080
@@ -36,7 +33,7 @@ TARGET_BOOTANIMATION_HALF_RES := true
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := albus
-PRODUCT_NAME := aosp_albus
+PRODUCT_NAME := arrow_albus
 PRODUCT_BRAND := Motorola
 PRODUCT_MODEL := Moto Z2 Play
 PRODUCT_MANUFACTURER := Motorola
@@ -52,6 +49,7 @@ PRODUCT_BUILD_PROP_OVERRIDES += \
     DEVICE_MAINTAINERS="marcost2"
 
 BUILD_FINGERPRINT := "motorola/albus/albus:8.0.0/OPS27.76-12-25/26:user/release-keys"
-TARGER_VENDOR := motorola
+TARGET_VENDOR := motorola
+TARGET_EXCLUDE_LAWNCHAIR := true
     # for specific
 $(call inherit-product, vendor/motorola/albus/albus-vendor.mk)
