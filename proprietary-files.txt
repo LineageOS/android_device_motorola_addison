@@ -74,22 +74,19 @@ vendor/lib/soundfx/libmmieffectswrapper.so
 vendor/lib/libeqservicebridge.so
 vendor/lib/motorola.hardware.audio.eqservice@1.0_vendor.so
 
-# Bluetooth from deen PPS29.133-30
+# Bluetooth
 vendor/bin/hw/android.hardware.bluetooth@1.0-service-qti
-vendor/bin/btnvtool
-vendor/bin/hci_qcomm_init
-vendor/bin/wcnss_filter
+vendor/etc/init/android.hardware.bluetooth@1.0-service-qti.rc
 vendor/lib64/hw/android.hardware.bluetooth@1.0-impl-qti.so
 vendor/lib64/libbt-hidlclient.so
 vendor/lib64/libbtnv.so
-vendor/lib/hw/android.hardware.bluetooth@1.0-impl-qti.so
-vendor/lib/libbtnv.so
-vendor/lib/libbt-hidlclient.so
-vendor/etc/init/android.hardware.bluetooth@1.0-service-qti.rc
 
-# Bluetooth (shared dependencies) from deen PPS29.133-30
+# Bluetooth (shared dependencies)
 vendor/lib64/com.qualcomm.qti.ant@1.0.so
-vendor/lib/com.qualcomm.qti.ant@1.0.so
+
+# Bluetooth Audio
+vendor/lib64/hw/vendor.qti.hardware.bluetooth_sar@1.0-impl.so
+vendor/lib64/vendor.qti.hardware.bluetooth_sar@1.0.so
 
 #Camera from Albus PPS29.133
 vendor/bin/mm-qcamera-daemon
