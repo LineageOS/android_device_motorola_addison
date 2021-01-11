@@ -908,13 +908,14 @@ vendor/lib64/libgcs-ipc.so|5f65e6f89b27a14a18d9807010f4477a77040a84
 vendor/lib64/libgcs-osal.so|d1e680f7f7750cd58551ddd8958e0d01768e5cc4
 vendor/lib64/libgcs.so|fce482d3fd91c63bcccc95ab16e00436e6073f31
 
-# Media
--vendor/lib/libgpustats.so
--vendor/lib64/libgpustats.so|a50ee23f3990405a8be9141108a400d8d22334fe
+# Media - from deen_sprout QPKS30.54-22-14
 vendor/lib/libAlacSwDec.so
 vendor/lib/libApeSwDec.so
 vendor/lib/libFlacSwDec.so
+-vendor/lib/libgpustats.so
 vendor/lib/libI420colorconvert.so
+vendor/lib/libmm-color-convertor.so
+vendor/lib/libmmosal_proprietary.so
 vendor/lib/libOmxAacDec.so
 vendor/lib/libOmxAlacDec.so
 vendor/lib/libOmxAlacDecSw.so
@@ -924,30 +925,28 @@ vendor/lib/libOmxApeDec.so
 vendor/lib/libOmxApeDecSw.so
 vendor/lib/libOmxDsdDec.so
 vendor/lib/libOmxEvrcDec.so
+vendor/lib/libOmxG711Dec.so
 vendor/lib/libOmxQcelp13Dec.so
-vendor/lib/libOmxVpp.so
 vendor/lib/libOmxWmaDec.so
-vendor/lib/libmm-color-convertor.so
-vendor/lib/libvpphvx.so
-vendor/lib/libvpplibrary.so
 vendor/lib/libvqzip.so
-vendor/lib64/libAlacSwDec.so|a691d46500cc28f3dcb1ddbf78c73ea2e32c132c
-vendor/lib64/libApeSwDec.so|e5004265ac8d6184270738ffe28e530882f2ef09
-vendor/lib64/libFlacSwDec.so|195259fa4f89648515bd768784e8835793967a08
-vendor/lib64/libI420colorconvert.so|4ef8e813ef50db3ea01f00a6aa515acc26394da3
-vendor/lib64/libOmxAacDec.so|0f0bf415170c57e3c2f0dc779af980d56a1c8094
-vendor/lib64/libOmxAlacDec.so|ff7e2e687b8802090946d7672733164acd847f6b
-vendor/lib64/libOmxAlacDecSw.so|4a8c2b2e3ce348d5c19ecc554a5be1bf1b44e03a
-vendor/lib64/libOmxAmrDec.so|90200c2876bae245b5f41370b49c822472a6eca7
-vendor/lib64/libOmxAmrwbplusDec.so|586bcc3bca37a4747d27f9a73d207cdcf42eae33
-vendor/lib64/libOmxApeDec.so|939053ac54703fc02eb935228f5922f5b8fa90d6
-vendor/lib64/libOmxApeDecSw.so|bcdcf15874bb75fe55e94e4ddd77ce432642e342
-vendor/lib64/libOmxEvrcDec.so|96deb1fdbf9ec4340965635732a5a22d37d1f504
-vendor/lib64/libOmxQcelp13Dec.so|0a3d33fb9f7bd49d5698bba4bce88eea375e57b0
-vendor/lib64/libOmxWmaDec.so|da5c8b3b59175378859695c68e7bbce9affa7673
-vendor/lib64/libmm-color-convertor.so|1d7ef625b5ad3005630d7ca68b5194073788d523
-vendor/lib64/libvpphvx.so|cf2b46f94a0f51d3168b58e590d3bb7545edcc55
-vendor/lib64/libvpplibrary.so|28225539156e2e9f970419229df3dace4337d17f
+vendor/lib64/libAlacSwDec.so
+vendor/lib64/libApeSwDec.so
+vendor/lib64/libFlacSwDec.so
+-vendor/lib64/libgpustats.so
+vendor/lib64/libI420colorconvert.so
+vendor/lib64/libmm-color-convertor.so
+vendor/lib64/libmmosal_proprietary.so
+vendor/lib64/libOmxAacDec.so
+vendor/lib64/libOmxAlacDec.so
+vendor/lib64/libOmxAlacDecSw.so
+vendor/lib64/libOmxAmrDec.so
+vendor/lib64/libOmxAmrwbplusDec.so
+vendor/lib64/libOmxApeDec.so
+vendor/lib64/libOmxApeDecSw.so
+vendor/lib64/libOmxEvrcDec.so
+vendor/lib64/libOmxG711Dec.so
+vendor/lib64/libOmxQcelp13Dec.so
+vendor/lib64/libOmxWmaDec.so
 
 # MMI
 vendor/lib/libmmi.so

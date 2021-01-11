@@ -133,21 +133,19 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     sys.mod.platformsdkversion=250
 
+# Media
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    media.stagefright.thumbnail.prefer_hw_codecs=true
+
 # OMX
 # Rank OMX SW codecs lower than OMX HW codecs
 PRODUCT_PROPERTY_OVERRIDES += \
     debug.stagefright.omx_default_rank.sw-audio=1 \
     debug.stagefright.omx_default_rank=0
-    
- 
-# Media
+
+# Perf
 PRODUCT_PROPERTY_OVERRIDES += \
-    media.settings.xml=/vendor/etc/media_profiles.xml \
-    media.aac_51_output_enabled=true \
-    vendor.mm.enable.qcom_parser=135715 \
-    vendor.mm.en.sec.smoothstreaming=false \
-    vendor.mm.enable.smoothstreaming=false \
-    vendor.mmp.enable.3g2=true
+    ro.vendor.extension_library=libqti-perfd-client.so
 
 # Qualcomm
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -155,10 +153,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     debug.qc.hardware=true \
     persist.timed.enable=true
 
-# Perf
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.vendor.extension_library=libqti-perfd-client.so
-    
 # RIL
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.vendor.data.iwlan.enable=true \
