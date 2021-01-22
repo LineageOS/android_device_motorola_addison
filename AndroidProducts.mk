@@ -14,4 +14,4 @@
 # limitations under the License.
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/arrow_albus.mk
+    $(LOCAL_DIR)/aicp_albus.mk
