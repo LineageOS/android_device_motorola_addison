@@ -233,7 +233,6 @@ BOARD_USES_QC_TIME_SERVICES := true
 
 # Treble
 PRODUCT_FULL_TREBLE_OVERRIDE := true
-BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 BOARD_VNDK_VERSION := current
 
 # Vendor security patch level
