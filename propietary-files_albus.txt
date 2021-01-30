@@ -545,7 +545,7 @@ system/etc/sysconfig/hiddenapi-whitelist-com.motorola.projectormod.xml|03715b502
 system/lib64/libmodhw.so|7a5c97253905bb90d826abefb2980e14e87f9f25
 system/lib64/libvibratorhw.so|c358640a3b091678746d6ab2e4eb47cb6684ef44
 system/lib64/motorola.hardware.vibrator@1.0.so|a9d40f79af80341abda2ca2ca49928d3accac321
--system/priv-app/ModService/ModService.apk;PRESIGNED|8c6e5a3a6eeb89fcaf881db294f60f1ace676082
+-system/priv-app/ModService/ModService.apk;|a5b97c14a102bcf06988e9044013829c89636161
 -system/priv-app/ProjectorApp/ProjectorApp.apk;PRESIGNED|280c58c91a7676d610405c633f4ddd781eb55039
 vendor/bin/mods_camd|b711e12e4afdeaac580806f95d04a12883dd87ec
 vendor/lib/libmodmanager.so|f56eaad6f8b559e5ffd6fc7cb8b68e35168ba49a
