@@ -45,20 +45,21 @@ vendor/etc/acdbdata/Headset_cal.acdb
 vendor/etc/acdbdata/Speaker_cal.acdb
 
 # Audio (Prebuilt Audio HAL) from Albus PPS29.133
-vendor/lib/hw/audio.primary.msm8998.so
+vendor/lib/hw/audio.primary.msm8953.so
 vendor/lib/libmotaudioutils.so
 vendor/lib/libtinyalsa.so
 vendor/lib/libtinycompress.so
 vendor/lib/libtinycompress_vendor.so
 vendor/lib/libunshorten.so
 
-# Audio from tissot PKQ1.180917
+# Audio from deen_sprout QPKS30.54-22-14
 vendor/lib/libacdb-fts.so
 vendor/lib/libacdbloader.so
 vendor/lib/libacdbrtac.so
 vendor/lib/libadiertac.so
 vendor/lib/libaudcal.so
 vendor/lib/libaudioalsa.so
+vendor/lib/libaudioparsers.so
 vendor/lib/libqtigef.so
 vendor/lib64/libacdb-fts.so
 vendor/lib64/libacdbloader.so
@@ -66,7 +67,14 @@ vendor/lib64/libacdbrtac.so
 vendor/lib64/libadiertac.so
 vendor/lib64/libaudcal.so
 vendor/lib64/libaudioalsa.so
+vendor/lib64/libaudioparsers.so
 vendor/lib64/libqtigef.so
+
+# Audio - Marley from Albus PPS29.133
+vendor/firmware/marley-dsp1-ultrasound.wmfw
+vendor/firmware/marley-dsp2-aov-frontend.wmfw
+vendor/firmware/marley-dsp2-aov-vrgain.bin
+vendor/firmware/marley-dsp3-aov-control.wmfw
 
 # Audio - Soundfx from Albus PPS29.133
 vendor/lib/soundfx/libspeakerbundle.so
