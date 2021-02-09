@@ -79,9 +79,7 @@ PRODUCT_PACKAGES += \
     vendor.qti.hardware.camera.device@1.0 \
     vendor.qti.hardware.camera.device@1.0_vendor \
     camera.device@3.2-impl \
-    libcamera_metadata_helper \
     libbson.vendor \
-    libxml2 \
     Camera2 \
     Snap \
     libwui 

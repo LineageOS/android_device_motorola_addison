@@ -112,8 +112,8 @@ vendor/lib/libactuator_mot_ak7371_bear.so
 vendor/lib/libactuator_mot_ak7371_mono.so
 vendor/lib/libadvalgcore
 vendor/lib/libarcsoft_beautyshot.so
-vendor/lib/libcamerabgprocservice.so
-vendor/lib/libcamerabgproc-jni.so
+vendor/lib/libcapiv2svacnn.so
+vendor/lib/libcapiv2vop.so
 vendor/lib/libcdsprpc.so
 vendor/lib/libflash_aw3641.so
 vendor/lib/libflash_pmic.so
@@ -122,32 +122,36 @@ vendor/lib/libflash_wd3100.so
 vendor/lib/libfamily_photo.so
 vendor/lib/libgralloc1.so
 vendor/lib/libjpegdhw.so
-vendor/lib/libjscore.so
+vendor/lib/libjscore.so|3946cd76d19cc9d8654b06d04d61d20372ee62d8
 vendor/lib/libjpegdmahw.so
 vendor/lib/libjpegehw.so
 vendor/lib/libjustshoot.so
-vendor/lib/libmbs.so
 vendor/lib/libmmjpeg.so
 vendor/lib/libmmjpeg_interface.so
 vendor/lib/libmmqjpeg_codec.so
 vendor/lib/libmmqjpegdma.so
+vendor/lib/libmpbase.so
 vendor/lib/libmorpho_image_stabilizer4.so
+vendor/lib/lib_mot_led_calibration.so
+vendor/lib/libmotocalibration.so
+vendor/lib/libmot_afd.so
 vendor/lib/libqomx_core.so
 vendor/lib/libqomx_jpegdec.so
 vendor/lib/libqomx_jpegenc.so
 vendor/lib/libqomx_jpegenc_pipe.so
 vendor/lib/libremosaic_daemon.so
+vendor/lib/libvideoutils.so
 vendor/lib/libzaf_algs.so
-vendor/lib/libzaf_core.so
-vendor/lib/libmotocalibration.so
-vendor/lib/lib_motsensorlistener.so
-vendor/lib/libmot-qc-fd-offline.so
-vendor/lib/lib_mottof.so
-vendor/lib/motorola.hardware.camera.device@1.0.so
-vendor/lib/libmot_lux_standardization.so
-vendor/lib/lib_mot_app6_metadata.so
-vendor/lib/lib_mot_led_calibration.so
-vendor/lib/libmot_afd.so
+vendor/lib/libzaf_core.so|c1523fdadb1ae5b5eb096e1a14ec952e28fdf68c
+vendor/lib/libzxingcpp.so
+lib/lib_motsensorlistener.so:vendor/lib/lib_motsensorlistener.so
+lib/libmot-qc-fd-offline.so:vendor/lib/libmot-qc-fd-offline.so
+lib/lib_mottof.so:vendor/lib/lib_mottof.so|a7908fbec2a0b6727250cd430d00b35324969e5a
+lib/motorola.hardware.camera.device@1.0.so:vendor/lib/motorola.hardware.camera.device@1.0.so
+lib/libmot_lux_standardization.so:vendor/lib/libmot_lux_standardization.so
+lib/lib_mot_app6_metadata.so:vendor/lib/lib_mot_app6_metadata.so
+lib/libcamerabgproc-jni.so:vendor/lib/libcamerabgproc-jni.so
+lib/libcamerabgprocservice.so:vendor/lib/libcamerabgprocservice.so|5b7236592d6a21202473016a6f45e902307efe6d
 
 #Camera from deen_sprout 10 QPKS30.54-22-14
 vendor/lib/libmot_gpu_mapper.so
@@ -157,9 +161,6 @@ vendor/lib/libmot_gpu_mapper.so
 vendor/lib/libchromaflash.so
 vendor/lib/libclearsight.so
 vendor/lib/libhazebuster.so
-vendor/lib/libmmcamera_chromaflash_lib.so
-vendor/lib/libmmcamera_dummyalgo.so
-vendor/lib/libmmcamera_trueportrait_lib.so
 vendor/lib/libtrueportrait.so
 vendor/lib/liboptizoom.so
 vendor/lib/libseemore.so
@@ -180,10 +181,12 @@ vendor/lib/libmmcamera2_mct_shimlayer.so
 vendor/lib/libmmcamera2_pp_buf_mgr.so
 vendor/lib/libmmcamera2_pproc_modules.so
 vendor/lib/libmmcamera2_q3a_core.so
-vendor/lib/libmmcamera2_sensor_modules.so
+vendor/lib/libmmcamera2_sensor_modules.so|ae4c4b38c4206acbc1502a0ec67328bd96cd8512
 vendor/lib/libmmcamera2_stats_algorithm.so
-vendor/lib/libmmcamera2_stats_modules.so | d784c1a7dfe11f740f5bdd4509093850b4fc7553
+vendor/lib/libmmcamera2_stats_modules.so|6192720de2f8d31936abdcaf299d634b994fc932
 vendor/lib/libmmcamera_ar1335.so
+vendor/lib/libmmcamera_chromaflash_lib.so
+vendor/lib/libmmcamera_dummyalgo.so
 vendor/lib/libmmcamera_dbg.so
 vendor/lib/libmmcamera_dcrf_lib.so
 vendor/lib/libmmcamera_dw9763_eeprom.so
@@ -257,7 +260,7 @@ vendor/lib/libmmcamera_paaf_lib.so
 vendor/lib/libmmcamera_pdaf.so
 vendor/lib/libmmcamera_pdafcamif.so
 vendor/lib/libmmcamera_ppbase_module.so
-vendor/lib/libmmcamera_ppeiscore.so
+vendor/lib/libmmcamera_ppeiscore.so|612f2886eda705ef143b01dab5c1cc6ecce5b19d
 vendor/lib/libmmcamera_quadracfa.so
 vendor/lib/libmmcamera_s5k2l7_eeprom.so
 vendor/lib/libmmcamera_s5k3p3.so
@@ -272,10 +275,10 @@ vendor/lib/libmmcamera_tintless_algo.so
 vendor/lib/libmmcamera_tintless_bg_pca_algo.so
 vendor/lib/libmmcamera_trueportrait_lib.so
 vendor/lib/libmmcamera_ubifocus_lib.so
-vendor/lib/libmmcamera_vstab_module.so
+vendor/lib/libmmcamera_vstab_module.so|1aeb209a4e70e073c18a53fbb0c78767af6fd6a5
 
 #Camera - Hacked camera provider
- vendor/lib/camera.device@1.0-impl.so|13a93ca1a2e58e813f32f0c6348f6c1ad7937454 
+vendor/lib/camera.device@1.0-impl.so|13a93ca1a2e58e813f32f0c6348f6c1ad7937454 
 
 
 # Camera - Firmware
@@ -295,10 +298,10 @@ vendor/firmware/cpp_firmware_v1_12_0.fw
 vendor/bin/vl53l1_daemon
 
 #Camera - Postprocessing from Albus PPS29.133
-vendor/lib/libdualcameraddm.so
 vendor/lib/libS5k2l7Pdaf.so
 vendor/lib/libS5k2l7PdafCamif.so
 vendor/lib/libmm-qcamera.so
+lib/libdualcameraddm.so:vendor/lib/libdualcameraddm.so
 
 #Camera - Chromatix from Albus PPS29.133
 vendor/lib/libchromatix_ar1335_common.so
@@ -1007,7 +1010,7 @@ vendor/firmware/libpn548ad_fw.so
 # Offmode charging
 vendor/bin/charge_only_mode|9c6cb9c1b27fd30eb236c13b9ec08a15febd32c0
 
-# Perf from Deen PPS29.133-30
+# Perf from deen_sprout QPKS30.54-22-14
 lib/libqti_performance.so
 lib/libqti-perfd-client_system.so
 lib64/libqti_performance.so

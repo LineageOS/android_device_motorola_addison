@@ -59,26 +59,46 @@ extract "$MY_DIR"/proprietary-files.txt "$SRC" "$SECTION"
 
 BLOB_ROOT="$LINEAGE_ROOT"/vendor/"$VENDOR"/"$DEVICE"/proprietary
 
-# Load camera configs form /vendor
-CAM2_SENSOR_MODULES="$BLOB_ROOT"/vendor/lib/libmmcamera2_sensor_modules.so
-sed -i "s|/system/etc/|/vendor/etc/|g" "$CAM2_SENSOR_MODULES"
+readonly MMCAMERA=(
+   vendor/lib/libmmcamera_vstab_module.so
+   vendor/lib/libmmcamera2_stats_modules.so
+)
 
-# Load Zaf configs form /vendor
+for i in "${MMCAMERA[@]}"; do
+  patchelf --remove-needed libandroid.so "$BLOB_ROOT"/${i}
+done
+
+# Load camera configs from vendor
+CAMERA2_SENSOR_MODULES="$BLOB_ROOT"/vendor/lib/libmmcamera2_sensor_modules.so
+sed -i "s|/system/etc/camera/|/vendor/etc/camera/|g" "$CAMERA2_SENSOR_MODULES"
+
+PROC_SERVICE="$BLOB_ROOT"/vendor/lib/libcamerabgprocservice.so
+patchelf --remove-needed libcamera_client.so "$PROC_SERVICE"
+
+readonly LIBWUI_FIXUP=(
+   vendor/lib/libmmcamera_vstab_module.so
+   vendor/lib/libmmcamera_ppeiscore.so
+   vendor/lib/libmmcamera2_stats_modules.so
+   vendor/lib/libjscore.so
+   vendor/lib/lib_mottof.so
+)
+
+for i in "${LIBWUI_FIXUP[@]}"; do
+  sed -i "s/libgui/libwui/" "$BLOB_ROOT"/${i}
+done
+
+# Load ZAF configs from vendor
 ZAF_CORE="$BLOB_ROOT"/vendor/lib/libzaf_core.so
-sed -i "s|/system/etc/|/vendor/etc/|g" "$ZAF_CORE"
+sed -i "s|/system/etc/zaf|/vendor/etc/zaf|g" "$ZAF_CORE"
 
 
 # Load camera metadata shim
-CAMERAHAL="$BLOB_ROOT"/vendor/lib/hw/camera.msm8998.so
+CAMERAHAL="$BLOB_ROOT"/vendor/lib/hw/camera.msm8953.so
 patchelf --replace-needed libcamera_client.so libcamera_metadata_helper.so "$CAMERAHAL"
 
 # Patch libcutils dep into audio HAL
 vendor/lib/hw/audio.primary.msm8953.so)
     patchelf --replace-needed "libcutils.so" "libprocessgroup.so" "${2}"
-    ;;
-
-vendor/lib/libcamerabgprocservice.so)
-    patchelf --remove-needed libcamera_client.so "${2}"
     ;;
 
 "$MY_DIR"/setup-makefiles.sh

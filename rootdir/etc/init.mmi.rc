@@ -30,10 +30,11 @@ on post-fs
     # MOT_LED_CALIBRATION
     chown cameraserver /mnt/vendor/persist/camera/ledcal
 
-     mkdir /mnt/vendor/persist/camera 0755 oem_5004 oem_5004
+    mkdir /mnt/vendor/persist/camera 0755 oem_5004 oem_5004
     mkdir /mnt/vendor/persist/camera/dualcal 0775 camera oem_5004
     mkdir /mnt/vendor/persist/camera/focus 0775 camera oem_5004
     mkdir /mnt/vendor/persist/camera/ledcal 0775 camera oem_5004
+    mkdir /mnt/vendor/persist/camera/mot_ledcal 0775 camera camera
     mkdir /mnt/vendor/persist/batt_health 0775 oem_5001 oem_5001
     mkdir /mnt/vendor/persist/mdm 0770 radio radio
     mkdir /mnt/vendor/persist/factory 0755 oem_5004 oem_5004
