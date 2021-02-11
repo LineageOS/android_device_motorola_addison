@@ -98,7 +98,9 @@ function blob_fixup() {
 
     # memset shim
     vendor/bin/charge_only_mode)
-        patchelf --add-needed "libmemset_shim.so" "${2}"
+        for  LIBMEMSET_SHIM in $(grep -L "libmemset_shim.so" "${2}"); do
+            "${PATCHELF}" --add-needed "libmemset_shim.so" "$LIBMEMSET_SHIM"
+        done
         ;;
 
     esac
