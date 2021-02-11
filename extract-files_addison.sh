@@ -65,7 +65,9 @@ function blob_fixup() {
     case "${1}" in
 
     vendor/lib/libjustshoot.so)
-        "${PATCHELF}" --add-needed libjustshoot_shim.so "${2}"
+        for LIBJUST_SHOOT in $(grep -L "libjustshoot_shim.so" "${2}"); do
+            "${PATCHELF}" --add-needed "libjustshoot_shim.so" "$LIBJUST_SHOOT_SHIM" 
+        done
         ;;
 
     vendor/lib/libmmcamera2_sensor_modules.so)
