@@ -393,7 +393,7 @@ PRODUCT_COPY_FILES += \
 # Shims
 PRODUCT_PACKAGES += \
     libqsapshim \
-    libjustshoot_shim
+    libshim_camera
 
 # Soong
 PRODUCT_SOONG_NAMESPACES += $(LOCAL_PATH)

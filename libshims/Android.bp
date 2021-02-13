@@ -19,3 +19,15 @@ cc_library_shared {
     ],
     include_dirs: ["system/media/private/camera/include"],
 }
+
+cc_library_shared {
+    name: "libshim_camera",
+
+    srcs: ["camera_shim.cpp"],
+
+    shared_libs: ["libui"],
+
+    vendor: true,
+
+    compile_multilib: "32",
+}
