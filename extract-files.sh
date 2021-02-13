@@ -59,6 +59,10 @@ extract "$MY_DIR"/proprietary-files.txt "$SRC" "$SECTION"
 
 BLOB_ROOT="$LINEAGE_ROOT"/vendor/"$VENDOR"/"$DEVICE"/proprietary
 
+vendor/lib/hw/camera.msm8996.so)
+    sed -i "s|service.bootanim.exit|service.bootanim.hold|g" "${2}"
+    ;;
+
 readonly MMCAMERA=(
    vendor/lib/libmmcamera_vstab_module.so
    vendor/lib/libmmcamera2_stats_modules.so

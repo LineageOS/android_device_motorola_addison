@@ -98,7 +98,7 @@ vendor/lib64/vendor.qti.hardware.bluetooth_sar@1.0.so
 
 #Camera from Albus PPS29.133
 vendor/bin/mm-qcamera-daemon
-vendor/lib/hw/camera.msm8953.so
+vendor/lib/hw/camera.msm8953.so|f42ece3403431433ed3fa404246f96afe26801b7
 vendor/lib/libSonyDefocus.so
 vendor/lib/libSonyDualPDLibrary.so
 vendor/lib/libSonyDualPDParam.so
