@@ -652,11 +652,6 @@ vendor/lib64/vendor.qti.hardware.factory@1.0.so
 vendor/lib64/vendor.qti.hardware.factory@1.1.so
 vendor/lib64/vendor.qti.latency@2.0.so
 
-# DPM
--framework/com.qti.dpmframework.jar
--framework/dpmapi.jar
-etc/permissions/com.qti.dpmframework.xml
-
 # DRM and SEE - from daisy_sprout - PKQ1.180917.001/V10.0.1.0.PDLMIFJ
 vendor/bin/qseecomd
 vendor/lib64/libGPreqcancel.so
@@ -1053,9 +1048,6 @@ vendor/bin/pm-service|860d91bfd9c6c090c271d11fe281f3a0a816580a
 vendor/lib/libperipheral_client.so
 vendor/lib64/libperipheral_client.so|c4cd65fa164a318a03c37dee3bd9671b5f579e9e
 
-# Postprocessing
-vendor/lib64/libdisp-aba.so|e8f65f5c78ffd30858a5e1ba8433f6e45e9e7bdd
-
 # QMI deen_sprout QPKS30.54-22-14
 vendor/bin/irsc_util
 vendor/lib/libdiag.so
@@ -1343,11 +1335,11 @@ vendor/lib64/sensors.tof.so
 vendor/lib64/libiio.so
 vendor/lib64/libsns_low_lat_stream_stub.so
 
-# Thermal
--vendor/lib/libthermalclient.so
--vendor/lib64/libthermalclient.so|539697d186f9eabe55d531687573601a7d1e8b7d
-vendor/bin/thermal-engine|27d18aebd0bf1f3d6411257e4ed9f76d66b774ee
-vendor/lib64/libthermalioctl.so|4c1f9451733bc0a006ebb55ba2e36bf9e78f22bf
+# Thermal from deen_sprout QPKS30.54-22-14
+vendor/bin/thermal-engine
+vendor/lib/libthermalclient.so
+vendor/lib64/libthermalclient.so
+vendor/lib64/libthermalioctl.so
 
 # Time services
 -vendor/app/TimeService/TimeService.apk
