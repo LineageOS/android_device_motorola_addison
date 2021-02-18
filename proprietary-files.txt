@@ -31,26 +31,9 @@ vendor/lib/rfsa/adsp/libscveBlobDescriptor_skel.so
 vendor/lib/rfsa/adsp/libscveObjectSegmentation_skel.so
 vendor/lib/rfsa/adsp/libscveT2T_skel.so
 
-# AptX
-vendor/lib64/libaptXHD_encoder.so|76eb03998f9b4f98029a4408076685892726e45a
-vendor/lib64/libaptX_encoder.so|a407a92a6eb467886c3970629ebcab4db95b7600
-
-# Audio - ACDB from Albus PPS29.133
-vendor/etc/acdbdata/Bluetooth_cal.acdb
-vendor/etc/acdbdata/General_cal.acdb
-vendor/etc/acdbdata/Global_cal.acdb
-vendor/etc/acdbdata/Handset_cal.acdb
-vendor/etc/acdbdata/Hdmi_cal.acdb
-vendor/etc/acdbdata/Headset_cal.acdb
-vendor/etc/acdbdata/Speaker_cal.acdb
-
-# Audio (Prebuilt Audio HAL) from Albus PPS29.133
-vendor/lib/hw/audio.primary.msm8953.so
-vendor/lib/libmotaudioutils.so
-vendor/lib/libtinyalsa.so
-vendor/lib/libtinycompress.so
-vendor/lib/libtinycompress_vendor.so
-vendor/lib/libunshorten.so
+# AptX from deen_sprout QPKS30.54-22-14
+lib64/libaptXHD_encoder.so
+lib64/libaptX_encoder.so
 
 # Audio from deen_sprout QPKS30.54-22-14
 vendor/lib/libacdb-fts.so
@@ -69,6 +52,23 @@ vendor/lib64/libaudcal.so
 vendor/lib64/libaudioalsa.so
 vendor/lib64/libaudioparsers.so
 vendor/lib64/libqtigef.so
+
+# Audio - ACDB from Albus PPS29.133
+vendor/etc/acdbdata/Bluetooth_cal.acdb
+vendor/etc/acdbdata/General_cal.acdb
+vendor/etc/acdbdata/Global_cal.acdb
+vendor/etc/acdbdata/Handset_cal.acdb
+vendor/etc/acdbdata/Hdmi_cal.acdb
+vendor/etc/acdbdata/Headset_cal.acdb
+vendor/etc/acdbdata/Speaker_cal.acdb
+
+# Audio (Prebuilt Audio HAL) from Albus PPS29.133
+vendor/lib/hw/audio.primary.msm8953.so
+vendor/lib/libmotaudioutils.so
+vendor/lib/libtinyalsa.so
+vendor/lib/libtinycompress.so
+vendor/lib/libtinycompress_vendor.so
+vendor/lib/libunshorten.so
 
 # Audio - Marley from Albus PPS29.133
 vendor/firmware/marley-dsp1-ultrasound.wmfw
@@ -260,7 +260,7 @@ vendor/lib/libmmcamera_paaf_lib.so
 vendor/lib/libmmcamera_pdaf.so
 vendor/lib/libmmcamera_pdafcamif.so
 vendor/lib/libmmcamera_ppbase_module.so
-vendor/lib/libmmcamera_ppeiscore.so|612f2886eda705ef143b01dab5c1cc6ecce5b19d
+vendor/lib/libmmcamera_ppeiscore.so|297cc589f2dc1f38c2ed3300bdb051f59c722ae0
 vendor/lib/libmmcamera_quadracfa.so
 vendor/lib/libmmcamera_s5k2l7_eeprom.so
 vendor/lib/libmmcamera_s5k3p3.so
