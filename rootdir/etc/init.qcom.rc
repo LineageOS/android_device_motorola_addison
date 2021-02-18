@@ -553,14 +553,7 @@ service vendor.thermal-engine /vendor/bin/thermal-engine
     socket thermal-recv-client stream 0660 system system
     socket thermal-recv-passive-client stream 0666 system system
     socket thermal-send-rule stream 0660 system system
-    group root
-    writepid /dev/cpuset/system-background/tasks
-
-service vendor.time_daemon /vendor/bin/time_daemon
-   class late_start
-   user root
-   group root
-   writepid /dev/cpuset/system-background/tasks
+   group root system
 
 on property:vold.decrypt=trigger_restart_framework
     start wcnss-service
@@ -586,11 +579,10 @@ service vendor.wcnss-service /vendor/bin/wcnss_service
     group system wifi radio
     oneshot
 
-#service vendor.adsprpcd /vendor/bin/adsprpcd
-#    class main
-#    user media
-#    group media
-# UNCOMMENT WHEN DOING AUDIO UPGRADE
+service vendor.adsprpcd /vendor/bin/adsprpcd
+    class main
+    user media
+    group media
 
 service vendor.energy-awareness /vendor/bin/energy-awareness
     class main

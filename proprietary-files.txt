@@ -1341,11 +1341,12 @@ vendor/lib/libthermalclient.so
 vendor/lib64/libthermalclient.so
 vendor/lib64/libthermalioctl.so
 
-# Time services
--vendor/app/TimeService/TimeService.apk
+# Time services - from deen_sprout QPKS30.54-22-14
+-vendor/app/TimeService/TimeService.apk;:timeservice_app_cert-legacy-um
+vendor/bin/time_daemon
+vendor/etc/init/init.time_daemon.rc
 -vendor/lib/libtime_genoff.so
--vendor/lib64/libtime_genoff.so|7683a85cae9f17cd535e8960fceda1d6831074a0
-vendor/bin/time_daemon|266da8c03b97e17656abc5bd7d67062199c73e43
+-vendor/lib64/libtime_genoff.so
 
 # Wi-Fi - Firmware - from deen_sprout QPKS30.54-22-11
 vendor/etc/wifi/WCNSS_qcom_wlan_nv.bin
