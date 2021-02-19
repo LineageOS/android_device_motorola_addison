@@ -988,6 +988,9 @@ etc/permissions/com.motorola.mod_v2.xml
 etc/permissions/com.motorola.moto.permissions.xml
 etc/permissions/privapp-permissions-com.motorola.modservice.xml
 etc/permissions/privapp-permissions-com.motorola.projectormod.xml
+etc/sysconfig/hiddenapi-whitelist-com.motorola.camera2.xml
+etc/sysconfig/hiddenapi-whitelist-com.motorola.modservice.xml
+etc/sysconfig/hiddenapi-whitelist-com.motorola.projectormod.xml
 lib64/libmodhw.so
 lib64/libvibratorhw.so
 lib64/motorola.hardware.vibrator@1.0.so
@@ -998,6 +1001,11 @@ vendor/lib/libmodmanager.so
 vendor/lib64/libmodmanager.so
 vendor/lib64/com.motorola.mod@1.0_vendor.so
 vendor/lib/com.motorola.mod@1.0_vendor.so
+
+# Moto Health from Nash PPX29.159-33
+vendor/bin/hw/motorola.hardware.health@1.0-service
+vendor/etc/init/motorola.hardware.health@1.0-service.rc
+vendor/lib64/motorola.hardware.health@1.0.so
 
 # NFC
 vendor/firmware/libpn548ad_fw.so
