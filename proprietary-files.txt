@@ -1006,11 +1006,11 @@ vendor/lib64/libqti-utils.so
 vendor/lib64/vendor.qti.hardware.perf@1.0.so
 vendor/lib64/vendor.qti.hardware.perf@2.0.so
 
-# Peripheral manager
-vendor/bin/pm-proxy|1d74d4cbffd87d28117f6524df9d8b34d78c9469
-vendor/bin/pm-service|860d91bfd9c6c090c271d11fe281f3a0a816580a
+# Peripheral manager deen_sprout QPKS30.54-22-14
+vendor/bin/pm-proxy
+vendor/bin/pm-service
 vendor/lib/libperipheral_client.so
-vendor/lib64/libperipheral_client.so|c4cd65fa164a318a03c37dee3bd9671b5f579e9e
+vendor/lib64/libperipheral_client.so
 
 # QMI deen_sprout QPKS30.54-22-14
 vendor/bin/irsc_util
