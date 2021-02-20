@@ -966,8 +966,8 @@ vendor/bin/hw/motorola.hardware.health@1.0-service
 vendor/etc/init/motorola.hardware.health@1.0-service.rc
 vendor/lib64/motorola.hardware.health@1.0.so
 
-# NFC
-vendor/firmware/libpn548ad_fw.so
+# NFC from Albus PPS29.133
+vendor/lib/libpn553_fw.so
 
 # Offmode charging
 vendor/bin/charge_only_mode|9c6cb9c1b27fd30eb236c13b9ec08a15febd32c0
