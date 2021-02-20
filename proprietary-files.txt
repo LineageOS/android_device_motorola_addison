@@ -674,24 +674,6 @@ vendor/lib/vendor.qti.hardware.qteeconnector@1.0.so
 vendor/lib64/hw/vendor.qti.hardware.qteeconnector@1.0-impl.so
 vendor/lib64/vendor.qti.hardware.qteeconnector@1.0.so
 
-# DSP
-vendor/lib/libsdsprpc.so
-vendor/lib/rfsa/adsp/libadsp_fd_skel.so
-vendor/lib/rfsa/adsp/libadsp_hvx_add_constant.so
-vendor/lib/rfsa/adsp/libadsp_hvx_skel.so
-vendor/lib/rfsa/adsp/libapps_mem_heap.so
-vendor/lib/rfsa/adsp/libdspCV_skel.so
-vendor/lib/rfsa/adsp/libfastcvadsp.so
-vendor/lib/rfsa/adsp/libfastcvadsp_skel.so
-vendor/lib/rfsa/adsp/libhvxMathVIO.so
-vendor/lib/rfsa/adsp/libscveBlobDescriptor_skel.so
-vendor/lib/rfsa/adsp/libscveFaceLandmark_skel.so
-vendor/lib/rfsa/adsp/libscveT2T_skel.so
-vendor/lib/rfsa/adsp/libsns_low_lat_stream_skel.so
-vendor/lib/rfsa/adsp/libvpp_frc.so
-vendor/lib/rfsa/adsp/libvpp_svc_skel.so
-vendor/lib64/libsdsprpc.so|3ba4bf3e3da8244e852700468c89ff00f0c8a6db
-
 # DTV
 -vendor/app/DTVPlayer/DTVPlayer.apk
 -vendor/app/DTVService/DTVService.apk
@@ -953,29 +935,6 @@ vendor/lib64/libOmxEvrcDec.so
 vendor/lib64/libOmxG711Dec.so
 vendor/lib64/libOmxQcelp13Dec.so
 vendor/lib64/libOmxWmaDec.so
-
-# MMI
-vendor/lib/libmmi.so
-vendor/lib/mmi_audio.so
-vendor/lib/mmi_battery.so
-vendor/lib/mmi_bluetooth.so
-vendor/lib/mmi_camera.so
-vendor/lib/mmi_cpu.so
-vendor/lib/mmi_flashlight.so
-vendor/lib/mmi_fm.so
-vendor/lib/mmi_gps.so
-vendor/lib/mmi_headset.so
-vendor/lib/mmi_key.so
-vendor/lib/mmi_lcd.so
-vendor/lib/mmi_light.so
-vendor/lib/mmi_memory.so
-vendor/lib/mmi_nfc.so
-vendor/lib/mmi_sim.so
-vendor/lib/mmi_storage.so
-vendor/lib/mmi_sysinfo.so
-vendor/lib/mmi_touch.so
-vendor/lib/mmi_vibrator.so
-vendor/lib/mmi_wifi.so
 
 # Moto Mods from Nash PPX29.159-33
 -priv-app/ModFmwkProxyService/ModFmwkProxyService.apk|8b52ee03261ef10cae325182e246e66f8b527368
