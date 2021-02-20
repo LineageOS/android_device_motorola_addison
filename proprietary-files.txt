@@ -969,8 +969,8 @@ vendor/lib64/motorola.hardware.health@1.0.so
 # NFC from Albus PPS29.133
 vendor/lib/libpn553_fw.so
 
-# Offmode charging
-vendor/bin/charge_only_mode|9c6cb9c1b27fd30eb236c13b9ec08a15febd32c0
+# Offmode charging from Albus PPS29.133
+vendor/bin/charge_only_mode
 
 # Perf from deen_sprout QPKS30.54-22-14
 lib/libqti_performance.so
