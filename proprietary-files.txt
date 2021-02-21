@@ -652,8 +652,9 @@ vendor/lib64/vendor.qti.hardware.factory@1.0.so
 vendor/lib64/vendor.qti.hardware.factory@1.1.so
 vendor/lib64/vendor.qti.latency@2.0.so
 
-# DRM and SEE - from daisy_sprout - PKQ1.180917.001/V10.0.1.0.PDLMIFJ
+# DRM and SEE deen_sprout QPKS30.54-22-14
 vendor/bin/qseecomd
+vendor/lib/libQSEEComAPI.so
 vendor/lib64/libGPreqcancel.so
 vendor/lib64/libGPreqcancel_svc.so
 vendor/lib64/libQSEEComAPI.so
@@ -662,11 +663,11 @@ vendor/lib64/libdrmfs.so
 vendor/lib64/libdrmtime.so
 vendor/lib64/libqisl.so
 vendor/lib64/librpmb.so
+vendor/lib64/libsecureui.so
 vendor/lib64/libsecureui_svcsock.so
 vendor/lib64/libssd.so
 
-# DRM - Qualcomm Trusted Execution Enviornment - from daisy_sprout - PKQ1.180917.001/V10.0.1.0.PDLMIFJ
-lib64/vendor.qti.hardware.qteeconnector@1.0.so
+# DRM - Qualcomm Trusted Execution Enviornment deen_sprout QPKS30.54-22-14
 vendor/bin/hw/vendor.qti.hardware.qteeconnector@1.0-service
 vendor/etc/init/vendor.qti.hardware.qteeconnector@1.0-service.rc
 vendor/lib/hw/vendor.qti.hardware.qteeconnector@1.0-impl.so
