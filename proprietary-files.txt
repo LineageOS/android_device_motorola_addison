@@ -1312,9 +1312,17 @@ vendor/etc/wifi/WCNSS_qcom_wlan_nv_epa.bin
 vendor/etc/wifi/WCNSS_qcom_wlan_nv_India.bin
 vendor/etc/wifi/WCNSS_wlan_dictionary.dat
 
-# Widevine - from deen_sprout - PPKS29.68-16-33-3
-vendor/bin/hw/android.hardware.drm@1.1-service.widevine
-vendor/etc/init/android.hardware.drm@1.1-service.widevine.rc
+# TUI - from deen_sprout QPKS30.54-22-11
+vendor/bin/hw/vendor.qti.hardware.tui_comm@1.0-service-qti
+vendor/etc/init/vendor.qti.hardware.tui_comm@1.0-service-qti.rc
+vendor/lib64/vendor.qti.hardware.tui_comm@1.0.so
+
+# Widevine - from deen_sprout QPKS30.54-22-11
+vendor/bin/hw/android.hardware.drm@1.2-service.widevine
+vendor/etc/init/android.hardware.drm@1.2-service.widevine.rc
+vendor/lib/mediadrm/libwvdrmengine.so
 vendor/lib64/mediadrm/libwvdrmengine.so
+vendor/lib64/libcpion.so
+vendor/lib64/libhdcpsrm.so
 vendor/lib64/liboemcrypto.so
 vendor/lib64/libwvhidl.so
