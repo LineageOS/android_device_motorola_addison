@@ -110,7 +110,7 @@ vendor/lib/libactuator_lc898217xc.so
 vendor/lib/libactuator_mot_ak7371.so
 vendor/lib/libactuator_mot_ak7371_bear.so
 vendor/lib/libactuator_mot_ak7371_mono.so
-vendor/lib/libadvalgcore
+vendor/lib/libadvalgcore.so
 vendor/lib/libarcsoft_beautyshot.so
 vendor/lib/libcapiv2svacnn.so
 vendor/lib/libcapiv2vop.so
@@ -246,7 +246,7 @@ vendor/lib/libmmcamera_mot_imx258_bear.so
 vendor/lib/libmmcamera_mot_imx258_mono.so
 vendor/lib/libmmcamera_mot_imx362.so
 vendor/lib/libmmcamera_mot_imx362_pdaf.so
-vendor/lib/libmmcamera_mot_ov5695.so
+vendor/lib/libmmcamera_mot_ov5695.so|eed040d7d651756c9b9adcbe80ce04901dc9048b
 vendor/lib/libmmcamera_mot_s5k2l7.so
 vendor/lib/libmmcamera_mot_s5k2l7_pdaf.so
 vendor/lib/libmmcamera_mot_s5k2l7sa.so
@@ -652,7 +652,7 @@ vendor/lib64/vendor.qti.hardware.factory@1.0.so
 vendor/lib64/vendor.qti.hardware.factory@1.1.so
 vendor/lib64/vendor.qti.latency@2.0.so
 
-# DRM and SEE deen_sprout QPKS30.54-22-14
+# DRM - SEE deen_sprout QPKS30.54-22-14
 vendor/bin/qseecomd
 vendor/lib/libQSEEComAPI.so
 vendor/lib64/libGPreqcancel.so
@@ -667,7 +667,7 @@ vendor/lib64/libsecureui.so
 vendor/lib64/libsecureui_svcsock.so
 vendor/lib64/libssd.so
 
-# DRM - Qualcomm Trusted Execution Enviornment deen_sprout QPKS30.54-22-14
+# DRM - Qualcomm Trusted Execution Environment deen_sprout QPKS30.54-22-14
 vendor/bin/hw/vendor.qti.hardware.qteeconnector@1.0-service
 vendor/etc/init/vendor.qti.hardware.qteeconnector@1.0-service.rc
 vendor/lib/hw/vendor.qti.hardware.qteeconnector@1.0-impl.so
@@ -686,7 +686,7 @@ vendor/lib64/libdtvtuner.so|1667ff29c199f9ae9abe1d57f9a43300ab594b07
 # Fingerprint
 vendor/bin/hw/android.hardware.biometrics.fingerprint@2.1-fpcservice
 vendor/etc/init/android.hardware.biometrics.fingerprint@2.1-service.rc
-vendor/lib/com.fingerprints.extension@1.0_vendor.so
+vendor/lib/com.fingerprints.extension@1.0.so
 
 # FM from deen_sprout QPKS30.54-22-14
 lib/fm_helium.so
@@ -870,7 +870,7 @@ vendor/lib64/libqti-iopd-client.so
 vendor/lib64/vendor.qti.hardware.iop@1.0.so
 vendor/lib64/vendor.qti.hardware.iop@2.0.so
 
-# Keymaster and Keystore - from deen_sprout QPKS30.54-22-14
+# Keystore - from deen_sprout QPKS30.54-22-14
 vendor/lib64/hw/keystore.msm8953.so
 
 # Listen from deen_sprout QPKS30.54-22-14
@@ -1047,7 +1047,6 @@ product/framework/qcrilhook.jar
 product/framework/QtiTelephonyServicelibrary.jar
 -product/priv-app/qcrilmsgtunnel/qcrilmsgtunnel.apk
 vendor/bin/ATFWD-daemon
-vendor/bin/hw/qcrild
 vendor/bin/ipacm-diag
 vendor/bin/netmgrd
 vendor/bin/port-bridge
@@ -1063,7 +1062,6 @@ vendor/etc/init/dataqti.rc
 vendor/etc/init/ipacm-diag.rc
 vendor/etc/init/netmgrd.rc
 vendor/etc/init/port-bridge.rc
-vendor/etc/init/qcrild.rc
 vendor/lib/libconfigdb.so
 vendor/lib/liblqe.so
 vendor/lib/libmdmdetect.so
@@ -1293,8 +1291,8 @@ vendor/lib64/libsns_low_lat_stream_stub.so
 
 # Thermal from deen_sprout QPKS30.54-22-14
 vendor/bin/thermal-engine
-vendor/lib/libthermalclient.so
-vendor/lib64/libthermalclient.so
+-vendor/lib/libthermalclient.so
+-vendor/lib64/libthermalclient.so
 vendor/lib64/libthermalioctl.so
 
 # Time services - from deen_sprout QPKS30.54-22-14
