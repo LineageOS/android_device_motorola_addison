@@ -1,4 +1,5 @@
 allow bootanim hwservicemanager:binder call;
+allow bootanim sysfs_kgsl:dir search;
 
 # TODO(b/62954877). On Android Wear, bootanim reads the time
 # during boot to display. It currently gets that time from a file
