@@ -61,23 +61,47 @@ fi
 
 function blob_fixup() {
     case "${1}" in
-
-    # Fix xml version
-    product/etc/permissions/vendor.qti.hardware.data.connection-V1.0-java.xml | product/etc/permissions/vendor.qti.hardware.data.connection-V1.1-java.xml)
-        sed -i 's/xml version="2.0"/xml version="1.0"/' "${2}"
+         
+    # Fix fingerprint UHID
+    vendor/etc/init/android.hardware.biometrics.fingerprint@2.1-service.rc)
+        sed -i 's/group system input 9015/group system uhid input 9015/' "${2}"
         ;;
 
-    #libwui patch
-    vendor/lib/libmot_gpu_mapper.so)
+    vendor/lib/libmmcamera2_sensor_modules.so)
+        sed -i "s|/system/etc/camera/|/vendor/etc/camera/|g" "${2}"
+        ;;
+
+    vendor/lib/libmmcamera_vstab_module.so | vendor/lib/libmmcamera2_stats_modules.so)
+        patchelf --remove-needed libandroid.so "${2}"
+        ;;
+
+    vendor/lib/lib_mottof.so | vendor/lib/libmmcamera_vstab_module.so | vendor/lib/libjscore.so | vendor/lib/libmmcamera_ppeiscore.so | vendor/lib/libmmcamera2_stats_modules.so)
         sed -i "s/libgui/libwui/" "${2}"
+        ;;
+            
+    vendor/lib/libcamerabgprocservice.so)
+        patchelf --remove-needed libcamera_client.so "${2}"
+        ;;
+    
+    # Patch libcutils dep into audio HAL
+    vendor/lib/hw/audio.primary.msm8953.so)
+        patchelf --replace-needed "libcutils.so" "libprocessgroup.so" "${2}"
+        ;;
+
+    vendor/lib/hw/camera.msm8953.so)
+        sed -i "s|service.bootanim.exit|service.bootanim.hold|g" "${2}"
+        ;;
+
+    vendor/lib/libzaf_core.so)
+        sed -i "s|/system/etc/zaf|/vendor/etc/zaf|g" "${2}"
         ;;
 
     esac
 }
+
 # Initialize the helper
-setup_vendor "${DEVICE}" "${VENDOR}" "${AICP_ROOT}" false "${CLEAN_VENDOR}"
+setup_vendor "${DEVICE}" "${VENDOR}" "${ANDROID_ROOT}" false "${CLEAN_VENDOR}"
 
-extract "${MY_DIR}/proprietary-files.txt" "${SRC}" ${KANG} --section "${SECTION}"
-
+extract "${MY_DIR}/proprietary-files_nash.txt" "${SRC}" ${KANG} --section "${SECTION}"
 
 "${MY_DIR}/setup-makefiles.sh"
