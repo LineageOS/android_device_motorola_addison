@@ -16,5 +16,8 @@ allow mm-qcamerad camera_data_file:dir search;
 allow mm-qcamerad vendor_data_file:dir r_dir_perms;
 allow mm-qcamerad vendor_data_file:file rw_file_perms;
 
+allow mm-qcamerad sysfs_mods_camd:file rw_file_perms;
+allow mm-qcamerad sysfs_mods_camd:dir r_dir_perms;
+
 vndbinder_use(mm-qcamerad);
 get_prop(mm-qcamerad, moto_boot_prop);
