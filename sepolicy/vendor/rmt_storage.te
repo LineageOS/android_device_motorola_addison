@@ -15,3 +15,4 @@ allow rmt_storage fsg_file:file r_file_perms;
 allow rmt_storage firmware_file:file { read open getattr };
 
 allow rmt_storage persist_file:dir r_dir_perms;
+get_prop(rmt_storage, moto_boot_prop)

@@ -70,5 +70,5 @@ type proc_touchpanel, fs_type;
 
 type sysfs_msm_subsys, sysfs_type, fs_type;
 
-type fingerprint_data_file, core_data_file_type, data_file_type, file_type;
-type fingerprint_socket, core_data_file_type, data_file_type, file_type;
+type fingerprint_data_file, data_file_type, file_type;
+type fingerprint_socket, data_file_type, file_type;
