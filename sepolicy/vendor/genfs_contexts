@@ -1,2 +1,5 @@
 genfscon sysfs /devices/soc/soc:qcom,cpubw u:object_r:sysfs_msm_subsys:s0
 genfscon sysfs /module/stmvl53l1                                              u:object_r:sysfs_sensor:s0
+
+# Real-time clock
+genfscon sysfs /devices/soc/qpnp-rtc-8/rtc                              u:object_r:sysfs_rtc:s0

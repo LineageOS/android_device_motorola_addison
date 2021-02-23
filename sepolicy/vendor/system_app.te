@@ -15,6 +15,7 @@ allow system_app sysfs_zram:dir { search read };
 allow system_app proc_pagetypeinfo:file { read open getattr };
 
 allow system_app sysfs_zram:file { read open getattr};
+allow system_app sysfs_rtc:dir { r_dir_perms search };
 
 get_prop(system_app, diag_prop);
 binder_call(system_app, qtitetherservice_service);
