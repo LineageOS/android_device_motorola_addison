@@ -150,8 +150,7 @@
 /sys/devices/soc/leds-atc-20/leds(/.*)?                  u:object_r:sysfs_leds:s0
 
 # Fingerprint custom hal
-/(vendor|system/vendor)/bin/hw/android\.hardware\.biometrics\.fingerprint@2\.1-service_32 u:object_r:hal_fingerprint_default_exec:s0
-/(vendor|system/vendor)/bin/hw/android\.hardware\.biometrics\.fingerprint@2\.1-fpcservice u:object_r:hal_fingerprint_default_exec:s0
+/(vendor|system/vendor)/bin/hw/android\.hardware\.biometrics\.fingerprint@2\.1-fpcservice    u:object_r:hal_fingerprint_fpc_exec:s0
 /(vendor|system/vendor)/bin/hw/vendor\.lineage\.touch@1\.0-service\.albus      u:object_r:hal_lineage_touch_default_exec:s0
 
 # Health HAL
