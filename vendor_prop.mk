@@ -140,7 +140,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # RIL
 PRODUCT_PROPERTY_OVERRIDES += \
-    persist.vendor.data.iwlan.enable=true \
     persist.vendor.ims.dropset_feature=0 \
     persist.vendor.ims.disableADBLogs=0 \
     persist.vendor.ims.disableDebugDataPathLogs=0 \
