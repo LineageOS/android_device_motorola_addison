@@ -44,9 +44,10 @@ PRODUCT_ENFORCE_RRO_TARGETS := \
     framework-res
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
+    PRIVATE_BUILD_DESC="albus_retail-user 9 PPS29.133-30 ab8b4 release-keys" \
     PRODUCT_NAME="Moto Z2 Play" \
     DEVICE_MAINTAINERS="marcost2"
 
-BUILD_FINGERPRINT := "motorola/albus/albus:8.0.0/OPS27.76-12-25/26:user/release-keys"
+BUILD_FINGERPRINT := "motorola/albus_retail/albus:9/PPS29.133-30/ab8b4:user/release-keys"
     # for specific
 $(call inherit-product, vendor/motorola/albus/albus-vendor.mk)
