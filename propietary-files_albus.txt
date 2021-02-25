@@ -556,7 +556,6 @@ vendor/lib/com.motorola.mod@1.0_vendor.so|984e87a974dcc187d8a46f3addf2865b42d1ce
 # Moto Health from Nash PPX29.159-33
 vendor/bin/hw/motorola.hardware.health@1.0-service|3d21763417a2087abf5ecce34a72d8bd56f2aa4f
 vendor/etc/init/motorola.hardware.health@1.0-service.rc|28f47f970593eb2c0768bd632a72f964146dcfe2
-vendor/lib64/motorola.hardware.health@1.0.so|c9ed5c4b1a38c6ef37d542a80f2d48af7d0a694c
 
 # NFC
 vendor/lib/libpn553_fw.so
