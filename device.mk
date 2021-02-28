@@ -175,7 +175,8 @@ PRODUCT_PACKAGES += \
 
 # Health
 PRODUCT_PACKAGES += \
-    android.hardware.health@2.0-service.albus
+    android.hardware.health@2.0-impl \
+    android.hardware.health@2.0-service
 
 # HIDL
 PRODUCT_PACKAGES += \
