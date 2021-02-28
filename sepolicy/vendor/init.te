@@ -39,7 +39,7 @@ allow init sysfs_screen_off_gestures:file { rw_file_perms setattr };
 
 allow init self:capability sys_nice;
 
-allow init firmware_file:filesystem { associate };
+allow init firmware_file:filesystem getattr;
 
 allow init sensors_device:chr_file { rw_file_perms create };
 allow init pmsg_device:chr_file { open };
