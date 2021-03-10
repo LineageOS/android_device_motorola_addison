@@ -174,15 +174,6 @@ on boot
     chown system system /proc/sys/net/core/rmem_max
     chown system system /proc/sys/net/core/wmem_max
 
- # Change ownership and permission for leds backlight
-   chmod 0664 /sys/class/leds/lcd-backlight/brightness
-   chown system system /sys/class/leds/charging/brightness
-   chmod 0664 /sys/class/leds/charging/brightness
-
-   # change permission of red leds
-   chown system system /sys/class/leds/red/brightness
-   chmod 0664 /sys/class/leds/red/brightness
-
    # Change ownership and permission for vibrator
    chown system system /sys/class/timed_output/vibrator/enable
    chmod 0660 /sys/class/timed_output/vibrator/enable
