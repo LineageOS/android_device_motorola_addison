@@ -5,6 +5,7 @@ allow mm-qcamerad persist_file:dir { getattr open read search  };
 allow mm-qcamerad persist_file:file { read open getattr };
 allow mm-qcamerad property_socket:sock_file write;
 allow mm-qcamerad mnt_vendor_file:file rw_file_perms;
+allow mm-qcamerad laser_device:chr_file { ioctl open read write };
 
 # TODO(b/36599434): Remove this once mm-qcamerad stops using Binder services
 typeattribute mm-qcamerad binder_in_vendor_violators;
