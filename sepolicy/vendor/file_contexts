@@ -100,7 +100,8 @@
 /dev/block/bootdevice/by-name/utagsBackup                u:object_r:utags_block_device:s0
 /dev/block/bootdevice/by-name/utags                      u:object_r:utags_block_device:s0
 
-# RIL
+# Power aidl stats
+/(vendor|system/vendor)/bin/hw/android\.hardware\.power\.stats@1\.0-service\.mock              u:object_r:hal_power_stats_default_exec:s0
 
 # Sensors
 /(vendor|system/vendor)/bin/motosh                       u:object_r:sensor_hub_exec:s0
