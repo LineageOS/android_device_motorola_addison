@@ -230,10 +230,13 @@ on charger
     trigger moto-charger
     class_stop main
     class_stop late_start
+    setprop sys.usb.configfs 1
 
 on moto-charger
     setprop ro.board.platform msm8953
     trigger firmware_mounts_complete
+    setprop sys.usb.config charging
+    start vendor.gbmodinstall
     start vendor.charge_only_mode
     start vendor.thermal-com
 
