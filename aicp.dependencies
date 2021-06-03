@@ -2,27 +2,27 @@
   {
     "repository":  "AICP/kernel_motorola_msm8953",
     "target_path": "kernel/motorola/msm8953",
-    "branch":      "q10.0-albus"
+    "branch":      "r11.1-albus"
   },
   {
     "repository":  "AICP/proprietary_vendor_motorola",
     "target_path": "vendor/motorola",
-    "branch":      "q10.0"
+    "branch":      "r11.1"
   },
   {
     "repository":  "LineageOS/android_system_qcom",
     "target_path": "system/qcom",
-    "branch":      "lineage-17.1"
+    "branch":      "lineage-18.1"
   },
   {
     "repository": "LineageOS/android_external_bson",
     "target_path": "external/bson",
-    "branch":      "lineage-17.1"
+    "branch":      "lineage-18.1"
   },
   {
     "repository": "LineageOS/android_hardware_motorola",
     "target_path": "hardware/motorola",
-    "branch":      "lineage-17.1"
+    "branch":      "lineage-18.1"
   }
 ]
 
