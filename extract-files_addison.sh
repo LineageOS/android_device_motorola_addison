@@ -18,7 +18,7 @@
 
 set -e
 
-DEVICE=albus
+DEVICE=addison
 VENDOR=motorola
 
 # Load extract_utils and do some sanity checks
@@ -69,22 +69,29 @@ function blob_fixup() {
         sed -i 's/group system input 9015/group system uhid input 9015/' "${2}"
         ;;
 
+    vendor/lib/libjustshoot.so)
+        "${PATCHELF}" --add-needed libjustshoot_shim.so "${2}"
+        ;;
+
     vendor/lib/libmmcamera2_sensor_modules.so)
         sed -i "s|/system/etc/camera/|/vendor/etc/camera/|g" "${2}"
         ;;
 
-    vendor/lib/libmmcamera_vstab_module.so | vendor/lib/libmmcamera2_stats_modules.so)
+    vendor/lib/libmmcamera_vstab_module.so)
         patchelf --remove-needed libandroid.so "${2}"
         ;;
 
-    vendor/lib/lib_mottof.so | vendor/lib/libmmcamera_vstab_module.so | vendor/lib/libjscore.so | vendor/lib/libmmcamera_ppeiscore.so | vendor/lib/libmmcamera2_stats_modules.so)
+    vendor/lib/lib_mottof.so | vendor/lib/libmmcamera_vstab_module.so | vendor/lib/libjscore.so)
         sed -i "s/libgui/libwui/" "${2}"
         ;;
             
     vendor/lib/libcamerabgprocservice.so)
         patchelf --remove-needed libcamera_client.so "${2}"
         ;;
-    
+
+    vendor/lib/libjustshoot.so | vendor/lib/libjscore.so)
+        "${PATCHELF}" --remove-needed libstagefright.so "${2}"
+        ;;
     # Patch libcutils dep into audio HAL
     vendor/lib/hw/audio.primary.msm8953.so)
         patchelf --replace-needed "libcutils.so" "libprocessgroup.so" "${2}"
@@ -111,6 +118,6 @@ function blob_fixup() {
 # Initialize the helper
 setup_vendor "${DEVICE}" "${VENDOR}" "${ANDROID_ROOT}" false "${CLEAN_VENDOR}"
 
-extract "${MY_DIR}/proprietary-files_albus.txt" "${SRC}" ${KANG} --section "${SECTION}"
+extract "${MY_DIR}/proprietary-files_addison.txt" "${SRC}" ${KANG} --section "${SECTION}"
 
 "${MY_DIR}/setup-makefiles.sh"

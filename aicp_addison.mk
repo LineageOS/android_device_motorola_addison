@@ -16,13 +16,13 @@
 
 
 # Inherit from those products. Most specific first.
-$(call inherit-product, device/motorola/albus/full_albus.mk)
+$(call inherit-product, device/motorola/addison/full_addison.mk)
 
 
 # Inherit from those products. Most specific first.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_n_mr1.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_m.mk)
 $(call inherit-product, vendor/aicp/config/common_full_phone.mk) 
 
 # Boot animation
@@ -31,12 +31,12 @@ TARGET_SCREEN_HEIGHT := 1920
 TARGET_BOOTANIMATION_HALF_RES := true
 
 ## Device identifier. This must come after all inclusions
-PRODUCT_DEVICE := albus
-PRODUCT_NAME := aicp_albus
+PRODUCT_DEVICE := addison
+PRODUCT_NAME := aicp_addison
 PRODUCT_BRAND := Motorola
-PRODUCT_MODEL := Moto Z2 Play
+PRODUCT_MODEL := Moto Z Play
 PRODUCT_MANUFACTURER := Motorola
-PRODUCT_RELEASE_NAME := albus
+PRODUCT_RELEASE_NAME := addison
 
 PRODUCT_GMS_CLIENTID_BASE := android-motorola
 
@@ -44,10 +44,10 @@ PRODUCT_ENFORCE_RRO_TARGETS := \
     framework-res
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
-    PRIVATE_BUILD_DESC="albus_retail-user 9 PPS29.133-30 ab8b4 release-keys" \
-    PRODUCT_NAME="Moto Z2 Play" \
+    PRIVATE_BUILD_DESC="addison_retail-user 8.0.0 OPNS27.76-12-22-9 10 release-keys" \
+    PRODUCT_NAME="Moto Z Play" \
     DEVICE_MAINTAINERS="marcost2"
 
-BUILD_FINGERPRINT := "motorola/albus_retail/albus:9/PPS29.133-30/ab8b4:user/release-keys"
+BUILD_FINGERPRINT := "motorola/addison_retail/addison:8.0.0/OPNS27.76-12-22-9/10:user/release-keys"
     # for specific
-$(call inherit-product, vendor/motorola/albus/albus-vendor.mk)
+$(call inherit-product, vendor/motorola/addison/addison-vendor.mk)

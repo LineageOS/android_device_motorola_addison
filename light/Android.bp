@@ -16,10 +16,10 @@
 cc_binary {
     relative_install_path: "hw",
     defaults: ["hidl_defaults"],
-    name: "android.hardware.light@2.0-service.albus",
+    name: "android.hardware.light@2.0-service.addison",
     proprietary: true,
-    init_rc: ["android.hardware.light@2.0-service.albus.rc"],
-    vintf_fragments: ["android.hardware.light@2.0-service.albus.xml"],
+    init_rc: ["android.hardware.light@2.0-service.addison.rc"],
+    vintf_fragments: ["android.hardware.light@2.0-service.addison.xml"],
     srcs: ["service.cpp", "Light.cpp"],
     shared_libs: [
         "libhardware",

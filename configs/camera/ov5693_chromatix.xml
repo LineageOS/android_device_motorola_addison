@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2016 Qualcomm Technologies, Inc.
+  Copyright (c) 2015 Qualcomm Technologies, Inc.
   All Rights Reserved.
   Confidential and Proprietary - Qualcomm Technologies, Inc.
 -->
@@ -79,31 +79,32 @@ special_mode_mask values:
 <ChromatixConfigurationRoot>
   <CommonChromatixInfo>
     <ChromatixName special_mode_mask="0">
-      <ISPCommon>mot_ov5695_ofilm_common</ISPCommon>
-      <PostProc>mot_ov5695_ofilm_postproc</PostProc>
-      <CPPPreview>mot_ov5695_ofilm_cpp_snapshot</CPPPreview>
-      <CPPSnapshot>mot_ov5695_ofilm_cpp_snapshot</CPPSnapshot>
-      <CPPLiveshot>mot_ov5695_ofilm_cpp_liveshot</CPPLiveshot>
+      <ISPCommon>ov5693_common</ISPCommon>
+      <PostProc>ov5693_postproc</PostProc>
+      <CPPPreview>ov5693_cpp_snapshot</CPPPreview>
+      <CPPSnapshot>ov5693_cpp_snapshot</CPPSnapshot>
+      <CPPLiveshot>ov5693_cpp_liveshot</CPPLiveshot>
     </ChromatixName>
   </CommonChromatixInfo>
   <ResolutionChromatixInfo>
     <ChromatixName sensor_resolution_index="0" special_mode_mask="0">
-      <ISPPreview>mot_ov5695_ofilm_snapshot</ISPPreview>
-      <ISPSnapshot>mot_ov5695_ofilm_snapshot</ISPSnapshot>
-      <ISPVideo>mot_ov5695_ofilm_default_video</ISPVideo>
-      <ISPLiveshot>mot_ov5695_ofilm_snapshot</ISPLiveshot>
-      <CPPVideo>mot_ov5695_ofilm_cpp_video</CPPVideo>
-      <A3Preview>mot_ov5695_ofilm_snapshot_3a</A3Preview>
-      <A3Video>mot_ov5695_ofilm_default_video_3a</A3Video>
+      <ISPPreview>ov5693_snapshot</ISPPreview>
+      <ISPSnapshot>ov5693_snapshot</ISPSnapshot>
+      <ISPVideo>ov5693_default_video</ISPVideo>
+      <ISPLiveshot>ov5693_snapshot</ISPLiveshot>
+      <CPPVideo>ov5693_cpp_video</CPPVideo>
+      <A3Preview>ov5693_snapshot_3a</A3Preview>
+      <A3Video>ov5693_default_video_3a</A3Video>
     </ChromatixName>
     <ChromatixName sensor_resolution_index="1" special_mode_mask="0">
-      <ISPPreview>mot_ov5695_ofilm_hfr_120</ISPPreview>
-      <ISPSnapshot>mot_ov5695_ofilm_hfr_120</ISPSnapshot>
-      <ISPVideo>mot_ov5695_ofilm_hfr_120</ISPVideo>
-      <ISPLiveshot>mot_ov5695_ofilm_hfr_120</ISPLiveshot>
-      <CPPVideo>mot_ov5695_ofilm_cpp_hfr_120</CPPVideo>
-      <A3Preview>mot_ov5695_ofilm_hfr_120_3a</A3Preview>
-      <A3Video>mot_ov5695_ofilm_hfr_120_3a</A3Video>
+      <ISPPreview>ov5693_hfr_120</ISPPreview>
+      <ISPSnapshot>ov5693_hfr_120</ISPSnapshot>
+      <ISPVideo>ov5693_hfr_120</ISPVideo>
+      <ISPLiveshot>ov5693_hfr_120</ISPLiveshot>
+      <CPPVideo>ov5693_cpp_hfr_120</CPPVideo>
+      <A3Preview>ov5693_hfr_120_3a</A3Preview>
+      <A3Video>ov5693_hfr_120_3a</A3Video>
     </ChromatixName>
   </ResolutionChromatixInfo>
 </ChromatixConfigurationRoot>
+

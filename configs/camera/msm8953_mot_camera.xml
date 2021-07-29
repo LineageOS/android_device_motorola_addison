@@ -86,14 +86,14 @@ LensInfo : Information of the lens present in the module.
 <CameraConfigurationRoot>
   <CameraModuleConfig>
     <CameraId>0</CameraId>
-    <SensorName>mot_imx362</SensorName>
-    <EepromName>imx362</EepromName>
-    <ActuatorName>mot_ak7371</ActuatorName>
-    <FlashName>pmic</FlashName>
-    <ChromatixName>mot_imx362_chromatix</ChromatixName>
+    <SensorName>ov16860</SensorName>
+    <ActuatorName>mot_lc898212xd</ActuatorName>
+    <EepromName>ov16860</EepromName>
+    <FlashName>sky81298</FlashName>
+    <ChromatixName>ov16860_chromatix</ChromatixName>
     <ModesSupported>1</ModesSupported>
     <Position>BACK</Position>
-    <MountAngle>90</MountAngle>
+    <MountAngle>360</MountAngle>
     <CSIInfo>
       <CSIDCore>1</CSIDCore>
       <LaneMask>0x1F</LaneMask>
@@ -101,24 +101,23 @@ LensInfo : Information of the lens present in the module.
       <ComboMode>0</ComboMode>
     </CSIInfo>
     <LensInfo>
-      <FocalLength>4.28</FocalLength>
-      <FNumber>1.7</FNumber>
-      <TotalFocusDistance>0.187</TotalFocusDistance>
-      <HorizontalViewAngle>65.0</HorizontalViewAngle>
-      <VerticalViewAngle>51.0</VerticalViewAngle>
+      <FocalLength>4.68</FocalLength>
+      <FNumber>2.00</FNumber>
+      <TotalFocusDistance>2.33</TotalFocusDistance>
+      <HorizontalViewAngle>64.8</HorizontalViewAngle>
+      <VerticalViewAngle>51.2</VerticalViewAngle>
       <MinFocusDistance>0.1</MinFocusDistance>
     </LensInfo>
   </CameraModuleConfig>
   <CameraModuleConfig>
     <CameraId>1</CameraId>
-    <SensorName>mot_s5k2l7</SensorName>
-    <EepromName>s5k2l7</EepromName>
+    <SensorName>mot_imx362</SensorName>
     <ActuatorName>mot_ak7371</ActuatorName>
-    <FlashName>pmic</FlashName>
-    <ChromatixName>mot_s5k2l7_chromatix</ChromatixName>
+    <FlashName>sky81298</FlashName>
+    <ChromatixName>mot_imx362_chromatix</ChromatixName>
     <ModesSupported>1</ModesSupported>
     <Position>BACK</Position>
-    <MountAngle>90</MountAngle>
+    <MountAngle>360</MountAngle>
     <CSIInfo>
       <CSIDCore>1</CSIDCore>
       <LaneMask>0x1F</LaneMask>
@@ -126,49 +125,23 @@ LensInfo : Information of the lens present in the module.
       <ComboMode>0</ComboMode>
     </CSIInfo>
     <LensInfo>
-      <FocalLength>4.28</FocalLength>
-      <FNumber>1.7</FNumber>
-      <TotalFocusDistance>0.187</TotalFocusDistance>
-      <HorizontalViewAngle>65.0</HorizontalViewAngle>
-      <VerticalViewAngle>51.0</VerticalViewAngle>
+      <FocalLength>4.43</FocalLength>
+      <FNumber>2.0</FNumber>
+      <TotalFocusDistance>1.9</TotalFocusDistance>
+      <HorizontalViewAngle>60.0</HorizontalViewAngle>
+      <VerticalViewAngle>45.0</VerticalViewAngle>
       <MinFocusDistance>0.1</MinFocusDistance>
     </LensInfo>
   </CameraModuleConfig>
   <CameraModuleConfig>
     <CameraId>2</CameraId>
-    <SensorName>mot_s5k2l7sa</SensorName>
-    <EepromName>s5k2l7</EepromName>
-    <ActuatorName>mot_ak7371</ActuatorName>
-    <FlashName>pmic</FlashName>
-    <ChromatixName>mot_s5k2l7sa_chromatix</ChromatixName>
-    <ModesSupported>1</ModesSupported>
-    <Position>BACK</Position>
-    <MountAngle>90</MountAngle>
-    <CSIInfo>
-      <CSIDCore>1</CSIDCore>
-      <LaneMask>0x1F</LaneMask>
-      <LaneAssign>0x4320</LaneAssign>
-      <ComboMode>0</ComboMode>
-    </CSIInfo>
-    <LensInfo>
-      <FocalLength>4.28</FocalLength>
-      <FNumber>1.7</FNumber>
-      <TotalFocusDistance>0.187</TotalFocusDistance>
-      <HorizontalViewAngle>65.0</HorizontalViewAngle>
-      <VerticalViewAngle>51.0</VerticalViewAngle>
-      <MinFocusDistance>0.1</MinFocusDistance>
-    </LensInfo>
-  </CameraModuleConfig>
-  <CameraModuleConfig>
-    <CameraId>3</CameraId>
-    <SensorName>mot_ov5695</SensorName>
-    <EepromName>ov5695</EepromName>
-    <FlashName>pmic</FlashName>
-    <ChromatixName>mot_ov5695_chromatix</ChromatixName>
-    <AltChromatixName>mot_ov5695_ofilm_chromatix</AltChromatixName>
+    <SensorName>ov5693</SensorName>
+    <FlashName>sky81298</FlashName>
+    <EepromName>ov5693</EepromName>
+    <ChromatixName>ov5693_chromatix</ChromatixName>
     <ModesSupported>1</ModesSupported>
     <Position>FRONT</Position>
-    <MountAngle>270</MountAngle>
+    <MountAngle>360</MountAngle>
     <CSIInfo>
       <CSIDCore>2</CSIDCore>
       <LaneMask>0x07</LaneMask>
@@ -178,9 +151,9 @@ LensInfo : Information of the lens present in the module.
     <LensInfo>
       <FocalLength>2.44</FocalLength>
       <FNumber>2.2</FNumber>
-      <TotalFocusDistance>1.26</TotalFocusDistance>
+      <TotalFocusDistance>0.0</TotalFocusDistance>
       <HorizontalViewAngle>72.95</HorizontalViewAngle>
-      <VerticalViewAngle>57.60</VerticalViewAngle>
+      <VerticalViewAngle>57.6</VerticalViewAngle>
       <MinFocusDistance>0.1</MinFocusDistance>
     </LensInfo>
   </CameraModuleConfig>

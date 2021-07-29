@@ -82,25 +82,12 @@ special_mode_mask values:
       <ISPCommon>mot_imx362_common</ISPCommon>
       <PostProc>mot_imx362_postproc</PostProc>
     </ChromatixName>
-    <ChromatixName special_mode_mask="MOT_4K_VIDEO">
-      <ISPVideo>mot_imx362_video_4k</ISPVideo>
-      <CPPVideo>mot_imx362_cpp_video_4k</CPPVideo>
-      <A3Video>mot_imx362_4k_video_3a</A3Video>
-    </ChromatixName>
-    <ChromatixName special_mode_mask="MOT_ALTM_IHDR_VIDEO">
-      <ISPVideo>mot_imx362_ihdr_video</ISPVideo>
-      <A3Video>mot_imx362_ihdr_video_3a</A3Video>
-    </ChromatixName>
-    <ChromatixName special_mode_mask="MOT_4K_IHDR_VIDEO">
-      <ISPVideo>mot_imx362_ihdr_video_4k</ISPVideo>
-      <A3Video>mot_imx362_4k_ihdr_video_3a</A3Video>
-    </ChromatixName>
   </CommonChromatixInfo>
   <ResolutionChromatixInfo>
     <ChromatixName sensor_resolution_index="0" special_mode_mask="0">
       <ISPPreview>mot_imx362_snapshot</ISPPreview>
       <ISPSnapshot>mot_imx362_snapshot</ISPSnapshot>
-      <ISPVideo>mot_imx362_default_video</ISPVideo>
+      <ISPVideo>mot_imx362_snapshot</ISPVideo>
       <CPPPreview>mot_imx362_cpp_preview</CPPPreview>
       <CPPSnapshot>mot_imx362_cpp_snapshot</CPPSnapshot>
       <CPPVideo>mot_imx362_cpp_video</CPPVideo>
@@ -109,6 +96,28 @@ special_mode_mask values:
       <A3Video>mot_imx362_fullsize_video_3a</A3Video>
     </ChromatixName>
     <ChromatixName sensor_resolution_index="1" special_mode_mask="0">
+      <ISPPreview>mot_imx362_video_4k</ISPPreview>
+      <ISPSnapshot>mot_imx362_video_4k</ISPSnapshot>
+      <ISPVideo>mot_imx362_video_4k</ISPVideo>
+      <CPPPreview>mot_imx362_cpp_preview</CPPPreview>
+      <CPPSnapshot>mot_imx362_cpp_snapshot</CPPSnapshot>
+      <CPPVideo>mot_imx362_cpp_video_4k</CPPVideo>
+      <CPPLiveshot>mot_imx362_cpp_liveshot</CPPLiveshot>
+      <A3Preview>mot_imx362_4k_preview_3a</A3Preview>
+      <A3Video>mot_imx362_4k_video_3a</A3Video>
+    </ChromatixName>
+    <ChromatixName sensor_resolution_index="2" special_mode_mask="0">
+      <ISPPreview>mot_imx362_default_video</ISPPreview>
+      <ISPSnapshot>mot_imx362_default_video</ISPSnapshot>
+      <ISPVideo>mot_imx362_default_video</ISPVideo>
+      <CPPPreview>mot_imx362_cpp_preview</CPPPreview>
+      <CPPSnapshot>mot_imx362_cpp_snapshot</CPPSnapshot>
+      <CPPVideo>mot_imx362_cpp_video</CPPVideo>
+      <CPPLiveshot>mot_imx362_cpp_liveshot</CPPLiveshot>
+      <A3Preview>mot_imx362_1080p_video_3a</A3Preview>
+      <A3Video>mot_imx362_1080p_video_3a</A3Video>
+    </ChromatixName>
+    <ChromatixName sensor_resolution_index="3" special_mode_mask="0">
       <ISPPreview>mot_imx362_hfr_60</ISPPreview>
       <ISPSnapshot>mot_imx362_hfr_60</ISPSnapshot>
       <ISPVideo>mot_imx362_hfr_60</ISPVideo>
@@ -119,7 +128,7 @@ special_mode_mask values:
       <A3Preview>mot_imx362_hfr_60_3a</A3Preview>
       <A3Video>mot_imx362_hfr_60_3a</A3Video>
     </ChromatixName>
-    <ChromatixName sensor_resolution_index="2" special_mode_mask="0">
+    <ChromatixName sensor_resolution_index="4" special_mode_mask="0">
       <ISPPreview>mot_imx362_hfr_120</ISPPreview>
       <ISPSnapshot>mot_imx362_hfr_120</ISPSnapshot>
       <ISPVideo>mot_imx362_hfr_120</ISPVideo>

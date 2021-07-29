@@ -4,6 +4,30 @@ import /vendor/etc/init/hw/init.mmi.usb.rc
 on early-boot
     write /sys/module/subsystem_restart/parameters/disable_restart_work 0x0
 
+    # STML4 driver parameter permissions
+    chown root oem_5004 /sys/module/motosh/parameters/irq_disable
+    chmod 0660 /sys/module/motosh/parameters/irq_disable
+
+    # STML4 device permissions
+    chown system compass /dev/motosh
+    chmod 0660 /dev/motosh
+    chown system compass /dev/motosh_as
+    chmod 0660 /dev/motosh_as
+    chown system compass /dev/motosh_ms
+    chmod 0660 /dev/motosh_ms
+    chown system compass /sys/devices/virtual/motosh/motosh_as/timestamp_time_ns
+    chmod 0440 /sys/devices/virtual/motosh/motosh_as/timestamp_time_ns
+    chown system compass /sys/devices/virtual/motosh/motosh_as/rv_6axis_update_rate
+    chmod 0660 /sys/devices/virtual/motosh/motosh_as/rv_6axis_update_rate
+    chown system compass /sys/devices/virtual/motosh/motosh_as/rv_9axis_update_rate
+    chmod 0660 /sys/devices/virtual/motosh/motosh_as/rv_9axis_update_rate
+    chown system compass /sys/devices/virtual/motosh/motosh_as/game_rv_update_rate
+    chmod 0660 /sys/devices/virtual/motosh/motosh_as/game_rv_update_rate
+    chown system compass /sys/devices/virtual/motosh/motosh_as/gravity_update_rate
+    chmod 0660 /sys/devices/virtual/motosh/motosh_as/gravity_update_rate
+    chown system compass /sys/devices/virtual/motosh/motosh_as/linear_accel_update_rate
+    chmod 0660 /sys/devices/virtual/motosh/motosh_as/linear_accel_update_rate
+
 on init
     chown system log /sys/fs/pstore/console-ramoops-0
     chmod 0440 /sys/fs/pstore/console-ramoops-0
@@ -12,19 +36,10 @@ on init
     chown system log /sys/fs/pstore/dmesg-ramoops-0
     chmod 0640 /sys/fs/pstore/dmesg-ramoops-0
 
-   chmod 0660 /sys/devices/virtual/laser/stmvl53l1/enable_sar
-   chown root system /sys/devices/virtual/laser/stmvl53l1/enable_sar
-
 on fs
     wait /dev/block/bootdevice/by-name/hw
 
 on post-fs
-    # Change permission for fingerprint sensor
-    chown system oem_5004 /sys/devices/soc/soc:fpc_fpc1020/nav
-    chown system oem_5004 /sys/devices/soc/soc:fpc_fpc1020/dev_enable
-    chown system oem_5004 /sys/devices/soc/soc:fpc_fpc1020/irq
-    chown system oem_5004 /sys/devices/soc/soc:fpc_fpc1020/irq_cnt
-    chmod 0440 /sys/devices/soc/soc:fpc_fpc1020/irq_cnt
 
     # MOT_LED_CALIBRATION
     chown cameraserver /mnt/vendor/persist/camera/ledcal
@@ -137,6 +152,9 @@ on post-fs-data
     chown root oem_5020 /sys/module/dwc3_msm/parameters/usb_priority
     chmod 0660 /sys/module/dwc3_msm/parameters/usb_priority
 
+    # Sensor Hub calibration data directory
+    mkdir /data/misc/sensorhub 0770 system compass
+    
     # Create panic dump dir.
     mkdir /data/vendor/dontpanic 0750 root log
 
@@ -165,6 +183,14 @@ on post-fs-data
 
 
 on boot
+    # Change permission for fingerprint sensor
+    chown system oem_5004 /sys/bus/spi/devices/spi8.0/nav
+    chown system oem_5004 /sys/bus/spi/devices/spi8.0/clk_enable
+    chown system oem_5004 /sys/bus/spi/devices/spi8.0/dev_enable
+    chown system oem_5004 /sys/bus/spi/devices/spi8.0/irq
+    chown system oem_5004 /sys/bus/spi/devices/spi8.0/irq_cnt
+    chmod 0440 /sys/bus/spi/devices/spi8.0/irq_cnt
+
    # restore default console_loglevel to KERN_DEBUG
    # restore default_message_loglevel to KERN_WARNING
    write /proc/sys/kernel/printk "7 4 1 7"
@@ -249,33 +275,15 @@ service vendor.mmi-boot-sh /vendor/bin/sh /vendor/bin/init.mmi.boot.sh
     oneshot
     disabled
 
-service mmi-laser-sh /vendor/bin/sh /vendor/bin/init.mmi.laser.sh
-    class core
-    user root
-    oneshot
-
 service vendor.charge_only_mode /vendor/bin/charge_only_mode
     user root
     group graphics system input
-    disabled
-
-service vendor.sensors.qti /vendor/bin/sensors.qti
-    class core
-    user system
-    group system
     disabled
 
 service vendor.sensor-sh /vendor/bin/init.qcom.sensors.sh
     class core
     user root
     oneshot
-
-service vendor.vl53l1_daemon /vendor/bin/vl53l1_daemon
-    class late_start
-    user root
-    group root
-    seclabel u:r:vl53l1:s0
-    socket vl53l1_daemon stream 660 root system
 
 service vendor.thermal-com /vendor/bin/thermal-engine --minimode
     class main
@@ -300,6 +308,13 @@ on property:ro.bootmode=normal
 on property:sys.boot_completed=1
     # Enable ZRAM on boot_complete
     swapon_all /vendor/etc/fstab.qcom
+
+# Start Sensor daemon
+service vendor.motosh /vendor/bin/motosh boot
+    class late_start
+    user compass
+    group compass misc input
+    oneshot
 
 # Override to add input group access and use of wake locks
 service vendor.sensors-hal-1-0 /vendor/bin/hw/android.hardware.sensors@1.0-service

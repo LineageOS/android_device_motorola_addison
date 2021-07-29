@@ -1,5 +1,5 @@
 #
-# vendor prop for albus
+# vendor prop for addison
 #
 
 # Audio
@@ -176,31 +176,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     ril.subscription.types=NV,RUIM \
     telephony.lteOnCdmaDevice=1 \
-
-
-# Sensors
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.qti.sensors.dev_ori=false \
-    ro.qti.sensors.dpc=true \
-    ro.qti.sensors.iod=true \
-    ro.qti.sensors.pmd=true \
-    ro.qti.sensors.mot_detect=true \
-    ro.qti.sensors.multishake=true \
-    ro.qti.sensors.sta_detect=true \
-    ro.hardware.sensors=albus \
-    ro.vendor.sensors.maghalcal=true \
-    ro.vendor.sensors.amd=false \
-    ro.vendor.sensors.pmd=false \
-    ro.vendor.sensors.rmd=false \
-    ro.vendor.sdk.sensors.gestures=false \
-    ro.vendor.sensors.facing=false \
-    ro.vendor.sensors.scrn_ortn=false \
-    ro.vendor.sensors.cmc=false \
-    ro.vendor.sensors.pedometer=false \
-    ro.sensors.tof.interval_ms=5000 \
-    ro.vendor.sensors.dev_ori=true \
-    ro.vendor.sensors.sta_detect=true \
-    ro.vendor.sensors.mot_detect=true
 
 # SurfaceFlinger
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \

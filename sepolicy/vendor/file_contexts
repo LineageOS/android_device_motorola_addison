@@ -139,17 +139,17 @@
 /sys/kernel/debug/rmt_storage(/.*)? u:object_r:debugfs_rmt_storage:s0
 
 # Usb hal
-/(vendor|system/vendor)/bin/hw/android\.hardware\.usb@1\.0-service\.albus       u:object_r:hal_usb_default_exec:s0
+/(vendor|system/vendor)/bin/hw/android\.hardware\.usb@1\.0-service\.addison       u:object_r:hal_usb_default_exec:s0
 
 # Light HAL
-/(vendor|system/vendor)/bin/hw/android\.hardware\.light@2\.0-service.albus                                     u:object_r:hal_light_default_exec:s0
+/(vendor|system/vendor)/bin/hw/android\.hardware\.light@2\.0-service.addison                                     u:object_r:hal_light_default_exec:s0
 /sys/devices/soc/leds-atc-20/leds(/.*)?                  u:object_r:sysfs_leds:s0
 
 # Fingerprint custom hal
 /(vendor|system/vendor)/bin/hw/android\.hardware\.biometrics\.fingerprint@2\.1-fpcservice    u:object_r:hal_fingerprint_fpc_exec:s0
-/(vendor|system/vendor)/bin/hw/vendor\.lineage\.touch@1\.0-service\.albus      u:object_r:hal_lineage_touch_default_exec:s0
+/(vendor|system/vendor)/bin/hw/vendor\.lineage\.touch@1\.0-service\.addison      u:object_r:hal_lineage_touch_default_exec:s0
 
 # Health HAL
-/(vendor|system/vendor)/bin/hw/android\.hardware\.health@2\.0-service\.albus          u:object_r:hal_health_default_exec:s0
+/(vendor|system/vendor)/bin/hw/android\.hardware\.health@2\.0-service\.addison          u:object_r:hal_health_default_exec:s0
 /(vendor|system/vendor)/bin/hw/motorola\.hardware\.health@1\.0-service                   u:object_r:hal_health_default_exec:s0
 /persist/battery(/.*)?  u:object_r:persist_battery_file:s0

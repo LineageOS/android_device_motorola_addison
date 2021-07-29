@@ -18,12 +18,12 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 
-# Inherit from albus device
-$(call inherit-product, device/motorola/albus/device.mk)
+# Inherit from addison device
+$(call inherit-product, device/motorola/addison/device.mk)
 
 # Device identifier. This must come after all inclusions
-PRODUCT_DEVICE := albus
-PRODUCT_NAME := full_albus
+PRODUCT_DEVICE := addison
+PRODUCT_NAME := full_addison
 
 # for specific
-$(call inherit-product, vendor/motorola/albus/albus-vendor.mk)
+$(call inherit-product, vendor/motorola/addison/addison-vendor.mk)

@@ -8,8 +8,8 @@
 # as published by the Free Software Foundation.
 #
 
-# fpc1020 "finger present" 
-key 616   HOME         VIRTUAL
-key 617   SLEEP        VIRTUAL
-key 620   APP_SWITCH   VIRTUAL
-key 621   BACK         VIRTUAL
+device.internal = 1
+
+keyboard.layout = fpc1020
+keyboard.builtIn = 1
+keyboard.orientationAware = 0

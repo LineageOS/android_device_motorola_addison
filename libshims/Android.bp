@@ -1,10 +1,10 @@
 // Camera
 cc_library_shared {
-    name: "libcamera_metadata_helper",
+    name: "libjni_shim",
     proprietary: true,
     defaults: ["hidl_defaults"],
     srcs: [
-        "CameraMetadata.cpp",
+        "jni_shim.cpp",
     ],
     cflags: [
         "-Werror",
@@ -12,12 +12,8 @@ cc_library_shared {
         "-Wall",
     ],
     shared_libs: [
-        "liblog",
         "libutils",
-        "libhardware",
-        "libcamera_metadata",
     ],
-    include_dirs: ["system/media/private/camera/include"],
 }
 
 cc_library_shared {

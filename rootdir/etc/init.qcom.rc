@@ -87,16 +87,6 @@ on early-boot
     chown system system /mnt/vendor/persist/sensors/sns.reg
     chmod 0664 /mnt/vendor/persist/sensors/sensors_settings
 
-    # vendor.health-hal needs to be able to RW
-    chown system system /sys/devices/soc/800f000.qcom,spmi/spmi-0/spmi0-02/800f000.qcom,spmi:qcom,pmi8998@2:qpnp,fg/cycle_counts_bins
-    # HardwareInfo needs to be able to read CC bins
-    chmod 644 /sys/devices/soc/800f000.qcom,spmi/spmi-0/spmi0-02/800f000.qcom,spmi:qcom,pmi8998@2:qpnp,fg/cycle_counts_bins
-
-    # dumpstate needs to read, vendor.health-hal needs to be able to RW
-    chown system system /sys/devices/soc/qpnp-fg-18/power_supply/bms/charge_full
-    # HardwareInfo needs to be able to read charge_full
-    chmod 644 /sys/devices/soc/qpnp-fg-18/power_supply/bms/charge_full
-
     chown system system /mnt/vendor/persist/data/pfm/licenses
     chmod 0775 /mnt/vendor/persist/data/pfm/licenses
 
@@ -271,11 +261,12 @@ on boot
     # Create vpp directory
     mkdir /mnt/vendor/persist/vpp 0770 media media
 
-    # Create hvdcp_opti directory
-    mkdir /mnt/vendor/persist/hvdcp_opti 0770 root system
-
     # FPC button permissions
     chown system system /sys/bus/spi/devices/spi8.0/key_enable
+
+    # Change permission for type C params
+    chown root oem_5004 /sys/devices/soc/78b6000.i2c/i2c-2/2-0022/CC_state
+    chown root oem_5004 /sys/devices/soc/78b6000.i2c/i2c-2/2-0022/enable_vconn
 
     # Change ownership and permission for AMPS factory testing
     chown root oem_5004 /sys/devices/soc/a800000.ssusb/modusb_enable
@@ -294,35 +285,13 @@ on boot
     chown root oem_5004 /sys/class/graphics/fb0/te_enable
     chown root oem_5004 /sys/class/graphics/fb0/frame_counter
 
-    # Change ownership and permission for AMPS factory testing
-    chown root oem_5004 /sys/devices/soc/a800000.ssusb/modusb_enable
-    chown root oem_5004 /sys/devices/soc/a800000.ssusb/modusb_protocol
-    chown root oem_5004 /sys/module/usb3813_hub/parameters/boost_val
-    chmod 0664 /sys/module/usb3813_hub/parameters/boost_val
-    write /sys/module/usb3813_hub/parameters/boost_val 5
-
     # Wifi firmware reload path
     chown wifi wifi /sys/module/wlan/parameters/fwpath
-
-    # restore default console_loglevel to KERN_DEBUG
-    # restore default_message_loglevel to KERN_WARNING
-    write /proc/sys/kernel/printk "7 4 1 7"
 
     # Change ownership and permission for leds backlight
     chmod 0664 /sys/class/leds/lcd-backlight/brightness
     chown system system /sys/class/leds/white/brightness
     chmod 0664 /sys/class/leds/white/brightness
-
-    # Change ownership and permission for vibrator
-    chown system system /sys/class/timed_output/vibrator/enable
-    chmod 0660 /sys/class/timed_output/vibrator/enable
-    chown system system /sys/class/leds/vibrator/state
-    chmod 0660 /sys/class/leds/vibrator/state
-    chown system system /sys/class/leds/vibrator/activate
-    chmod 0660 /sys/class/leds/vibrator/activate
-    chown system system /sys/class/leds/vibrator/duration
-    chmod 0660 /sys/class/leds/vibrator/duration
-    chown root oem_5020 /sys/bus/i2c/devices/2-005a/reduce
 
     #sensors log dir
     mkdir /data/vendor/sensors

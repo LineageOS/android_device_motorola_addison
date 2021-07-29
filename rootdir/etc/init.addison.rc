@@ -46,7 +46,7 @@ on init
     setprop ro.vendor.boot.serialno ${ro.boot.serialno}
     setprop ro.vendor.zygote ${ro.zygote}
     setprop ro.vendor.hw.fps true
-    setprop ro.vendor.hw.imager 12MP
+    setprop ro.vendor.hw.imager 16MP
     setprop ro.product.manufacturer Motorola
 	
 # Translate MMI property in order to keep consistent with QCOM
