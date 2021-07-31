@@ -314,7 +314,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
 
     LOCAL_C_INCLUDES := \
         $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
-        hardware/moto/sensors/libsensorhub
+        $(LOCAL_PATH)/libsensorhub
 
     # Need the UAPI output directory to be populated with motosh.h/stml0xx.h
     LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
