@@ -203,7 +203,6 @@ int IioSensor::readEvents(sensors_event_t* data, int count) {
         start = reinterpret_cast<uintptr_t>(iio_buffer_start(iio_buf)) + (copied_samples * sample_size);
     }
 
-    const ptrdiff_t len = (ptrdiff_t)iio_buffer_end(iio_buf) - start;
     //S_LOGD("step=%" PRIdPTR " sample_size=%zd samples=%d bytes=%" PRIdPTR " count=%d",
     //        iio_buffer_step(iio_buf), sample_size, remaining_samples, len, count);
     //assert(iio_buffer_step(buffer) == sample_size);

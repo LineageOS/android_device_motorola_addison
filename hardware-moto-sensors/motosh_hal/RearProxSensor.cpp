@@ -33,7 +33,6 @@
 RearProxSensor::RearProxSensor()
 	: SensorBase("", "Rear proximity sensor", ""),
 	mEnabled(0),
-	mPendingMask(0),
 	mInputReader(8),
 	mFlushEnabled(0)
 {
@@ -56,7 +55,6 @@ RearProxSensor::RearProxSensor()
 	// read the actual value of all sensors if they're enabled already
 	int fd;
 	char buff[20];
-	struct input_absinfo absinfo;
 
 
 	fd = open("/sys/kernel/range/enable_sar", O_RDONLY);
@@ -165,7 +163,7 @@ int RearProxSensor::readEvents(sensors_event_t* data, int count)
 
 	ssize_t n = mInputReader.fill(data_fd);
 	if (n < 0) {
-		ALOGE("RearProxSensor: read error %d, dropped events", n);
+		ALOGE("RearProxSensor: read error %ld, dropped events", n);
 		return 0;
 	}
 
@@ -183,7 +181,6 @@ int RearProxSensor::readEvents(sensors_event_t* data, int count)
 				processEvent(event->code, event->value);
 		}
 		else if (type == EV_SYN) {
-			int64_t time = timevalToNano(event->time);
 			*data++ = mPendingEvents;
 			count--;
 			numEventReceived++;

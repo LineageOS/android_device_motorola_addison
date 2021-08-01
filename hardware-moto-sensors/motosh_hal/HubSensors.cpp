@@ -63,7 +63,6 @@ HubSensors::HubSensors()
       nextPendingEvent(0)
 {
     // read the actual value of all sensors if they're enabled already
-    struct input_absinfo absinfo;
     char flags[3];
     FILE *fp;
     int size;
@@ -446,7 +445,8 @@ int HubSensors::setEnable(int32_t handle, int en)
                     new_enabled |= M_GLANCE;
                 found = 1;
             }
-	case ID_MOTION_DETECT:
+            break;
+	    case ID_MOTION_DETECT:
             if (newState)
                 new_enabled |= M_MOTION_DETECT;
             else

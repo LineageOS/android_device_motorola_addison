@@ -681,9 +681,7 @@ int  main(int argc, char *argv[])
     unsigned char hexinput[250];
     int count, i;
     short delay = 0;
-    int enabledints = 0;
     bool forceBoot = false;
-    char ver_string[FW_VERSION_SIZE];
     char fw_file_name[STM_MAX_PATH];
 
     LOGDEBUG("Start MOTOSH  Version-1 service\n");
@@ -947,7 +945,6 @@ int  main(int argc, char *argv[])
 
         // read_write, 0 = read, 1 = write
         unsigned int read_write = atoi(argv[2]);
-        int addr = (data_header[0] << 8) | data_header[1];
         int data_size = (data_header[2] << 8) | data_header[3];
 
         if (data_size > STM_MAX_GENERIC_DATA - 1) {

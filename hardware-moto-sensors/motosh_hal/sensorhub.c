@@ -224,7 +224,7 @@ static int sensorhub_algo_query(struct sensorhub_device_t* device, uint16_t algo
     struct sensorhub_event_t* output)
 {
     struct sensorhub_context_t* context = (struct sensorhub_context_t*)device;
-    int i, evt_reg_size, error = 0;
+    int evt_reg_size, error = 0;
 
     if (algo == SENSORHUB_ALGO_ACCUM_MVMT) {
         evt_reg_size = MOTOSH_EVT_SZ_ACCUM_MVMT;

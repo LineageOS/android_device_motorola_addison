@@ -72,7 +72,6 @@ public:
 	}
 private:
 	uint32_t mEnabled;
-	uint32_t mPendingMask;
 	InputEventCircularReader mInputReader;
 	sensors_event_t mPendingEvents;
 	sensors_event_t mFlushEvents;

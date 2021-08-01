@@ -75,7 +75,7 @@ public:
      * return type, so that a compiler warning is generated in case it is used.
      */
     template<typename T, typename = typename std::enable_if<std::is_integral<T>::value>::type >
-    static inline T extract(uint8_t* a) {
+    static inline T extract(uint8_t*) {
         assert(false);
     }
 
