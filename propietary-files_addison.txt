@@ -204,10 +204,14 @@ vendor/etc/permissions/mot_dtv_permissions.xml
 vendor/lib64/libdtvhal.so|f2ac1307ed9dbe3da1b3a1da5b947da1b085b62c
 vendor/lib64/libdtvtuner.so|1667ff29c199f9ae9abe1d57f9a43300ab594b07
 
-# Fingerprint
+# Fingerprint from Griffin OPL27.76-71-2
 lib/libcom_fingerprints_service.so:vendor/lib/libcom_fingerprints_service.so
 lib/lib_fpc_tac_shared.so:vendor/lib/lib_fpc_tac_shared.so
-vendor/lib/hw/fingerprint.msm8953.so
+vendor/lib/hw/fingerprint.msm8996.so:vendor/lib/hw/fingerprint.msm8953.so
+lib64/lib_fpc_tac_shared.so:vendor/lib64/lib_fpc_tac_shared.so
+lib64/libcom_fingerprints_service.so:vendor/lib64/libcom_fingerprints_service.so
+vendor/lib64/hw/fingerprint.msm8996.so:vendor/lib64/hw/fingerprint.msm8953.so
+
 
 # Moto Mods from Nash PPX29.159-33
 -system/priv-app/ModFmwkProxyService/ModFmwkProxyService.apk|3f1d65a49edf6d1fac4988f738ebb5d17f8a2476

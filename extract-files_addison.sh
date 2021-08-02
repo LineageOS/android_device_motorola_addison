@@ -63,11 +63,6 @@ fi
 
 function blob_fixup() {
     case "${1}" in
-         
-    # Fix fingerprint UHID
-    vendor/etc/init/android.hardware.biometrics.fingerprint@2.1-service.rc)
-        sed -i 's/group system input 9015/group system uhid input 9015/' "${2}"
-        ;;
 
     vendor/lib/libjustshoot.so)
         "${PATCHELF}" --add-needed libjustshoot_shim.so "${2}"
@@ -101,8 +96,8 @@ function blob_fixup() {
         sed -i "s|service.bootanim.exit|service.bootanim.hold|g" "${2}"
         ;;
 
-    vendor/lib/libzaf_core.so)
-        sed -i "s|/system/etc/zaf|/vendor/etc/zaf|g" "${2}"
+    vendor/lib64/hw/fingerprint.msm8953.so | vendor/lib/hw/fingerprint.msm8953.so)
+        "${PATCHELF}" --set-soname fingerprint.msm8953.so "${2}"
         ;;
 
     # memset shim
