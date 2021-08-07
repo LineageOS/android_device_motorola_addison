@@ -55,7 +55,7 @@ vendor/lib/libmmcamera2_dcrf.so
 vendor/lib/libmmcamera2_frame_algorithm.so
 vendor/lib/libmmcamera2_iface_modules.so
 vendor/lib/libmmcamera2_imglib_modules.so
-vendor/lib/libmmcamera2_isp_modules.so
+vendor/lib/libmmcamera2_isp_modules.so|1a1c0d4e5221cd91aceef43c0c5f03a6f0955b09
 vendor/lib/libmmcamera2_is.so
 vendor/lib/libmmcamera2_mct.so
 vendor/lib/libmmcamera2_pp_buf_mgr.so
