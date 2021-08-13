@@ -5,11 +5,6 @@
     "branch":      "r11.1-albus"
   },
   {
-    "repository":  "AICP/proprietary_vendor_motorola",
-    "target_path": "vendor/motorola",
-    "branch":      "r11.1"
-  },
-  {
     "repository":  "LineageOS/android_system_qcom",
     "target_path": "system/qcom",
     "branch":      "lineage-18.1"
