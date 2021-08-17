@@ -58,7 +58,7 @@ function blob_fixup() {
             ;;
         # Load wrapped shim
         vendor/lib64/libmdmcutback.so)
-            "${PATCHELF}" --add-needed "libqsap_shim.so" "${2}"
+            "${PATCHELF}" --add-needed "libqsapshim.so" "${2}"
             ;;
         # Fix missing symbols
         vendor/lib64/libril-qc-qmi-1.so)
@@ -69,17 +69,6 @@ function blob_fixup() {
         vendor/bin/thermal-engine)
             sed -i "s|/system/etc/thermal|/vendor/etc/thermal|g" "${2}"
             ;;
-
-    vendor/lib64/libmdmcutback.so)
-        patchelf --add-needed libqsap_shim.so "${2}"
-        ;;
-
-    # Fix missing symbols
-    vendor/lib64/libril-qc-qmi-1.so)
-        for  LIBCUTILS_SHIM in $(grep -L "libcutils_shim.so" "${2}"); do
-            "${PATCHELF}" --add-needed "libcutils_shim.so" "$LIBCUTILS_SHIM"
-        done
-    ;;
     
     #libwui patch
     vendor/lib/libmot_gpu_mapper.so)
