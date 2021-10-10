@@ -572,6 +572,7 @@ vendor/lib/libpdnotifier.so|897750f36ced03517a3cf49ce99137d74347777e
 -vendor/lib/libqmiservices.so|f11a2d2d8183b0bd5eefb2b6a37ae73861414f66
 vendor/lib64/libadropbox.so|3e24aac3594dbd82df0df1069ea0cd852745a63c
 vendor/lib64/libconfigdb.so|26a7f0a74b76f1dab6dab5d31d87613893d3e9b2
+vendor/lib64/liblog_vendor.so|cc0d95f7bb67969954566eb10e88008cca3f0c0a
 vendor/lib64/liblqe.so|8171fe5561fa1f797e143bbcd3ea87a8eae66c79
 vendor/lib64/libmdmcutback.so|d639d429c969685f3e60bf510c078be0d1c00c8a
 vendor/lib64/libmdmdetect.so|6bb0d75e36095fae2867ea7b2c1122ca46565cfe
