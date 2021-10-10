@@ -10,19 +10,21 @@ system/etc/acdbdata/Hdmi_cal.acdb:vendor/etc/acdbdata/Hdmi_cal.acdb
 system/etc/acdbdata/Headset_cal.acdb:vendor/etc/acdbdata/Headset_cal.acdb
 system/etc/acdbdata/Speaker_cal.acdb:vendor/etc/acdbdata/Speaker_cal.acdb
 
+# Audio (Prebuilt Audio HAL)
+vendor/lib/hw/audio.primary.msm8953.so|15672483b31756858fdf172c37bc7bd503886700
+
 # Audio (Prebuilt Audio HAL) from Albus
-vendor/lib/hw/audio.primary.msm8953.so|488fc5246b5f2aa6e15b61a58acd6826e550bab0
-vendor/lib/libmotaudioutils.so
-vendor/lib/libtinyalsa.so
-vendor/lib/libtinycompress.so
-vendor/lib/libtinycompress_vendor.so
-vendor/lib/libunshorten.so
+vendor/lib/libmotaudioutils.so|3821a99a4dbdfea937434e5ef4a637fb24e705f2
+vendor/lib/libtinyalsa.so|2368cbbc025af83208c4abc7fabf66c967edceb6
+vendor/lib/libtinycompress.so|fdf962fd8ce40e00a0bf9f5b1ed693f9d6611d8a
+vendor/lib/libtinycompress_vendor.so|40090a0c3f4ddb494fce932dbc9ac6bca36eb640
+vendor/lib/libunshorten.so|19ae3fbe698b36c10b57877ef3a8e1c0d6a5aa15
 
 # Audio - Soundfx from Albus
-vendor/lib/soundfx/libspeakerbundle.so
-vendor/lib/soundfx/libmmieffectswrapper.so
-vendor/lib/libeqservicebridge.so
-vendor/lib/motorola.hardware.audio.eqservice@1.0_vendor.so
+vendor/lib/soundfx/libspeakerbundle.so|b05fcfad46ba8b5a46bc2beb575fc2a89040a2bb
+vendor/lib/soundfx/libmmieffectswrapper.so|14e9d0a4d62368e344640f060fe9018165c7eeb8
+vendor/lib/libeqservicebridge.so|31ae87116cf5c03722d3d68b2f36e365990099a0
+vendor/lib/motorola.hardware.audio.eqservice@1.0_vendor.so|862b7ec100f08b217614a0fba3cba518ea4bc62b
 
 
 # Camera
