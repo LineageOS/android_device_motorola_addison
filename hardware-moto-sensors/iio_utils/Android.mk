@@ -11,9 +11,7 @@ LOCAL_CFLAGS += -Wall -Wextra
 
 LOCAL_SRC_FILES := lsiio.c
 
-LOCAL_C_INCLUDES := \
-    $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
-    kernel/include
+LOCAL_HEADER_LIBRARIES += generated_kernel_headers
 
 include $(BUILD_EXECUTABLE)
 
@@ -26,9 +24,7 @@ LOCAL_CFLAGS += -Wall -Wextra
 
 LOCAL_SRC_FILES := iio_event_monitor.c
 
-LOCAL_C_INCLUDES := \
-    $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
-    kernel/include
+LOCAL_HEADER_LIBRARIES += generated_kernel_headers
 
 include $(BUILD_EXECUTABLE)
 
@@ -41,9 +37,7 @@ LOCAL_CFLAGS += -Wall -Wextra
 
 LOCAL_SRC_FILES := generic_buffer.c
 
-LOCAL_C_INCLUDES := \
-    $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
-    kernel/include
+LOCAL_HEADER_LIBRARIES += generated_kernel_headers
 
 include $(BUILD_EXECUTABLE)
 

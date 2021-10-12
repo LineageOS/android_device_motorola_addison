@@ -168,16 +168,9 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(SH_PATH)
         LOCAL_C_INCLUDES += external/zlib
 
-        LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
-                            system/core/base/include
+        LOCAL_C_INCLUDES += system/core/base/include
 
-        # Needs to be added after KERNEL_OBJ/usr/include
-        ifeq ($(MOT_SENSOR_HUB_HW_TYPE_L4), true)
-            LOCAL_C_INCLUDES += kernel/include
-        endif
-
-        # Need the UAPI output directory to be populated with motosh.h/stml0xx.h
-        LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+        LOCAL_HEADER_LIBRARIES += generated_kernel_headers
 
         LOCAL_PRELINK_MODULE := false
         LOCAL_MODULE_RELATIVE_PATH := hw
@@ -202,10 +195,8 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
     LOCAL_SRC_FILES := $(SH_PATH)/sensorhub.c
     LOCAL_SRC_FILES += $(UTILS_PATH)/sensor_time.cpp
 
-    LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
-    # Need the UAPI output directory to be populated with motosh.h/stml0xx.h
-    LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
     LOCAL_HEADER_LIBRARIES := libutils_headers libhardware_headers
+    LOCAL_HEADER_LIBRARIES += generated_kernel_headers
     LOCAL_SHARED_LIBRARIES := libcutils libc libutils liblog
     LOCAL_VENDOR_MODULE := true
     LOCAL_MODULE := sensorhub.$(TARGET_BOARD_PLATFORM)
@@ -227,7 +218,6 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         LOCAL_MODULE  := akmd09912
 
         LOCAL_C_INCLUDES := \
-            $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
             $(LOCAL_PATH)/$(AKM_PATH) \
             $(LOCAL_PATH)/$(AKM_PATH)/$(SMARTCOMPASS_LIB) \
             $(LOCAL_PATH)/$(SH_PATH)
@@ -252,6 +242,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         LOCAL_STATIC_LIBRARIES := AK09912
 
         LOCAL_FORCE_STATIC_EXECUTABLE := false
+        LOCAL_HEADER_LIBRARIES += generated_kernel_headers
         LOCAL_SHARED_LIBRARIES := libc libm libutils libcutils liblog
 
         include $(BUILD_EXECUTABLE)
@@ -313,11 +304,9 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
     endif
 
     LOCAL_C_INCLUDES := \
-        $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
         $(LOCAL_PATH)/libsensorhub
 
-    # Need the UAPI output directory to be populated with motosh.h/stml0xx.h
-    LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+    LOCAL_HEADER_LIBRARIES += generated_kernel_headers
 
     include $(BUILD_EXECUTABLE)
 

@@ -33,9 +33,7 @@ endif
 LOCAL_SRC_FILES :=              \
     SensorHub.cpp Endian.cpp
 
-LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
-# Need the UAPI output directory to be populated with motosh.h/stml0xx.h
-LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+LOCAL_HEADER_LIBRARIES += generated_kernel_headers
 
 LOCAL_SHARED_LIBRARIES := liblog libcutils libutils libc
 LOCAL_CFLAGS += -Wall -Wextra
