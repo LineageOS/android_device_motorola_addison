@@ -42,8 +42,8 @@ LOCAL_C_INCLUDES += \
     external/libselinux/include \
     
 
-LOCAL_SHARED_LIBRARIES += libiio libcrypto
-LOCAL_HEADER_LIBRARIES := libutils_headers libhardware_headers
+LOCAL_SHARED_LIBRARIES += libiio.vendor libcrypto
+LOCAL_HEADER_LIBRARIES := libutils_headers libhardware_headers libiio.vendor_headers
 LOCAL_HEADER_LIBRARIES += generated_kernel_headers
 LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libc libbase libselinux
 LOCAL_CFLAGS += -Wall -Wextra
