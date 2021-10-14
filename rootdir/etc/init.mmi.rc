@@ -28,6 +28,14 @@ on early-boot
     chown system compass /sys/devices/virtual/motosh/motosh_as/linear_accel_update_rate
     chmod 0660 /sys/devices/virtual/motosh/motosh_as/linear_accel_update_rate
 
+    # Change ownership and permission for laser_sensor
+    chown system system /sys/kernel/range/enable_sar
+    chmod 0660 /sys/kernel/range/enable_sar
+    chown system system /sys/kernel/range/set_delay_ms
+    chmod 0660 /sys/kernel/range/set_delay_ms
+    chown system system /sys/kernel/range/near
+    chmod 0660 /sys/kernel/range/near
+
 on init
     chown system log /sys/fs/pstore/console-ramoops-0
     chmod 0440 /sys/fs/pstore/console-ramoops-0
