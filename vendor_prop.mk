@@ -108,11 +108,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     debug.sf.recomputecrop=0 \
     ro.opengles.version=196610 \
     ro.qualcomm.cabl=0
-    
-# FM
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    vendor.bluetooth.soc=smd \
-    ro.vendor.fm.use_audio_session=true
 	
 # Mods
 PRODUCT_PROPERTY_OVERRIDES += \

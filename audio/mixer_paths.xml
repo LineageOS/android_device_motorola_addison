@@ -231,14 +231,6 @@
 	<ctl name="MultiMedia1 Mixer AFE_PCM_TX" value="0" />
 	<ctl name="AFE_PCM_RX Audio Mixer MultiMedia5" value="0" />
 	<!-- usb headset end -->
-	<!-- fm -->
-	<ctl name="PRI MI2S LOOPBACK Volume" value="0" />
-	<ctl name="SLIMBUS_0_RX Port Mixer PRI_MI2S_TX" value="0" />
-	<ctl name="SLIMBUS_DL_HL Switch" value="0" />
-	<ctl name="MultiMedia1 Mixer PRI_MI2S_TX" value="0" />
-	<ctl name="MultiMedia2 Mixer PRI_MI2S_TX" value="0" />
-	<ctl name="MultiMedia2 Mixer QUAT_MI2S_TX" value="0" />
-	<!-- fm end -->
 
 	<!-- Voice -->
 	<ctl name="SLIM_0_RX_Voice Mixer CSVoice" value="0" />
@@ -576,14 +568,6 @@
 	<path name="low-latency-record bt-sco-wb">
 		<ctl name="Internal BTSCO SampleRate" value="BTSCO_RATE_16KHZ" />
 		<path name="low-latency-record bt-sco" />
-	</path>
-
-	<path name="fm-virtual-record capture-fm">
-		<ctl name="MultiMedia2 Mixer PRI_MI2S_TX" value="1" />
-	</path>
-
-	<path name="fm-virtual-record mod">
-		<ctl name="MultiMedia2 Mixer QUAT_MI2S_TX" value="1" />
 	</path>
 
     <path name="compress-voip-call">
@@ -960,9 +944,6 @@
 	</path>
 
 	<path name="bt-sco-mic-wb">
-	</path>
-
-	<path name="capture-fm">
 	</path>
 
 	<path name="voice-rx">
