@@ -106,6 +106,8 @@
 
 # Sensors
 /(vendor|system/vendor)/bin/motosh                       u:object_r:sensor_hub_exec:s0
+/data/vendor/sensorhub(/.*)?                             u:object_r:sensorhub_data_file:s0
+/data/vendor/sensorhub_logs(/.*)?                        u:object_r:sensorhub_data_file:s0
 /dev/laser                                               u:object_r:laser_device:s0
 /dev/mmi_sys_temp                                        u:object_r:thermal_device:s0
 /dev/motosh                                              u:object_r:sensors_device:s0
