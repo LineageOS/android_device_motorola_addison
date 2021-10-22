@@ -26,7 +26,6 @@
 /sys/homebutton(/.*)?                                    u:object_r:sysfs_homebutton:s0
 
 # Fingerprint
-/sys/devices/soc/soc:fpc_fpc1020(/.*)?                        u:object_r:sysfs_fingerprint:s0
 /data/vendor/fpc(/.*)?                                        u:object_r:fingerprint_data_file:s0
 /data/vendor/fpc/socket                                       u:object_r:fingerprint_socket:s0
 /data/.fps(/.*)?                                         u:object_r:fingerprint_data_file:s0
@@ -87,8 +86,6 @@
 /dev/mot_hob_ram                                         u:object_r:hob_device:s0
 /dev/smd3                                                u:object_r:hci_attach_dev:s0
 
-/(vendor|system/vendor)/bin/vl53l1_daemon                     u:object_r:vl53l1_exec:s0
-
 /dev/bcm2079x-i2c                                        u:object_r:nfc_device:s0
 
 /dev/fb_quickdraw                                        u:object_r:graphics_fb_device:s0
@@ -139,7 +136,6 @@
 
 /vendor/bin/perfd           u:object_r:perfd_exec:s0
 /vendor/bin/hw/android\.hardware\.power@1\.1-service-qti          u:object_r:hal_power_default_exec:s0
-#/vendor/radio(/.*)? u:object_r:radio_data_file:s0
 
 /vendor/bin/qmi_motext_hook u:object_r:rild_exec:s0
 
@@ -153,7 +149,6 @@
 /sys/devices/soc/leds-atc-20/leds(/.*)?                  u:object_r:sysfs_leds:s0
 
 # Fingerprint custom hal
-/(vendor|system/vendor)/bin/hw/android\.hardware\.biometrics\.fingerprint@2\.1-fpcservice    u:object_r:hal_fingerprint_fpc_exec:s0
 /(vendor|system/vendor)/bin/hw/vendor\.lineage\.touch@1\.0-service\.addison      u:object_r:hal_lineage_touch_default_exec:s0
 
 
@@ -162,6 +157,5 @@
 /sys/devices/virtual/timed_output/vibrator/voltage_level u:object_r:sysfs_vibrator:s0
 
 # Health HAL
-/(vendor|system/vendor)/bin/hw/android\.hardware\.health@2\.0-service\.addison          u:object_r:hal_health_default_exec:s0
 /(vendor|system/vendor)/bin/hw/motorola\.hardware\.health@1\.0-service                   u:object_r:hal_health_default_exec:s0
 /persist/battery(/.*)?  u:object_r:persist_battery_file:s0
