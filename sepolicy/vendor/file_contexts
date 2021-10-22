@@ -121,6 +121,7 @@
 /dev/stml0xx_as                                          u:object_r:sensors_device:s0
 /sys/devices/virtual/motosh/motosh_as					 u:object_r:sysfs_sensors:s0
 /sys/devices/iio_sysfs_trigger(/.*)?                     u:object_r:sysfs_sensors:s0
+/sys/kernel/debug/iio									 u:object_r:debugfs_iio:s0
 
 # WCNSS
 /sys/module/wcnsscore/parameters(/.*)?                   u:object_r:sysfs_wcnsscore:s0
