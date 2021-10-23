@@ -1,32 +1,3 @@
-// Camera
-cc_library_shared {
-    name: "libjni_shim",
-    proprietary: true,
-    defaults: ["hidl_defaults"],
-    srcs: [
-        "jni_shim.cpp",
-    ],
-    cflags: [
-        "-Werror",
-        "-Wextra",
-        "-Wall",
-    ],
-    shared_libs: [
-        "libutils",
-    ],
-}
-
-cc_library_shared {
-    name: "libshim_camera",
-
-    srcs: ["camera_shim.cpp"],
-
-    shared_libs: ["libui"],
-
-    vendor: true,
-
-    compile_multilib: "32",
-}
 cc_library {
     name: "libmemset_shim",
     vendor: true,
