@@ -1,3 +1,5 @@
+typeattribute hal_fingerprint_default data_between_core_and_vendor_violators;
+
 allow hal_fingerprint_default tee_device:chr_file { open read write ioctl };
 
 allow hal_fingerprint_default fingerprint_data_file:dir rw_dir_perms;
@@ -8,3 +10,6 @@ allow hal_fingerprint_default sysfs_fingerprint:file rw_file_perms;
 
 allow hal_fingerprint_default sysfs_greybus:dir { search };
 allow hal_fingerprint_default sysfs_greybus:file r_file_perms;
+
+allow hal_fingerprint_default fingerprintd_data_file:dir rw_dir_perms;
+allow hal_fingerprint_default fingerprintd_data_file:file create_file_perms;
