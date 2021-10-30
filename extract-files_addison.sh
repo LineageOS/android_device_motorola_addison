@@ -111,6 +111,15 @@ function blob_fixup() {
         done
         ;;
 
+    vendor/lib/libmmcamera2_mct.so)
+        sed -i "s/\x09\x91\x01\x68\x07\x91\x40\x68/\x09\x91\x4f\xf0\x10\x01\x40\x68/g" "${2}"
+        sed -i "s/\xf2\xf7\x96\xef\x02\xa9\x06\x20/\xf2\xf7\x96\xef\x02\xa9\x10\x20/g" "${2}"
+        ;;
+
+    vendor/lib/libmmcamera2_stats_modules.so
+        sed -i "s/\x53\x46\x03\x30\xcc\x90/\x53\x46\x05\x30\xcc\x90/g" "${2}"
+        ;;
+
     esac
 }
 

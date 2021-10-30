@@ -59,13 +59,13 @@ vendor/lib/libmmcamera2_iface_modules.so
 vendor/lib/libmmcamera2_imglib_modules.so
 vendor/lib/libmmcamera2_isp_modules.so|1a1c0d4e5221cd91aceef43c0c5f03a6f0955b09
 vendor/lib/libmmcamera2_is.so
-vendor/lib/libmmcamera2_mct.so
+vendor/lib/libmmcamera2_mct.so|fe3f129c8d626fccaf0e01986dcd6ff0502df459
 vendor/lib/libmmcamera2_pp_buf_mgr.so
 vendor/lib/libmmcamera2_pproc_modules.so
 vendor/lib/libmmcamera2_q3a_core.so
 vendor/lib/libmmcamera2_sensor_modules.so
 vendor/lib/libmmcamera2_stats_algorithm.so
-vendor/lib/libmmcamera2_stats_modules.so
+vendor/lib/libmmcamera2_stats_modules.so|bbfca954697d586e09dceddc0bc6f392d22f8067
 vendor/lib/libmmcamera_chromaflash_lib.so
 vendor/lib/libmmcamera_dbg.so
 vendor/lib/libmmcamera_dcrf_lib.so
