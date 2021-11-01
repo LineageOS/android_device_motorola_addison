@@ -52,8 +52,8 @@ on init
     chown system system /sys/class/graphics/fb0/cabc
 
     # Change ownership for Pocketmode feature
-    chown system system /sys/devices/soc/soc:fpc_fpc1020/proximity_state
-    chmod 0660 /sys/devices/soc/soc:fpc_fpc1020/proximity_state
+    chown system system /sys/bus/spi/devices/spi8.0/proximity_state
+    chmod 0660 /sys/bus/spi/devices/spi8.0/proximity_state
 
 on early-boot
     # set RLIMIT_MEMLOCK to 64MB
@@ -523,8 +523,8 @@ on property:persist.env.fastdorm.enabled=true
     setprop persist.radio.data_no_toggle 1
 
 #start camera server as daemon
-service qcamerasvr /system/vendor/bin/mm-qcamera-daemon
-    class main
+service vendor.qcamerasvr /vendor/bin/mm-qcamera-daemon
+    class late_start
     user camera
     group camera system inet input graphics
 
