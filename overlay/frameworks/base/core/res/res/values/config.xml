@@ -20,7 +20,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <!-- Enable system navigation keys. -->
-    <bool name="config_canShowNavbarToggle">true</bool>
+    <bool name="config_showNavigationBar">true</bool>
 
     <!-- When true use the linux /dev/input/event subsystem to detect the switch changes
          on the headphone/microphone jack. When false use the older uevent framework. -->
