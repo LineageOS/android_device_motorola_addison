@@ -64,7 +64,10 @@ function blob_fixup() {
         vendor/lib64/libril-qc-qmi-1.so)
             "${PATCHELF}" --add-needed "libcutils_shim.so" "${2}"
             ;;
-          
+        
+        vendor/lib/libwvhidl.so)
+            "${PATCHELF}" --replace-needed "libprotobuf-cpp-lite.so" "libprotobuf-cpp-lite-v28.so" "${2}"
+            ;;
         # Fix thermal engine config path
         vendor/bin/thermal-engine)
             sed -i "s|/system/etc/thermal|/vendor/etc/thermal|g" "${2}"

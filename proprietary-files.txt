@@ -537,15 +537,15 @@ vendor/bin/hw/vendor.qti.hardware.tui_comm@1.0-service-qti
 vendor/etc/init/vendor.qti.hardware.tui_comm@1.0-service-qti.rc
 vendor/lib64/vendor.qti.hardware.tui_comm@1.0.so
 
-# Widevine
-vendor/bin/hw/android.hardware.drm@1.2-service.widevine
-vendor/etc/init/android.hardware.drm@1.2-service.widevine.rc
-vendor/lib/mediadrm/libwvdrmengine.so
-vendor/lib64/mediadrm/libwvdrmengine.so
-vendor/lib64/libcpion.so
-vendor/lib64/libhdcpsrm.so
-vendor/lib64/liboemcrypto.so
-vendor/lib64/libwvhidl.so
+# Widevine - from Oneplus 3T PKQ1.181203.001
+vendor/bin/hw/android.hardware.drm@1.1-service.widevine|ece455d032ab8c4b9077133f194dc63d84718a1c
+vendor/etc/init/android.hardware.drm@1.1-service.widevine.rc|5a01d337c1d375ee24a6c8992ba91f54afb7637e
+vendor/lib/mediadrm/libwvdrmengine.so|80625617447c818b915296facd92b41f6e594116
+vendor/lib/libcppf.so|302087145d8235e69b68e95c418c17684ca52f15
+vendor/lib/libcpion.so|93720d6ae68661b8c3019c54127bc85681967980
+vendor/lib/libhdcpsrm.so|8ead768a049cc2333e5b3528542f4733f3f988ac
+vendor/lib/liboemcrypto.so|835c271ec57b158c39385f8d7ab400b386a04882
+vendor/lib/libwvhidl.so|6c8ab8660484131a0890b6a52020bae40fa05946
 
 # Radio - from deen PPK29.68-16-8
 vendor/bin/netmgrd|6e89c3eb89ba97a4d976b3249ee8991712906bf3
