@@ -96,7 +96,7 @@ on fs
 
     mount_all /vendor/etc/fstab.qcom --early
 
-    write /proc/sys/vm/swappiness 60
+    write /proc/sys/vm/swappiness 100
 
     # Set permissions for persist partition
     chown root system /mnt/vendor/persist
