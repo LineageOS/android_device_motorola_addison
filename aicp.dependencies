@@ -15,9 +15,9 @@
     "branch":      "lineage-18.1"
   },
   {
-    "repository": "LineageOS/android_hardware_motorola",
+    "repository": "AICP/hardware_motorola",
     "target_path": "hardware/motorola",
-    "branch":      "lineage-18.1"
+    "branch":      "r11.1"
   }
 ]
 
