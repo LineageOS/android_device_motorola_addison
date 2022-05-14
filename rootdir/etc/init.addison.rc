@@ -57,3 +57,6 @@ on property:ro.vendor.hw.dualsim=true
 on property:ro.vendor.hw.dualsim=false
     setprop persist.radio.multisim.config ""
     setprop ro.telephony.default_network 10
+
+on init && property:ro.boot.hardware.sku=XT1635-03
+    mount none /vendor/etc/libnfc-nxp_retcn.conf /vendor/etc/libnfc-nxp.conf bind
