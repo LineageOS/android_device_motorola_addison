@@ -325,10 +325,6 @@
         <item>9,1</item>
     </string-array>
 
-    <!-- Configure ethernet tcp buffersizes in the form:
-         rmem_min,rmem_def,rmem_max,wmem_min,wmem_def,wmem_max -->
-    <string name="config_wifi_tcp_buffers">131072,262144,6287200,4096,221184,3145728</string>
-
     <!-- Boolean indicating if restoring network selection should be skipped -->
     <!-- The restoring is handled by modem if it is true-->
     <bool translatable="false" name="skip_restoring_network_selection">true</bool>
@@ -358,12 +354,6 @@
          flag is set for wifi displays.
     -->
     <bool name="config_wifiDisplaySupportsProtectedBuffers">true</bool>
-
-    <!-- Integer threshold for low network score, should be somewhat less than the entry threshhold -->
-    <integer name="config_wifi_framework_wifi_score_bad_rssi_threshold_24GHz">-83</integer>
-    <integer name="config_wifi_framework_wifi_score_bad_rssi_threshold_5GHz">-80</integer>
-    <integer name="config_wifi_framework_wifi_score_entry_rssi_threshold_24GHz">-80</integer>
-    <integer name="config_wifi_framework_wifi_score_entry_rssi_threshold_5GHz">-77</integer>
 
     <!-- Default list of files pinned by the Pinner Service -->
     <string-array translatable="false" name="config_defaultPinnerServiceFiles">
