@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
--include vendor/motorola/addison/BoardConfigVendor.mk
+include vendor/motorola/addison/BoardConfigVendor.mk
 
 DEVICE_PATH := device/motorola/addison
 
