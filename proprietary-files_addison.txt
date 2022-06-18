@@ -248,4 +248,4 @@ vendor/firmware/libpn548ad_fw.so:vendor/lib/libpn548ad_fw.so
 vendor/bin/charge_only_mode
 
 # Sensors
-vendor/etc/firmware/sensorhubfw.bin
+vendor/firmware/sensorhubfw.bin
