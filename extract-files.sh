@@ -52,27 +52,31 @@ fi
 
 function blob_fixup() {
     case "${1}" in
-        # Fix xml version
-        product/etc/permissions/vendor.qti.hardware.data.connection-V1.0-java.xml | product/etc/permissions/vendor.qti.hardware.data.connection-V1.1-java.xml)
-            sed -i 's|xml version="2.0"|xml version="1.0"|g' "${2}"
-            ;;
-        # Load wrapped shim
-        vendor/lib64/libmdmcutback.so)
-            "${PATCHELF}" --add-needed "libqsapshim.so" "${2}"
-            ;;
-        # Fix missing symbols
-        vendor/lib64/libril-qc-qmi-1.so)
-            "${PATCHELF}" --add-needed "libcutils_shim.so" "${2}"
-            ;;
-        
-        vendor/lib/libwvhidl.so)
-            "${PATCHELF}" --replace-needed "libprotobuf-cpp-lite.so" "libprotobuf-cpp-lite-v28.so" "${2}"
-            ;;
-        # Fix thermal engine config path
-        vendor/bin/thermal-engine)
-            sed -i "s|/system/etc/thermal|/vendor/etc/thermal|g" "${2}"
-            ;;
-    
+
+    # Fix xml version
+    product/etc/permissions/vendor.qti.hardware.data.connection-V1.0-java.xml | product/etc/permissions/vendor.qti.hardware.data.connection-V1.1-java.xml)
+        sed -i 's|xml version="2.0"|xml version="1.0"|g' "${2}"
+        ;;
+
+    # Load wrapped shim
+    vendor/lib64/libmdmcutback.so)
+        "${PATCHELF}" --add-needed "libqsapshim.so" "${2}"
+        ;;
+
+    # Fix missing symbols
+    vendor/lib64/libril-qc-qmi-1.so)
+        "${PATCHELF}" --add-needed "libcutils_shim.so" "${2}"
+        ;;
+
+    vendor/lib/libwvhidl.so)
+        "${PATCHELF}" --replace-needed "libprotobuf-cpp-lite.so" "libprotobuf-cpp-lite-v28.so" "${2}"
+        ;;
+
+    # Fix thermal engine config path
+    vendor/bin/thermal-engine)
+        sed -i "s|/system/etc/thermal|/vendor/etc/thermal|g" "${2}"
+        ;;
+
     #libwui patch
     vendor/lib/libmot_gpu_mapper.so)
         sed -i "s/libgui/libwui/" "${2}"

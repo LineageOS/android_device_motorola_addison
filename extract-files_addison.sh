@@ -73,23 +73,24 @@ function blob_fixup() {
         ;;
 
     vendor/lib/libmmcamera_vstab_module.so)
-        patchelf --remove-needed libandroid.so "${2}"
+        "${PATCHELF}" --remove-needed libandroid.so "${2}"
         ;;
 
     vendor/lib/lib_mottof.so | vendor/lib/libmmcamera_vstab_module.so | vendor/lib/libjscore.so)
         sed -i "s/libgui/libwui/" "${2}"
         ;;
-            
+
     vendor/lib/libcamerabgprocservice.so)
-        patchelf --remove-needed libcamera_client.so "${2}"
+        "${PATCHELF}" --remove-needed libcamera_client.so "${2}"
         ;;
 
     vendor/lib/libjustshoot.so | vendor/lib/libjscore.so)
         "${PATCHELF}" --remove-needed libstagefright.so "${2}"
         ;;
+
     # Patch libcutils dep into audio HAL
     vendor/lib/hw/audio.primary.msm8953.so)
-        patchelf --replace-needed "libcutils.so" "libprocessgroup.so" "${2}"
+        "${PATCHELF}" --replace-needed "libcutils.so" "libprocessgroup.so" "${2}"
         ;;
 
     vendor/lib/hw/camera.msm8953.so)
@@ -116,7 +117,7 @@ function blob_fixup() {
         sed -i "s/\xf2\xf7\x96\xef\x02\xa9\x06\x20/\xf2\xf7\x96\xef\x02\xa9\x10\x20/g" "${2}"
         ;;
 
-    vendor/lib/libmmcamera2_stats_modules.so
+    vendor/lib/libmmcamera2_stats_modules.so)
         sed -i "s/\x53\x46\x03\x30\xcc\x90/\x53\x46\x05\x30\xcc\x90/g" "${2}"
         ;;
 
