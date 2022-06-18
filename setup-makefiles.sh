@@ -31,6 +31,7 @@ setup_vendor "${DEVICE}" "${VENDOR}" "${ANDROID_ROOT}"
 write_headers
 
 write_makefiles "$MY_DIR"/proprietary-files.txt
+write_makefiles "$MY_DIR"/proprietary-files_addison.txt
 
 # Finish
 write_footers
