@@ -26,20 +26,19 @@ vendor/lib/soundfx/libmmieffectswrapper.so|14e9d0a4d62368e344640f060fe9018165c7e
 vendor/lib/libeqservicebridge.so|31ae87116cf5c03722d3d68b2f36e365990099a0
 vendor/lib/motorola.hardware.audio.eqservice@1.0_vendor.so|862b7ec100f08b217614a0fba3cba518ea4bc62b
 
-
 # Camera
-lib/libadvalgcore.so:vendor/lib/libadvalgcore.so
-lib/libarcsoft_beautyshot.so:vendor/lib/libarcsoft_beautyshot.so
-lib/libfamily_photo.so:vendor/lib/libfamily_photo.so
-lib/libjscore.so:vendor/lib/libjscore.so
-lib/libjustshoot.so:vendor/lib/libjustshoot.so
-lib/libmbs.so:vendor/lib/libmbs.so
-lib/libmorpho_image_stabilizer4.so:vendor/lib/libmorpho_image_stabilizer4.so
-lib/libmot-qc-fd-offline.so:vendor/lib/libmot-qc-fd-offline.so
-lib/lib_motsensorlistener.so:vendor/lib/lib_motsensorlistener.so
-lib/lib_mottof.so:vendor/lib/lib_mottof.so
-lib/libmpbase.so:vendor/lib/libmpbase.so
-lib/motorola.hardware.camera.device@1.0.so:vendor/lib/motorola.hardware.camera.device@1.0.so
+system/lib/libadvalgcore.so:vendor/lib/libadvalgcore.so
+system/lib/libarcsoft_beautyshot.so:vendor/lib/libarcsoft_beautyshot.so
+system/lib/libfamily_photo.so:vendor/lib/libfamily_photo.so
+system/lib/libjscore.so:vendor/lib/libjscore.so
+system/lib/libjustshoot.so:vendor/lib/libjustshoot.so
+system/lib/libmbs.so:vendor/lib/libmbs.so
+system/lib/libmorpho_image_stabilizer4.so:vendor/lib/libmorpho_image_stabilizer4.so
+system/lib/libmot-qc-fd-offline.so:vendor/lib/libmot-qc-fd-offline.so
+system/lib/lib_motsensorlistener.so:vendor/lib/lib_motsensorlistener.so
+system/lib/lib_mottof.so:vendor/lib/lib_mottof.so
+system/lib/libmpbase.so:vendor/lib/libmpbase.so
+system/lib/motorola.hardware.camera.device@1.0.so:vendor/lib/motorola.hardware.camera.device@1.0.so
 vendor/bin/mm-qcamera-daemon
 vendor/lib/hw/camera.msm8953.so
 vendor/lib/libactuator_mot_lc898212xd.so
@@ -148,7 +147,6 @@ vendor/lib/libts_detected_face_hal.so
 vendor/lib/libts_face_beautify_hal.so
 vendor/lib/libubifocus.so
 
-
 # Chromatix
 vendor/lib/libchromatix_ov5693_common.so
 vendor/lib/libchromatix_ov5693_cpp_hfr_120.so
@@ -188,15 +186,15 @@ vendor/lib/libchromatix_ov16860_zsl_preview_3a.so
 vendor/lib/libchromatix_ov16860_zsl_video_3a.so
 
 # Camera firmware
-etc/firmware/cpp_firmware_v1_1_1.fw:vendor/firmware/cpp_firmware_v1_1_1.fw
-etc/firmware/cpp_firmware_v1_1_6.fw:vendor/firmware/cpp_firmware_v1_1_6.fw
-etc/firmware/cpp_firmware_v1_2_0.fw:vendor/firmware/cpp_firmware_v1_2_0.fw
-etc/firmware/cpp_firmware_v1_4_0.fw:vendor/firmware/cpp_firmware_v1_4_0.fw
-etc/firmware/cpp_firmware_v1_5_0.fw:vendor/firmware/cpp_firmware_v1_5_0.fw
-etc/firmware/cpp_firmware_v1_5_2.fw:vendor/firmware/cpp_firmware_v1_5_2.fw
-etc/firmware/cpp_firmware_v1_6_0.fw:vendor/firmware/cpp_firmware_v1_6_0.fw
-etc/firmware/cpp_firmware_v1_8_0.fw:vendor/firmware/cpp_firmware_v1_8_0.fw
-etc/firmware/cpp_firmware_v1_10_0.fw:vendor/firmware/cpp_firmware_v1_10_0.fw
+system/etc/firmware/cpp_firmware_v1_1_1.fw:vendor/firmware/cpp_firmware_v1_1_1.fw
+system/etc/firmware/cpp_firmware_v1_1_6.fw:vendor/firmware/cpp_firmware_v1_1_6.fw
+system/etc/firmware/cpp_firmware_v1_2_0.fw:vendor/firmware/cpp_firmware_v1_2_0.fw
+system/etc/firmware/cpp_firmware_v1_4_0.fw:vendor/firmware/cpp_firmware_v1_4_0.fw
+system/etc/firmware/cpp_firmware_v1_5_0.fw:vendor/firmware/cpp_firmware_v1_5_0.fw
+system/etc/firmware/cpp_firmware_v1_5_2.fw:vendor/firmware/cpp_firmware_v1_5_2.fw
+system/etc/firmware/cpp_firmware_v1_6_0.fw:vendor/firmware/cpp_firmware_v1_6_0.fw
+system/etc/firmware/cpp_firmware_v1_8_0.fw:vendor/firmware/cpp_firmware_v1_8_0.fw
+system/etc/firmware/cpp_firmware_v1_10_0.fw:vendor/firmware/cpp_firmware_v1_10_0.fw
 
 # DTV
 -vendor/app/DTVPlayer/DTVPlayer.apk
