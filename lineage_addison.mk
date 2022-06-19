@@ -46,3 +46,5 @@ PRODUCT_ENFORCE_RRO_TARGETS := \
 BUILD_FINGERPRINT := "motorola/addison_retail/addison:8.0.0/OPNS27.76-12-22-9/10:user/release-keys"
     # for specific
 $(call inherit-product, vendor/motorola/addison/addison-vendor.mk)
+
+$(call enforce-product-packages-exist,)
