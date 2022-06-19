@@ -60,7 +60,6 @@ PRODUCT_COPY_FILES += \
 # Bluetooth
 PRODUCT_PACKAGES += \
     android.hardware.bluetooth@1.0 \
-    libbt-vendor \
     vendor.qti.hardware.btconfigstore@1.0.vendor
 
 #Camera
