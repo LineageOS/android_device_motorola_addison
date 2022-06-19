@@ -199,10 +199,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.usb.bpteth=2ee7 \
     ro.usb.bpteth_adb=2ee8
 
-# Fast App Launch
-PRODUCT_PROPERTY_OVERRIDES += \
-    persist.device_config.runtime_native.usap_pool_enabled=true
-
 # DRM
 PRODUCT_PROPERTY_OVERRIDES += \
     drm.service.enabled = true
