@@ -66,8 +66,9 @@ function blob_fixup() {
 
     vendor/lib/libjustshoot.so)
         for LIBJUST_SHOOT in $(grep -L "libjustshoot_shim.so" "${2}"); do
-            "${PATCHELF}" --add-needed "libjustshoot_shim.so" "$LIBJUST_SHOOT_SHIM" 
+            "${PATCHELF}" --add-needed "libjustshoot_shim.so" "$LIBJUST_SHOOT_SHIM"
         done
+        "${PATCHELF}" --remove-needed libstagefright.so "${2}"
         ;;
 
     vendor/lib/libmmcamera2_sensor_modules.so)
@@ -76,9 +77,10 @@ function blob_fixup() {
 
     vendor/lib/libmmcamera_vstab_module.so)
         "${PATCHELF}" --remove-needed libandroid.so "${2}"
+        sed -i "s/libgui/libwui/" "${2}"
         ;;
 
-    vendor/lib/lib_mottof.so | vendor/lib/libmmcamera_vstab_module.so | vendor/lib/libjscore.so)
+    vendor/lib/lib_mottof.so)
         sed -i "s/libgui/libwui/" "${2}"
         ;;
 
@@ -86,8 +88,9 @@ function blob_fixup() {
         "${PATCHELF}" --remove-needed libcamera_client.so "${2}"
         ;;
 
-    vendor/lib/libjustshoot.so | vendor/lib/libjscore.so)
+    vendor/lib/libjscore.so)
         "${PATCHELF}" --remove-needed libstagefright.so "${2}"
+        sed -i "s/libgui/libwui/" "${2}"
         ;;
 
     # Patch libcutils dep into audio HAL
