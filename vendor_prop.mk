@@ -192,10 +192,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     debug.sf.early_gl_phase_offset_ns=3000000 \
     debug.sf.early_gl_app_phase_offset_ns=15000000
 
-# USAP
-PRODUCT_PROPERTY_OVERRIDES += \
-    persist.device_config.runtime_native.usap_pool_enabled=true
-
 # USB
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.usb.mtp=2e82 \
