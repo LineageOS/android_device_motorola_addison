@@ -197,7 +197,6 @@ system/etc/firmware/cpp_firmware_v1_8_0.fw:vendor/firmware/cpp_firmware_v1_8_0.f
 system/etc/firmware/cpp_firmware_v1_10_0.fw:vendor/firmware/cpp_firmware_v1_10_0.fw
 
 # DTV
--vendor/app/DTVPlayer/DTVPlayer.apk
 -vendor/app/DTVService/DTVService.apk
 vendor/etc/permissions/com.motorola.hardware.dtv.xml
 vendor/etc/permissions/mot_dtv_permissions.xml
