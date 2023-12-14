@@ -179,7 +179,7 @@ ifeq ($(BOARD_USES_MOT_SENSOR_HUB), true)
         LOCAL_HEADER_LIBRARIES += libhardware_headers
         LOCAL_SHARED_LIBRARIES += liblog libcutils libz libdl libutils
         LOCAL_CLANG := true
-        LOCAL_MODULE := sensors.$(TARGET_BOARD_PLATFORM)
+        LOCAL_MODULE := sensors-moto.$(TARGET_BOARD_PLATFORM)
 
         include $(BUILD_SHARED_LIBRARY)
 

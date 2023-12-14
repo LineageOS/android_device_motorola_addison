@@ -377,7 +377,7 @@ PRODUCT_PACKAGES += \
     libsensorhub \
     motosh \
     sensorhub.msm8953 \
-    sensors.msm8953 \
+    sensors-moto.msm8953 \
     libsensorndkbridge
 
 PRODUCT_COPY_FILES += \
